@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
+import Link from "next/link";
 import "./globals.css";
 
 const geistSans = localFont({
@@ -28,8 +29,14 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} font-sans antialiased`}
       >
+        <nav className="flex h-16 items-center justify-between border-b border-zinc-800 bg-zinc-900 px-6">
+          <Link href="/" className="text-lg font-bold tracking-tight text-white">
+            Nassau
+          </Link>
+          <span className="text-xs text-zinc-400">nassau.golf</span>
+        </nav>
         {children}
       </body>
     </html>
