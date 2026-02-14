@@ -22,15 +22,22 @@ export const metadata: Metadata = {
     "Plan golf trips, manage itineraries, track expenses, generate pairings, and run skins games.",
 };
 
+async function getUser() {
+  try {
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    return user;
+  } catch {
+    return null;
+  }
+}
+
 export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const user = await getUser();
 
   return (
     <html lang="en">
