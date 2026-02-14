@@ -2,12 +2,18 @@ import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
 export async function middleware(request: NextRequest) {
-  let supabaseResponse = NextResponse.next({ request });
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
+  // If env vars are missing, let the request through
+  if (!supabaseUrl || !supabaseAnonKey) {
+    return NextResponse.next();
+  }
+
+  try {
+    let supabaseResponse = NextResponse.next({ request });
+
+    const supabase = createServerClient(supabaseUrl, supabaseAnonKey, {
       cookies: {
         getAll() {
           return request.cookies.getAll();
@@ -22,33 +28,35 @@ export async function middleware(request: NextRequest) {
           );
         },
       },
+    });
+
+    // Refresh the auth token on every request
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    // Protected routes — redirect to /login if not authenticated
+    const isProtected =
+      request.nextUrl.pathname.startsWith("/dashboard") ||
+      request.nextUrl.pathname.startsWith("/trips");
+
+    if (isProtected && !user) {
+      const url = request.nextUrl.clone();
+      url.pathname = "/login";
+      return NextResponse.redirect(url);
     }
-  );
 
-  // Refresh the auth token on every request
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+    // If authenticated user visits /login, redirect to /dashboard
+    if (request.nextUrl.pathname === "/login" && user) {
+      const url = request.nextUrl.clone();
+      url.pathname = "/dashboard";
+      return NextResponse.redirect(url);
+    }
 
-  // Protected routes — redirect to /login if not authenticated
-  const isProtected =
-    request.nextUrl.pathname.startsWith("/dashboard") ||
-    request.nextUrl.pathname.startsWith("/trips");
-
-  if (isProtected && !user) {
-    const url = request.nextUrl.clone();
-    url.pathname = "/login";
-    return NextResponse.redirect(url);
+    return supabaseResponse;
+  } catch {
+    return NextResponse.next();
   }
-
-  // If authenticated user visits /login, redirect to /dashboard
-  if (request.nextUrl.pathname === "/login" && user) {
-    const url = request.nextUrl.clone();
-    url.pathname = "/dashboard";
-    return NextResponse.redirect(url);
-  }
-
-  return supabaseResponse;
 }
 
 export const config = {
