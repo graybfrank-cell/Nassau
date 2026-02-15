@@ -42,11 +42,11 @@ export default function PairingsPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tripId]);
 
-  function refresh() {
-    const t = getTrip(tripId);
+  async function refresh() {
+    const t = await getTrip(tripId);
     if (t) {
       setTrip(t);
-      setRounds(getRounds(tripId));
+      setRounds(await getRounds(tripId));
     }
   }
 
@@ -58,12 +58,12 @@ export default function PairingsPage() {
     return trip?.members.find((m) => m.id === memberId)?.handicap || 0;
   }
 
-  function handleCreate(e: React.FormEvent) {
+  async function handleCreate(e: React.FormEvent) {
     e.preventDefault();
     if (!trip || !roundName.trim()) return;
     const memberIds = trip.members.map((m) => m.id);
     const groups = makeGroups(memberIds, groupSize);
-    createRound({
+    await createRound({
       tripId,
       name: roundName.trim(),
       courseName: courseName.trim(),
@@ -74,20 +74,20 @@ export default function PairingsPage() {
     setCourseName("");
     setRoundDate("");
     setShowForm(false);
-    refresh();
+    await refresh();
   }
 
-  function handleReshuffle(roundId: string) {
+  async function handleReshuffle(roundId: string) {
     if (!trip) return;
     const memberIds = trip.members.map((m) => m.id);
     const groups = makeGroups(memberIds, groupSize);
-    updateRound(roundId, { groups });
-    refresh();
+    await updateRound(roundId, { groups });
+    await refresh();
   }
 
-  function handleDeleteRound(roundId: string) {
-    deleteRound(roundId);
-    refresh();
+  async function handleDeleteRound(roundId: string) {
+    await deleteRound(roundId);
+    await refresh();
   }
 
   if (!trip) {

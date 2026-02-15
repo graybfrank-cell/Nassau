@@ -33,17 +33,22 @@ export default function TripDetailPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tripId]);
 
-  function refresh() {
-    const t = getTrip(tripId);
+  async function refresh() {
+    const t = await getTrip(tripId);
     if (t) {
       setTrip(t);
-      setExpenseCount(getExpenses(tripId).length);
-      setRoundCount(getRounds(tripId).length);
-      setSkinsCount(getSkinsGames(tripId).length);
+      const [expenses, rounds, skins] = await Promise.all([
+        getExpenses(tripId),
+        getRounds(tripId),
+        getSkinsGames(tripId),
+      ]);
+      setExpenseCount(expenses.length);
+      setRoundCount(rounds.length);
+      setSkinsCount(skins.length);
     }
   }
 
-  function handleAddMember(e: React.FormEvent) {
+  async function handleAddMember(e: React.FormEvent) {
     e.preventDefault();
     if (!trip || !memberName.trim()) return;
     const newMember: Member = {
@@ -51,19 +56,19 @@ export default function TripDetailPage() {
       name: memberName.trim(),
       handicap: parseInt(memberHandicap) || 0,
     };
-    updateTrip(tripId, { members: [...trip.members, newMember] });
+    await updateTrip(tripId, { members: [...trip.members, newMember] });
     setMemberName("");
     setMemberHandicap("");
     setShowAddMember(false);
-    refresh();
+    await refresh();
   }
 
-  function handleRemoveMember(memberId: string) {
+  async function handleRemoveMember(memberId: string) {
     if (!trip) return;
-    updateTrip(tripId, {
+    await updateTrip(tripId, {
       members: trip.members.filter((m) => m.id !== memberId),
     });
-    refresh();
+    await refresh();
   }
 
   if (!trip) {
