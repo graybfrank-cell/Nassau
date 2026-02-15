@@ -1,0 +1,67 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Trip {
+  id          String   @id @default(uuid())
+  userId      String
+  name        String
+  destination String   @default("")
+  startDate   String   @default("")
+  endDate     String   @default("")
+  members     Json     @default("[]")
+  createdAt   DateTime @default(now())
+
+  expenses   Expense[]
+  rounds     Round[]
+  skinsGames SkinsGame[]
+
+  @@index([userId])
+}
+
+model Expense {
+  id          String   @id @default(uuid())
+  tripId      String
+  description String
+  amount      Float
+  paidBy      String
+  splitAmong  Json     @default("[]")
+  createdAt   DateTime @default(now())
+
+  trip Trip @relation(fields: [tripId], references: [id], onDelete: Cascade)
+
+  @@index([tripId])
+}
+
+model Round {
+  id         String   @id @default(uuid())
+  tripId     String
+  name       String
+  courseName String   @default("")
+  date       String   @default("")
+  groups     Json     @default("[]")
+  createdAt  DateTime @default(now())
+
+  trip Trip @relation(fields: [tripId], references: [id], onDelete: Cascade)
+
+  @@index([tripId])
+}
+
+model SkinsGame {
+  id        String   @id @default(uuid())
+  tripId    String
+  name      String
+  players   Json     @default("[]")
+  stake     Float    @default(5)
+  holes     Json     @default("[]")
+  createdAt DateTime @default(now())
+
+  trip Trip @relation(fields: [tripId], references: [id], onDelete: Cascade)
+
+  @@index([tripId])
+}
