@@ -21,10 +21,10 @@ export default function DashboardPage() {
 
   useEffect(() => {
     const supabase = createClient();
-    supabase.auth.getUser().then(({ data: { user } }) => {
+    supabase.auth.getUser().then(async ({ data: { user } }) => {
       if (user) {
         setUserId(user.id);
-        setTrips(getTrips(user.id));
+        setTrips(await getTrips(user.id));
       } else {
         router.push("/login");
       }
@@ -32,14 +32,14 @@ export default function DashboardPage() {
     });
   }, [router]);
 
-  function refresh() {
-    if (userId) setTrips(getTrips(userId));
+  async function refresh() {
+    if (userId) setTrips(await getTrips(userId));
   }
 
-  function handleCreate(e: React.FormEvent) {
+  async function handleCreate(e: React.FormEvent) {
     e.preventDefault();
     if (!userId || !name.trim()) return;
-    createTrip({
+    await createTrip({
       userId,
       name: name.trim(),
       destination: destination.trim(),
@@ -52,12 +52,12 @@ export default function DashboardPage() {
     setStartDate("");
     setEndDate("");
     setShowForm(false);
-    refresh();
+    await refresh();
   }
 
-  function handleDelete(tripId: string) {
-    deleteTrip(tripId);
-    refresh();
+  async function handleDelete(tripId: string) {
+    await deleteTrip(tripId);
+    await refresh();
   }
 
   if (loading) {
