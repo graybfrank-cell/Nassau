@@ -53,7 +53,12 @@ export default function DashboardPage() {
       destination: destination.trim(),
       startDate,
       endDate,
+      arrivalTime: "",
+      departureTime: "",
       members: [],
+      lodging: { name: "", address: "", checkIn: "", checkOut: "", confirmationNumber: "", phone: "", notes: "" },
+      schedule: [],
+      inviteCode: null,
     });
     setName("");
     setDestination("");

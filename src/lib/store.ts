@@ -201,7 +201,11 @@ function mapTrip(row: any): Trip {
     destination: row.destination || "",
     startDate: row.startDate || "",
     endDate: row.endDate || "",
+    arrivalTime: row.arrivalTime || "",
+    departureTime: row.departureTime || "",
     members: row.members || [],
+    lodging: row.lodging || { name: "", address: "", checkIn: "", checkOut: "", confirmationNumber: "", phone: "", notes: "" },
+    schedule: row.schedule || [],
     inviteCode: row.inviteCode || null,
     createdAt: row.createdAt,
   };

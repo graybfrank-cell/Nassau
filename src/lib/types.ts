@@ -4,6 +4,25 @@ export interface Member {
   handicap: number;
 }
 
+export interface Lodging {
+  name: string;
+  address: string;
+  checkIn: string;
+  checkOut: string;
+  confirmationNumber: string;
+  phone: string;
+  notes: string;
+}
+
+export interface ScheduleItem {
+  id: string;
+  date: string;
+  time: string;
+  title: string;
+  description: string;
+  type: "tee_time" | "dinner" | "activity" | "travel" | "other";
+}
+
 export interface Trip {
   id: string;
   userId: string;
@@ -11,7 +30,11 @@ export interface Trip {
   destination: string;
   startDate: string;
   endDate: string;
+  arrivalTime: string;
+  departureTime: string;
   members: Member[];
+  lodging: Lodging;
+  schedule: ScheduleItem[];
   inviteCode: string | null;
   createdAt: string;
 }
