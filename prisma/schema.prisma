@@ -12,9 +12,13 @@ model Trip {
   userId      String
   name        String
   destination String   @default("")
-  startDate   String   @default("")
-  endDate     String   @default("")
+  startDate     String   @default("")
+  endDate       String   @default("")
+  arrivalTime   String   @default("")
+  departureTime String   @default("")
   members     Json     @default("[]")
+  lodging     Json     @default("{}")
+  schedule    Json     @default("[]")
   inviteCode  String?  @unique
   createdAt   DateTime @default(now())
 
