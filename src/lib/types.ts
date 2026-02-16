@@ -12,6 +12,7 @@ export interface Trip {
   startDate: string;
   endDate: string;
   members: Member[];
+  inviteCode: string | null;
   createdAt: string;
 }
 

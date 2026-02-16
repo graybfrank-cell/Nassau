@@ -23,6 +23,14 @@ export default function DashboardPage() {
     const supabase = createClient();
     supabase.auth.getUser().then(async ({ data: { user } }) => {
       if (user) {
+        // Check for pending invite redirect
+        const pendingInvite = sessionStorage.getItem("pendingInvite");
+        if (pendingInvite) {
+          sessionStorage.removeItem("pendingInvite");
+          router.push(`/invite/${pendingInvite}`);
+          return;
+        }
+
         setUserId(user.id);
         setTrips(await getTrips(user.id));
       } else {

@@ -15,6 +15,7 @@ model Trip {
   startDate   String   @default("")
   endDate     String   @default("")
   members     Json     @default("[]")
+  inviteCode  String?  @unique
   createdAt   DateTime @default(now())
 
   expenses   Expense[]

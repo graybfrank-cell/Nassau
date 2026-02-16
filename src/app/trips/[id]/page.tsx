@@ -14,6 +14,9 @@ import {
   Plus,
   X,
   ChevronRight,
+  Link2,
+  Check,
+  Copy,
 } from "lucide-react";
 
 export default function TripDetailPage() {
@@ -27,6 +30,8 @@ export default function TripDetailPage() {
   const [showAddMember, setShowAddMember] = useState(false);
   const [memberName, setMemberName] = useState("");
   const [memberHandicap, setMemberHandicap] = useState("");
+  const [inviteLoading, setInviteLoading] = useState(false);
+  const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     refresh();
@@ -61,6 +66,31 @@ export default function TripDetailPage() {
     setMemberHandicap("");
     setShowAddMember(false);
     await refresh();
+  }
+
+  async function handleShareInvite() {
+    setInviteLoading(true);
+    let code = trip?.inviteCode;
+
+    if (!code) {
+      const res = await fetch(`/api/trips/${tripId}/invite`, {
+        method: "POST",
+      });
+      if (res.ok) {
+        const data = await res.json();
+        code = data.inviteCode;
+        await refresh();
+      }
+    }
+
+    if (code) {
+      const link = `${window.location.origin}/invite/${code}`;
+      await navigator.clipboard.writeText(link);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    }
+
+    setInviteLoading(false);
   }
 
   async function handleRemoveMember(memberId: string) {
@@ -129,19 +159,42 @@ export default function TripDetailPage() {
 
         {/* Trip Header */}
         <div className="mt-6 rounded-xl border border-zinc-200 bg-white p-6 shadow-sm">
-          <h1 className="text-2xl font-bold tracking-tight text-zinc-900">
-            {trip.name}
-          </h1>
-          {trip.destination && (
-            <p className="mt-1 text-sm text-zinc-500">{trip.destination}</p>
-          )}
-          {(trip.startDate || trip.endDate) && (
-            <p className="mt-1 text-sm text-zinc-400">
-              {trip.startDate && trip.endDate
-                ? `${trip.startDate} — ${trip.endDate}`
-                : trip.startDate || trip.endDate}
-            </p>
-          )}
+          <div className="flex items-start justify-between">
+            <div>
+              <h1 className="text-2xl font-bold tracking-tight text-zinc-900">
+                {trip.name}
+              </h1>
+              {trip.destination && (
+                <p className="mt-1 text-sm text-zinc-500">{trip.destination}</p>
+              )}
+              {(trip.startDate || trip.endDate) && (
+                <p className="mt-1 text-sm text-zinc-400">
+                  {trip.startDate && trip.endDate
+                    ? `${trip.startDate} — ${trip.endDate}`
+                    : trip.startDate || trip.endDate}
+                </p>
+              )}
+            </div>
+            <button
+              onClick={handleShareInvite}
+              disabled={inviteLoading}
+              className="inline-flex items-center gap-1.5 rounded-lg border border-zinc-200 bg-white px-3 py-1.5 text-xs font-semibold text-zinc-700 transition-colors hover:bg-zinc-50 disabled:opacity-50"
+            >
+              {copied ? (
+                <>
+                  <Check className="h-3.5 w-3.5 text-emerald-600" />
+                  Copied!
+                </>
+              ) : inviteLoading ? (
+                "..."
+              ) : (
+                <>
+                  <Link2 className="h-3.5 w-3.5" />
+                  Invite Link
+                </>
+              )}
+            </button>
+          </div>
         </div>
 
         {/* Members Section */}
