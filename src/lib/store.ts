@@ -153,6 +153,7 @@ function mapTrip(row: any): Trip {
     startDate: row.startDate || "",
     endDate: row.endDate || "",
     members: row.members || [],
+    inviteCode: row.inviteCode || null,
     createdAt: row.createdAt,
   };
 }
