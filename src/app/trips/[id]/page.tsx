@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
-import { getTrip, updateTrip, getExpenses, getRounds, getSkinsGames } from "@/lib/store";
+import { getTrip, updateTrip, getExpenses, getRounds, getSkinsGames, getScorecards } from "@/lib/store";
 import { Trip, Member } from "@/lib/types";
 import {
   ArrowLeft,
@@ -16,7 +16,8 @@ import {
   ChevronRight,
   Link2,
   Check,
-  Copy,
+  ClipboardList,
+  Medal,
 } from "lucide-react";
 
 export default function TripDetailPage() {
@@ -27,6 +28,7 @@ export default function TripDetailPage() {
   const [expenseCount, setExpenseCount] = useState(0);
   const [roundCount, setRoundCount] = useState(0);
   const [skinsCount, setSkinsCount] = useState(0);
+  const [scorecardCount, setScorecardCount] = useState(0);
   const [showAddMember, setShowAddMember] = useState(false);
   const [memberName, setMemberName] = useState("");
   const [memberHandicap, setMemberHandicap] = useState("");
@@ -42,14 +44,16 @@ export default function TripDetailPage() {
     const t = await getTrip(tripId);
     if (t) {
       setTrip(t);
-      const [expenses, rounds, skins] = await Promise.all([
+      const [expenses, rounds, skins, scorecards] = await Promise.all([
         getExpenses(tripId),
         getRounds(tripId),
         getSkinsGames(tripId),
+        getScorecards({ tripId }),
       ]);
       setExpenseCount(expenses.length);
       setRoundCount(rounds.length);
       setSkinsCount(skins.length);
+      setScorecardCount(scorecards.length);
     }
   }
 
@@ -143,6 +147,20 @@ export default function TripDetailPage() {
       desc: `${skinsCount} game${skinsCount !== 1 ? "s" : ""} played`,
       href: `/trips/${tripId}/skins`,
       color: "bg-amber-100 text-amber-700",
+    },
+    {
+      icon: ClipboardList,
+      title: "Scorecards",
+      desc: `${scorecardCount} round${scorecardCount !== 1 ? "s" : ""} scored`,
+      href: `/trips/${tripId}/scorecards`,
+      color: "bg-emerald-100 text-emerald-700",
+    },
+    {
+      icon: Medal,
+      title: "Leaderboard",
+      desc: "Standings & rankings",
+      href: `/trips/${tripId}/leaderboard`,
+      color: "bg-orange-100 text-orange-700",
     },
   ];
 
@@ -293,7 +311,7 @@ export default function TripDetailPage() {
         </div>
 
         {/* Feature Cards */}
-        <div className="mt-6 grid gap-4 sm:grid-cols-3">
+        <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {featureCards.map((card) => (
             <Link
               key={card.title}

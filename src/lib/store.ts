@@ -1,4 +1,4 @@
-import { Trip, Expense, Round, SkinsGame } from "./types";
+import { Trip, Expense, Round, SkinsGame, Scorecard } from "./types";
 
 // --- Trips ---
 
@@ -141,6 +141,55 @@ export async function deleteSkinsGame(gameId: string): Promise<void> {
   await fetch(`/api/skins/${gameId}`, { method: "DELETE" });
 }
 
+// --- Scorecards ---
+
+export async function getScorecards(params: {
+  userId?: string;
+  tripId?: string;
+}): Promise<Scorecard[]> {
+  const query = new URLSearchParams();
+  if (params.userId) query.set("userId", params.userId);
+  if (params.tripId) query.set("tripId", params.tripId);
+  const res = await fetch(`/api/scorecards?${query}`);
+  if (!res.ok) return [];
+  const rows = await res.json();
+  return rows.map(mapScorecard);
+}
+
+export async function getScorecard(id: string): Promise<Scorecard | null> {
+  const res = await fetch(`/api/scorecards/${id}`);
+  if (!res.ok) return null;
+  return mapScorecard(await res.json());
+}
+
+export async function createScorecard(
+  scorecard: Omit<Scorecard, "id" | "createdAt">
+): Promise<Scorecard> {
+  const res = await fetch("/api/scorecards", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(scorecard),
+  });
+  return mapScorecard(await res.json());
+}
+
+export async function updateScorecard(
+  id: string,
+  updates: Partial<Scorecard>
+): Promise<Scorecard | null> {
+  const res = await fetch(`/api/scorecards/${id}`, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(updates),
+  });
+  if (!res.ok) return null;
+  return mapScorecard(await res.json());
+}
+
+export async function deleteScorecard(id: string): Promise<void> {
+  await fetch(`/api/scorecards/${id}`, { method: "DELETE" });
+}
+
 // --- Mappers (DB row → frontend type) ---
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -193,6 +242,20 @@ function mapSkinsGame(row: any): SkinsGame {
     players: row.players || [],
     stake: row.stake,
     holes: row.holes || [],
+    createdAt: row.createdAt,
+  };
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function mapScorecard(row: any): Scorecard {
+  return {
+    id: row.id,
+    userId: row.userId,
+    tripId: row.tripId || null,
+    courseName: row.courseName || "",
+    date: row.date || "",
+    pars: row.pars || [],
+    players: row.players || [],
     createdAt: row.createdAt,
   };
 }

@@ -6,7 +6,7 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { getTrips, createTrip, deleteTrip } from "@/lib/store";
 import { Trip } from "@/lib/types";
-import { Plus, MapPin, Users, Calendar, Trash2 } from "lucide-react";
+import { Plus, MapPin, Users, Calendar, Trash2, ClipboardList } from "lucide-react";
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -89,13 +89,22 @@ export default function DashboardPage() {
               Plan and manage your golf getaways.
             </p>
           </div>
-          <button
-            onClick={() => setShowForm(!showForm)}
-            className="inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-emerald-700"
-          >
-            <Plus className="h-4 w-4" />
-            New Trip
-          </button>
+          <div className="flex items-center gap-3">
+            <Link
+              href="/scorecards"
+              className="inline-flex items-center gap-2 rounded-lg border border-zinc-200 bg-white px-4 py-2.5 text-sm font-semibold text-zinc-700 transition-colors hover:bg-zinc-50"
+            >
+              <ClipboardList className="h-4 w-4" />
+              Scorecards
+            </Link>
+            <button
+              onClick={() => setShowForm(!showForm)}
+              className="inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-emerald-700"
+            >
+              <Plus className="h-4 w-4" />
+              New Trip
+            </button>
+          </div>
         </div>
 
         {/* Create Form */}
