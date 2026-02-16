@@ -38,7 +38,8 @@ export async function proxy(request: NextRequest) {
     // Protected routes — redirect to /login if not authenticated
     const isProtected =
       request.nextUrl.pathname.startsWith("/dashboard") ||
-      request.nextUrl.pathname.startsWith("/trips");
+      request.nextUrl.pathname.startsWith("/trips") ||
+      request.nextUrl.pathname.startsWith("/scorecards");
 
     if (isProtected && !user) {
       const url = request.nextUrl.clone();

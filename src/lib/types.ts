@@ -51,9 +51,28 @@ export interface SkinsGame {
   createdAt: string;
 }
 
+export interface ScorecardPlayer {
+  id: string;
+  name: string;
+  handicap: number;
+  scores: (number | null)[]; // one per hole, null = not entered
+}
+
+export interface Scorecard {
+  id: string;
+  userId: string;
+  tripId: string | null;
+  courseName: string;
+  date: string;
+  pars: number[]; // par for each hole
+  players: ScorecardPlayer[];
+  createdAt: string;
+}
+
 export interface AppData {
   trips: Trip[];
   expenses: Expense[];
   rounds: Round[];
   skinsGames: SkinsGame[];
+  scorecards: Scorecard[];
 }
