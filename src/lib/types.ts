@@ -4,6 +4,25 @@ export interface Member {
   handicap: number;
 }
 
+export interface Lodging {
+  name: string;
+  address: string;
+  checkIn: string;
+  checkOut: string;
+  confirmationNumber: string;
+  phone: string;
+  notes: string;
+}
+
+export interface ScheduleItem {
+  id: string;
+  date: string;
+  time: string;
+  title: string;
+  description: string;
+  type: "tee_time" | "dinner" | "activity" | "travel" | "other";
+}
+
 export interface Trip {
   id: string;
   userId: string;
@@ -11,7 +30,12 @@ export interface Trip {
   destination: string;
   startDate: string;
   endDate: string;
+  arrivalTime: string;
+  departureTime: string;
   members: Member[];
+  lodging: Lodging;
+  schedule: ScheduleItem[];
+  inviteCode: string | null;
   createdAt: string;
 }
 
@@ -50,9 +74,28 @@ export interface SkinsGame {
   createdAt: string;
 }
 
+export interface ScorecardPlayer {
+  id: string;
+  name: string;
+  handicap: number;
+  scores: (number | null)[]; // one per hole, null = not entered
+}
+
+export interface Scorecard {
+  id: string;
+  userId: string;
+  tripId: string | null;
+  courseName: string;
+  date: string;
+  pars: number[]; // par for each hole
+  players: ScorecardPlayer[];
+  createdAt: string;
+}
+
 export interface AppData {
   trips: Trip[];
   expenses: Expense[];
   rounds: Round[];
   skinsGames: SkinsGame[];
+  scorecards: Scorecard[];
 }

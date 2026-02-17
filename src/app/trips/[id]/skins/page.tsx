@@ -101,11 +101,11 @@ export default function SkinsPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tripId]);
 
-  function refresh() {
-    const t = getTrip(tripId);
+  async function refresh() {
+    const t = await getTrip(tripId);
     if (t) {
       setTrip(t);
-      setGames(getSkinsGames(tripId));
+      setGames(await getSkinsGames(tripId));
     }
   }
 
@@ -121,7 +121,7 @@ export default function SkinsPage() {
     );
   }
 
-  function handleCreate(e: React.FormEvent) {
+  async function handleCreate(e: React.FormEvent) {
     e.preventDefault();
     if (!gameName.trim() || selectedPlayers.length < 2) return;
 
@@ -130,7 +130,7 @@ export default function SkinsPage() {
       scores: {},
     }));
 
-    createSkinsGame({
+    await createSkinsGame({
       tripId,
       name: gameName.trim(),
       players: selectedPlayers,
@@ -141,10 +141,10 @@ export default function SkinsPage() {
     setStake("5");
     setSelectedPlayers([]);
     setShowForm(false);
-    refresh();
+    await refresh();
   }
 
-  function handleScoreChange(
+  async function handleScoreChange(
     gameId: string,
     holeIndex: number,
     playerId: string,
@@ -164,14 +164,14 @@ export default function SkinsPage() {
     }
     updatedHoles[holeIndex] = hole;
 
-    updateSkinsGame(gameId, { holes: updatedHoles });
-    refresh();
+    await updateSkinsGame(gameId, { holes: updatedHoles });
+    await refresh();
   }
 
-  function handleDeleteGame(gameId: string) {
-    deleteSkinsGame(gameId);
+  async function handleDeleteGame(gameId: string) {
+    await deleteSkinsGame(gameId);
     if (expandedGame === gameId) setExpandedGame(null);
-    refresh();
+    await refresh();
   }
 
   if (!trip) {
