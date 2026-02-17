@@ -1,168 +1,265 @@
-import { Trip, Expense, Round, SkinsGame, AppData } from "./types";
-
-const STORAGE_KEY = "nassau_data";
-
-function generateId(): string {
-  return crypto.randomUUID();
-}
-
-function getData(): AppData {
-  if (typeof window === "undefined") {
-    return { trips: [], expenses: [], rounds: [], skinsGames: [] };
-  }
-  const raw = localStorage.getItem(STORAGE_KEY);
-  if (!raw) return { trips: [], expenses: [], rounds: [], skinsGames: [] };
-  return JSON.parse(raw);
-}
-
-function saveData(data: AppData): void {
-  if (typeof window === "undefined") return;
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-}
+import { Trip, Expense, Round, SkinsGame, Scorecard } from "./types";
 
 // --- Trips ---
 
-export function getTrips(userId: string): Trip[] {
-  return getData().trips.filter((t) => t.userId === userId);
+export async function getTrips(userId: string): Promise<Trip[]> {
+  const res = await fetch(`/api/trips?userId=${userId}`);
+  if (!res.ok) return [];
+  const rows = await res.json();
+  return rows.map(mapTrip);
 }
 
-export function getTrip(tripId: string): Trip | null {
-  return getData().trips.find((t) => t.id === tripId) || null;
+export async function getTrip(tripId: string): Promise<Trip | null> {
+  const res = await fetch(`/api/trips/${tripId}`);
+  if (!res.ok) return null;
+  return mapTrip(await res.json());
 }
 
-export function createTrip(
+export async function createTrip(
   trip: Omit<Trip, "id" | "createdAt">
-): Trip {
-  const data = getData();
-  const newTrip: Trip = {
-    ...trip,
-    id: generateId(),
-    createdAt: new Date().toISOString(),
-  };
-  data.trips.push(newTrip);
-  saveData(data);
-  return newTrip;
+): Promise<Trip> {
+  const res = await fetch("/api/trips", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(trip),
+  });
+  return mapTrip(await res.json());
 }
 
-export function updateTrip(
+export async function updateTrip(
   tripId: string,
   updates: Partial<Trip>
-): Trip | null {
-  const data = getData();
-  const idx = data.trips.findIndex((t) => t.id === tripId);
-  if (idx === -1) return null;
-  data.trips[idx] = { ...data.trips[idx], ...updates };
-  saveData(data);
-  return data.trips[idx];
+): Promise<Trip | null> {
+  const res = await fetch(`/api/trips/${tripId}`, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(updates),
+  });
+  if (!res.ok) return null;
+  return mapTrip(await res.json());
 }
 
-export function deleteTrip(tripId: string): void {
-  const data = getData();
-  data.trips = data.trips.filter((t) => t.id !== tripId);
-  data.expenses = data.expenses.filter((e) => e.tripId !== tripId);
-  data.rounds = data.rounds.filter((r) => r.tripId !== tripId);
-  data.skinsGames = data.skinsGames.filter((s) => s.tripId !== tripId);
-  saveData(data);
+export async function deleteTrip(tripId: string): Promise<void> {
+  await fetch(`/api/trips/${tripId}`, { method: "DELETE" });
 }
 
 // --- Expenses ---
 
-export function getExpenses(tripId: string): Expense[] {
-  return getData().expenses.filter((e) => e.tripId === tripId);
+export async function getExpenses(tripId: string): Promise<Expense[]> {
+  const res = await fetch(`/api/expenses?tripId=${tripId}`);
+  if (!res.ok) return [];
+  const rows = await res.json();
+  return rows.map(mapExpense);
 }
 
-export function addExpense(
+export async function addExpense(
   expense: Omit<Expense, "id" | "createdAt">
-): Expense {
-  const data = getData();
-  const newExpense: Expense = {
-    ...expense,
-    id: generateId(),
-    createdAt: new Date().toISOString(),
-  };
-  data.expenses.push(newExpense);
-  saveData(data);
-  return newExpense;
+): Promise<Expense> {
+  const res = await fetch("/api/expenses", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(expense),
+  });
+  return mapExpense(await res.json());
 }
 
-export function deleteExpense(expenseId: string): void {
-  const data = getData();
-  data.expenses = data.expenses.filter((e) => e.id !== expenseId);
-  saveData(data);
+export async function deleteExpense(expenseId: string): Promise<void> {
+  await fetch(`/api/expenses/${expenseId}`, { method: "DELETE" });
 }
 
 // --- Rounds / Pairings ---
 
-export function getRounds(tripId: string): Round[] {
-  return getData().rounds.filter((r) => r.tripId === tripId);
+export async function getRounds(tripId: string): Promise<Round[]> {
+  const res = await fetch(`/api/rounds?tripId=${tripId}`);
+  if (!res.ok) return [];
+  const rows = await res.json();
+  return rows.map(mapRound);
 }
 
-export function createRound(
+export async function createRound(
   round: Omit<Round, "id" | "createdAt">
-): Round {
-  const data = getData();
-  const newRound: Round = {
-    ...round,
-    id: generateId(),
-    createdAt: new Date().toISOString(),
-  };
-  data.rounds.push(newRound);
-  saveData(data);
-  return newRound;
+): Promise<Round> {
+  const res = await fetch("/api/rounds", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(round),
+  });
+  return mapRound(await res.json());
 }
 
-export function updateRound(
+export async function updateRound(
   roundId: string,
   updates: Partial<Round>
-): Round | null {
-  const data = getData();
-  const idx = data.rounds.findIndex((r) => r.id === roundId);
-  if (idx === -1) return null;
-  data.rounds[idx] = { ...data.rounds[idx], ...updates };
-  saveData(data);
-  return data.rounds[idx];
+): Promise<Round | null> {
+  const res = await fetch(`/api/rounds/${roundId}`, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(updates),
+  });
+  if (!res.ok) return null;
+  return mapRound(await res.json());
 }
 
-export function deleteRound(roundId: string): void {
-  const data = getData();
-  data.rounds = data.rounds.filter((r) => r.id !== roundId);
-  saveData(data);
+export async function deleteRound(roundId: string): Promise<void> {
+  await fetch(`/api/rounds/${roundId}`, { method: "DELETE" });
 }
 
 // --- Skins Games ---
 
-export function getSkinsGames(tripId: string): SkinsGame[] {
-  return getData().skinsGames.filter((s) => s.tripId === tripId);
+export async function getSkinsGames(tripId: string): Promise<SkinsGame[]> {
+  const res = await fetch(`/api/skins?tripId=${tripId}`);
+  if (!res.ok) return [];
+  const rows = await res.json();
+  return rows.map(mapSkinsGame);
 }
 
-export function createSkinsGame(
+export async function createSkinsGame(
   game: Omit<SkinsGame, "id" | "createdAt">
-): SkinsGame {
-  const data = getData();
-  const newGame: SkinsGame = {
-    ...game,
-    id: generateId(),
-    createdAt: new Date().toISOString(),
-  };
-  data.skinsGames.push(newGame);
-  saveData(data);
-  return newGame;
+): Promise<SkinsGame> {
+  const res = await fetch("/api/skins", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(game),
+  });
+  return mapSkinsGame(await res.json());
 }
 
-export function updateSkinsGame(
+export async function updateSkinsGame(
   gameId: string,
   updates: Partial<SkinsGame>
-): SkinsGame | null {
-  const data = getData();
-  const idx = data.skinsGames.findIndex((s) => s.id === gameId);
-  if (idx === -1) return null;
-  data.skinsGames[idx] = { ...data.skinsGames[idx], ...updates };
-  saveData(data);
-  return data.skinsGames[idx];
+): Promise<SkinsGame | null> {
+  const res = await fetch(`/api/skins/${gameId}`, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(updates),
+  });
+  if (!res.ok) return null;
+  return mapSkinsGame(await res.json());
 }
 
-export function deleteSkinsGame(gameId: string): void {
-  const data = getData();
-  data.skinsGames = data.skinsGames.filter((s) => s.id !== gameId);
-  saveData(data);
+export async function deleteSkinsGame(gameId: string): Promise<void> {
+  await fetch(`/api/skins/${gameId}`, { method: "DELETE" });
+}
+
+// --- Scorecards ---
+
+export async function getScorecards(params: {
+  userId?: string;
+  tripId?: string;
+}): Promise<Scorecard[]> {
+  const query = new URLSearchParams();
+  if (params.userId) query.set("userId", params.userId);
+  if (params.tripId) query.set("tripId", params.tripId);
+  const res = await fetch(`/api/scorecards?${query}`);
+  if (!res.ok) return [];
+  const rows = await res.json();
+  return rows.map(mapScorecard);
+}
+
+export async function getScorecard(id: string): Promise<Scorecard | null> {
+  const res = await fetch(`/api/scorecards/${id}`);
+  if (!res.ok) return null;
+  return mapScorecard(await res.json());
+}
+
+export async function createScorecard(
+  scorecard: Omit<Scorecard, "id" | "createdAt">
+): Promise<Scorecard> {
+  const res = await fetch("/api/scorecards", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(scorecard),
+  });
+  return mapScorecard(await res.json());
+}
+
+export async function updateScorecard(
+  id: string,
+  updates: Partial<Scorecard>
+): Promise<Scorecard | null> {
+  const res = await fetch(`/api/scorecards/${id}`, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(updates),
+  });
+  if (!res.ok) return null;
+  return mapScorecard(await res.json());
+}
+
+export async function deleteScorecard(id: string): Promise<void> {
+  await fetch(`/api/scorecards/${id}`, { method: "DELETE" });
+}
+
+// --- Mappers (DB row → frontend type) ---
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function mapTrip(row: any): Trip {
+  return {
+    id: row.id,
+    userId: row.userId,
+    name: row.name,
+    destination: row.destination || "",
+    startDate: row.startDate || "",
+    endDate: row.endDate || "",
+    arrivalTime: row.arrivalTime || "",
+    departureTime: row.departureTime || "",
+    members: row.members || [],
+    lodging: row.lodging || { name: "", address: "", checkIn: "", checkOut: "", confirmationNumber: "", phone: "", notes: "" },
+    schedule: row.schedule || [],
+    inviteCode: row.inviteCode || null,
+    createdAt: row.createdAt,
+  };
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function mapExpense(row: any): Expense {
+  return {
+    id: row.id,
+    tripId: row.tripId,
+    description: row.description,
+    amount: row.amount,
+    paidBy: row.paidBy,
+    splitAmong: row.splitAmong || [],
+    createdAt: row.createdAt,
+  };
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function mapRound(row: any): Round {
+  return {
+    id: row.id,
+    tripId: row.tripId,
+    name: row.name,
+    courseName: row.courseName || "",
+    date: row.date || "",
+    groups: row.groups || [],
+    createdAt: row.createdAt,
+  };
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function mapSkinsGame(row: any): SkinsGame {
+  return {
+    id: row.id,
+    tripId: row.tripId,
+    name: row.name,
+    players: row.players || [],
+    stake: row.stake,
+    holes: row.holes || [],
+    createdAt: row.createdAt,
+  };
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function mapScorecard(row: any): Scorecard {
+  return {
+    id: row.id,
+    userId: row.userId,
+    tripId: row.tripId || null,
+    courseName: row.courseName || "",
+    date: row.date || "",
+    pars: row.pars || [],
+    players: row.players || [],
+    createdAt: row.createdAt,
+  };
 }

@@ -6,6 +6,7 @@ import {
   Trophy,
   ArrowRight,
 } from "lucide-react";
+import AuthRedirect from "./auth-redirect";
 
 const features = [
   {
@@ -37,6 +38,7 @@ const features = [
 export default function Home() {
   return (
     <div className="min-h-[calc(100vh-64px)]">
+      <AuthRedirect />
       {/* Hero */}
       <section className="relative overflow-hidden bg-gradient-to-br from-emerald-900 via-emerald-800 to-zinc-900 px-6 py-24 sm:py-32">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-emerald-600/20 via-transparent to-transparent" />

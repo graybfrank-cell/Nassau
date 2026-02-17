@@ -6,7 +6,7 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { getTrips, createTrip, deleteTrip } from "@/lib/store";
 import { Trip } from "@/lib/types";
-import { Plus, MapPin, Users, Calendar, Trash2 } from "lucide-react";
+import { Plus, MapPin, Users, Calendar, Trash2, ClipboardList } from "lucide-react";
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -21,10 +21,18 @@ export default function DashboardPage() {
 
   useEffect(() => {
     const supabase = createClient();
-    supabase.auth.getUser().then(({ data: { user } }) => {
+    supabase.auth.getUser().then(async ({ data: { user } }) => {
       if (user) {
+        // Check for pending invite redirect
+        const pendingInvite = sessionStorage.getItem("pendingInvite");
+        if (pendingInvite) {
+          sessionStorage.removeItem("pendingInvite");
+          router.push(`/invite/${pendingInvite}`);
+          return;
+        }
+
         setUserId(user.id);
-        setTrips(getTrips(user.id));
+        setTrips(await getTrips(user.id));
       } else {
         router.push("/login");
       }
@@ -32,32 +40,37 @@ export default function DashboardPage() {
     });
   }, [router]);
 
-  function refresh() {
-    if (userId) setTrips(getTrips(userId));
+  async function refresh() {
+    if (userId) setTrips(await getTrips(userId));
   }
 
-  function handleCreate(e: React.FormEvent) {
+  async function handleCreate(e: React.FormEvent) {
     e.preventDefault();
     if (!userId || !name.trim()) return;
-    createTrip({
+    await createTrip({
       userId,
       name: name.trim(),
       destination: destination.trim(),
       startDate,
       endDate,
+      arrivalTime: "",
+      departureTime: "",
       members: [],
+      lodging: { name: "", address: "", checkIn: "", checkOut: "", confirmationNumber: "", phone: "", notes: "" },
+      schedule: [],
+      inviteCode: null,
     });
     setName("");
     setDestination("");
     setStartDate("");
     setEndDate("");
     setShowForm(false);
-    refresh();
+    await refresh();
   }
 
-  function handleDelete(tripId: string) {
-    deleteTrip(tripId);
-    refresh();
+  async function handleDelete(tripId: string) {
+    await deleteTrip(tripId);
+    await refresh();
   }
 
   if (loading) {
@@ -81,13 +94,22 @@ export default function DashboardPage() {
               Plan and manage your golf getaways.
             </p>
           </div>
-          <button
-            onClick={() => setShowForm(!showForm)}
-            className="inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-emerald-700"
-          >
-            <Plus className="h-4 w-4" />
-            New Trip
-          </button>
+          <div className="flex items-center gap-3">
+            <Link
+              href="/scorecards"
+              className="inline-flex items-center gap-2 rounded-lg border border-zinc-200 bg-white px-4 py-2.5 text-sm font-semibold text-zinc-700 transition-colors hover:bg-zinc-50"
+            >
+              <ClipboardList className="h-4 w-4" />
+              Scorecards
+            </Link>
+            <button
+              onClick={() => setShowForm(!showForm)}
+              className="inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-emerald-700"
+            >
+              <Plus className="h-4 w-4" />
+              New Trip
+            </button>
+          </div>
         </div>
 
         {/* Create Form */}
