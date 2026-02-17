@@ -35,6 +35,20 @@ export async function proxy(request: NextRequest) {
       data: { user },
     } = await supabase.auth.getUser();
 
+    // If / has auth query params, forward to /auth/callback so the
+    // existing handler can exchange them for a session. This catches
+    // cases where Supabase ignores emailRedirectTo and sends users
+    // back to the Site URL with ?code= or ?token_hash= attached.
+    if (request.nextUrl.pathname === "/") {
+      const code = request.nextUrl.searchParams.get("code");
+      const tokenHash = request.nextUrl.searchParams.get("token_hash");
+      if (code || tokenHash) {
+        const url = request.nextUrl.clone();
+        url.pathname = "/auth/callback";
+        return NextResponse.redirect(url);
+      }
+    }
+
     // Protected routes — redirect to /login if not authenticated
     const isProtected =
       request.nextUrl.pathname.startsWith("/dashboard") ||
@@ -47,8 +61,12 @@ export async function proxy(request: NextRequest) {
       return NextResponse.redirect(url);
     }
 
-    // If authenticated user visits /login, redirect to /dashboard
-    if (request.nextUrl.pathname === "/login" && user) {
+    // If authenticated user visits / or /login, redirect to /dashboard
+    if (
+      (request.nextUrl.pathname === "/login" ||
+        request.nextUrl.pathname === "/") &&
+      user
+    ) {
       const url = request.nextUrl.clone();
       url.pathname = "/dashboard";
       return NextResponse.redirect(url);
