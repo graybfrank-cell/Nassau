@@ -7,83 +7,187 @@ datasource db {
   provider = "postgresql"
 }
 
+// ─── profiles ────────────────────────────────────────────────
+model Profile {
+  id        String   @id @db.Uuid
+  email     String?  @unique
+  fullName  String   @default("") @map("full_name")
+  avatarUrl String   @default("") @map("avatar_url")
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz()
+  updatedAt DateTime @default(now()) @map("updated_at") @db.Timestamptz()
+
+  trips       Trip[]
+  tripMembers TripMember[]
+  scorecards  Scorecard[]
+
+  @@map("profiles")
+}
+
+// ─── trips ───────────────────────────────────────────────────
 model Trip {
-  id          String   @id @default(uuid())
-  userId      String
-  name        String
-  destination String   @default("")
-  startDate     String   @default("")
-  endDate       String   @default("")
-  arrivalTime   String   @default("")
-  departureTime String   @default("")
-  members     Json     @default("[]")
-  lodging     Json     @default("{}")
-  schedule    Json     @default("[]")
-  inviteCode  String?  @unique
-  createdAt   DateTime @default(now())
+  id            String   @id @default(uuid()) @db.Uuid
+  createdBy     String   @map("created_by") @db.Uuid
+  name          String
+  destination   String   @default("")
+  startDate     String   @default("") @map("start_date")
+  endDate       String   @default("") @map("end_date")
+  arrivalTime   String   @default("") @map("arrival_time")
+  departureTime String   @default("") @map("departure_time")
+  lodging       Json     @default("{}")
+  inviteCode    String?  @unique @map("invite_code")
+  createdAt     DateTime @default(now()) @map("created_at") @db.Timestamptz()
+  updatedAt     DateTime @default(now()) @map("updated_at") @db.Timestamptz()
 
-  expenses   Expense[]
-  rounds     Round[]
-  skinsGames SkinsGame[]
-  scorecards Scorecard[]
+  creator        Profile         @relation(fields: [createdBy], references: [id], onDelete: Cascade)
+  members        TripMember[]
+  itineraryItems ItineraryItem[]
+  expenses       Expense[]
+  rounds         Round[]
+  skinsGames     SkinsGame[]
+  scorecards     Scorecard[]
 
+  @@index([createdBy])
+  @@map("trips")
+}
+
+// ─── trip_members ────────────────────────────────────────────
+model TripMember {
+  id            String   @id @default(uuid()) @db.Uuid
+  tripId        String   @map("trip_id") @db.Uuid
+  userId        String?  @map("user_id") @db.Uuid
+  name          String   @default("")
+  handicap      Decimal  @default(0)
+  role          String   @default("MEMBER")
+  rsvpStatus    String   @default("PENDING") @map("rsvp_status")
+  paymentStatus String   @default("UNPAID") @map("payment_status")
+  createdAt     DateTime @default(now()) @map("created_at") @db.Timestamptz()
+
+  trip          Trip           @relation(fields: [tripId], references: [id], onDelete: Cascade)
+  user          Profile?       @relation(fields: [userId], references: [id], onDelete: SetNull)
+  expensesPaid  Expense[]
+  expenseSplits ExpenseSplit[]
+
+  @@unique([tripId, userId])
+  @@index([tripId])
   @@index([userId])
+  @@map("trip_members")
 }
 
+// ─── itinerary_items ─────────────────────────────────────────
+model ItineraryItem {
+  id          String   @id @default(uuid()) @db.Uuid
+  tripId      String   @map("trip_id") @db.Uuid
+  dayNumber   Int?     @map("day_number")
+  date        String   @default("")
+  time        String   @default("")
+  type        String   @default("other")
+  title       String   @default("")
+  description String   @default("")
+  cost        Decimal  @default(0)
+  bookingUrl  String   @default("") @map("booking_url")
+  notes       String   @default("")
+  sortOrder   Int      @default(0) @map("sort_order")
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz()
+
+  trip Trip @relation(fields: [tripId], references: [id], onDelete: Cascade)
+
+  @@index([tripId])
+  @@map("itinerary_items")
+}
+
+// ─── expenses ────────────────────────────────────────────────
 model Expense {
-  id          String   @id @default(uuid())
-  tripId      String
-  description String
-  amount      Float
-  paidBy      String
-  splitAmong  Json     @default("[]")
-  createdAt   DateTime @default(now())
+  id          String   @id @default(uuid()) @db.Uuid
+  tripId      String   @map("trip_id") @db.Uuid
+  description String   @default("")
+  amount      Decimal  @default(0)
+  category    String   @default("")
+  paidBy      String?  @map("paid_by") @db.Uuid
+  splitMethod String   @default("EQUAL") @map("split_method")
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz()
 
-  trip Trip @relation(fields: [tripId], references: [id], onDelete: Cascade)
+  trip   Trip          @relation(fields: [tripId], references: [id], onDelete: Cascade)
+  payer  TripMember?   @relation(fields: [paidBy], references: [id], onDelete: SetNull)
+  splits ExpenseSplit[]
 
   @@index([tripId])
+  @@map("expenses")
 }
 
+// ─── expense_splits ──────────────────────────────────────────
+model ExpenseSplit {
+  id        String   @id @default(uuid()) @db.Uuid
+  expenseId String   @map("expense_id") @db.Uuid
+  memberId  String   @map("member_id") @db.Uuid
+  amount    Decimal  @default(0)
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz()
+
+  expense Expense    @relation(fields: [expenseId], references: [id], onDelete: Cascade)
+  member  TripMember @relation(fields: [memberId], references: [id], onDelete: Cascade)
+
+  @@index([expenseId])
+  @@index([memberId])
+  @@map("expense_splits")
+}
+
+// ─── rounds ──────────────────────────────────────────────────
 model Round {
-  id         String   @id @default(uuid())
-  tripId     String
-  name       String
-  courseName String   @default("")
+  id         String   @id @default(uuid()) @db.Uuid
+  tripId     String   @map("trip_id") @db.Uuid
+  name       String   @default("")
+  courseName String   @default("") @map("course_name")
   date       String   @default("")
+  groupSize  Int      @default(4) @map("group_size")
   groups     Json     @default("[]")
-  createdAt  DateTime @default(now())
+  createdAt  DateTime @default(now()) @map("created_at") @db.Timestamptz()
 
   trip Trip @relation(fields: [tripId], references: [id], onDelete: Cascade)
 
   @@index([tripId])
+  @@map("rounds")
 }
 
+// ─── skins_games ─────────────────────────────────────────────
 model SkinsGame {
-  id        String   @id @default(uuid())
-  tripId    String
-  name      String
+  id        String   @id @default(uuid()) @db.Uuid
+  tripId    String   @map("trip_id") @db.Uuid
+  name      String   @default("")
+  buyIn     Decimal  @default(5) @map("buy_in")
+  dayNumber Int?     @map("day_number")
   players   Json     @default("[]")
-  stake     Float    @default(5)
   holes     Json     @default("[]")
-  createdAt DateTime @default(now())
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz()
 
   trip Trip @relation(fields: [tripId], references: [id], onDelete: Cascade)
 
   @@index([tripId])
+  @@map("skins_games")
 }
 
+// ─── scorecards ──────────────────────────────────────────────
 model Scorecard {
-  id         String   @id @default(uuid())
-  userId     String
-  tripId     String?
-  courseName String   @default("")
+  id         String   @id @default(uuid()) @db.Uuid
+  userId     String   @map("user_id") @db.Uuid
+  tripId     String?  @map("trip_id") @db.Uuid
+  courseName String   @default("") @map("course_name")
   date       String   @default("")
   pars       Json     @default("[]")
   players    Json     @default("[]")
-  createdAt  DateTime @default(now())
+  createdAt  DateTime @default(now()) @map("created_at") @db.Timestamptz()
 
-  trip Trip? @relation(fields: [tripId], references: [id], onDelete: Cascade)
+  user Profile @relation(fields: [userId], references: [id], onDelete: Cascade)
+  trip Trip?   @relation(fields: [tripId], references: [id], onDelete: Cascade)
 
   @@index([userId])
   @@index([tripId])
+  @@map("scorecards")
+}
+
+// ─── waitlist ────────────────────────────────────────────────
+model Waitlist {
+  id        String   @id @default(uuid()) @db.Uuid
+  email     String   @unique
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz()
+
+  @@map("waitlist")
 }
