@@ -19,7 +19,7 @@ export default function LoginPage() {
       const { error } = await supabase.auth.signInWithOtp({
         email,
         options: {
-          emailRedirectTo: "https://nassau-ten.vercel.app/auth/callback",
+          emailRedirectTo: "https://nassau.golf/auth/callback",
         },
       });
 
