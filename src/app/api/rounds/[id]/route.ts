@@ -1,24 +1,53 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { getUser, getTripMembership, unauthorized, forbidden } from "@/lib/auth";
 
 export async function PATCH(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const user = await getUser();
+  if (!user) return unauthorized();
+
   const { id } = await params;
+  const round = await prisma.round.findUnique({ where: { id } });
+  if (!round) {
+    return NextResponse.json({ error: "Not found" }, { status: 404 });
+  }
+
+  const membership = await getTripMembership(round.tripId, user.id);
+  if (!membership) return forbidden();
+
   const body = await req.json();
-  const round = await prisma.round.update({
+  const updated = await prisma.round.update({
     where: { id },
-    data: body,
+    data: {
+      name: body.name,
+      courseName: body.courseName,
+      date: body.date,
+      groupSize: body.groupSize,
+      groups: body.groups,
+    },
   });
-  return NextResponse.json(round);
+  return NextResponse.json(updated);
 }
 
 export async function DELETE(
   _req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const user = await getUser();
+  if (!user) return unauthorized();
+
   const { id } = await params;
+  const round = await prisma.round.findUnique({ where: { id } });
+  if (!round) {
+    return NextResponse.json({ error: "Not found" }, { status: 404 });
+  }
+
+  const membership = await getTripMembership(round.tripId, user.id);
+  if (!membership) return forbidden();
+
   await prisma.round.delete({ where: { id } });
   return NextResponse.json({ ok: true });
 }
