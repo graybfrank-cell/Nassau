@@ -1,33 +1,48 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { getUser, getTripMembership, unauthorized, forbidden } from "@/lib/auth";
 
 export async function GET(req: NextRequest) {
-  const userId = req.nextUrl.searchParams.get("userId");
+  const user = await getUser();
+  if (!user) return unauthorized();
+
   const tripId = req.nextUrl.searchParams.get("tripId");
 
-  if (!userId && !tripId) {
-    return NextResponse.json(
-      { error: "userId or tripId required" },
-      { status: 400 }
-    );
+  // If tripId provided, verify membership then return all trip scorecards
+  if (tripId) {
+    const membership = await getTripMembership(tripId, user.id);
+    if (!membership) return forbidden();
+
+    const scorecards = await prisma.scorecard.findMany({
+      where: { tripId },
+      orderBy: { createdAt: "desc" },
+    });
+    return NextResponse.json(scorecards);
   }
 
-  const where: Record<string, string> = {};
-  if (userId) where.userId = userId;
-  if (tripId) where.tripId = tripId;
-
+  // Otherwise return the current user's scorecards
   const scorecards = await prisma.scorecard.findMany({
-    where,
+    where: { userId: user.id },
     orderBy: { createdAt: "desc" },
   });
   return NextResponse.json(scorecards);
 }
 
 export async function POST(req: NextRequest) {
+  const user = await getUser();
+  if (!user) return unauthorized();
+
   const body = await req.json();
+
+  // If tied to a trip, verify membership
+  if (body.tripId) {
+    const membership = await getTripMembership(body.tripId, user.id);
+    if (!membership) return forbidden();
+  }
+
   const scorecard = await prisma.scorecard.create({
     data: {
-      userId: body.userId,
+      userId: user.id,
       tripId: body.tripId || null,
       courseName: body.courseName || "",
       date: body.date || "",
