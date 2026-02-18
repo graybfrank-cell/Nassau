@@ -15,7 +15,9 @@ export async function GET(
       destination: true,
       startDate: true,
       endDate: true,
-      members: true,
+      members: {
+        select: { id: true, name: true, handicap: true, userId: true },
+      },
     },
   });
 
