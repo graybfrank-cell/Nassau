@@ -70,11 +70,11 @@ export default function ExpensesPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tripId]);
 
-  function refresh() {
-    const t = getTrip(tripId);
+  async function refresh() {
+    const t = await getTrip(tripId);
     if (t) {
       setTrip(t);
-      setExpenses(getExpenses(tripId));
+      setExpenses(await getExpenses(tripId));
     }
   }
 
@@ -99,11 +99,11 @@ export default function ExpensesPage() {
     }
   }
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!description.trim() || !amount || !paidBy || splitAmong.length === 0)
       return;
-    addExpense({
+    await addExpense({
       tripId,
       description: description.trim(),
       amount: parseFloat(amount),
@@ -115,12 +115,12 @@ export default function ExpensesPage() {
     setPaidBy("");
     setSplitAmong([]);
     setShowForm(false);
-    refresh();
+    await refresh();
   }
 
-  function handleDeleteExpense(expenseId: string) {
-    deleteExpense(expenseId);
-    refresh();
+  async function handleDeleteExpense(expenseId: string) {
+    await deleteExpense(expenseId);
+    await refresh();
   }
 
   if (!trip) {
