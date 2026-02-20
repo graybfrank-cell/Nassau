@@ -10,7 +10,7 @@ export async function DELETE(
   if (!user) return unauthorized();
 
   const { id } = await params;
-  const expense = await prisma.expense.findUnique({ where: { id } });
+  const expense = await prisma.expenses.findUnique({ where: { id } });
   if (!expense) {
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
@@ -18,6 +18,6 @@ export async function DELETE(
   const membership = await getTripMembership(expense.tripId, user.id);
   if (!membership) return forbidden();
 
-  await prisma.expense.delete({ where: { id } });
+  await prisma.expenses.delete({ where: { id } });
   return NextResponse.json({ ok: true });
 }

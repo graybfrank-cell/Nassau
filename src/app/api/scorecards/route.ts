@@ -13,7 +13,7 @@ export async function GET(req: NextRequest) {
     const membership = await getTripMembership(tripId, user.id);
     if (!membership) return forbidden();
 
-    const scorecards = await prisma.scorecard.findMany({
+    const scorecards = await prisma.scorecards.findMany({
       where: { tripId },
       orderBy: { createdAt: "desc" },
     });
@@ -21,7 +21,7 @@ export async function GET(req: NextRequest) {
   }
 
   // Otherwise return the current user's scorecards
-  const scorecards = await prisma.scorecard.findMany({
+  const scorecards = await prisma.scorecards.findMany({
     where: { userId: user.id },
     orderBy: { createdAt: "desc" },
   });
@@ -40,7 +40,7 @@ export async function POST(req: NextRequest) {
     if (!membership) return forbidden();
   }
 
-  const scorecard = await prisma.scorecard.create({
+  const scorecard = await prisma.scorecards.create({
     data: {
       userId: user.id,
       tripId: body.tripId || null,

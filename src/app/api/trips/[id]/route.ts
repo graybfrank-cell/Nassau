@@ -11,7 +11,7 @@ export async function GET(
 
   const { id } = await params;
 
-  const trip = await prisma.trip.findUnique({
+  const trip = await prisma.trips.findUnique({
     where: { id },
     include: {
       members: { include: { user: true } },
@@ -44,7 +44,7 @@ export async function PATCH(
   if (!membership) return forbidden();
 
   const body = await req.json();
-  const trip = await prisma.trip.update({
+  const trip = await prisma.trips.update({
     where: { id },
     data: {
       name: body.name,
@@ -68,12 +68,12 @@ export async function DELETE(
   if (!user) return unauthorized();
 
   const { id } = await params;
-  const trip = await prisma.trip.findUnique({ where: { id } });
+  const trip = await prisma.trips.findUnique({ where: { id } });
   if (!trip) {
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
   if (trip.createdBy !== user.id) return forbidden();
 
-  await prisma.trip.delete({ where: { id } });
+  await prisma.trips.delete({ where: { id } });
   return NextResponse.json({ ok: true });
 }

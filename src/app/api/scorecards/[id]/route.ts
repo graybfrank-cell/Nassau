@@ -10,7 +10,7 @@ export async function GET(
   if (!user) return unauthorized();
 
   const { id } = await params;
-  const scorecard = await prisma.scorecard.findUnique({ where: { id } });
+  const scorecard = await prisma.scorecards.findUnique({ where: { id } });
   if (!scorecard) {
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
@@ -29,14 +29,14 @@ export async function PATCH(
   if (!user) return unauthorized();
 
   const { id } = await params;
-  const scorecard = await prisma.scorecard.findUnique({ where: { id } });
+  const scorecard = await prisma.scorecards.findUnique({ where: { id } });
   if (!scorecard) {
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
   if (scorecard.userId !== user.id) return forbidden();
 
   const body = await req.json();
-  const updated = await prisma.scorecard.update({
+  const updated = await prisma.scorecards.update({
     where: { id },
     data: {
       courseName: body.courseName,
@@ -56,12 +56,12 @@ export async function DELETE(
   if (!user) return unauthorized();
 
   const { id } = await params;
-  const scorecard = await prisma.scorecard.findUnique({ where: { id } });
+  const scorecard = await prisma.scorecards.findUnique({ where: { id } });
   if (!scorecard) {
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
   if (scorecard.userId !== user.id) return forbidden();
 
-  await prisma.scorecard.delete({ where: { id } });
+  await prisma.scorecards.delete({ where: { id } });
   return NextResponse.json({ ok: true });
 }

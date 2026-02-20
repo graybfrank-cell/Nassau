@@ -10,7 +10,7 @@ export async function PATCH(
   if (!user) return unauthorized();
 
   const { id } = await params;
-  const round = await prisma.round.findUnique({ where: { id } });
+  const round = await prisma.rounds.findUnique({ where: { id } });
   if (!round) {
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
@@ -19,7 +19,7 @@ export async function PATCH(
   if (!membership) return forbidden();
 
   const body = await req.json();
-  const updated = await prisma.round.update({
+  const updated = await prisma.rounds.update({
     where: { id },
     data: {
       name: body.name,
@@ -40,7 +40,7 @@ export async function DELETE(
   if (!user) return unauthorized();
 
   const { id } = await params;
-  const round = await prisma.round.findUnique({ where: { id } });
+  const round = await prisma.rounds.findUnique({ where: { id } });
   if (!round) {
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
@@ -48,6 +48,6 @@ export async function DELETE(
   const membership = await getTripMembership(round.tripId, user.id);
   if (!membership) return forbidden();
 
-  await prisma.round.delete({ where: { id } });
+  await prisma.rounds.delete({ where: { id } });
   return NextResponse.json({ ok: true });
 }
