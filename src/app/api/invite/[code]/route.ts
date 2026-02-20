@@ -7,7 +7,7 @@ export async function GET(
 ) {
   const { code } = await params;
 
-  const trip = await prisma.trip.findUnique({
+  const trip = await prisma.trips.findUnique({
     where: { inviteCode: code },
     select: {
       id: true,

@@ -14,7 +14,7 @@ export async function POST(
   if (!membership) return forbidden();
 
   const body = await req.json();
-  const member = await prisma.tripMember.create({
+  const member = await prisma.tripMembers.create({
     data: {
       tripId,
       name: body.name || "",

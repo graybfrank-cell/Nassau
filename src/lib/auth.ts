@@ -18,7 +18,7 @@ export async function getUser() {
  * Returns the TripMember row, or null if not a member.
  */
 export async function getTripMembership(tripId: string, userId: string) {
-  return prisma.tripMember.findFirst({
+  return prisma.tripMembers.findFirst({
     where: { tripId, userId },
   });
 }

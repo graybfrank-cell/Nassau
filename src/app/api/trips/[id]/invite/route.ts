@@ -16,7 +16,7 @@ export async function POST(
 
   const inviteCode = crypto.randomBytes(6).toString("base64url");
 
-  const updated = await prisma.trip.update({
+  const updated = await prisma.trips.update({
     where: { id },
     data: { inviteCode },
   });
