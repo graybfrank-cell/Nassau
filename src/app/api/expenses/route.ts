@@ -14,7 +14,7 @@ export async function GET(req: NextRequest) {
   const membership = await getTripMembership(tripId, user.id);
   if (!membership) return forbidden();
 
-  const expenses = await prisma.expense.findMany({
+  const expenses = await prisma.expenses.findMany({
     where: { tripId },
     include: { payer: true, splits: { include: { member: true } } },
     orderBy: { createdAt: "desc" },
@@ -30,7 +30,7 @@ export async function POST(req: NextRequest) {
   const membership = await getTripMembership(body.tripId, user.id);
   if (!membership) return forbidden();
 
-  const expense = await prisma.expense.create({
+  const expense = await prisma.expenses.create({
     data: {
       tripId: body.tripId,
       description: body.description,

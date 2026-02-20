@@ -8,7 +8,7 @@ datasource db {
 }
 
 // ─── profiles ────────────────────────────────────────────────
-model Profile {
+model Profiles {
   id        String   @id @db.Uuid
   email     String?  @unique
   fullName  String   @default("") @map("full_name")
@@ -16,15 +16,15 @@ model Profile {
   createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz()
   updatedAt DateTime @default(now()) @map("updated_at") @db.Timestamptz()
 
-  trips       Trip[]
-  tripMembers TripMember[]
-  scorecards  Scorecard[]
+  trips       Trips[]
+  tripMembers TripMembers[]
+  scorecards  Scorecards[]
 
   @@map("profiles")
 }
 
 // ─── trips ───────────────────────────────────────────────────
-model Trip {
+model Trips {
   id            String   @id @default(uuid()) @db.Uuid
   createdBy     String   @map("created_by") @db.Uuid
   name          String
@@ -38,20 +38,20 @@ model Trip {
   createdAt     DateTime @default(now()) @map("created_at") @db.Timestamptz()
   updatedAt     DateTime @default(now()) @map("updated_at") @db.Timestamptz()
 
-  creator        Profile         @relation(fields: [createdBy], references: [id], onDelete: Cascade)
-  members        TripMember[]
-  itineraryItems ItineraryItem[]
-  expenses       Expense[]
-  rounds         Round[]
-  skinsGames     SkinsGame[]
-  scorecards     Scorecard[]
+  creator        Profiles         @relation(fields: [createdBy], references: [id], onDelete: Cascade)
+  members        TripMembers[]
+  itineraryItems ItineraryItems[]
+  expenses       Expenses[]
+  rounds         Rounds[]
+  skinsGames     SkinsGames[]
+  scorecards     Scorecards[]
 
   @@index([createdBy])
   @@map("trips")
 }
 
 // ─── trip_members ────────────────────────────────────────────
-model TripMember {
+model TripMembers {
   id            String   @id @default(uuid()) @db.Uuid
   tripId        String   @map("trip_id") @db.Uuid
   userId        String?  @map("user_id") @db.Uuid
@@ -62,10 +62,10 @@ model TripMember {
   paymentStatus String   @default("UNPAID") @map("payment_status")
   createdAt     DateTime @default(now()) @map("created_at") @db.Timestamptz()
 
-  trip          Trip           @relation(fields: [tripId], references: [id], onDelete: Cascade)
-  user          Profile?       @relation(fields: [userId], references: [id], onDelete: SetNull)
-  expensesPaid  Expense[]
-  expenseSplits ExpenseSplit[]
+  trip          Trips           @relation(fields: [tripId], references: [id], onDelete: Cascade)
+  user          Profiles?       @relation(fields: [userId], references: [id], onDelete: SetNull)
+  expensesPaid  Expenses[]
+  expenseSplits ExpenseSplits[]
 
   @@unique([tripId, userId])
   @@index([tripId])
@@ -74,7 +74,7 @@ model TripMember {
 }
 
 // ─── itinerary_items ─────────────────────────────────────────
-model ItineraryItem {
+model ItineraryItems {
   id          String   @id @default(uuid()) @db.Uuid
   tripId      String   @map("trip_id") @db.Uuid
   dayNumber   Int?     @map("day_number")
@@ -89,14 +89,14 @@ model ItineraryItem {
   sortOrder   Int      @default(0) @map("sort_order")
   createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz()
 
-  trip Trip @relation(fields: [tripId], references: [id], onDelete: Cascade)
+  trip Trips @relation(fields: [tripId], references: [id], onDelete: Cascade)
 
   @@index([tripId])
   @@map("itinerary_items")
 }
 
 // ─── expenses ────────────────────────────────────────────────
-model Expense {
+model Expenses {
   id          String   @id @default(uuid()) @db.Uuid
   tripId      String   @map("trip_id") @db.Uuid
   description String   @default("")
@@ -106,24 +106,24 @@ model Expense {
   splitMethod String   @default("EQUAL") @map("split_method")
   createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz()
 
-  trip   Trip          @relation(fields: [tripId], references: [id], onDelete: Cascade)
-  payer  TripMember?   @relation(fields: [paidBy], references: [id], onDelete: SetNull)
-  splits ExpenseSplit[]
+  trip   Trips          @relation(fields: [tripId], references: [id], onDelete: Cascade)
+  payer  TripMembers?   @relation(fields: [paidBy], references: [id], onDelete: SetNull)
+  splits ExpenseSplits[]
 
   @@index([tripId])
   @@map("expenses")
 }
 
 // ─── expense_splits ──────────────────────────────────────────
-model ExpenseSplit {
+model ExpenseSplits {
   id        String   @id @default(uuid()) @db.Uuid
   expenseId String   @map("expense_id") @db.Uuid
   memberId  String   @map("member_id") @db.Uuid
   amount    Decimal  @default(0)
   createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz()
 
-  expense Expense    @relation(fields: [expenseId], references: [id], onDelete: Cascade)
-  member  TripMember @relation(fields: [memberId], references: [id], onDelete: Cascade)
+  expense Expenses    @relation(fields: [expenseId], references: [id], onDelete: Cascade)
+  member  TripMembers @relation(fields: [memberId], references: [id], onDelete: Cascade)
 
   @@index([expenseId])
   @@index([memberId])
@@ -131,7 +131,7 @@ model ExpenseSplit {
 }
 
 // ─── rounds ──────────────────────────────────────────────────
-model Round {
+model Rounds {
   id         String   @id @default(uuid()) @db.Uuid
   tripId     String   @map("trip_id") @db.Uuid
   name       String   @default("")
@@ -141,14 +141,14 @@ model Round {
   groups     Json     @default("[]")
   createdAt  DateTime @default(now()) @map("created_at") @db.Timestamptz()
 
-  trip Trip @relation(fields: [tripId], references: [id], onDelete: Cascade)
+  trip Trips @relation(fields: [tripId], references: [id], onDelete: Cascade)
 
   @@index([tripId])
   @@map("rounds")
 }
 
 // ─── skins_games ─────────────────────────────────────────────
-model SkinsGame {
+model SkinsGames {
   id        String   @id @default(uuid()) @db.Uuid
   tripId    String   @map("trip_id") @db.Uuid
   name      String   @default("")
@@ -158,14 +158,14 @@ model SkinsGame {
   holes     Json     @default("[]")
   createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz()
 
-  trip Trip @relation(fields: [tripId], references: [id], onDelete: Cascade)
+  trip Trips @relation(fields: [tripId], references: [id], onDelete: Cascade)
 
   @@index([tripId])
   @@map("skins_games")
 }
 
 // ─── scorecards ──────────────────────────────────────────────
-model Scorecard {
+model Scorecards {
   id         String   @id @default(uuid()) @db.Uuid
   userId     String   @map("user_id") @db.Uuid
   tripId     String?  @map("trip_id") @db.Uuid
@@ -175,8 +175,8 @@ model Scorecard {
   players    Json     @default("[]")
   createdAt  DateTime @default(now()) @map("created_at") @db.Timestamptz()
 
-  user Profile @relation(fields: [userId], references: [id], onDelete: Cascade)
-  trip Trip?   @relation(fields: [tripId], references: [id], onDelete: Cascade)
+  user Profiles @relation(fields: [userId], references: [id], onDelete: Cascade)
+  trip Trips?   @relation(fields: [tripId], references: [id], onDelete: Cascade)
 
   @@index([userId])
   @@index([tripId])
@@ -184,7 +184,7 @@ model Scorecard {
 }
 
 // ─── waitlist ────────────────────────────────────────────────
-model Waitlist {
+model Waitlists {
   id        String   @id @default(uuid()) @db.Uuid
   email     String   @unique
   createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz()

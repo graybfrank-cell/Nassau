@@ -6,7 +6,7 @@ export async function GET(_req: NextRequest) {
   const user = await getUser();
   if (!user) return unauthorized();
 
-  const trips = await prisma.trip.findMany({
+  const trips = await prisma.trips.findMany({
     where: {
       OR: [
         { createdBy: user.id },
@@ -24,7 +24,7 @@ export async function POST(req: NextRequest) {
   if (!user) return unauthorized();
 
   const body = await req.json();
-  const trip = await prisma.trip.create({
+  const trip = await prisma.trips.create({
     data: {
       createdBy: user.id,
       name: body.name,

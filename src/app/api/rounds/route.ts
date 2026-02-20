@@ -14,7 +14,7 @@ export async function GET(req: NextRequest) {
   const membership = await getTripMembership(tripId, user.id);
   if (!membership) return forbidden();
 
-  const rounds = await prisma.round.findMany({
+  const rounds = await prisma.rounds.findMany({
     where: { tripId },
     orderBy: { createdAt: "desc" },
   });
@@ -29,7 +29,7 @@ export async function POST(req: NextRequest) {
   const membership = await getTripMembership(body.tripId, user.id);
   if (!membership) return forbidden();
 
-  const round = await prisma.round.create({
+  const round = await prisma.rounds.create({
     data: {
       tripId: body.tripId,
       name: body.name,

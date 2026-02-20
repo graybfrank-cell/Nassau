@@ -13,11 +13,11 @@ export async function DELETE(
   const membership = await getTripMembership(tripId, user.id);
   if (!membership) return forbidden();
 
-  const item = await prisma.itineraryItem.findUnique({ where: { id: itemId } });
+  const item = await prisma.itineraryItems.findUnique({ where: { id: itemId } });
   if (!item || item.tripId !== tripId) {
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
 
-  await prisma.itineraryItem.delete({ where: { id: itemId } });
+  await prisma.itineraryItems.delete({ where: { id: itemId } });
   return NextResponse.json({ ok: true });
 }
