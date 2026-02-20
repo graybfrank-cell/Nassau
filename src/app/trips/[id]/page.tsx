@@ -6,12 +6,16 @@ import Link from "next/link";
 import {
   getTrip,
   updateTrip,
+  addMember,
+  removeMember,
+  addItineraryItem,
+  removeItineraryItem,
   getExpenses,
   getRounds,
   getSkinsGames,
   getScorecards,
 } from "@/lib/store";
-import { Trip, Member, Lodging, ScheduleItem, Scorecard } from "@/lib/types";
+import { Trip, Lodging, ScheduleItem, Scorecard } from "@/lib/types";
 import {
   ArrowLeft,
   Users,
@@ -35,6 +39,7 @@ import {
   Trash2,
   PlaneTakeoff,
   PlaneLanding,
+  AlertCircle,
 } from "lucide-react";
 
 const SCHEDULE_TYPES = [
@@ -87,6 +92,7 @@ export default function TripDetailPage() {
   const [eventTitle, setEventTitle] = useState("");
   const [eventDesc, setEventDesc] = useState("");
   const [eventType, setEventType] = useState<ScheduleItem["type"]>("tee_time");
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     refresh();
@@ -117,16 +123,19 @@ export default function TripDetailPage() {
   async function handleAddMember(e: React.FormEvent) {
     e.preventDefault();
     if (!trip || !memberName.trim()) return;
-    const newMember: Member = {
-      id: crypto.randomUUID(),
-      name: memberName.trim(),
-      handicap: parseInt(memberHandicap) || 0,
-    };
-    await updateTrip(tripId, { members: [...trip.members, newMember] });
-    setMemberName("");
-    setMemberHandicap("");
-    setShowAddMember(false);
-    await refresh();
+    setError(null);
+    try {
+      await addMember(tripId, {
+        name: memberName.trim(),
+        handicap: parseInt(memberHandicap) || 0,
+      });
+      setMemberName("");
+      setMemberHandicap("");
+      setShowAddMember(false);
+      await refresh();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to add member");
+    }
   }
 
   async function handleShareInvite() {
@@ -153,55 +162,72 @@ export default function TripDetailPage() {
 
   async function handleRemoveMember(memberId: string) {
     if (!trip) return;
-    await updateTrip(tripId, {
-      members: trip.members.filter((m) => m.id !== memberId),
-    });
-    await refresh();
+    setError(null);
+    try {
+      await removeMember(tripId, memberId);
+      await refresh();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to remove member");
+    }
   }
 
   async function handleSaveTravel(e: React.FormEvent) {
     e.preventDefault();
-    await updateTrip(tripId, { arrivalTime, departureTime } as Partial<Trip>);
-    setEditingTravel(false);
-    await refresh();
+    setError(null);
+    try {
+      await updateTrip(tripId, { arrivalTime, departureTime } as Partial<Trip>);
+      setEditingTravel(false);
+      await refresh();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to save travel info");
+    }
   }
 
   async function handleSaveLodging(e: React.FormEvent) {
     e.preventDefault();
-    await updateTrip(tripId, { lodging: lodgingForm } as Partial<Trip>);
-    setEditingLodging(false);
-    await refresh();
+    setError(null);
+    try {
+      await updateTrip(tripId, { lodging: lodgingForm } as Partial<Trip>);
+      setEditingLodging(false);
+      await refresh();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to save lodging");
+    }
   }
 
   async function handleAddEvent(e: React.FormEvent) {
     e.preventDefault();
     if (!trip || !eventTitle.trim()) return;
-    const newEvent: ScheduleItem = {
-      id: crypto.randomUUID(),
-      date: eventDate,
-      time: eventTime,
-      title: eventTitle.trim(),
-      description: eventDesc.trim(),
-      type: eventType,
-    };
-    await updateTrip(tripId, {
-      schedule: [...trip.schedule, newEvent],
-    } as Partial<Trip>);
-    setEventDate("");
-    setEventTime("");
-    setEventTitle("");
-    setEventDesc("");
-    setEventType("tee_time");
-    setShowAddEvent(false);
-    await refresh();
+    setError(null);
+    try {
+      await addItineraryItem(tripId, {
+        date: eventDate,
+        time: eventTime,
+        title: eventTitle.trim(),
+        description: eventDesc.trim(),
+        type: eventType,
+      });
+      setEventDate("");
+      setEventTime("");
+      setEventTitle("");
+      setEventDesc("");
+      setEventType("tee_time");
+      setShowAddEvent(false);
+      await refresh();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to add event");
+    }
   }
 
   async function handleDeleteEvent(eventId: string) {
     if (!trip) return;
-    await updateTrip(tripId, {
-      schedule: trip.schedule.filter((e) => e.id !== eventId),
-    } as Partial<Trip>);
-    await refresh();
+    setError(null);
+    try {
+      await removeItineraryItem(tripId, eventId);
+      await refresh();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to delete event");
+    }
   }
 
   if (!trip) {
@@ -281,6 +307,14 @@ export default function TripDetailPage() {
           <ArrowLeft className="h-4 w-4" />
           Back to Trips
         </Link>
+
+        {/* Error Banner */}
+        {error && (
+          <div className="mt-4 flex items-center gap-2 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+            <AlertCircle className="h-4 w-4 shrink-0" />
+            {error}
+          </div>
+        )}
 
         {/* Trip Header */}
         <div className="mt-6 rounded-xl border border-zinc-200 bg-white p-6 shadow-sm">

@@ -6,11 +6,10 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { getTrips, createTrip, deleteTrip } from "@/lib/store";
 import { Trip } from "@/lib/types";
-import { Plus, MapPin, Users, Calendar, Trash2, ClipboardList } from "lucide-react";
+import { Plus, MapPin, Users, Calendar, Trash2, ClipboardList, AlertCircle } from "lucide-react";
 
 export default function DashboardPage() {
   const router = useRouter();
-  const [userId, setUserId] = useState<string | null>(null);
   const [trips, setTrips] = useState<Trip[]>([]);
   const [showForm, setShowForm] = useState(false);
   const [name, setName] = useState("");
@@ -18,6 +17,7 @@ export default function DashboardPage() {
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const supabase = createClient();
@@ -31,8 +31,7 @@ export default function DashboardPage() {
           return;
         }
 
-        setUserId(user.id);
-        setTrips(await getTrips(user.id));
+        setTrips(await getTrips());
       } else {
         router.push("/login");
       }
@@ -41,36 +40,39 @@ export default function DashboardPage() {
   }, [router]);
 
   async function refresh() {
-    if (userId) setTrips(await getTrips(userId));
+    setTrips(await getTrips());
   }
 
   async function handleCreate(e: React.FormEvent) {
     e.preventDefault();
-    if (!userId || !name.trim()) return;
-    await createTrip({
-      userId,
-      name: name.trim(),
-      destination: destination.trim(),
-      startDate,
-      endDate,
-      arrivalTime: "",
-      departureTime: "",
-      members: [],
-      lodging: { name: "", address: "", checkIn: "", checkOut: "", confirmationNumber: "", phone: "", notes: "" },
-      schedule: [],
-      inviteCode: null,
-    });
-    setName("");
-    setDestination("");
-    setStartDate("");
-    setEndDate("");
-    setShowForm(false);
-    await refresh();
+    if (!name.trim()) return;
+    setError(null);
+    try {
+      await createTrip({
+        name: name.trim(),
+        destination: destination.trim(),
+        startDate,
+        endDate,
+      });
+      setName("");
+      setDestination("");
+      setStartDate("");
+      setEndDate("");
+      setShowForm(false);
+      await refresh();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to create trip");
+    }
   }
 
   async function handleDelete(tripId: string) {
-    await deleteTrip(tripId);
-    await refresh();
+    setError(null);
+    try {
+      await deleteTrip(tripId);
+      await refresh();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to delete trip");
+    }
   }
 
   if (loading) {
@@ -84,6 +86,14 @@ export default function DashboardPage() {
   return (
     <div className="min-h-[calc(100vh-64px)] bg-zinc-50 px-6 py-10">
       <div className="mx-auto max-w-5xl">
+        {/* Error Banner */}
+        {error && (
+          <div className="mb-4 flex items-center gap-2 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+            <AlertCircle className="h-4 w-4 shrink-0" />
+            {error}
+          </div>
+        )}
+
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>

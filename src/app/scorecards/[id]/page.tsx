@@ -5,7 +5,7 @@ import { useParams } from "next/navigation";
 import Link from "next/link";
 import { getScorecard, updateScorecard } from "@/lib/store";
 import { Scorecard, ScorecardPlayer } from "@/lib/types";
-import { ArrowLeft, Save, Pencil } from "lucide-react";
+import { ArrowLeft, Save, Pencil, AlertCircle } from "lucide-react";
 
 export default function ScorecardDetailPage() {
   const params = useParams();
@@ -17,6 +17,7 @@ export default function ScorecardDetailPage() {
   const [saving, setSaving] = useState(false);
   const [editingHandicap, setEditingHandicap] = useState<string | null>(null);
   const [editingPar, setEditingPar] = useState<number | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     getScorecard(id).then((sc) => {
@@ -31,10 +32,14 @@ export default function ScorecardDetailPage() {
   const save = useCallback(
     async (updatedPlayers: ScorecardPlayer[], updatedPars?: number[]) => {
       setSaving(true);
-      await updateScorecard(id, {
-        players: updatedPlayers,
-        ...(updatedPars ? { pars: updatedPars } : {}),
-      });
+      try {
+        await updateScorecard(id, {
+          players: updatedPlayers,
+          ...(updatedPars ? { pars: updatedPars } : {}),
+        });
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Failed to save");
+      }
       setSaving(false);
     },
     [id]
@@ -110,6 +115,13 @@ export default function ScorecardDetailPage() {
             )}
           </div>
         </div>
+
+        {error && (
+          <div className="mt-4 flex items-center gap-2 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+            <AlertCircle className="h-4 w-4 shrink-0" />
+            {error}
+          </div>
+        )}
 
         <div className="mt-6">
           <h1 className="text-2xl font-bold tracking-tight text-zinc-900">
