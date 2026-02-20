@@ -6,7 +6,7 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { getScorecards, createScorecard, deleteScorecard } from "@/lib/store";
 import { Scorecard } from "@/lib/types";
-import { Plus, ClipboardList, Trash2, ArrowLeft } from "lucide-react";
+import { Plus, ClipboardList, Trash2, ArrowLeft, AlertCircle } from "lucide-react";
 
 const DEFAULT_PARS = [4, 4, 4, 3, 5, 4, 3, 4, 5, 4, 4, 3, 5, 4, 4, 3, 4, 5];
 
@@ -19,6 +19,7 @@ export default function ScorecardsPage() {
   const [courseName, setCourseName] = useState("");
   const [date, setDate] = useState("");
   const [playerNames, setPlayerNames] = useState("");
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const supabase = createClient();
@@ -40,38 +41,47 @@ export default function ScorecardsPage() {
   async function handleCreate(e: React.FormEvent) {
     e.preventDefault();
     if (!userId || !playerNames.trim()) return;
+    setError(null);
+    try {
+      const players = playerNames
+        .split(",")
+        .map((name) => name.trim())
+        .filter(Boolean)
+        .map((name) => ({
+          id: crypto.randomUUID(),
+          name,
+          handicap: 0,
+          scores: Array(18).fill(null),
+        }));
 
-    const players = playerNames
-      .split(",")
-      .map((name) => name.trim())
-      .filter(Boolean)
-      .map((name) => ({
-        id: crypto.randomUUID(),
-        name,
-        handicap: 0,
-        scores: Array(18).fill(null),
-      }));
+      const sc = await createScorecard({
+        userId,
+        tripId: null,
+        courseName: courseName.trim(),
+        date,
+        pars: DEFAULT_PARS,
+        players,
+      });
 
-    const sc = await createScorecard({
-      userId,
-      tripId: null,
-      courseName: courseName.trim(),
-      date,
-      pars: DEFAULT_PARS,
-      players,
-    });
-
-    setCourseName("");
-    setDate("");
-    setPlayerNames("");
-    setShowForm(false);
-    await refresh();
-    router.push(`/scorecards/${sc.id}`);
+      setCourseName("");
+      setDate("");
+      setPlayerNames("");
+      setShowForm(false);
+      await refresh();
+      router.push(`/scorecards/${sc.id}`);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to create scorecard");
+    }
   }
 
   async function handleDelete(id: string) {
-    await deleteScorecard(id);
-    await refresh();
+    setError(null);
+    try {
+      await deleteScorecard(id);
+      await refresh();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to delete scorecard");
+    }
   }
 
   if (loading) {
@@ -92,6 +102,13 @@ export default function ScorecardsPage() {
           <ArrowLeft className="h-4 w-4" />
           Dashboard
         </Link>
+
+        {error && (
+          <div className="mt-4 flex items-center gap-2 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+            <AlertCircle className="h-4 w-4 shrink-0" />
+            {error}
+          </div>
+        )}
 
         <div className="mt-6 flex items-center justify-between">
           <div>
