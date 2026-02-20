@@ -19,7 +19,7 @@ export async function getUser() {
  */
 export async function getTripMembership(tripId: string, userId: string) {
   return prisma.tripMembers.findFirst({
-    where: { tripId, userId },
+    where: { trip_id: tripId, user_id: userId },
   });
 }
 

@@ -15,9 +15,9 @@ export async function GET(req: NextRequest) {
   if (!membership) return forbidden();
 
   const expenses = await prisma.expenses.findMany({
-    where: { tripId },
+    where: { trip_id: tripId },
     include: { payer: true, splits: { include: { member: true } } },
-    orderBy: { createdAt: "desc" },
+    orderBy: { created_at: "desc" },
   });
   return NextResponse.json(expenses);
 }
@@ -32,16 +32,16 @@ export async function POST(req: NextRequest) {
 
   const expense = await prisma.expenses.create({
     data: {
-      tripId: body.tripId,
+      trip_id: body.tripId,
       description: body.description,
       amount: body.amount,
       category: body.category || "",
-      paidBy: body.paidBy || null,
-      splitMethod: body.splitMethod || "EQUAL",
+      paid_by: body.paidBy || null,
+      split_method: body.splitMethod || "EQUAL",
       splits: body.splits
         ? {
             create: body.splits.map((s: { memberId: string; amount: number }) => ({
-              memberId: s.memberId,
+              member_id: s.memberId,
               amount: s.amount,
             })),
           }

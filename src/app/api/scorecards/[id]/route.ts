@@ -15,8 +15,7 @@ export async function GET(
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
 
-  // Must be the owner of the scorecard
-  if (scorecard.userId !== user.id) return forbidden();
+  if (scorecard.user_id !== user.id) return forbidden();
 
   return NextResponse.json(scorecard);
 }
@@ -33,13 +32,13 @@ export async function PATCH(
   if (!scorecard) {
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
-  if (scorecard.userId !== user.id) return forbidden();
+  if (scorecard.user_id !== user.id) return forbidden();
 
   const body = await req.json();
   const updated = await prisma.scorecards.update({
     where: { id },
     data: {
-      courseName: body.courseName,
+      course_name: body.courseName,
       date: body.date,
       pars: body.pars,
       players: body.players,
@@ -60,7 +59,7 @@ export async function DELETE(
   if (!scorecard) {
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
-  if (scorecard.userId !== user.id) return forbidden();
+  if (scorecard.user_id !== user.id) return forbidden();
 
   await prisma.scorecards.delete({ where: { id } });
   return NextResponse.json({ ok: true });

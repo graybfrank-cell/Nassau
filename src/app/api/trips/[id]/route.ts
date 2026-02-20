@@ -15,18 +15,18 @@ export async function GET(
     where: { id },
     include: {
       members: { include: { user: true } },
-      itineraryItems: { orderBy: { sortOrder: "asc" } },
+      itineraryItems: { orderBy: { sort_order: "asc" } },
       expenses: { include: { payer: true, splits: { include: { member: true } } } },
-      rounds: { orderBy: { createdAt: "desc" } },
-      skinsGames: { orderBy: { createdAt: "desc" } },
-      scorecards: { orderBy: { createdAt: "desc" } },
+      rounds: { orderBy: { created_at: "desc" } },
+      skinsGames: { orderBy: { created_at: "desc" } },
+      scorecards: { orderBy: { created_at: "desc" } },
     },
   });
   if (!trip) {
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
 
-  const isMember = trip.createdBy === user.id || trip.members.some((m) => m.userId === user.id);
+  const isMember = trip.created_by === user.id || trip.members.some((m) => m.user_id === user.id);
   if (!isMember) return forbidden();
 
   return NextResponse.json(trip);
@@ -49,10 +49,10 @@ export async function PATCH(
     data: {
       name: body.name,
       destination: body.destination,
-      startDate: body.startDate,
-      endDate: body.endDate,
-      arrivalTime: body.arrivalTime,
-      departureTime: body.departureTime,
+      start_date: body.startDate,
+      end_date: body.endDate,
+      arrival_time: body.arrivalTime,
+      departure_time: body.departureTime,
       lodging: body.lodging,
     },
     include: { members: { include: { user: true } } },
@@ -72,7 +72,7 @@ export async function DELETE(
   if (!trip) {
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
-  if (trip.createdBy !== user.id) return forbidden();
+  if (trip.created_by !== user.id) return forbidden();
 
   await prisma.trips.delete({ where: { id } });
   return NextResponse.json({ ok: true });

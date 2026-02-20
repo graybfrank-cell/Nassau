@@ -18,8 +18,8 @@ export async function POST(
 
   const updated = await prisma.trips.update({
     where: { id },
-    data: { inviteCode },
+    data: { invite_code: inviteCode },
   });
 
-  return NextResponse.json({ inviteCode: updated.inviteCode });
+  return NextResponse.json({ inviteCode: updated.invite_code });
 }
