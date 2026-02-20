@@ -15,7 +15,7 @@ export async function PATCH(
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
 
-  const membership = await getTripMembership(game.tripId, user.id);
+  const membership = await getTripMembership(game.trip_id, user.id);
   if (!membership) return forbidden();
 
   const body = await req.json();
@@ -23,8 +23,8 @@ export async function PATCH(
     where: { id },
     data: {
       name: body.name,
-      buyIn: body.buyIn,
-      dayNumber: body.dayNumber,
+      buy_in: body.buyIn,
+      day_number: body.dayNumber,
       players: body.players,
       holes: body.holes,
     },
@@ -45,7 +45,7 @@ export async function DELETE(
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
 
-  const membership = await getTripMembership(game.tripId, user.id);
+  const membership = await getTripMembership(game.trip_id, user.id);
   if (!membership) return forbidden();
 
   await prisma.skinsGames.delete({ where: { id } });

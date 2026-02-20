@@ -16,11 +16,11 @@ export async function POST(
   const body = await req.json();
   const member = await prisma.tripMembers.create({
     data: {
-      tripId,
+      trip_id: tripId,
       name: body.name || "",
       handicap: body.handicap ?? 0,
       role: "MEMBER",
-      rsvpStatus: "PENDING",
+      rsvp_status: "PENDING",
     },
   });
   return NextResponse.json(member, { status: 201 });

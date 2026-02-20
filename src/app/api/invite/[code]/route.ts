@@ -8,15 +8,15 @@ export async function GET(
   const { code } = await params;
 
   const trip = await prisma.trips.findUnique({
-    where: { inviteCode: code },
+    where: { invite_code: code },
     select: {
       id: true,
       name: true,
       destination: true,
-      startDate: true,
-      endDate: true,
+      start_date: true,
+      end_date: true,
       members: {
-        select: { id: true, name: true, handicap: true, userId: true },
+        select: { id: true, name: true, handicap: true, user_id: true },
       },
     },
   });

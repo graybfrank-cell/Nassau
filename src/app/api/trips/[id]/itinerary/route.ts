@@ -17,20 +17,20 @@ export async function POST(
 
   // Determine sort order: place after the last existing item
   const lastItem = await prisma.itineraryItems.findFirst({
-    where: { tripId },
-    orderBy: { sortOrder: "desc" },
+    where: { trip_id: tripId },
+    orderBy: { sort_order: "desc" },
   });
-  const sortOrder = (lastItem?.sortOrder ?? -1) + 1;
+  const sortOrder = (lastItem?.sort_order ?? -1) + 1;
 
   const item = await prisma.itineraryItems.create({
     data: {
-      tripId,
+      trip_id: tripId,
       date: body.date || "",
       time: body.time || "",
       type: body.type || "other",
       title: body.title || "",
       description: body.description || "",
-      sortOrder,
+      sort_order: sortOrder,
     },
   });
   return NextResponse.json(item, { status: 201 });
