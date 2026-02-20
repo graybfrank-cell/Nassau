@@ -16,13 +16,13 @@ export async function POST(
   const body = await req.json();
 
   // Determine sort order: place after the last existing item
-  const lastItem = await prisma.itineraryItem.findFirst({
+  const lastItem = await prisma.itineraryItems.findFirst({
     where: { tripId },
     orderBy: { sortOrder: "desc" },
   });
   const sortOrder = (lastItem?.sortOrder ?? -1) + 1;
 
-  const item = await prisma.itineraryItem.create({
+  const item = await prisma.itineraryItems.create({
     data: {
       tripId,
       date: body.date || "",

@@ -10,7 +10,7 @@ export async function PATCH(
   if (!user) return unauthorized();
 
   const { id } = await params;
-  const game = await prisma.skinsGame.findUnique({ where: { id } });
+  const game = await prisma.skinsGames.findUnique({ where: { id } });
   if (!game) {
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
@@ -19,7 +19,7 @@ export async function PATCH(
   if (!membership) return forbidden();
 
   const body = await req.json();
-  const updated = await prisma.skinsGame.update({
+  const updated = await prisma.skinsGames.update({
     where: { id },
     data: {
       name: body.name,
@@ -40,7 +40,7 @@ export async function DELETE(
   if (!user) return unauthorized();
 
   const { id } = await params;
-  const game = await prisma.skinsGame.findUnique({ where: { id } });
+  const game = await prisma.skinsGames.findUnique({ where: { id } });
   if (!game) {
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
@@ -48,6 +48,6 @@ export async function DELETE(
   const membership = await getTripMembership(game.tripId, user.id);
   if (!membership) return forbidden();
 
-  await prisma.skinsGame.delete({ where: { id } });
+  await prisma.skinsGames.delete({ where: { id } });
   return NextResponse.json({ ok: true });
 }
