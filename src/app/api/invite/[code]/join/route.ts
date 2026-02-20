@@ -12,7 +12,7 @@ export async function POST(
   const { code } = await params;
 
   const trip = await prisma.trips.findUnique({
-    where: { inviteCode: code },
+    where: { invite_code: code },
   });
 
   if (!trip) {
@@ -21,7 +21,7 @@ export async function POST(
 
   // Check if user is already a member via trip_members table
   const existing = await prisma.tripMembers.findFirst({
-    where: { tripId: trip.id, userId: user.id },
+    where: { trip_id: trip.id, user_id: user.id },
   });
 
   if (existing) {
@@ -31,11 +31,11 @@ export async function POST(
   // Add the user as a new member
   await prisma.tripMembers.create({
     data: {
-      tripId: trip.id,
-      userId: user.id,
+      trip_id: trip.id,
+      user_id: user.id,
       name: user.email?.split("@")[0] || "Guest",
       role: "MEMBER",
-      rsvpStatus: "GOING",
+      rsvp_status: "GOING",
     },
   });
 

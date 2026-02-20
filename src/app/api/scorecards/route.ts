@@ -14,16 +14,16 @@ export async function GET(req: NextRequest) {
     if (!membership) return forbidden();
 
     const scorecards = await prisma.scorecards.findMany({
-      where: { tripId },
-      orderBy: { createdAt: "desc" },
+      where: { trip_id: tripId },
+      orderBy: { created_at: "desc" },
     });
     return NextResponse.json(scorecards);
   }
 
   // Otherwise return the current user's scorecards
   const scorecards = await prisma.scorecards.findMany({
-    where: { userId: user.id },
-    orderBy: { createdAt: "desc" },
+    where: { user_id: user.id },
+    orderBy: { created_at: "desc" },
   });
   return NextResponse.json(scorecards);
 }
@@ -42,9 +42,9 @@ export async function POST(req: NextRequest) {
 
   const scorecard = await prisma.scorecards.create({
     data: {
-      userId: user.id,
-      tripId: body.tripId || null,
-      courseName: body.courseName || "",
+      user_id: user.id,
+      trip_id: body.tripId || null,
+      course_name: body.courseName || "",
       date: body.date || "",
       pars: body.pars || [],
       players: body.players || [],

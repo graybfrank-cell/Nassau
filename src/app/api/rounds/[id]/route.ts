@@ -15,7 +15,7 @@ export async function PATCH(
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
 
-  const membership = await getTripMembership(round.tripId, user.id);
+  const membership = await getTripMembership(round.trip_id, user.id);
   if (!membership) return forbidden();
 
   const body = await req.json();
@@ -23,9 +23,9 @@ export async function PATCH(
     where: { id },
     data: {
       name: body.name,
-      courseName: body.courseName,
+      course_name: body.courseName,
       date: body.date,
-      groupSize: body.groupSize,
+      group_size: body.groupSize,
       groups: body.groups,
     },
   });
@@ -45,7 +45,7 @@ export async function DELETE(
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
 
-  const membership = await getTripMembership(round.tripId, user.id);
+  const membership = await getTripMembership(round.trip_id, user.id);
   if (!membership) return forbidden();
 
   await prisma.rounds.delete({ where: { id } });

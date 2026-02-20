@@ -9,12 +9,12 @@ export async function GET(_req: NextRequest) {
   const trips = await prisma.trips.findMany({
     where: {
       OR: [
-        { createdBy: user.id },
-        { members: { some: { userId: user.id } } },
+        { created_by: user.id },
+        { members: { some: { user_id: user.id } } },
       ],
     },
     include: { members: { include: { user: true } } },
-    orderBy: { createdAt: "desc" },
+    orderBy: { created_at: "desc" },
   });
   return NextResponse.json(trips);
 }
@@ -26,17 +26,17 @@ export async function POST(req: NextRequest) {
   const body = await req.json();
   const trip = await prisma.trips.create({
     data: {
-      createdBy: user.id,
+      created_by: user.id,
       name: body.name,
       destination: body.destination || "",
-      startDate: body.startDate || "",
-      endDate: body.endDate || "",
+      start_date: body.startDate || "",
+      end_date: body.endDate || "",
       members: {
         create: {
-          userId: user.id,
+          user_id: user.id,
           name: user.email?.split("@")[0] || "Captain",
           role: "CAPTAIN",
-          rsvpStatus: "GOING",
+          rsvp_status: "GOING",
         },
       },
     },
