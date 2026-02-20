@@ -5,7 +5,7 @@ import { useParams } from "next/navigation";
 import Link from "next/link";
 import { getTrip, getRounds, createRound, updateRound, deleteRound } from "@/lib/store";
 import { Trip, Round } from "@/lib/types";
-import { ArrowLeft, Plus, Shuffle, Trash2, Users } from "lucide-react";
+import { ArrowLeft, Plus, Shuffle, Trash2, Users, AlertCircle } from "lucide-react";
 
 function shuffle<T>(array: T[]): T[] {
   const arr = [...array];
@@ -36,6 +36,7 @@ export default function PairingsPage() {
   const [courseName, setCourseName] = useState("");
   const [roundDate, setRoundDate] = useState("");
   const [groupSize, setGroupSize] = useState(4);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     refresh();
@@ -61,33 +62,49 @@ export default function PairingsPage() {
   async function handleCreate(e: React.FormEvent) {
     e.preventDefault();
     if (!trip || !roundName.trim()) return;
-    const memberIds = trip.members.map((m) => m.id);
-    const groups = makeGroups(memberIds, groupSize);
-    await createRound({
-      tripId,
-      name: roundName.trim(),
-      courseName: courseName.trim(),
-      date: roundDate,
-      groups,
-    });
-    setRoundName("");
-    setCourseName("");
-    setRoundDate("");
-    setShowForm(false);
-    await refresh();
+    setError(null);
+    try {
+      const memberIds = trip.members.map((m) => m.id);
+      const groups = makeGroups(memberIds, groupSize);
+      await createRound({
+        tripId,
+        name: roundName.trim(),
+        courseName: courseName.trim(),
+        date: roundDate,
+        groupSize,
+        groups,
+      });
+      setRoundName("");
+      setCourseName("");
+      setRoundDate("");
+      setShowForm(false);
+      await refresh();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to create round");
+    }
   }
 
   async function handleReshuffle(roundId: string) {
     if (!trip) return;
-    const memberIds = trip.members.map((m) => m.id);
-    const groups = makeGroups(memberIds, groupSize);
-    await updateRound(roundId, { groups });
-    await refresh();
+    setError(null);
+    try {
+      const memberIds = trip.members.map((m) => m.id);
+      const groups = makeGroups(memberIds, groupSize);
+      await updateRound(roundId, { groups });
+      await refresh();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to reshuffle");
+    }
   }
 
   async function handleDeleteRound(roundId: string) {
-    await deleteRound(roundId);
-    await refresh();
+    setError(null);
+    try {
+      await deleteRound(roundId);
+      await refresh();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to delete round");
+    }
   }
 
   if (!trip) {
@@ -108,6 +125,13 @@ export default function PairingsPage() {
           <ArrowLeft className="h-4 w-4" />
           Back to {trip.name}
         </Link>
+
+        {error && (
+          <div className="mt-4 flex items-center gap-2 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+            <AlertCircle className="h-4 w-4 shrink-0" />
+            {error}
+          </div>
+        )}
 
         <div className="mt-6 flex items-center justify-between">
           <div>

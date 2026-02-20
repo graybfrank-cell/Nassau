@@ -11,7 +11,7 @@ import {
   deleteSkinsGame,
 } from "@/lib/store";
 import { Trip, SkinsGame, SkinsHole } from "@/lib/types";
-import { ArrowLeft, Plus, Trash2, Trophy, ChevronDown, ChevronUp } from "lucide-react";
+import { ArrowLeft, Plus, Trash2, Trophy, ChevronDown, ChevronUp, AlertCircle } from "lucide-react";
 
 function calculateResults(game: SkinsGame) {
   const totals: Record<string, { skins: number; winnings: number }> = {};
@@ -95,6 +95,7 @@ export default function SkinsPage() {
   const [stake, setStake] = useState("5");
   const [selectedPlayers, setSelectedPlayers] = useState<string[]>([]);
   const [expandedGame, setExpandedGame] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     refresh();
@@ -124,24 +125,28 @@ export default function SkinsPage() {
   async function handleCreate(e: React.FormEvent) {
     e.preventDefault();
     if (!gameName.trim() || selectedPlayers.length < 2) return;
+    setError(null);
+    try {
+      const holes: SkinsHole[] = Array.from({ length: 18 }, (_, i) => ({
+        number: i + 1,
+        scores: {},
+      }));
 
-    const holes: SkinsHole[] = Array.from({ length: 18 }, (_, i) => ({
-      number: i + 1,
-      scores: {},
-    }));
-
-    await createSkinsGame({
-      tripId,
-      name: gameName.trim(),
-      players: selectedPlayers,
-      stake: parseFloat(stake) || 5,
-      holes,
-    });
-    setGameName("");
-    setStake("5");
-    setSelectedPlayers([]);
-    setShowForm(false);
-    await refresh();
+      await createSkinsGame({
+        tripId,
+        name: gameName.trim(),
+        players: selectedPlayers,
+        stake: parseFloat(stake) || 5,
+        holes,
+      });
+      setGameName("");
+      setStake("5");
+      setSelectedPlayers([]);
+      setShowForm(false);
+      await refresh();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to create game");
+    }
   }
 
   async function handleScoreChange(
@@ -152,26 +157,35 @@ export default function SkinsPage() {
   ) {
     const game = games.find((g) => g.id === gameId);
     if (!game) return;
+    setError(null);
+    try {
+      const updatedHoles = [...game.holes];
+      const hole = { ...updatedHoles[holeIndex] };
+      hole.scores = { ...hole.scores };
 
-    const updatedHoles = [...game.holes];
-    const hole = { ...updatedHoles[holeIndex] };
-    hole.scores = { ...hole.scores };
+      if (value === "" || value === "0") {
+        delete hole.scores[playerId];
+      } else {
+        hole.scores[playerId] = parseInt(value) || 0;
+      }
+      updatedHoles[holeIndex] = hole;
 
-    if (value === "" || value === "0") {
-      delete hole.scores[playerId];
-    } else {
-      hole.scores[playerId] = parseInt(value) || 0;
+      await updateSkinsGame(gameId, { holes: updatedHoles });
+      await refresh();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to save score");
     }
-    updatedHoles[holeIndex] = hole;
-
-    await updateSkinsGame(gameId, { holes: updatedHoles });
-    await refresh();
   }
 
   async function handleDeleteGame(gameId: string) {
-    await deleteSkinsGame(gameId);
-    if (expandedGame === gameId) setExpandedGame(null);
-    await refresh();
+    setError(null);
+    try {
+      await deleteSkinsGame(gameId);
+      if (expandedGame === gameId) setExpandedGame(null);
+      await refresh();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to delete game");
+    }
   }
 
   if (!trip) {
@@ -192,6 +206,13 @@ export default function SkinsPage() {
           <ArrowLeft className="h-4 w-4" />
           Back to {trip.name}
         </Link>
+
+        {error && (
+          <div className="mt-4 flex items-center gap-2 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+            <AlertCircle className="h-4 w-4 shrink-0" />
+            {error}
+          </div>
+        )}
 
         <div className="mt-6 flex items-center justify-between">
           <div>

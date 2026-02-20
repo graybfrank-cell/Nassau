@@ -5,7 +5,7 @@ import { useParams } from "next/navigation";
 import Link from "next/link";
 import { getTrip, getExpenses, addExpense, deleteExpense } from "@/lib/store";
 import { Trip, Expense, Member } from "@/lib/types";
-import { ArrowLeft, Plus, Trash2, DollarSign } from "lucide-react";
+import { ArrowLeft, Plus, Trash2, DollarSign, AlertCircle } from "lucide-react";
 
 function calculateSettlements(
   expenses: Expense[],
@@ -64,6 +64,7 @@ export default function ExpensesPage() {
   const [amount, setAmount] = useState("");
   const [paidBy, setPaidBy] = useState("");
   const [splitAmong, setSplitAmong] = useState<string[]>([]);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     refresh();
@@ -103,24 +104,34 @@ export default function ExpensesPage() {
     e.preventDefault();
     if (!description.trim() || !amount || !paidBy || splitAmong.length === 0)
       return;
-    await addExpense({
-      tripId,
-      description: description.trim(),
-      amount: parseFloat(amount),
-      paidBy,
-      splitAmong,
-    });
-    setDescription("");
-    setAmount("");
-    setPaidBy("");
-    setSplitAmong([]);
-    setShowForm(false);
-    await refresh();
+    setError(null);
+    try {
+      await addExpense({
+        tripId,
+        description: description.trim(),
+        amount: parseFloat(amount),
+        paidBy,
+        splitAmong,
+      });
+      setDescription("");
+      setAmount("");
+      setPaidBy("");
+      setSplitAmong([]);
+      setShowForm(false);
+      await refresh();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to add expense");
+    }
   }
 
   async function handleDeleteExpense(expenseId: string) {
-    await deleteExpense(expenseId);
-    await refresh();
+    setError(null);
+    try {
+      await deleteExpense(expenseId);
+      await refresh();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to delete expense");
+    }
   }
 
   if (!trip) {
@@ -144,6 +155,13 @@ export default function ExpensesPage() {
           <ArrowLeft className="h-4 w-4" />
           Back to {trip.name}
         </Link>
+
+        {error && (
+          <div className="mt-4 flex items-center gap-2 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+            <AlertCircle className="h-4 w-4 shrink-0" />
+            {error}
+          </div>
+        )}
 
         <div className="mt-6 flex items-center justify-between">
           <div>
