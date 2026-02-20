@@ -6,7 +6,7 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { getTrip, getScorecards, createScorecard, deleteScorecard } from "@/lib/store";
 import { Trip, Scorecard } from "@/lib/types";
-import { ArrowLeft, Plus, ClipboardList, Trash2 } from "lucide-react";
+import { ArrowLeft, Plus, ClipboardList, Trash2, AlertCircle } from "lucide-react";
 
 const DEFAULT_PARS = [4, 4, 4, 3, 5, 4, 3, 4, 5, 4, 4, 3, 5, 4, 4, 3, 4, 5];
 
@@ -22,6 +22,7 @@ export default function TripScorecardsPage() {
   const [courseName, setCourseName] = useState("");
   const [date, setDate] = useState("");
   const [selectedMembers, setSelectedMembers] = useState<string[]>([]);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     async function load() {
@@ -43,41 +44,53 @@ export default function TripScorecardsPage() {
   async function handleCreate(e: React.FormEvent) {
     e.preventDefault();
     if (!trip) return;
+    setError(null);
+    try {
+      const supabase = createClient();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      if (!user) {
+        setError("You must be logged in to create a scorecard");
+        return;
+      }
 
-    const supabase = createClient();
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-    if (!user) return;
+      const players = trip.members
+        .filter((m) => selectedMembers.includes(m.id))
+        .map((m) => ({
+          id: m.id,
+          name: m.name,
+          handicap: m.handicap,
+          scores: Array(18).fill(null),
+        }));
 
-    const players = trip.members
-      .filter((m) => selectedMembers.includes(m.id))
-      .map((m) => ({
-        id: m.id,
-        name: m.name,
-        handicap: m.handicap,
-        scores: Array(18).fill(null),
-      }));
+      const sc = await createScorecard({
+        userId: user.id,
+        tripId,
+        courseName: courseName.trim(),
+        date,
+        pars: DEFAULT_PARS,
+        players,
+      });
 
-    const sc = await createScorecard({
-      userId: user.id,
-      tripId,
-      courseName: courseName.trim(),
-      date,
-      pars: DEFAULT_PARS,
-      players,
-    });
-
-    setCourseName("");
-    setDate("");
-    setShowForm(false);
-    await refresh();
-    router.push(`/scorecards/${sc.id}`);
+      setCourseName("");
+      setDate("");
+      setShowForm(false);
+      await refresh();
+      router.push(`/scorecards/${sc.id}`);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to create scorecard");
+    }
   }
 
   async function handleDelete(id: string) {
-    await deleteScorecard(id);
-    await refresh();
+    setError(null);
+    try {
+      await deleteScorecard(id);
+      await refresh();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to delete scorecard");
+    }
   }
 
   function toggleMember(memberId: string) {
@@ -106,6 +119,13 @@ export default function TripScorecardsPage() {
           <ArrowLeft className="h-4 w-4" />
           Back to {trip.name}
         </Link>
+
+        {error && (
+          <div className="mt-4 flex items-center gap-2 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+            <AlertCircle className="h-4 w-4 shrink-0" />
+            {error}
+          </div>
+        )}
 
         <div className="mt-6 flex items-center justify-between">
           <div>
