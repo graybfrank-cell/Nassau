@@ -352,18 +352,18 @@ function mapTrip(row: any): Trip {
 
   return {
     id: row.id,
-    userId: row.createdBy || row.userId || "",
+    userId: row.created_by || row.userId || "",
     name: row.name,
     destination: row.destination || "",
-    startDate: row.startDate || "",
-    endDate: row.endDate || "",
-    arrivalTime: row.arrivalTime || "",
-    departureTime: row.departureTime || "",
+    startDate: row.start_date || "",
+    endDate: row.end_date || "",
+    arrivalTime: row.arrival_time || "",
+    departureTime: row.departure_time || "",
     members,
     lodging,
     schedule,
-    inviteCode: row.inviteCode || null,
-    createdAt: row.createdAt,
+    inviteCode: row.invite_code || null,
+    createdAt: row.created_at,
   };
 }
 
@@ -371,17 +371,17 @@ function mapTrip(row: any): Trip {
 function mapExpense(row: any): Expense {
   // Map v2 splits → v1 splitAmong (array of member IDs)
   const splitAmong: string[] = Array.isArray(row.splits)
-    ? row.splits.map((s: { memberId: string }) => s.memberId)
+    ? row.splits.map((s: { member_id: string }) => s.member_id)
     : row.splitAmong || [];
 
   return {
     id: row.id,
-    tripId: row.tripId,
+    tripId: row.trip_id,
     description: row.description || "",
     amount: Number(row.amount) || 0,
-    paidBy: row.paidBy || "",
+    paidBy: row.paid_by || "",
     splitAmong,
-    createdAt: row.createdAt,
+    createdAt: row.created_at,
   };
 }
 
@@ -389,12 +389,12 @@ function mapExpense(row: any): Expense {
 function mapRound(row: any): Round {
   return {
     id: row.id,
-    tripId: row.tripId,
+    tripId: row.trip_id,
     name: row.name || "",
-    courseName: row.courseName || "",
+    courseName: row.course_name || "",
     date: row.date || "",
     groups: row.groups || [],
-    createdAt: row.createdAt,
+    createdAt: row.created_at,
   };
 }
 
@@ -402,12 +402,12 @@ function mapRound(row: any): Round {
 function mapSkinsGame(row: any): SkinsGame {
   return {
     id: row.id,
-    tripId: row.tripId,
+    tripId: row.trip_id,
     name: row.name || "",
     players: row.players || [],
-    stake: Number(row.buyIn ?? row.stake) || 5,
+    stake: Number(row.buy_in ?? row.stake) || 5,
     holes: row.holes || [],
-    createdAt: row.createdAt,
+    createdAt: row.created_at,
   };
 }
 
@@ -415,12 +415,12 @@ function mapSkinsGame(row: any): SkinsGame {
 function mapScorecard(row: any): Scorecard {
   return {
     id: row.id,
-    userId: row.userId,
-    tripId: row.tripId || null,
-    courseName: row.courseName || "",
+    userId: row.user_id,
+    tripId: row.trip_id || null,
+    courseName: row.course_name || "",
     date: row.date || "",
     pars: row.pars || [],
     players: row.players || [],
-    createdAt: row.createdAt,
+    createdAt: row.created_at,
   };
 }

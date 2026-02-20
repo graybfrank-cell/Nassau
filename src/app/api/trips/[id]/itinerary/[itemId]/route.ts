@@ -14,7 +14,7 @@ export async function DELETE(
   if (!membership) return forbidden();
 
   const item = await prisma.itineraryItems.findUnique({ where: { id: itemId } });
-  if (!item || item.tripId !== tripId) {
+  if (!item || item.trip_id !== tripId) {
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
 

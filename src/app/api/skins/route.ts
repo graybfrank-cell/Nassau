@@ -15,8 +15,8 @@ export async function GET(req: NextRequest) {
   if (!membership) return forbidden();
 
   const games = await prisma.skinsGames.findMany({
-    where: { tripId },
-    orderBy: { createdAt: "desc" },
+    where: { trip_id: tripId },
+    orderBy: { created_at: "desc" },
   });
   return NextResponse.json(games);
 }
@@ -31,10 +31,10 @@ export async function POST(req: NextRequest) {
 
   const game = await prisma.skinsGames.create({
     data: {
-      tripId: body.tripId,
+      trip_id: body.tripId,
       name: body.name,
-      buyIn: body.buyIn || 5,
-      dayNumber: body.dayNumber || null,
+      buy_in: body.buyIn || 5,
+      day_number: body.dayNumber || null,
       players: body.players || [],
       holes: body.holes || [],
     },

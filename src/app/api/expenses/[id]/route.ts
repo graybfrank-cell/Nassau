@@ -15,7 +15,7 @@ export async function DELETE(
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
 
-  const membership = await getTripMembership(expense.tripId, user.id);
+  const membership = await getTripMembership(expense.trip_id, user.id);
   if (!membership) return forbidden();
 
   await prisma.expenses.delete({ where: { id } });
