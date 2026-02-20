@@ -1,193 +1,189 @@
 generator client {
-  provider = "prisma-client"
-  output   = "../src/generated/prisma"
+  provider        = "prisma-client-js"
+  output          = "../src/generated/prisma"
+  previewFeatures = ["partialIndexes"]
 }
 
 datasource db {
   provider = "postgresql"
+  schemas  = ["public"]
 }
 
-// ─── profiles ────────────────────────────────────────────────
-model Profiles {
-  id        String   @id @db.Uuid
-  email     String?  @unique
-  fullName  String   @default("") @map("full_name")
-  avatarUrl String   @default("") @map("avatar_url")
-  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz()
-  updatedAt DateTime @default(now()) @map("updated_at") @db.Timestamptz()
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model expense_splits {
+  id           String       @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  expense_id   String       @db.Uuid
+  member_id    String       @db.Uuid
+  amount       Decimal      @default(0) @db.Decimal
+  created_at   DateTime?    @default(now()) @db.Timestamptz(6)
+  expenses     expenses     @relation(fields: [expense_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  trip_members trip_members @relation(fields: [member_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
 
-  trips       Trips[]
-  tripMembers TripMembers[]
-  scorecards  Scorecards[]
-
-  @@map("profiles")
+  @@index([expense_id], map: "idx_expense_splits_expense_id")
+  @@index([member_id], map: "idx_expense_splits_member_id")
+  @@schema("public")
 }
 
-// ─── trips ───────────────────────────────────────────────────
-model Trips {
-  id            String   @id @default(uuid()) @db.Uuid
-  createdBy     String   @map("created_by") @db.Uuid
-  name          String
-  destination   String   @default("")
-  startDate     String   @default("") @map("start_date")
-  endDate       String   @default("") @map("end_date")
-  arrivalTime   String   @default("") @map("arrival_time")
-  departureTime String   @default("") @map("departure_time")
-  lodging       Json     @default("{}")
-  inviteCode    String?  @unique @map("invite_code")
-  createdAt     DateTime @default(now()) @map("created_at") @db.Timestamptz()
-  updatedAt     DateTime @default(now()) @map("updated_at") @db.Timestamptz()
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model expenses {
+  id             String           @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  trip_id        String           @db.Uuid
+  description    String           @default("")
+  amount         Decimal          @default(0) @db.Decimal
+  category       String?          @default("")
+  paid_by        String?          @db.Uuid
+  split_method   String           @default("EQUAL")
+  created_at     DateTime?        @default(now()) @db.Timestamptz(6)
+  expense_splits expense_splits[]
+  trip_members   trip_members?    @relation(fields: [paid_by], references: [id], onUpdate: NoAction)
+  trips          trips            @relation(fields: [trip_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
 
-  creator        Profiles         @relation(fields: [createdBy], references: [id], onDelete: Cascade)
-  members        TripMembers[]
-  itineraryItems ItineraryItems[]
-  expenses       Expenses[]
-  rounds         Rounds[]
-  skinsGames     SkinsGames[]
-  scorecards     Scorecards[]
-
-  @@index([createdBy])
-  @@map("trips")
+  @@index([trip_id], map: "idx_expenses_trip_id")
+  @@schema("public")
 }
 
-// ─── trip_members ────────────────────────────────────────────
-model TripMembers {
-  id            String   @id @default(uuid()) @db.Uuid
-  tripId        String   @map("trip_id") @db.Uuid
-  userId        String?  @map("user_id") @db.Uuid
-  name          String   @default("")
-  handicap      Decimal  @default(0)
-  role          String   @default("MEMBER")
-  rsvpStatus    String   @default("PENDING") @map("rsvp_status")
-  paymentStatus String   @default("UNPAID") @map("payment_status")
-  createdAt     DateTime @default(now()) @map("created_at") @db.Timestamptz()
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model itinerary_items {
+  id          String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  trip_id     String    @db.Uuid
+  day_number  Int?
+  date        String?   @default("")
+  time        String?   @default("")
+  type        String    @default("other")
+  title       String    @default("")
+  description String?   @default("")
+  cost        Decimal?  @default(0) @db.Decimal
+  booking_url String?   @default("")
+  notes       String?   @default("")
+  sort_order  Int?      @default(0)
+  created_at  DateTime? @default(now()) @db.Timestamptz(6)
+  trips       trips     @relation(fields: [trip_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
 
-  trip          Trips           @relation(fields: [tripId], references: [id], onDelete: Cascade)
-  user          Profiles?       @relation(fields: [userId], references: [id], onDelete: SetNull)
-  expensesPaid  Expenses[]
-  expenseSplits ExpenseSplits[]
-
-  @@unique([tripId, userId])
-  @@index([tripId])
-  @@index([userId])
-  @@map("trip_members")
+  @@index([trip_id], map: "idx_itinerary_items_trip_id")
+  @@schema("public")
 }
 
-// ─── itinerary_items ─────────────────────────────────────────
-model ItineraryItems {
-  id          String   @id @default(uuid()) @db.Uuid
-  tripId      String   @map("trip_id") @db.Uuid
-  dayNumber   Int?     @map("day_number")
-  date        String   @default("")
-  time        String   @default("")
-  type        String   @default("other")
-  title       String   @default("")
-  description String   @default("")
-  cost        Decimal  @default(0)
-  bookingUrl  String   @default("") @map("booking_url")
-  notes       String   @default("")
-  sortOrder   Int      @default(0) @map("sort_order")
-  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz()
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model profiles {
+  id           String         @id @db.Uuid
+  email        String?        @unique
+  full_name    String?        @default("")
+  avatar_url   String?        @default("")
+  created_at   DateTime?      @default(now()) @db.Timestamptz(6)
+  updated_at   DateTime?      @default(now()) @db.Timestamptz(6)
+  scorecards   scorecards[]
+  trip_members trip_members[]
+  trips        trips[]
 
-  trip Trips @relation(fields: [tripId], references: [id], onDelete: Cascade)
-
-  @@index([tripId])
-  @@map("itinerary_items")
+  @@schema("public")
 }
 
-// ─── expenses ────────────────────────────────────────────────
-model Expenses {
-  id          String   @id @default(uuid()) @db.Uuid
-  tripId      String   @map("trip_id") @db.Uuid
-  description String   @default("")
-  amount      Decimal  @default(0)
-  category    String   @default("")
-  paidBy      String?  @map("paid_by") @db.Uuid
-  splitMethod String   @default("EQUAL") @map("split_method")
-  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz()
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model rounds {
+  id          String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  trip_id     String    @db.Uuid
+  name        String    @default("")
+  course_name String?   @default("")
+  date        String?   @default("")
+  group_size  Int?      @default(4)
+  groups      Json?     @default("[]")
+  created_at  DateTime? @default(now()) @db.Timestamptz(6)
+  trips       trips     @relation(fields: [trip_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
 
-  trip   Trips          @relation(fields: [tripId], references: [id], onDelete: Cascade)
-  payer  TripMembers?   @relation(fields: [paidBy], references: [id], onDelete: SetNull)
-  splits ExpenseSplits[]
-
-  @@index([tripId])
-  @@map("expenses")
+  @@index([trip_id], map: "idx_rounds_trip_id")
+  @@schema("public")
 }
 
-// ─── expense_splits ──────────────────────────────────────────
-model ExpenseSplits {
-  id        String   @id @default(uuid()) @db.Uuid
-  expenseId String   @map("expense_id") @db.Uuid
-  memberId  String   @map("member_id") @db.Uuid
-  amount    Decimal  @default(0)
-  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz()
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model scorecards {
+  id          String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  user_id     String    @db.Uuid
+  trip_id     String?   @db.Uuid
+  course_name String?   @default("")
+  date        String?   @default("")
+  pars        Json?     @default("[]")
+  players     Json?     @default("[]")
+  created_at  DateTime? @default(now()) @db.Timestamptz(6)
+  trips       trips?    @relation(fields: [trip_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  profiles    profiles  @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
 
-  expense Expenses    @relation(fields: [expenseId], references: [id], onDelete: Cascade)
-  member  TripMembers @relation(fields: [memberId], references: [id], onDelete: Cascade)
-
-  @@index([expenseId])
-  @@index([memberId])
-  @@map("expense_splits")
+  @@index([trip_id], map: "idx_scorecards_trip_id")
+  @@index([user_id], map: "idx_scorecards_user_id")
+  @@schema("public")
 }
 
-// ─── rounds ──────────────────────────────────────────────────
-model Rounds {
-  id         String   @id @default(uuid()) @db.Uuid
-  tripId     String   @map("trip_id") @db.Uuid
-  name       String   @default("")
-  courseName String   @default("") @map("course_name")
-  date       String   @default("")
-  groupSize  Int      @default(4) @map("group_size")
-  groups     Json     @default("[]")
-  createdAt  DateTime @default(now()) @map("created_at") @db.Timestamptz()
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model skins_games {
+  id         String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  trip_id    String    @db.Uuid
+  name       String    @default("")
+  buy_in     Decimal?  @default(5) @db.Decimal
+  day_number Int?
+  players    Json?     @default("[]")
+  holes      Json?     @default("[]")
+  created_at DateTime? @default(now()) @db.Timestamptz(6)
+  trips      trips     @relation(fields: [trip_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
 
-  trip Trips @relation(fields: [tripId], references: [id], onDelete: Cascade)
-
-  @@index([tripId])
-  @@map("rounds")
+  @@index([trip_id], map: "idx_skins_games_trip_id")
+  @@schema("public")
 }
 
-// ─── skins_games ─────────────────────────────────────────────
-model SkinsGames {
-  id        String   @id @default(uuid()) @db.Uuid
-  tripId    String   @map("trip_id") @db.Uuid
-  name      String   @default("")
-  buyIn     Decimal  @default(5) @map("buy_in")
-  dayNumber Int?     @map("day_number")
-  players   Json     @default("[]")
-  holes     Json     @default("[]")
-  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz()
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model trip_members {
+  id             String           @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  trip_id        String           @db.Uuid
+  user_id        String?          @db.Uuid
+  name           String           @default("")
+  handicap       Decimal?         @default(0) @db.Decimal
+  role           String           @default("MEMBER")
+  rsvp_status    String           @default("PENDING")
+  payment_status String           @default("UNPAID")
+  created_at     DateTime?        @default(now()) @db.Timestamptz(6)
+  expense_splits expense_splits[]
+  expenses       expenses[]
+  trips          trips            @relation(fields: [trip_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  profiles       profiles?        @relation(fields: [user_id], references: [id], onUpdate: NoAction)
 
-  trip Trips @relation(fields: [tripId], references: [id], onDelete: Cascade)
-
-  @@index([tripId])
-  @@map("skins_games")
+  @@unique([trip_id, user_id], map: "idx_trip_members_unique", where: raw("(user_id IS NOT NULL)"))
+  @@index([trip_id], map: "idx_trip_members_trip_id")
+  @@index([user_id], map: "idx_trip_members_user_id")
+  @@schema("public")
 }
 
-// ─── scorecards ──────────────────────────────────────────────
-model Scorecards {
-  id         String   @id @default(uuid()) @db.Uuid
-  userId     String   @map("user_id") @db.Uuid
-  tripId     String?  @map("trip_id") @db.Uuid
-  courseName String   @default("") @map("course_name")
-  date       String   @default("")
-  pars       Json     @default("[]")
-  players    Json     @default("[]")
-  createdAt  DateTime @default(now()) @map("created_at") @db.Timestamptz()
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model trips {
+  id              String            @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  created_by      String            @db.Uuid
+  name            String
+  destination     String?           @default("")
+  start_date      String?           @default("")
+  end_date        String?           @default("")
+  arrival_time    String?           @default("")
+  departure_time  String?           @default("")
+  lodging         Json?             @default("{}")
+  invite_code     String?           @unique
+  created_at      DateTime?         @default(now()) @db.Timestamptz(6)
+  updated_at      DateTime?         @default(now()) @db.Timestamptz(6)
+  expenses        expenses[]
+  itinerary_items itinerary_items[]
+  rounds          rounds[]
+  scorecards      scorecards[]
+  skins_games     skins_games[]
+  trip_members    trip_members[]
+  profiles        profiles          @relation(fields: [created_by], references: [id], onDelete: Cascade, onUpdate: NoAction)
 
-  user Profiles @relation(fields: [userId], references: [id], onDelete: Cascade)
-  trip Trips?   @relation(fields: [tripId], references: [id], onDelete: Cascade)
-
-  @@index([userId])
-  @@index([tripId])
-  @@map("scorecards")
+  @@index([created_by], map: "idx_trips_created_by")
+  @@schema("public")
 }
 
-// ─── waitlist ────────────────────────────────────────────────
-model Waitlists {
-  id        String   @id @default(uuid()) @db.Uuid
-  email     String   @unique
-  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz()
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model waitlist {
+  id         String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  email      String    @unique
+  created_at DateTime? @default(now()) @db.Timestamptz(6)
 
-  @@map("waitlist")
+  @@schema("public")
 }
