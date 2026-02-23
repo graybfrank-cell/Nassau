@@ -2,6 +2,9 @@ export interface Member {
   id: string;
   name: string;
   handicap: number;
+  email?: string;
+  role?: string;
+  rsvpStatus?: string;
 }
 
 export interface Lodging {
@@ -86,8 +89,12 @@ export interface Scorecard {
   userId: string;
   tripId: string | null;
   courseName: string;
+  courseApiId: number | null;
+  teeName: string;
   date: string;
   pars: number[]; // par for each hole
+  yardages: number[]; // yardage for each hole
+  handicaps: number[]; // handicap index for each hole
   players: ScorecardPlayer[];
   createdAt: string;
 }
