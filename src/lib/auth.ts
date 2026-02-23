@@ -16,10 +16,29 @@ export async function getUser() {
 /**
  * Verify the caller is a member of the given trip.
  * Returns the TripMember row, or null if not a member.
+ * Also grants access if the user is the trip creator (created_by).
  */
 export async function getTripMembership(tripId: string, userId: string) {
-  return prisma.tripMembers.findFirst({
+  const member = await prisma.tripMembers.findFirst({
     where: { trip_id: tripId, user_id: userId },
+  });
+  if (member) return member;
+
+  // Fallback: the trip creator always has access even without a members row
+  const trip = await prisma.trips.findFirst({
+    where: { id: tripId, created_by: userId },
+  });
+  if (!trip) return null;
+
+  // Auto-create the missing member row for the creator
+  return prisma.tripMembers.create({
+    data: {
+      trip_id: tripId,
+      user_id: userId,
+      name: "Captain",
+      role: "CAPTAIN",
+      rsvp_status: "GOING",
+    },
   });
 }
 
