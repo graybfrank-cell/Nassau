@@ -1,0 +1,193 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ─── profiles ────────────────────────────────────────────────
+model Profiles {
+  id         String   @id @db.Uuid
+  email      String?  @unique
+  full_name  String   @default("")
+  avatar_url String   @default("")
+  created_at DateTime @default(now()) @db.Timestamptz()
+  updated_at DateTime @default(now()) @db.Timestamptz()
+
+  trips       Trips[]
+  tripMembers TripMembers[]
+  scorecards  Scorecards[]
+
+  @@map("profiles")
+}
+
+// ─── trips ───────────────────────────────────────────────────
+model Trips {
+  id             String   @id @default(uuid()) @db.Uuid
+  created_by     String   @db.Uuid
+  name           String
+  destination    String   @default("")
+  start_date     String   @default("")
+  end_date       String   @default("")
+  arrival_time   String   @default("")
+  departure_time String   @default("")
+  lodging        Json     @default("{}")
+  invite_code    String?  @unique
+  created_at     DateTime @default(now()) @db.Timestamptz()
+  updated_at     DateTime @default(now()) @db.Timestamptz()
+
+  creator        Profiles         @relation(fields: [created_by], references: [id], onDelete: Cascade)
+  members        TripMembers[]
+  itineraryItems ItineraryItems[]
+  expenses       Expenses[]
+  rounds         Rounds[]
+  skinsGames     SkinsGames[]
+  scorecards     Scorecards[]
+
+  @@index([created_by])
+  @@map("trips")
+}
+
+// ─── trip_members ────────────────────────────────────────────
+model TripMembers {
+  id             String   @id @default(uuid()) @db.Uuid
+  trip_id        String   @db.Uuid
+  user_id        String?  @db.Uuid
+  name           String   @default("")
+  handicap       Decimal  @default(0)
+  role           String   @default("MEMBER")
+  rsvp_status    String   @default("PENDING")
+  payment_status String   @default("UNPAID")
+  created_at     DateTime @default(now()) @db.Timestamptz()
+
+  trip          Trips           @relation(fields: [trip_id], references: [id], onDelete: Cascade)
+  user          Profiles?       @relation(fields: [user_id], references: [id], onDelete: SetNull)
+  expensesPaid  Expenses[]
+  expenseSplits ExpenseSplits[]
+
+  @@unique([trip_id, user_id])
+  @@index([trip_id])
+  @@index([user_id])
+  @@map("trip_members")
+}
+
+// ─── itinerary_items ─────────────────────────────────────────
+model ItineraryItems {
+  id          String   @id @default(uuid()) @db.Uuid
+  trip_id     String   @db.Uuid
+  day_number  Int?
+  date        String   @default("")
+  time        String   @default("")
+  type        String   @default("other")
+  title       String   @default("")
+  description String   @default("")
+  cost        Decimal  @default(0)
+  booking_url String   @default("")
+  notes       String   @default("")
+  sort_order  Int      @default(0)
+  created_at  DateTime @default(now()) @db.Timestamptz()
+
+  trip Trips @relation(fields: [trip_id], references: [id], onDelete: Cascade)
+
+  @@index([trip_id])
+  @@map("itinerary_items")
+}
+
+// ─── expenses ────────────────────────────────────────────────
+model Expenses {
+  id           String   @id @default(uuid()) @db.Uuid
+  trip_id      String   @db.Uuid
+  description  String   @default("")
+  amount       Decimal  @default(0)
+  category     String   @default("")
+  paid_by      String?  @db.Uuid
+  split_method String   @default("EQUAL")
+  created_at   DateTime @default(now()) @db.Timestamptz()
+
+  trip   Trips          @relation(fields: [trip_id], references: [id], onDelete: Cascade)
+  payer  TripMembers?   @relation(fields: [paid_by], references: [id], onDelete: SetNull)
+  splits ExpenseSplits[]
+
+  @@index([trip_id])
+  @@map("expenses")
+}
+
+// ─── expense_splits ──────────────────────────────────────────
+model ExpenseSplits {
+  id         String   @id @default(uuid()) @db.Uuid
+  expense_id String   @db.Uuid
+  member_id  String   @db.Uuid
+  amount     Decimal  @default(0)
+  created_at DateTime @default(now()) @db.Timestamptz()
+
+  expense Expenses    @relation(fields: [expense_id], references: [id], onDelete: Cascade)
+  member  TripMembers @relation(fields: [member_id], references: [id], onDelete: Cascade)
+
+  @@index([expense_id])
+  @@index([member_id])
+  @@map("expense_splits")
+}
+
+// ─── rounds ──────────────────────────────────────────────────
+model Rounds {
+  id          String   @id @default(uuid()) @db.Uuid
+  trip_id     String   @db.Uuid
+  name        String   @default("")
+  course_name String   @default("")
+  date        String   @default("")
+  group_size  Int      @default(4)
+  groups      Json     @default("[]")
+  created_at  DateTime @default(now()) @db.Timestamptz()
+
+  trip Trips @relation(fields: [trip_id], references: [id], onDelete: Cascade)
+
+  @@index([trip_id])
+  @@map("rounds")
+}
+
+// ─── skins_games ─────────────────────────────────────────────
+model SkinsGames {
+  id         String   @id @default(uuid()) @db.Uuid
+  trip_id    String   @db.Uuid
+  name       String   @default("")
+  buy_in     Decimal  @default(5)
+  day_number Int?
+  players    Json     @default("[]")
+  holes      Json     @default("[]")
+  created_at DateTime @default(now()) @db.Timestamptz()
+
+  trip Trips @relation(fields: [trip_id], references: [id], onDelete: Cascade)
+
+  @@index([trip_id])
+  @@map("skins_games")
+}
+
+// ─── scorecards ──────────────────────────────────────────────
+model Scorecards {
+  id          String   @id @default(uuid()) @db.Uuid
+  user_id     String   @db.Uuid
+  trip_id     String?  @db.Uuid
+  course_name String   @default("")
+  date        String   @default("")
+  pars        Json     @default("[]")
+  players     Json     @default("[]")
+  created_at  DateTime @default(now()) @db.Timestamptz()
+
+  user Profiles @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  trip Trips?   @relation(fields: [trip_id], references: [id], onDelete: Cascade)
+
+  @@index([user_id])
+  @@index([trip_id])
+  @@map("scorecards")
+}
+
+// ─── waitlist ────────────────────────────────────────────────
+model Waitlists {
+  id         String   @id @default(uuid()) @db.Uuid
+  email      String   @unique
+  created_at DateTime @default(now()) @db.Timestamptz()
+
+  @@map("waitlist")
+}

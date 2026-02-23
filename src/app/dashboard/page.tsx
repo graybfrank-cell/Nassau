@@ -6,11 +6,10 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { getTrips, createTrip, deleteTrip } from "@/lib/store";
 import { Trip } from "@/lib/types";
-import { Plus, MapPin, Users, Calendar, Trash2 } from "lucide-react";
+import { Plus, MapPin, Users, Calendar, Trash2, ClipboardList, AlertCircle } from "lucide-react";
 
 export default function DashboardPage() {
   const router = useRouter();
-  const [userId, setUserId] = useState<string | null>(null);
   const [trips, setTrips] = useState<Trip[]>([]);
   const [showForm, setShowForm] = useState(false);
   const [name, setName] = useState("");
@@ -18,13 +17,21 @@ export default function DashboardPage() {
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const supabase = createClient();
-    supabase.auth.getUser().then(({ data: { user } }) => {
+    supabase.auth.getUser().then(async ({ data: { user } }) => {
       if (user) {
-        setUserId(user.id);
-        setTrips(getTrips(user.id));
+        // Check for pending invite redirect
+        const pendingInvite = sessionStorage.getItem("pendingInvite");
+        if (pendingInvite) {
+          sessionStorage.removeItem("pendingInvite");
+          router.push(`/invite/${pendingInvite}`);
+          return;
+        }
+
+        setTrips(await getTrips());
       } else {
         router.push("/login");
       }
@@ -32,32 +39,40 @@ export default function DashboardPage() {
     });
   }, [router]);
 
-  function refresh() {
-    if (userId) setTrips(getTrips(userId));
+  async function refresh() {
+    setTrips(await getTrips());
   }
 
-  function handleCreate(e: React.FormEvent) {
+  async function handleCreate(e: React.FormEvent) {
     e.preventDefault();
-    if (!userId || !name.trim()) return;
-    createTrip({
-      userId,
-      name: name.trim(),
-      destination: destination.trim(),
-      startDate,
-      endDate,
-      members: [],
-    });
-    setName("");
-    setDestination("");
-    setStartDate("");
-    setEndDate("");
-    setShowForm(false);
-    refresh();
+    if (!name.trim()) return;
+    setError(null);
+    try {
+      await createTrip({
+        name: name.trim(),
+        destination: destination.trim(),
+        startDate,
+        endDate,
+      });
+      setName("");
+      setDestination("");
+      setStartDate("");
+      setEndDate("");
+      setShowForm(false);
+      await refresh();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to create trip");
+    }
   }
 
-  function handleDelete(tripId: string) {
-    deleteTrip(tripId);
-    refresh();
+  async function handleDelete(tripId: string) {
+    setError(null);
+    try {
+      await deleteTrip(tripId);
+      await refresh();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to delete trip");
+    }
   }
 
   if (loading) {
@@ -71,6 +86,14 @@ export default function DashboardPage() {
   return (
     <div className="min-h-[calc(100vh-64px)] bg-zinc-50 px-6 py-10">
       <div className="mx-auto max-w-5xl">
+        {/* Error Banner */}
+        {error && (
+          <div className="mb-4 flex items-center gap-2 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+            <AlertCircle className="h-4 w-4 shrink-0" />
+            {error}
+          </div>
+        )}
+
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
@@ -81,13 +104,22 @@ export default function DashboardPage() {
               Plan and manage your golf getaways.
             </p>
           </div>
-          <button
-            onClick={() => setShowForm(!showForm)}
-            className="inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-emerald-700"
-          >
-            <Plus className="h-4 w-4" />
-            New Trip
-          </button>
+          <div className="flex items-center gap-3">
+            <Link
+              href="/scorecards"
+              className="inline-flex items-center gap-2 rounded-lg border border-zinc-200 bg-white px-4 py-2.5 text-sm font-semibold text-zinc-700 transition-colors hover:bg-zinc-50"
+            >
+              <ClipboardList className="h-4 w-4" />
+              Scorecards
+            </Link>
+            <button
+              onClick={() => setShowForm(!showForm)}
+              className="inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-emerald-700"
+            >
+              <Plus className="h-4 w-4" />
+              New Trip
+            </button>
+          </div>
         </div>
 
         {/* Create Form */}
