@@ -166,14 +166,18 @@ model SkinsGames {
 
 // ─── scorecards ──────────────────────────────────────────────
 model Scorecards {
-  id          String   @id @default(uuid()) @db.Uuid
-  user_id     String   @db.Uuid
-  trip_id     String?  @db.Uuid
-  course_name String   @default("")
-  date        String   @default("")
-  pars        Json     @default("[]")
-  players     Json     @default("[]")
-  created_at  DateTime @default(now()) @db.Timestamptz()
+  id            String   @id @default(uuid()) @db.Uuid
+  user_id       String   @db.Uuid
+  trip_id       String?  @db.Uuid
+  course_name   String   @default("")
+  course_api_id Int?
+  tee_name      String   @default("")
+  date          String   @default("")
+  pars          Json     @default("[]")
+  yardages      Json     @default("[]")
+  handicaps     Json     @default("[]")
+  players       Json     @default("[]")
+  created_at    DateTime @default(now()) @db.Timestamptz()
 
   user Profiles @relation(fields: [user_id], references: [id], onDelete: Cascade)
   trip Trips?   @relation(fields: [trip_id], references: [id], onDelete: Cascade)

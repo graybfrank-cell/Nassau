@@ -35,14 +35,20 @@ export async function PATCH(
   if (scorecard.user_id !== user.id) return forbidden();
 
   const body = await req.json();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const data: any = {};
+  if (body.courseName !== undefined) data.course_name = body.courseName;
+  if (body.courseApiId !== undefined) data.course_api_id = body.courseApiId;
+  if (body.teeName !== undefined) data.tee_name = body.teeName;
+  if (body.date !== undefined) data.date = body.date;
+  if (body.pars !== undefined) data.pars = body.pars;
+  if (body.yardages !== undefined) data.yardages = body.yardages;
+  if (body.handicaps !== undefined) data.handicaps = body.handicaps;
+  if (body.players !== undefined) data.players = body.players;
+
   const updated = await prisma.scorecards.update({
     where: { id },
-    data: {
-      course_name: body.courseName,
-      date: body.date,
-      pars: body.pars,
-      players: body.players,
-    },
+    data,
   });
   return NextResponse.json(updated);
 }
