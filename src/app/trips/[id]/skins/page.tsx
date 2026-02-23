@@ -84,6 +84,62 @@ function calculateResults(game: SkinsGame) {
   return { holeResults, totals };
 }
 
+const currency = new Intl.NumberFormat("en-US", {
+  style: "currency",
+  currency: "USD",
+  minimumFractionDigits: 2,
+});
+
+function calculateSettlements(
+  game: SkinsGame,
+  totals: Record<string, { skins: number; winnings: number }>
+): { from: string; to: string; amount: number }[] {
+  const totalSkinsWon = Object.values(totals).reduce(
+    (sum, t) => sum + t.skins,
+    0
+  );
+  if (totalSkinsWon === 0) return [];
+
+  const totalPot = totalSkinsWon * game.stake;
+  const costPerPlayer = totalPot / game.players.length;
+
+  // Net per player: (skins won × stake) - cost per player
+  // Positive = owed money (creditor), negative = owes money (debtor)
+  const debtors: { id: string; remaining: number }[] = [];
+  const creditors: { id: string; remaining: number }[] = [];
+
+  for (const id of game.players) {
+    const net = (totals[id]?.skins || 0) * game.stake - costPerPlayer;
+    if (net < -0.005) {
+      debtors.push({ id, remaining: -net });
+    } else if (net > 0.005) {
+      creditors.push({ id, remaining: net });
+    }
+  }
+
+  debtors.sort((a, b) => b.remaining - a.remaining);
+  creditors.sort((a, b) => b.remaining - a.remaining);
+
+  const settlements: { from: string; to: string; amount: number }[] = [];
+  let i = 0;
+  let j = 0;
+  while (i < debtors.length && j < creditors.length) {
+    const payment = Math.min(debtors[i].remaining, creditors[j].remaining);
+    // Round final settlement amount, not intermediate steps
+    settlements.push({
+      from: debtors[i].id,
+      to: creditors[j].id,
+      amount: Math.round(payment * 100) / 100,
+    });
+    debtors[i].remaining -= payment;
+    creditors[j].remaining -= payment;
+    if (debtors[i].remaining < 0.005) i++;
+    if (creditors[j].remaining < 0.005) j++;
+  }
+
+  return settlements;
+}
+
 export default function SkinsPage() {
   const params = useParams();
   const tripId = params.id as string;
@@ -503,6 +559,45 @@ export default function SkinsPage() {
                             })}
                         </div>
                       </div>
+
+                      {/* Settlement */}
+                      {(() => {
+                        const settlements = calculateSettlements(game, totals);
+                        return (
+                          <div className="mt-4 rounded-lg bg-zinc-50 p-4">
+                            <h4 className="text-sm font-semibold text-zinc-700">
+                              Settlement
+                            </h4>
+                            {settlements.length === 0 ? (
+                              <p className="mt-3 text-sm text-zinc-400">
+                                All square!
+                              </p>
+                            ) : (
+                              <div className="mt-3 space-y-2">
+                                {settlements.map((s, i) => (
+                                  <div
+                                    key={i}
+                                    className="flex items-center justify-between rounded-lg bg-white px-3 py-2"
+                                  >
+                                    <p className="text-sm text-zinc-700">
+                                      <span className="font-medium">
+                                        {getMemberName(s.from)}
+                                      </span>
+                                      {" owes "}
+                                      <span className="font-medium">
+                                        {getMemberName(s.to)}
+                                      </span>
+                                    </p>
+                                    <span className="text-sm font-semibold text-emerald-600">
+                                      {currency.format(s.amount)}
+                                    </span>
+                                  </div>
+                                ))}
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })()}
                     </div>
                   )}
                 </div>
