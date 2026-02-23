@@ -68,6 +68,7 @@ export default function TripDetailPage() {
   const tripId = params.id as string;
 
   const [trip, setTrip] = useState<Trip | null>(null);
+  const [loading, setLoading] = useState(true);
   const [expenseCount, setExpenseCount] = useState(0);
   const [roundCount, setRoundCount] = useState(0);
   const [skinsCount, setSkinsCount] = useState(0);
@@ -104,7 +105,8 @@ export default function TripDetailPage() {
   const [inviteSuccess, setInviteSuccess] = useState<string | null>(null);
 
   useEffect(() => {
-    refresh();
+    setLoading(true);
+    refresh().finally(() => setLoading(false));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tripId]);
 
@@ -282,6 +284,14 @@ export default function TripDetailPage() {
       setError(err instanceof Error ? err.message : "Failed to send invites");
     }
     setInviteSending(false);
+  }
+
+  if (loading) {
+    return (
+      <div className="flex min-h-[calc(100vh-64px)] items-center justify-center">
+        <p className="text-sm text-zinc-400">Loading...</p>
+      </div>
+    );
   }
 
   if (!trip) {
