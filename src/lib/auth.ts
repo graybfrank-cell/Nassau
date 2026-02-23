@@ -30,16 +30,26 @@ export async function getTripMembership(tripId: string, userId: string) {
   });
   if (!trip) return null;
 
-  // Auto-create the missing member row for the creator
-  return prisma.tripMembers.create({
-    data: {
-      trip_id: tripId,
-      user_id: userId,
-      name: "Captain",
-      role: "CAPTAIN",
-      rsvp_status: "GOING",
-    },
-  });
+  // Auto-create the missing member row for the creator.
+  // Use try/catch to handle race conditions: when multiple parallel requests
+  // (e.g. expenses + rounds + skins + scorecards) all arrive simultaneously,
+  // the first create succeeds but the others hit a unique constraint error.
+  try {
+    return await prisma.tripMembers.create({
+      data: {
+        trip_id: tripId,
+        user_id: userId,
+        name: "Captain",
+        role: "CAPTAIN",
+        rsvp_status: "GOING",
+      },
+    });
+  } catch {
+    // Another concurrent request already created the row — fetch it
+    return prisma.tripMembers.findFirst({
+      where: { trip_id: tripId, user_id: userId },
+    });
+  }
 }
 
 /**
