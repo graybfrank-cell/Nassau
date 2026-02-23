@@ -25,18 +25,23 @@ model Profiles {
 
 // ─── trips ───────────────────────────────────────────────────
 model Trips {
-  id             String   @id @default(uuid()) @db.Uuid
-  created_by     String   @db.Uuid
-  name           String
-  destination    String   @default("")
-  start_date     String   @default("")
-  end_date       String   @default("")
-  arrival_time   String   @default("")
-  departure_time String   @default("")
-  lodging        Json     @default("{}")
-  invite_code    String?  @unique
-  created_at     DateTime @default(now()) @db.Timestamptz()
-  updated_at     DateTime @default(now()) @db.Timestamptz()
+  id                String   @id @default(uuid()) @db.Uuid
+  created_by        String   @db.Uuid
+  name              String
+  destination       String   @default("")
+  start_date        String   @default("")
+  end_date          String   @default("")
+  arrival_time      String   @default("")
+  departure_time    String   @default("")
+  lodging           Json     @default("{}")
+  invite_code       String?  @unique
+  share_code        String?  @unique
+  vibe              String?
+  budget_tier       String?
+  group_size_target Int?
+  notes             String?
+  created_at        DateTime @default(now()) @db.Timestamptz()
+  updated_at        DateTime @default(now()) @db.Timestamptz()
 
   creator        Profiles         @relation(fields: [created_by], references: [id], onDelete: Cascade)
   members        TripMembers[]
@@ -52,15 +57,18 @@ model Trips {
 
 // ─── trip_members ────────────────────────────────────────────
 model TripMembers {
-  id             String   @id @default(uuid()) @db.Uuid
-  trip_id        String   @db.Uuid
-  user_id        String?  @db.Uuid
-  name           String   @default("")
-  handicap       Decimal  @default(0)
-  role           String   @default("MEMBER")
-  rsvp_status    String   @default("PENDING")
-  payment_status String   @default("UNPAID")
-  created_at     DateTime @default(now()) @db.Timestamptz()
+  id             String    @id @default(uuid()) @db.Uuid
+  trip_id        String    @db.Uuid
+  user_id        String?   @db.Uuid
+  email          String?
+  name           String    @default("")
+  handicap       Decimal   @default(0)
+  role           String    @default("MEMBER")
+  rsvp_status    String    @default("PENDING")
+  payment_status String    @default("UNPAID")
+  invited_at     DateTime? @db.Timestamptz()
+  rsvp_at        DateTime? @db.Timestamptz()
+  created_at     DateTime  @default(now()) @db.Timestamptz()
 
   trip          Trips           @relation(fields: [trip_id], references: [id], onDelete: Cascade)
   user          Profiles?       @relation(fields: [user_id], references: [id], onDelete: SetNull)
