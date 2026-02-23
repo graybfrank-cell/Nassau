@@ -112,7 +112,7 @@ export async function removeItineraryItem(
 // --- Expenses ---
 
 export async function getExpenses(tripId: string): Promise<Expense[]> {
-  const res = await fetch(`/api/expenses?tripId=${tripId}`);
+  const res = await fetch(`/api/trips/${tripId}/expenses`);
   if (!res.ok) return [];
   const rows = await res.json();
   return rows.map(mapExpense);
@@ -128,11 +128,10 @@ export async function addExpense(data: {
   const perPerson = data.splitAmong.length > 0
     ? data.amount / data.splitAmong.length
     : 0;
-  const res = await fetch("/api/expenses", {
+  const res = await fetch(`/api/trips/${data.tripId}/expenses`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
-      tripId: data.tripId,
       description: data.description,
       amount: data.amount,
       paidBy: data.paidBy,
@@ -155,7 +154,7 @@ export async function deleteExpense(expenseId: string): Promise<void> {
 // --- Rounds / Pairings ---
 
 export async function getRounds(tripId: string): Promise<Round[]> {
-  const res = await fetch(`/api/rounds?tripId=${tripId}`);
+  const res = await fetch(`/api/trips/${tripId}/rounds`);
   if (!res.ok) return [];
   const rows = await res.json();
   return rows.map(mapRound);
@@ -169,7 +168,7 @@ export async function createRound(data: {
   groupSize?: number;
   groups: string[][];
 }): Promise<Round> {
-  const res = await fetch("/api/rounds", {
+  const res = await fetch(`/api/trips/${data.tripId}/rounds`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(data),
@@ -199,7 +198,7 @@ export async function deleteRound(roundId: string): Promise<void> {
 // --- Skins Games ---
 
 export async function getSkinsGames(tripId: string): Promise<SkinsGame[]> {
-  const res = await fetch(`/api/skins?tripId=${tripId}`);
+  const res = await fetch(`/api/trips/${tripId}/skins`);
   if (!res.ok) return [];
   const rows = await res.json();
   return rows.map(mapSkinsGame);
@@ -212,11 +211,10 @@ export async function createSkinsGame(data: {
   players: string[];
   holes: { number: number; scores: Record<string, number> }[];
 }): Promise<SkinsGame> {
-  const res = await fetch("/api/skins", {
+  const res = await fetch(`/api/trips/${data.tripId}/skins`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
-      tripId: data.tripId,
       name: data.name,
       buyIn: data.stake,
       players: data.players,
@@ -258,10 +256,15 @@ export async function getScorecards(params: {
   userId?: string;
   tripId?: string;
 }): Promise<Scorecard[]> {
-  const query = new URLSearchParams();
-  if (params.userId) query.set("userId", params.userId);
-  if (params.tripId) query.set("tripId", params.tripId);
-  const res = await fetch(`/api/scorecards?${query}`);
+  let url: string;
+  if (params.tripId) {
+    url = `/api/trips/${params.tripId}/scorecards`;
+  } else {
+    const query = new URLSearchParams();
+    if (params.userId) query.set("userId", params.userId);
+    url = `/api/scorecards?${query}`;
+  }
+  const res = await fetch(url);
   if (!res.ok) return [];
   const rows = await res.json();
   return rows.map(mapScorecard);
@@ -276,7 +279,10 @@ export async function getScorecard(id: string): Promise<Scorecard | null> {
 export async function createScorecard(
   scorecard: Omit<Scorecard, "id" | "createdAt">
 ): Promise<Scorecard> {
-  const res = await fetch("/api/scorecards", {
+  const url = scorecard.tripId
+    ? `/api/trips/${scorecard.tripId}/scorecards`
+    : "/api/scorecards";
+  const res = await fetch(url, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(scorecard),
