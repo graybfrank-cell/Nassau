@@ -317,6 +317,9 @@ function mapMember(row: any): Member {
     id: row.id,
     name: row.name || "",
     handicap: Number(row.handicap) || 0,
+    email: row.email || undefined,
+    role: row.role || undefined,
+    rsvpStatus: row.rsvp_status || undefined,
   };
 }
 

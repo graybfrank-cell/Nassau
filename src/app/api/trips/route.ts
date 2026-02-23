@@ -1,6 +1,18 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getUser, unauthorized } from "@/lib/auth";
+import crypto from "crypto";
+
+function generateShareCode(): string {
+  // 8 uppercase alphanumeric chars, no ambiguous characters (0/O, 1/l/I)
+  const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+  const bytes = crypto.randomBytes(8);
+  let code = "";
+  for (let i = 0; i < 8; i++) {
+    code += chars[bytes[i] % chars.length];
+  }
+  return code;
+}
 
 export async function GET(_req: NextRequest) {
   const user = await getUser();
@@ -24,6 +36,46 @@ export async function POST(req: NextRequest) {
   if (!user) return unauthorized();
 
   const body = await req.json();
+
+  // Generate a unique share code (retry on collision)
+  let shareCode = generateShareCode();
+  for (let i = 0; i < 5; i++) {
+    const existing = await prisma.trips.findUnique({
+      where: { share_code: shareCode },
+    });
+    if (!existing) break;
+    shareCode = generateShareCode();
+  }
+
+  // Calculate days for itinerary placeholder items
+  const itineraryItems: {
+    day_number: number;
+    date: string;
+    title: string;
+    type: string;
+    sort_order: number;
+  }[] = [];
+  if (body.startDate && body.endDate) {
+    const start = new Date(body.startDate + "T12:00:00");
+    const end = new Date(body.endDate + "T12:00:00");
+    const days =
+      Math.round(
+        (end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)
+      ) + 1;
+    for (let d = 0; d < days && d < 14; d++) {
+      const date = new Date(start);
+      date.setDate(date.getDate() + d);
+      const dateStr = date.toISOString().split("T")[0];
+      itineraryItems.push({
+        day_number: d + 1,
+        date: dateStr,
+        title: `Day ${d + 1}`,
+        type: "other",
+        sort_order: d,
+      });
+    }
+  }
+
   const trip = await prisma.trips.create({
     data: {
       created_by: user.id,
@@ -31,6 +83,11 @@ export async function POST(req: NextRequest) {
       destination: body.destination || "",
       start_date: body.startDate || "",
       end_date: body.endDate || "",
+      share_code: shareCode,
+      vibe: body.vibe || null,
+      budget_tier: body.budgetTier || null,
+      group_size_target: body.groupSizeTarget || null,
+      notes: body.notes || null,
       members: {
         create: {
           user_id: user.id,
@@ -39,8 +96,14 @@ export async function POST(req: NextRequest) {
           rsvp_status: "GOING",
         },
       },
+      ...(itineraryItems.length > 0
+        ? { itineraryItems: { create: itineraryItems } }
+        : {}),
     },
-    include: { members: { include: { user: true } } },
+    include: {
+      members: { include: { user: true } },
+      itineraryItems: { orderBy: { sort_order: "asc" } },
+    },
   });
   return NextResponse.json(trip, { status: 201 });
 }

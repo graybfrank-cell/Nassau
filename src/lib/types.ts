@@ -2,6 +2,9 @@ export interface Member {
   id: string;
   name: string;
   handicap: number;
+  email?: string;
+  role?: string;
+  rsvpStatus?: string;
 }
 
 export interface Lodging {
