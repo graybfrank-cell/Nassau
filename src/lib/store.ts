@@ -317,6 +317,9 @@ function mapMember(row: any): Member {
     id: row.id,
     name: row.name || "",
     handicap: Number(row.handicap) || 0,
+    email: row.email || undefined,
+    role: row.role || undefined,
+    rsvpStatus: row.rsvp_status || undefined,
   };
 }
 
@@ -424,8 +427,12 @@ function mapScorecard(row: any): Scorecard {
     userId: row.user_id,
     tripId: row.trip_id || null,
     courseName: row.course_name || "",
+    courseApiId: row.course_api_id || null,
+    teeName: row.tee_name || "",
     date: row.date || "",
     pars: row.pars || [],
+    yardages: row.yardages || [],
+    handicaps: row.handicaps || [],
     players: row.players || [],
     createdAt: row.created_at,
   };
