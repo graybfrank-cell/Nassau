@@ -3,7 +3,7 @@ import { getUser, unauthorized } from "@/lib/auth";
 import knowledgeBase from "@/data/nassau-knowledge-base.json";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-type Destination = (typeof knowledgeBase.destinations)[number] & { score?: number; [key: string]: any };
+type Destination = (typeof knowledgeBase.destinations)[number] & { score?: number };
 
 interface IdeateRequest {
   vibe: string;
@@ -19,47 +19,76 @@ interface IdeateRequest {
   notes?: string;
 }
 
+// Map user-facing vibe IDs to knowledge base vibe tags
+const VIBE_TO_KB_TAGS: Record<string, string[]> = {
+  competitive: ["golf-purist", "traditional", "bucket-list", "walking-only"],
+  party: ["nightlife", "bachelor-party-friendly", "live-music", "entertainment", "casino"],
+  relaxed: ["relaxed", "laid-back", "coastal", "beach", "scenic"],
+  "father-son": ["father-son", "traditional", "bucket-list", "historic"],
+  corporate: ["resort", "premium", "luxury"],
+  "bucket-list": ["bucket-list", "once-in-a-lifetime", "special-occasion", "international"],
+};
+
+// Map user-facing budget tiers to KB price_tier values
+const BUDGET_TO_KB_TIERS: Record<string, string[]> = {
+  budget: ["budget"],
+  mid: ["budget", "mid"],
+  premium: ["mid", "mid-high", "premium"],
+  luxury: ["premium", "mid-high", "luxury"],
+};
+
 // Map priority labels to destination features for scoring
-const PRIORITY_MATCHES: Record<string, (d: Destination) => boolean> = {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const PRIORITY_MATCHES: Record<string, (d: any) => boolean> = {
   "Elite courses": (d) =>
     d.top_courses?.some(
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (c: any) => c.rating >= 4.6
+      (c: any) => (c.condition_rating ?? 0) >= 4.5 || (c.scenery_rating ?? 0) >= 4.5
     ) ?? false,
   "Great food scene": (d) =>
-    (d.dining?.length ?? 0) >= 4,
+    (d.dining?.length ?? 0) >= 4 ||
+    d.vibe?.includes("food-scene"),
   "Beach access": (d) =>
-    d.destination?.toLowerCase().includes("beach") ||
-    d.region === "Southeast" ||
-    d.destination?.includes("San Diego") ||
-    d.destination?.includes("Cabo") ||
-    d.destination?.includes("Hilton Head") ||
-    d.destination?.includes("Gulf Shores"),
+    d.vibe?.includes("beach") ||
+    d.vibe?.includes("coastal") ||
+    d.vibe?.includes("ocean") ||
+    d.destination?.toLowerCase().includes("beach"),
   "Nightlife": (d) =>
-    d.vibe_tags?.includes("party") ?? false,
+    d.vibe?.includes("nightlife") ||
+    d.vibe?.includes("entertainment") ||
+    d.vibe?.includes("bachelor-party-friendly"),
   "Best value": (d) =>
-    d.price_tier === "budget",
+    d.price_tier === "budget" ||
+    d.vibe?.includes("budget-friendly"),
   "Perfect weather": (d) =>
-    d.region === "Southwest" || d.region === "Southeast",
+    d.region === "Southwest" || d.region === "Desert" || d.region === "Mexico",
   "Scenic beauty": (d) =>
-    d.vibe_tags?.includes("relaxed") || d.vibe_tags?.includes("bucket-list"),
+    d.vibe?.includes("scenic") ||
+    d.vibe?.includes("ocean") ||
+    d.vibe?.includes("mountain") ||
+    d.vibe?.includes("Ozark-scenery"),
   "Craft beer/bourbon": (d) =>
+    d.vibe?.includes("bourbon-trail") ||
+    d.vibe?.includes("live-music") ||
     d.destination?.includes("Austin") ||
-    d.destination?.includes("Savannah") ||
-    d.destination?.includes("Branson"),
+    d.destination?.includes("Savannah"),
   "Casino/entertainment": (d) =>
-    d.destination?.includes("Las Vegas") ||
-    d.destination?.includes("Mesquite"),
+    d.vibe?.includes("casino") ||
+    d.vibe?.includes("entertainment") ||
+    d.destination?.includes("Las Vegas"),
   "Off the beaten path": (d) =>
+    d.vibe?.includes("hidden-gem") ||
+    d.vibe?.includes("hidden-gem-vibe") ||
+    d.vibe?.includes("midwest-getaway") ||
     d.destination?.includes("Bandon") ||
     d.destination?.includes("Streamsong") ||
     d.destination?.includes("Sand Valley"),
 };
 
-function getMonthFromDate(dateStr: string): string | null {
+function getMonthAbbrev(dateStr: string): string | null {
   try {
     const date = new Date(dateStr + "T12:00:00");
-    return date.toLocaleString("en-US", { month: "long" });
+    return date.toLocaleString("en-US", { month: "short" });
   } catch {
     return null;
   }
@@ -67,51 +96,52 @@ function getMonthFromDate(dateStr: string): string | null {
 
 function seasonToMonths(season: string): string[] {
   const map: Record<string, string[]> = {
-    spring: ["March", "April", "May"],
-    summer: ["June", "July", "August"],
-    fall: ["September", "October", "November"],
-    winter: ["December", "January", "February"],
+    spring: ["Mar", "Apr", "May"],
+    summer: ["Jun", "Jul", "Aug"],
+    fall: ["Sep", "Oct", "Nov"],
+    winter: ["Dec", "Jan", "Feb"],
   };
   return map[season] || [];
 }
 
-function scoreDestination(dest: Destination, req: IdeateRequest): number {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function scoreDestination(dest: any, req: IdeateRequest): number {
   let score = 0;
 
   // Vibe match (highest weight)
-  if (dest.vibe_tags?.includes(req.vibe)) score += 30;
+  const kbVibes: string[] = dest.vibe || [];
+  const matchingTags = VIBE_TO_KB_TAGS[req.vibe] || [];
+  const vibeOverlap = kbVibes.filter((v: string) => matchingTags.includes(v)).length;
+  if (vibeOverlap > 0) score += 10 + vibeOverlap * 10; // 20-50 points
 
   // Budget match
-  const budgetMap: Record<string, string[]> = {
-    budget: ["budget"],
-    mid: ["budget", "mid"],
-    premium: ["mid", "premium"],
-    luxury: ["premium", "luxury"],
-  };
-  if (budgetMap[req.budget_tier]?.includes(dest.price_tier)) score += 20;
+  const allowedTiers = BUDGET_TO_KB_TIERS[req.budget_tier] || [];
+  if (allowedTiers.includes(dest.price_tier)) score += 20;
 
   // Season/date match
   let travelMonths: string[] = [];
   if (req.dates.start_date) {
-    const m = getMonthFromDate(req.dates.start_date);
+    const m = getMonthAbbrev(req.dates.start_date);
     if (m) travelMonths.push(m);
   }
   if (req.dates.season && req.dates.season !== "flexible") {
     travelMonths = [...travelMonths, ...seasonToMonths(req.dates.season)];
   }
   if (travelMonths.length > 0) {
-    const inBest = travelMonths.some((m) => dest.best_months?.includes(m));
-    const inAvoid = travelMonths.some((m) => dest.avoid_months?.includes(m));
+    const bestMonths: string[] = dest.best_months || [];
+    const avoidMonths: string[] = dest.avoid_months || [];
+    const inBest = travelMonths.some((m) => bestMonths.includes(m));
+    const inAvoid = travelMonths.some((m) => avoidMonths.includes(m));
     if (inBest) score += 15;
     if (inAvoid) score -= 25; // Strong penalty for avoid months
   } else {
-    // Flexible dates — slight bonus
-    score += 5;
+    score += 5; // Flexible dates — slight bonus
   }
 
   // Group size match
   if (dest.group_size_sweet_spot) {
-    const [min, max] = dest.group_size_sweet_spot.split("-").map(Number);
+    const parts = dest.group_size_sweet_spot.split("-").map(Number);
+    const [min, max] = [parts[0] || 0, parts[1] || parts[0] || 16];
     if (req.group_size >= min && req.group_size <= max) score += 10;
     else if (req.group_size <= max + 4) score += 5;
   }
@@ -125,16 +155,15 @@ function scoreDestination(dest: Destination, req: IdeateRequest): number {
   return score;
 }
 
-function filterAndRankDestinations(req: IdeateRequest): Destination[] {
+function filterAndRankDestinations(req: IdeateRequest) {
   const scored = knowledgeBase.destinations.map((dest) => ({
     ...dest,
-    score: scoreDestination(dest as Destination, req),
+    score: scoreDestination(dest, req),
   }));
 
-  // Sort by score descending
   scored.sort((a, b) => b.score - a.score);
 
-  // Return top 5-8 (enough for variety, not too many tokens)
+  // Return top 5-8
   return scored.slice(0, Math.min(8, Math.max(5, scored.length)));
 }
 
