@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getUser, unauthorized } from "@/lib/auth";
+import { ensureDbColumns } from "@/lib/auto-migrate";
 import crypto from "crypto";
 
 function generateShareCode(): string {
@@ -18,17 +19,37 @@ export async function GET(_req: NextRequest) {
   const user = await getUser();
   if (!user) return unauthorized();
 
-  const trips = await prisma.trips.findMany({
-    where: {
-      OR: [
-        { created_by: user.id },
-        { members: { some: { user_id: user.id } } },
-      ],
-    },
-    include: { members: { include: { user: true } } },
-    orderBy: { created_at: "desc" },
-  });
-  return NextResponse.json(trips);
+  for (let attempt = 0; attempt < 2; attempt++) {
+    try {
+      const trips = await prisma.trips.findMany({
+        where: {
+          OR: [
+            { created_by: user.id },
+            { members: { some: { user_id: user.id } } },
+          ],
+        },
+        include: { members: { include: { user: true } } },
+        orderBy: { created_at: "desc" },
+      });
+      return NextResponse.json(trips);
+    } catch (err) {
+      if (attempt === 0) {
+        console.error("GET /api/trips failed, attempting auto-migration:", err);
+        try {
+          await ensureDbColumns();
+        } catch {
+          // Migration failed — fall through to error
+        }
+        continue;
+      }
+      console.error("GET /api/trips error:", err);
+      const message =
+        err instanceof Error ? err.message : "Failed to load trips";
+      return NextResponse.json({ error: message }, { status: 500 });
+    }
+  }
+
+  return NextResponse.json({ error: "Failed to load trips" }, { status: 500 });
 }
 
 export async function POST(req: NextRequest) {
@@ -67,9 +88,7 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    // First try: create with all new fields (share_code, vibe, etc.)
-    // If the DB columns don't exist yet (prisma db push hasn't run),
-    // fall back to creating with only the original fields.
+    // First try: auto-migrate if needed, then create with all fields
     let trip;
     try {
       const shareCode = generateShareCode();
@@ -103,35 +122,70 @@ export async function POST(req: NextRequest) {
         },
       });
     } catch (fullErr) {
-      // Fallback: create with only the original columns
+      // Likely missing columns — auto-migrate and retry with all fields
       console.error(
-        "Trip creation with new fields failed, falling back to basic fields:",
+        "Trip creation failed, attempting auto-migration:",
         fullErr
       );
-      trip = await prisma.trips.create({
-        data: {
-          created_by: user.id,
-          name: body.name,
-          destination: body.destination || "",
-          start_date: body.startDate || "",
-          end_date: body.endDate || "",
-          members: {
-            create: {
-              user_id: user.id,
-              name: user.email?.split("@")[0] || "Captain",
-              role: "CAPTAIN",
-              rsvp_status: "GOING",
+      try {
+        await ensureDbColumns();
+        const shareCode = generateShareCode();
+        trip = await prisma.trips.create({
+          data: {
+            created_by: user.id,
+            name: body.name,
+            destination: body.destination || "",
+            start_date: body.startDate || "",
+            end_date: body.endDate || "",
+            share_code: shareCode,
+            vibe: body.vibe || null,
+            budget_tier: body.budgetTier || null,
+            group_size_target: body.groupSizeTarget || null,
+            notes: body.notes || null,
+            members: {
+              create: {
+                user_id: user.id,
+                name: user.email?.split("@")[0] || "Captain",
+                role: "CAPTAIN",
+                rsvp_status: "GOING",
+              },
             },
+            ...(itineraryItems.length > 0
+              ? { itineraryItems: { create: itineraryItems } }
+              : {}),
           },
-          ...(itineraryItems.length > 0
-            ? { itineraryItems: { create: itineraryItems } }
-            : {}),
-        },
-        include: {
-          members: { include: { user: true } },
-          itineraryItems: { orderBy: { sort_order: "asc" } },
-        },
-      });
+          include: {
+            members: { include: { user: true } },
+            itineraryItems: { orderBy: { sort_order: "asc" } },
+          },
+        });
+      } catch {
+        // Auto-migration failed too — last resort: create with basic fields only
+        trip = await prisma.trips.create({
+          data: {
+            created_by: user.id,
+            name: body.name,
+            destination: body.destination || "",
+            start_date: body.startDate || "",
+            end_date: body.endDate || "",
+            members: {
+              create: {
+                user_id: user.id,
+                name: user.email?.split("@")[0] || "Captain",
+                role: "CAPTAIN",
+                rsvp_status: "GOING",
+              },
+            },
+            ...(itineraryItems.length > 0
+              ? { itineraryItems: { create: itineraryItems } }
+              : {}),
+          },
+          include: {
+            members: { include: { user: true } },
+            itineraryItems: { orderBy: { sort_order: "asc" } },
+          },
+        });
+      }
     }
 
     return NextResponse.json(trip, { status: 201 });
