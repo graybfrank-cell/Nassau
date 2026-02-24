@@ -27,6 +27,9 @@ export async function PATCH(
   if (body.time !== undefined) data.time = body.time;
   if (body.type !== undefined) data.type = body.type;
   if (body.cost !== undefined) data.cost = body.cost;
+  if (body.phone !== undefined) data.phone = body.phone;
+  if (body.website !== undefined) data.website = body.website;
+  if (body.email !== undefined) data.email = body.email;
 
   const updated = await prisma.itineraryItems.update({
     where: { id: itemId },
