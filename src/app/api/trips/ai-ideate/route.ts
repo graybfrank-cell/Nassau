@@ -227,8 +227,10 @@ function trimDestinationForPrompt(dest: any) {
       price_range: d.price_range,
       vibe: d.vibe,
     })),
-    insider_tips: dest.insider_tips?.slice(0, 2),
-    sample_itineraries: dest.sample_itineraries?.slice(0, 1),
+    insider_tips: Array.isArray(dest.insider_tips) ? dest.insider_tips.slice(0, 2) : dest.insider_tips,
+    sample_itineraries: dest.sample_itineraries && typeof dest.sample_itineraries === "object" && !Array.isArray(dest.sample_itineraries)
+      ? Object.fromEntries(Object.entries(dest.sample_itineraries).slice(0, 1))
+      : dest.sample_itineraries,
     score: dest.score,
   };
 }
