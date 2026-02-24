@@ -259,6 +259,8 @@ RULES:
 - Include specific course names, real greens fees, real restaurants
 - Calculate realistic per-person costs based on the knowledge base data
 - If the requested dates fall in a destination's "avoid months," DON'T recommend it
+- Keep your response concise. Each trip concept should be complete but not verbose. Limit itinerary items to 3-4 per day.
+- CRITICAL: You must complete the entire JSON array. Do not stop mid-response.
 
 OUTPUT FORMAT — respond with ONLY this JSON array, no other text or markdown:
 [
@@ -411,7 +413,7 @@ Generate 2-3 distinct trip concepts. Make them specific, actionable, and excitin
       },
       body: JSON.stringify({
         model: "claude-sonnet-4-20250514",
-        max_tokens: 4000,
+        max_tokens: 8000,
         system: systemPrompt,
         messages: [{ role: "user", content: userPrompt }],
       }),
