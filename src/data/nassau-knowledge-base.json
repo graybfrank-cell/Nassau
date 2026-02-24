@@ -1,0 +1,5796 @@
+{
+  "version": "1.0",
+  "last_updated": "2026-02-22",
+  "total_destinations": 20,
+  "total_courses": 119,
+  "trip_structure_rules": {
+    "rounds_per_day": {
+      "max": "36 holes (2 rounds) per day, only if group is under 50 and conditions allow",
+      "default": "18 holes per day",
+      "arrival_day": "Never schedule 18 if flight lands after 10am. Suggest par-3, range, or putting contest instead.",
+      "departure_day": "Never schedule 18 if flight leaves before 4pm. Early morning round OK if late flight.",
+      "rest_day": "Recommend half-day or rest day for trips 4+ nights"
+    },
+    "tee_time_spacing": {
+      "groups_4_to_8": "Book consecutive tee times 8-10 min apart",
+      "groups_8_to_16": "Request shotgun start or block tee times",
+      "morning_rounds": "First tee 7:00-8:30am (earlier in summer/hot climates)",
+      "afternoon_rounds": "12:00-2:00pm tee times",
+      "buffer": "Always build in 30 min before tee time for range warm-up"
+    },
+    "travel_days": {
+      "day_1": "Travel + settle in. Casual 9-hole, putting contest, or par-3. Welcome dinner.",
+      "last_day": "Checkout + travel. No golf unless early morning round and late flight.",
+      "airport_buffer": "At least 3 hours between last putt and airport departure"
+    },
+    "housing_rules": {
+      "max_per_bedroom": "2 adults per bedroom",
+      "large_groups": "Groups of 8+: consider two adjacent houses over one mansion (bathroom ratio matters)",
+      "airbnb_vs_resort": "Airbnb/VRBO is cheaper for 8+ people, every time. Resort is worth it for 4-6 or premium trips.",
+      "kitchen_savings": "House with kitchen saves $15-20/person/day on breakfasts and casual meals"
+    },
+    "budget_allocation": {
+      "golf": "35-45% \u2014 biggest line item",
+      "lodging": "25-35% \u2014 per-night divided by group",
+      "food_drink": "15-20% \u2014 2 nice dinners + casual rest",
+      "transportation": "5-10% \u2014 flights separate, ground transport shared",
+      "entertainment": "5% \u2014 activities, tips, incidentals"
+    }
+  },
+  "seasonal_calendar": {
+    "jan": {
+      "best_regions": [
+        "Southwest",
+        "Southeast (FL)",
+        "International (Cabo, Scotland off-season)"
+      ],
+      "avoid": [
+        "Midwest",
+        "Northeast",
+        "Mountain"
+      ]
+    },
+    "feb": {
+      "best_regions": [
+        "Southwest",
+        "Southeast",
+        "International (Cabo)"
+      ],
+      "avoid": [
+        "Midwest",
+        "Northeast",
+        "Mountain"
+      ]
+    },
+    "mar": {
+      "best_regions": [
+        "Southwest",
+        "Southeast",
+        "Gulf Coast"
+      ],
+      "avoid": [
+        "Mountain (still snow)"
+      ]
+    },
+    "apr": {
+      "best_regions": [
+        "Southeast",
+        "Southwest",
+        "Gulf Coast",
+        "Mid-Atlantic"
+      ],
+      "avoid": [
+        "Mountain (limited)"
+      ]
+    },
+    "may": {
+      "best_regions": [
+        "Everywhere except deep South (getting hot)",
+        "Mountain opening",
+        "Scotland opening"
+      ],
+      "avoid": []
+    },
+    "jun": {
+      "best_regions": [
+        "Mountain",
+        "Pacific NW",
+        "Scotland",
+        "Midwest"
+      ],
+      "avoid": [
+        "Southwest (too hot)",
+        "Deep South (humidity)"
+      ]
+    },
+    "jul": {
+      "best_regions": [
+        "Mountain",
+        "Pacific NW",
+        "Scotland",
+        "Midwest"
+      ],
+      "avoid": [
+        "Southwest",
+        "Southeast",
+        "Gulf Coast"
+      ]
+    },
+    "aug": {
+      "best_regions": [
+        "Mountain",
+        "Pacific NW",
+        "Scotland",
+        "Midwest"
+      ],
+      "avoid": [
+        "Southwest",
+        "Southeast",
+        "Gulf Coast",
+        "Cabo (hurricanes)"
+      ]
+    },
+    "sep": {
+      "best_regions": [
+        "Everywhere \u2014 best month in golf"
+      ],
+      "avoid": [
+        "Cabo (hurricanes)"
+      ]
+    },
+    "oct": {
+      "best_regions": [
+        "Southwest",
+        "Southeast",
+        "Gulf Coast",
+        "Midwest (early Oct)"
+      ],
+      "avoid": [
+        "Mountain (closing)",
+        "Scotland (getting cold)"
+      ]
+    },
+    "nov": {
+      "best_regions": [
+        "Southwest",
+        "Southeast",
+        "Gulf Coast",
+        "International"
+      ],
+      "avoid": [
+        "Midwest",
+        "Mountain",
+        "Northeast"
+      ]
+    },
+    "dec": {
+      "best_regions": [
+        "Southwest",
+        "FL",
+        "International"
+      ],
+      "avoid": [
+        "Midwest",
+        "Mountain",
+        "Northeast",
+        "Scotland"
+      ]
+    }
+  },
+  "group_size_guidance": {
+    "2_to_4": {
+      "best_for": "Bucket list trips, premium experiences, father-son, couples",
+      "destinations": [
+        "Pebble Beach",
+        "Pinehurst",
+        "Bandon Dunes",
+        "St. Andrews",
+        "Kiawah Island"
+      ],
+      "lodging": "Resort or boutique hotel",
+      "logistics": "Easy \u2014 one tee time, one dinner reservation"
+    },
+    "4_to_8": {
+      "best_for": "Most golf trips. Sweet spot for logistics and fun.",
+      "destinations": [
+        "Any destination works well at this size"
+      ],
+      "lodging": "Airbnb house or resort villas",
+      "logistics": "Manageable \u2014 1-2 tee times, most restaurants handle this"
+    },
+    "8_to_12": {
+      "best_for": "The classic boys trip. Big enough for competition, small enough to manage.",
+      "destinations": [
+        "Scottsdale",
+        "Las Vegas",
+        "Myrtle Beach",
+        "Austin",
+        "Gulf Shores",
+        "Branson",
+        "Mesquite"
+      ],
+      "lodging": "Large Airbnb house or 2 adjacent units",
+      "logistics": "Need block tee times. Split into groups for some dinners. Designate a trip captain."
+    },
+    "12_to_16": {
+      "best_for": "Reunion trips, bachelor parties, corporate outings",
+      "destinations": [
+        "Myrtle Beach",
+        "Gulf Shores",
+        "Mesquite",
+        "Branson"
+      ],
+      "lodging": "Two houses or condo block. Resort condos work well.",
+      "logistics": "Shotgun starts ideal. Need bus/shuttle for transport. Multiple dinner reservations or private dining."
+    }
+  },
+  "budget_tier_definitions": {
+    "budget": {
+      "per_person_per_day": "Under $175",
+      "greens_fees": "Under $100 average",
+      "lodging": "Under $50/person/night",
+      "destinations": [
+        "Myrtle Beach",
+        "Gulf Shores",
+        "Branson",
+        "Mesquite"
+      ]
+    },
+    "mid": {
+      "per_person_per_day": "$175-400",
+      "greens_fees": "$100-250 average",
+      "lodging": "$50-125/person/night",
+      "destinations": [
+        "Scottsdale",
+        "Las Vegas",
+        "Austin",
+        "San Diego",
+        "Hilton Head",
+        "Palm Springs",
+        "Savannah",
+        "Lake Tahoe"
+      ]
+    },
+    "premium": {
+      "per_person_per_day": "$400-650",
+      "greens_fees": "$250-450 average",
+      "lodging": "$125-250/person/night",
+      "destinations": [
+        "Pinehurst",
+        "Kiawah Island",
+        "Bandon Dunes",
+        "Streamsong",
+        "Cabo San Lucas",
+        "Wisconsin Dells/Sand Valley"
+      ]
+    },
+    "luxury": {
+      "per_person_per_day": "$650+",
+      "greens_fees": "$400+ average",
+      "lodging": "$250+/person/night",
+      "destinations": [
+        "Pebble Beach",
+        "St. Andrews"
+      ]
+    }
+  },
+  "vibe_tags": {
+    "bachelor-party-friendly": [
+      "Scottsdale",
+      "Las Vegas",
+      "Myrtle Beach",
+      "Austin"
+    ],
+    "bucket-list": [
+      "Pebble Beach",
+      "Pinehurst",
+      "Bandon Dunes",
+      "St. Andrews",
+      "Kiawah Island"
+    ],
+    "budget-friendly": [
+      "Myrtle Beach",
+      "Gulf Shores",
+      "Branson",
+      "Mesquite"
+    ],
+    "food-scene": [
+      "Austin",
+      "Savannah",
+      "San Diego"
+    ],
+    "nightlife": [
+      "Scottsdale",
+      "Las Vegas",
+      "Austin"
+    ],
+    "golf-purist": [
+      "Bandon Dunes",
+      "Pinehurst",
+      "Streamsong",
+      "Sand Valley",
+      "St. Andrews"
+    ],
+    "beach": [
+      "San Diego",
+      "Hilton Head",
+      "Gulf Shores",
+      "Cabo San Lucas"
+    ],
+    "resort": [
+      "Scottsdale",
+      "Hilton Head",
+      "Kiawah Island",
+      "Palm Springs"
+    ],
+    "family-friendly": [
+      "Branson",
+      "Hilton Head"
+    ],
+    "father-son": [
+      "Pinehurst",
+      "Pebble Beach",
+      "St. Andrews"
+    ],
+    "international": [
+      "Cabo San Lucas",
+      "St. Andrews"
+    ],
+    "mountain": [
+      "Lake Tahoe",
+      "Branson"
+    ],
+    "desert": [
+      "Scottsdale",
+      "Palm Springs",
+      "Las Vegas",
+      "Mesquite"
+    ]
+  },
+  "pricing_notes": {
+    "disclaimer": "All prices are estimates based on publicly available rates as of early 2026. Actual prices vary by season, day of week, and booking method. Always verify current rates directly with courses and lodging providers.",
+    "flight_policy": "Flight costs are NOT included in trip estimates \u2014 too volatile. Recommend users search Google Flights separately.",
+    "tipping_guide": {
+      "caddie": "$25-75 per bag depending on course prestige and service",
+      "forecaddie": "$20-40 per person in the group",
+      "cart_attendant": "$2-5",
+      "restaurant": "18-22% for group dining"
+    }
+  },
+  "destinations": [
+    {
+      "id": "scottsdale-az",
+      "destination": "Scottsdale, AZ",
+      "region": "Southwest",
+      "nearest_airport": "PHX (Phoenix Sky Harbor)",
+      "airport_to_courses_drive": "15-30 min",
+      "best_months": [
+        "Oct",
+        "Nov",
+        "Dec",
+        "Jan",
+        "Feb",
+        "Mar",
+        "Apr"
+      ],
+      "avoid_months": [
+        "Jun",
+        "Jul",
+        "Aug"
+      ],
+      "avoid_reason": "115\u00b0F+ temps make afternoon rounds brutal.",
+      "vibe": [
+        "premium",
+        "resort",
+        "nightlife",
+        "bachelor-party-friendly"
+      ],
+      "price_tier": "mid-high",
+      "avg_cost_per_person_per_day": {
+        "budget": 200,
+        "mid": 350,
+        "premium": 550
+      },
+      "group_size_sweet_spot": "8-12",
+      "why_go": "Best combination of elite golf and nightlife in the country. 300+ days of sunshine, world-class courses within 30 minutes of each other, and Old Town Scottsdale is the best post-round scene in golf.",
+      "top_courses": [
+        {
+          "name": "TPC Scottsdale (Stadium Course)",
+          "greens_fee_range": "$175-350",
+          "peak_season_fee": 350,
+          "off_peak_fee": 175,
+          "twilight_fee": 125,
+          "difficulty": "moderate",
+          "condition_rating": 4.5,
+          "scenery_rating": 4.0,
+          "must_know": "Home of the WM Phoenix Open. The par-3 16th is iconic \u2014 the stadium hole.",
+          "booking_lead_time": "2-4 weeks",
+          "walking_policy": "Walking encouraged, carts available",
+          "designer": "Tom Weiskopf & Jay Morrish",
+          "signature_holes": [
+            "#16 par-3 Stadium Hole",
+            "#15 par-5 with water"
+          ],
+          "tags": [
+            "championship",
+            "pga_tour_venue",
+            "resort"
+          ]
+        },
+        {
+          "name": "TPC Scottsdale (Champions Course)",
+          "greens_fee_range": "$95-200",
+          "peak_season_fee": 200,
+          "off_peak_fee": 125,
+          "twilight_fee": 95,
+          "difficulty": "moderate",
+          "condition_rating": 4.3,
+          "scenery_rating": 4.2,
+          "must_know": "The quieter sibling. Better desert scenery than Stadium, less crowded, significantly cheaper. Locals prefer this one.",
+          "booking_lead_time": "1-2 weeks",
+          "designer": "Randy Heckenkemper",
+          "tags": [
+            "resort",
+            "value"
+          ]
+        },
+        {
+          "name": "We-Ko-Pa (Saguaro Course)",
+          "greens_fee_range": "$125-250",
+          "peak_season_fee": 250,
+          "off_peak_fee": 150,
+          "twilight_fee": 100,
+          "difficulty": "moderate-hard",
+          "condition_rating": 4.7,
+          "scenery_rating": 4.9,
+          "must_know": "Best public course in Arizona. Stunning Sonoran desert on Fort McDowell Yavapai Nation land. No homes, no roads \u2014 pure desert golf.",
+          "booking_lead_time": "2-3 weeks",
+          "designer": "Ben Crenshaw & Bill Coore",
+          "signature_holes": [
+            "#2 par-4 saguaro-lined fairway",
+            "#17 par-3 mountain backdrop"
+          ],
+          "tags": [
+            "must_play",
+            "desert",
+            "top_100_public"
+          ]
+        },
+        {
+          "name": "We-Ko-Pa (Cholla Course)",
+          "greens_fee_range": "$100-225",
+          "peak_season_fee": 225,
+          "off_peak_fee": 125,
+          "twilight_fee": 90,
+          "difficulty": "hard",
+          "condition_rating": 4.5,
+          "scenery_rating": 4.8,
+          "must_know": "More target golf than Saguaro \u2014 tighter, more forced carries. Bring extra balls.",
+          "designer": "Scott Miller",
+          "tags": [
+            "desert",
+            "challenging"
+          ]
+        },
+        {
+          "name": "Troon North (Monument Course)",
+          "greens_fee_range": "$150-325",
+          "peak_season_fee": 325,
+          "off_peak_fee": 175,
+          "twilight_fee": 125,
+          "difficulty": "hard",
+          "condition_rating": 4.6,
+          "scenery_rating": 4.8,
+          "must_know": "Pinnacle Desert boulder on #3 is the most photographed hole in AZ. North Scottsdale adds 15 min drive.",
+          "designer": "Tom Weiskopf",
+          "signature_holes": [
+            "#3 Monument par-4",
+            "#17 par-3"
+          ],
+          "tags": [
+            "premium",
+            "desert",
+            "bucket_list"
+          ]
+        }
+      ],
+      "hidden_gems": [
+        {
+          "name": "Papago Golf Course",
+          "greens_fee_range": "$40-75",
+          "must_know": "Phoenix muni with stunning Papago Buttes views. Best value in the Valley.",
+          "tags": [
+            "budget",
+            "muni"
+          ]
+        },
+        {
+          "name": "Lookout Mountain Golf Club",
+          "greens_fee_range": "$75-150",
+          "must_know": "At the Pointe Hilton \u2014 short but fun. Good warm-up round on arrival day.",
+          "tags": [
+            "resort",
+            "short_course"
+          ]
+        }
+      ],
+      "lodging_options": [
+        {
+          "type": "resort",
+          "name": "We-Ko-Pa Resort",
+          "per_night_range": "$200-400",
+          "group_friendly": true,
+          "note": "On-site at We-Ko-Pa courses. Pool, restaurant, casino nearby. 25 min from Old Town."
+        },
+        {
+          "type": "resort",
+          "name": "Scottsdale Resort at McCormick Ranch",
+          "per_night_range": "$175-350",
+          "group_friendly": true,
+          "note": "Central location, good pool scene, walking distance to restaurants."
+        },
+        {
+          "type": "airbnb",
+          "name": "Old Town Scottsdale house",
+          "typical_per_night": "$300-700 for 4BR",
+          "group_friendly": true,
+          "note": "Old Town for walkable nightlife. North Scottsdale for quiet luxury with pools."
+        }
+      ],
+      "dining": [
+        {
+          "name": "Dominick's Steakhouse",
+          "type": "steakhouse",
+          "price": "$$$",
+          "group_note": "Large parties, reserve 2 weeks out. Rooftop bar is a scene."
+        },
+        {
+          "name": "Mastro's City Hall",
+          "type": "steakhouse",
+          "price": "$$$$",
+          "group_note": "Power dinner spot. Live music. Iconic butter cake."
+        },
+        {
+          "name": "Rehab Burger Therapy",
+          "type": "casual",
+          "price": "$$",
+          "group_note": "Great burgers, good beer list, no reservation needed."
+        },
+        {
+          "name": "Diego Pops",
+          "type": "mexican",
+          "price": "$$",
+          "group_note": "Solid tacos, great margaritas, outdoor patio."
+        }
+      ],
+      "non_golf_activities": [
+        "Spa day",
+        "Hiking Camelback Mountain (sunrise)",
+        "Old Town bar crawl",
+        "Spring training (Feb-Mar)",
+        "TopGolf Scottsdale",
+        "Jet ski at Saguaro Lake"
+      ],
+      "insider_tips": [
+        "Book twilight rates after 1pm for 40-50% savings",
+        "We-Ko-Pa Saguaro is the locals' pick over TPC Stadium",
+        "Uber/Lyft is cheap \u2014 skip the rental car if staying in Old Town",
+        "Mon-Thu rates are significantly cheaper than weekends",
+        "TopGolf is a great arrival day activity before welcome dinner",
+        "Spring training adds energy but drives lodging up 30-40%"
+      ],
+      "sample_itineraries": {
+        "3_day_weekend": {
+          "duration_nights": 3,
+          "ideal_group_size": "8-12",
+          "estimated_cost_pp": 1650,
+          "days": [
+            {
+              "day": 1,
+              "title": "Arrival & Warm-Up",
+              "items": [
+                {
+                  "time": "12:00 PM",
+                  "type": "travel",
+                  "title": "Arrive PHX, Uber to Airbnb",
+                  "cost_pp": 0
+                },
+                {
+                  "time": "4:00 PM",
+                  "type": "activity",
+                  "title": "Range + putting contest ($20 buy-in)",
+                  "cost_pp": 25
+                },
+                {
+                  "time": "7:00 PM",
+                  "type": "dinner",
+                  "title": "Dominick's Steakhouse",
+                  "cost_pp": 85
+                }
+              ]
+            },
+            {
+              "day": 2,
+              "title": "Championship Day",
+              "items": [
+                {
+                  "time": "7:30 AM",
+                  "type": "tee_time",
+                  "title": "TPC Scottsdale \u2014 Stadium Course",
+                  "cost_pp": 275
+                },
+                {
+                  "time": "2:30 PM",
+                  "type": "tee_time",
+                  "title": "TPC Champions (twilight)",
+                  "cost_pp": 95
+                },
+                {
+                  "time": "7:30 PM",
+                  "type": "dinner",
+                  "title": "Rehab Burger + Old Town bar crawl",
+                  "cost_pp": 80
+                }
+              ]
+            },
+            {
+              "day": 3,
+              "title": "Desert Golf",
+              "items": [
+                {
+                  "time": "8:00 AM",
+                  "type": "tee_time",
+                  "title": "We-Ko-Pa Saguaro",
+                  "cost_pp": 225
+                },
+                {
+                  "time": "3:00 PM",
+                  "type": "activity",
+                  "title": "Pool + recovery",
+                  "cost_pp": 0
+                },
+                {
+                  "time": "7:00 PM",
+                  "type": "dinner",
+                  "title": "Mastro's City Hall",
+                  "cost_pp": 100
+                }
+              ]
+            },
+            {
+              "day": 4,
+              "title": "Departure",
+              "items": [
+                {
+                  "time": "9:00 AM",
+                  "type": "travel",
+                  "title": "Checkout, Uber to PHX",
+                  "cost_pp": 0
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "myrtle-beach-sc",
+      "destination": "Myrtle Beach, SC",
+      "region": "Southeast",
+      "nearest_airport": "MYR (Myrtle Beach International)",
+      "airport_to_courses_drive": "10-30 min",
+      "best_months": [
+        "Mar",
+        "Apr",
+        "May",
+        "Sep",
+        "Oct",
+        "Nov"
+      ],
+      "avoid_months": [
+        "Jul",
+        "Aug"
+      ],
+      "avoid_reason": "Peak humidity, daily afternoon thunderstorms, peak tourist season drives up lodging.",
+      "vibe": [
+        "budget-friendly",
+        "volume-golf",
+        "bachelor-party-friendly",
+        "group-trip"
+      ],
+      "price_tier": "budget",
+      "avg_cost_per_person_per_day": {
+        "budget": 125,
+        "mid": 200,
+        "premium": 350
+      },
+      "group_size_sweet_spot": "8-16",
+      "why_go": "Golf capital of the world by volume. 80+ courses within 30 miles, package deals that bundle rounds + lodging for less than golf alone elsewhere. Built for big groups on a budget.",
+      "top_courses": [
+        {
+          "name": "Caledonia Golf & Fish Club",
+          "greens_fee_range": "$125-225",
+          "peak_season_fee": 225,
+          "off_peak_fee": 125,
+          "twilight_fee": 85,
+          "difficulty": "moderate",
+          "condition_rating": 4.8,
+          "scenery_rating": 4.7,
+          "must_know": "Crown jewel of Myrtle Beach. Live oak alley entrance is jaw-dropping. Consistently #1 public course in SC.",
+          "booking_lead_time": "2-4 weeks",
+          "designer": "Mike Strantz",
+          "signature_holes": [
+            "#18 par-4 plantation house backdrop",
+            "#2 par-3 over marsh"
+          ],
+          "tags": [
+            "must_play",
+            "top_100_public",
+            "lowcountry"
+          ]
+        },
+        {
+          "name": "True Blue Golf Club",
+          "greens_fee_range": "$100-200",
+          "peak_season_fee": 200,
+          "off_peak_fee": 100,
+          "twilight_fee": 70,
+          "difficulty": "moderate-hard",
+          "condition_rating": 4.6,
+          "scenery_rating": 4.3,
+          "must_know": "Sister course to Caledonia by same designer. Wider, more dramatic, massive bunkers. Equally good, different personality.",
+          "designer": "Mike Strantz",
+          "tags": [
+            "must_play",
+            "lowcountry"
+          ]
+        },
+        {
+          "name": "Barefoot Resort (Dye Course)",
+          "greens_fee_range": "$75-175",
+          "peak_season_fee": 175,
+          "off_peak_fee": 90,
+          "twilight_fee": 65,
+          "difficulty": "hard",
+          "condition_rating": 4.3,
+          "scenery_rating": 4.0,
+          "must_know": "Pete Dye being Pete Dye \u2014 forced carries, railroad ties, optical illusions. Bring extra balls.",
+          "designer": "Pete Dye",
+          "signature_holes": [
+            "#11 par-3 island green"
+          ],
+          "tags": [
+            "resort",
+            "challenging"
+          ]
+        },
+        {
+          "name": "Tidewater Golf Club",
+          "greens_fee_range": "$70-150",
+          "peak_season_fee": 150,
+          "off_peak_fee": 80,
+          "twilight_fee": 55,
+          "difficulty": "moderate",
+          "condition_rating": 4.4,
+          "scenery_rating": 4.6,
+          "must_know": "Best views in Myrtle \u2014 holes along Cherry Grove inlet and ICW. Back 9 is spectacular.",
+          "designer": "Ken Tomlinson",
+          "tags": [
+            "scenic",
+            "waterfront"
+          ]
+        },
+        {
+          "name": "Myrtle Beach National (King's North)",
+          "greens_fee_range": "$50-125",
+          "peak_season_fee": 125,
+          "off_peak_fee": 60,
+          "twilight_fee": 40,
+          "difficulty": "moderate",
+          "condition_rating": 4.0,
+          "scenery_rating": 3.8,
+          "must_know": "The Gambler hole (#6) is a par-5 with island fairway. Arnold Palmer design, fun for all levels, great value.",
+          "designer": "Arnold Palmer",
+          "tags": [
+            "value",
+            "fun_layout"
+          ]
+        }
+      ],
+      "hidden_gems": [
+        {
+          "name": "Thistle Golf Club",
+          "greens_fee_range": "$45-80",
+          "must_know": "Scottish links-style 27 holes just across NC border. Criminally underrated.",
+          "tags": [
+            "budget",
+            "links-style"
+          ]
+        },
+        {
+          "name": "Pawleys Plantation",
+          "greens_fee_range": "$55-100",
+          "must_know": "Jack Nicklaus design in Pawleys Island. Marsh views, less crowded.",
+          "tags": [
+            "value",
+            "lowcountry"
+          ]
+        }
+      ],
+      "lodging_options": [
+        {
+          "type": "resort",
+          "name": "Barefoot Resort",
+          "per_night_range": "$100-250",
+          "group_friendly": true,
+          "note": "4 courses on-site. Condos and villas perfect for groups."
+        },
+        {
+          "type": "condo",
+          "name": "Oceanfront condo (N. Myrtle Beach)",
+          "per_night_range": "$150-400 for 3BR",
+          "group_friendly": true,
+          "note": "Kitchen saves money on meals."
+        },
+        {
+          "type": "golf_package",
+          "name": "Myrtle Beach Golf Packagers",
+          "per_night_range": "From $150/person/day all-in",
+          "group_friendly": true,
+          "note": "ALWAYS book through a packager in Myrtle \u2014 you'll save 30-40%."
+        }
+      ],
+      "dining": [
+        {
+          "name": "Greg Norman Australian Grille",
+          "type": "steakhouse/seafood",
+          "price": "$$$",
+          "group_note": "At Barefoot Landing. Large party friendly."
+        },
+        {
+          "name": "Dead Dog Saloon",
+          "type": "casual seafood",
+          "price": "$$",
+          "group_note": "On the Marshwalk. Fun atmosphere, cold beer."
+        },
+        {
+          "name": "Sea Captain's House",
+          "type": "seafood",
+          "price": "$$-$$$",
+          "group_note": "Oceanfront institution. She-crab soup is legendary."
+        }
+      ],
+      "non_golf_activities": [
+        "Beach day",
+        "Deep sea fishing charter",
+        "Broadway at the Beach",
+        "TopGolf Myrtle Beach",
+        "Go-karts"
+      ],
+      "insider_tips": [
+        "ALWAYS book through a golf packager \u2014 30-40% savings vs individual bookings",
+        "Pawleys Island courses (Caledonia, True Blue) are 20 min south, way less tourist chaos",
+        "Fall (Sep-Oct) is the sweet spot \u2014 value + conditions + fewer crowds",
+        "Request morning tee times \u2014 afternoon thunderstorms common May-Sep",
+        "Breakfast at the condo saves $15/person/day \u2014 adds up over 4 days with 12 guys",
+        "Litchfield Beach is quieter and classier than N. Myrtle if you want less Spring Break energy"
+      ],
+      "sample_itineraries": {
+        "4_day_budget": {
+          "duration_nights": 4,
+          "ideal_group_size": "12-16",
+          "estimated_cost_pp": 850,
+          "days": [
+            {
+              "day": 1,
+              "title": "Arrival & Warm-Up",
+              "items": [
+                {
+                  "time": "11:00 AM",
+                  "type": "travel",
+                  "title": "Arrive MYR, rental van",
+                  "cost_pp": 25
+                },
+                {
+                  "time": "1:00 PM",
+                  "type": "tee_time",
+                  "title": "King's North (afternoon rate)",
+                  "cost_pp": 60
+                },
+                {
+                  "time": "6:30 PM",
+                  "type": "dinner",
+                  "title": "Dead Dog Saloon",
+                  "cost_pp": 30
+                }
+              ]
+            },
+            {
+              "day": 2,
+              "title": "36-Hole Day",
+              "items": [
+                {
+                  "time": "7:30 AM",
+                  "type": "tee_time",
+                  "title": "Barefoot Dye Course",
+                  "cost_pp": 100
+                },
+                {
+                  "time": "2:00 PM",
+                  "type": "tee_time",
+                  "title": "Barefoot Fazio (twilight)",
+                  "cost_pp": 65
+                },
+                {
+                  "time": "7:00 PM",
+                  "type": "dinner",
+                  "title": "Cookout at condo + poker night",
+                  "cost_pp": 20
+                }
+              ]
+            },
+            {
+              "day": 3,
+              "title": "Crown Jewel",
+              "items": [
+                {
+                  "time": "8:00 AM",
+                  "type": "tee_time",
+                  "title": "Caledonia Golf & Fish Club",
+                  "cost_pp": 175
+                },
+                {
+                  "time": "3:00 PM",
+                  "type": "activity",
+                  "title": "Beach / pool",
+                  "cost_pp": 0
+                },
+                {
+                  "time": "7:00 PM",
+                  "type": "dinner",
+                  "title": "Greg Norman Australian Grille",
+                  "cost_pp": 65
+                }
+              ]
+            },
+            {
+              "day": 4,
+              "title": "Final Round",
+              "items": [
+                {
+                  "time": "7:30 AM",
+                  "type": "tee_time",
+                  "title": "Tidewater Golf Club",
+                  "cost_pp": 90
+                },
+                {
+                  "time": "3:00 PM",
+                  "type": "travel",
+                  "title": "Return rental, depart MYR",
+                  "cost_pp": 0
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "pinehurst-nc",
+      "destination": "Pinehurst, NC",
+      "region": "Southeast",
+      "nearest_airport": "RDU (Raleigh-Durham) or PTI (Greensboro)",
+      "airport_to_courses_drive": "60-75 min from RDU",
+      "best_months": [
+        "Mar",
+        "Apr",
+        "May",
+        "Sep",
+        "Oct",
+        "Nov"
+      ],
+      "avoid_months": [
+        "Jul",
+        "Aug"
+      ],
+      "avoid_reason": "Extreme heat and humidity makes walking rounds miserable.",
+      "vibe": [
+        "bucket-list",
+        "traditional",
+        "golf-purist",
+        "historic",
+        "father-son"
+      ],
+      "price_tier": "premium",
+      "avg_cost_per_person_per_day": {
+        "budget": 250,
+        "mid": 400,
+        "premium": 650
+      },
+      "group_size_sweet_spot": "4-8",
+      "why_go": "The cradle of American golf. Nine courses at Pinehurst Resort including #2 \u2014 the most famous course in the country. Walking only with caddies. This is a pilgrimage, not just a trip.",
+      "top_courses": [
+        {
+          "name": "Pinehurst No. 2",
+          "greens_fee_range": "$295-495 (must stay at resort)",
+          "peak_season_fee": 495,
+          "off_peak_fee": 295,
+          "difficulty": "very hard",
+          "condition_rating": 4.9,
+          "scenery_rating": 4.5,
+          "must_know": "Must stay at resort to play. Walking only with caddie ($50-100 + tip). Crowned turtle-back greens are the hardest in golf.",
+          "booking_lead_time": "60+ days",
+          "walking_policy": "Walking only",
+          "caddie_available": true,
+          "caddie_fee": "$50-100 + $25-50 tip",
+          "designer": "Donald Ross (1907, restored Coore & Crenshaw 2011)",
+          "hosted_events": [
+            "US Open 2024",
+            "US Open 2014",
+            "US Open 2005"
+          ],
+          "tags": [
+            "bucket_list",
+            "walking_only",
+            "historic",
+            "championship",
+            "top_10_us"
+          ]
+        },
+        {
+          "name": "Pinehurst No. 4",
+          "greens_fee_range": "$200-395 (must stay at resort)",
+          "peak_season_fee": 395,
+          "off_peak_fee": 200,
+          "difficulty": "hard",
+          "condition_rating": 4.7,
+          "scenery_rating": 4.6,
+          "must_know": "Redesigned by Gil Hanse 2018. Some say it's better than #2. Hosted 2019 US Amateur.",
+          "walking_policy": "Walking only",
+          "caddie_available": true,
+          "designer": "Gil Hanse (2018 redesign)",
+          "tags": [
+            "bucket_list",
+            "walking_only",
+            "modern_classic"
+          ]
+        },
+        {
+          "name": "Pinehurst No. 8",
+          "greens_fee_range": "$150-295 (must stay at resort)",
+          "peak_season_fee": 295,
+          "off_peak_fee": 150,
+          "difficulty": "moderate-hard",
+          "condition_rating": 4.5,
+          "must_know": "Tom Fazio design \u2014 more forgiving than #2 or #4. Great for a 36-hole day complement.",
+          "designer": "Tom Fazio",
+          "tags": [
+            "resort",
+            "walking_only"
+          ]
+        },
+        {
+          "name": "Tobacco Road",
+          "greens_fee_range": "$75-165",
+          "peak_season_fee": 165,
+          "off_peak_fee": 75,
+          "difficulty": "hard (but fun-hard)",
+          "condition_rating": 4.2,
+          "must_know": "Wildest course in America. Blind shots, crazy elevation, sand everywhere. Mike Strantz masterpiece. You'll either love it or hate it \u2014 but you'll never forget it.",
+          "designer": "Mike Strantz",
+          "tags": [
+            "unique",
+            "wild",
+            "love_it_or_hate_it"
+          ]
+        }
+      ],
+      "hidden_gems": [
+        {
+          "name": "Pine Needles Lodge & Golf Club",
+          "greens_fee_range": "$100-200",
+          "must_know": "Donald Ross design across from Pinehurst. Hosted US Women's Opens. Quieter, less expensive.",
+          "tags": [
+            "donald_ross",
+            "historic",
+            "value"
+          ]
+        },
+        {
+          "name": "Mid South Club",
+          "greens_fee_range": "$75-150",
+          "must_know": "Arnold Palmer design. Wide fairways, half the price of resort courses.",
+          "tags": [
+            "value",
+            "forgiving"
+          ]
+        }
+      ],
+      "lodging_options": [
+        {
+          "type": "resort",
+          "name": "Pinehurst Resort (The Carolina Hotel)",
+          "per_night_range": "$350-700",
+          "group_friendly": true,
+          "note": "Only way to play #2 and #4. Historic property. Worth the premium."
+        },
+        {
+          "type": "resort",
+          "name": "Pine Needles Lodge",
+          "per_night_range": "$200-400",
+          "group_friendly": true,
+          "note": "Donald Ross course on-site. Quieter, more intimate."
+        },
+        {
+          "type": "airbnb",
+          "name": "Village of Pinehurst rental",
+          "typical_per_night": "$200-500 for 4BR",
+          "group_friendly": true,
+          "note": "Can't play resort courses unless staying at resort though."
+        }
+      ],
+      "dining": [
+        {
+          "name": "The Carolina Dining Room",
+          "type": "fine dining",
+          "price": "$$$$",
+          "group_note": "At Pinehurst Resort. Jacket suggested. Reserve well in advance."
+        },
+        {
+          "name": "The Deuce",
+          "type": "pub",
+          "price": "$$",
+          "group_note": "At the resort. Where everyone ends up after rounds."
+        },
+        {
+          "name": "Dugan's Pub",
+          "type": "pub",
+          "price": "$$",
+          "group_note": "Village of Pinehurst. Irish pub vibe."
+        }
+      ],
+      "non_golf_activities": [
+        "Thistle Dhu putting course (free for guests)",
+        "Spa at Pinehurst Resort",
+        "USGA Headquarters visit",
+        "Clay shooting at Pinehurst Gun Club"
+      ],
+      "insider_tips": [
+        "Stay at the resort \u2014 only way to play #2, #4, #8. Package deals are actually decent value",
+        "Play #4 before #2 \u2014 some groups like #4 better and it takes pressure off #2",
+        "Tip your caddie well ($50-75/bag min) \u2014 they'll read every putt and save you 5+ strokes",
+        "Thistle Dhu putting course is free and wildly fun. Do it the evening before your #2 round",
+        "Tobacco Road is 30 min away and worth the detour \u2014 completely different but unforgettable",
+        "Fall (Sep-Oct) is best: great weather, lower rates, peak conditions"
+      ],
+      "sample_itineraries": {
+        "3_day_pilgrimage": {
+          "duration_nights": 3,
+          "ideal_group_size": "4-8",
+          "estimated_cost_pp": 2200,
+          "days": [
+            {
+              "day": 1,
+              "title": "Arrival & Warm-Up",
+              "items": [
+                {
+                  "time": "11:00 AM",
+                  "type": "travel",
+                  "title": "Arrive RDU, drive to Pinehurst",
+                  "cost_pp": 30
+                },
+                {
+                  "time": "2:30 PM",
+                  "type": "tee_time",
+                  "title": "Pinehurst No. 8",
+                  "cost_pp": 200
+                },
+                {
+                  "time": "6:30 PM",
+                  "type": "activity",
+                  "title": "Thistle Dhu putting contest",
+                  "cost_pp": 0
+                },
+                {
+                  "time": "7:30 PM",
+                  "type": "dinner",
+                  "title": "The Carolina Dining Room",
+                  "cost_pp": 90
+                }
+              ]
+            },
+            {
+              "day": 2,
+              "title": "The Main Event",
+              "items": [
+                {
+                  "time": "8:00 AM",
+                  "type": "tee_time",
+                  "title": "Pinehurst No. 2 (with caddies)",
+                  "cost_pp": 450
+                },
+                {
+                  "time": "3:00 PM",
+                  "type": "activity",
+                  "title": "Spa / rest / range",
+                  "cost_pp": 0
+                },
+                {
+                  "time": "7:00 PM",
+                  "type": "dinner",
+                  "title": "The Deuce (casual recap)",
+                  "cost_pp": 40
+                }
+              ]
+            },
+            {
+              "day": 3,
+              "title": "The Closer",
+              "items": [
+                {
+                  "time": "8:00 AM",
+                  "type": "tee_time",
+                  "title": "Pinehurst No. 4 (with caddies)",
+                  "cost_pp": 350
+                },
+                {
+                  "time": "3:00 PM",
+                  "type": "tee_time",
+                  "title": "Tobacco Road (optional)",
+                  "cost_pp": 120
+                },
+                {
+                  "time": "7:30 PM",
+                  "type": "dinner",
+                  "title": "Final dinner at resort",
+                  "cost_pp": 60
+                }
+              ]
+            },
+            {
+              "day": 4,
+              "title": "Departure",
+              "items": [
+                {
+                  "time": "9:00 AM",
+                  "type": "travel",
+                  "title": "Drive to RDU",
+                  "cost_pp": 0
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "las-vegas-nv",
+      "destination": "Las Vegas, NV",
+      "region": "Southwest",
+      "nearest_airport": "LAS (Harry Reid International)",
+      "airport_to_courses_drive": "15-40 min",
+      "best_months": [
+        "Oct",
+        "Nov",
+        "Mar",
+        "Apr",
+        "May"
+      ],
+      "avoid_months": [
+        "Jun",
+        "Jul",
+        "Aug"
+      ],
+      "avoid_reason": "115\u00b0F+ desert heat. Some courses close or go twilight-only.",
+      "vibe": [
+        "nightlife",
+        "bachelor-party-friendly",
+        "entertainment",
+        "resort"
+      ],
+      "price_tier": "mid",
+      "avg_cost_per_person_per_day": {
+        "budget": 175,
+        "mid": 350,
+        "premium": 600
+      },
+      "group_size_sweet_spot": "8-12",
+      "why_go": "Golf by day, Vegas by night. Only destination where non-golf friends want to come. Great desert courses within 30 minutes of the Strip.",
+      "top_courses": [
+        {
+          "name": "Shadow Creek",
+          "greens_fee_range": "$500-600 (must stay at MGM property)",
+          "peak_season_fee": 600,
+          "off_peak_fee": 500,
+          "difficulty": "moderate",
+          "condition_rating": 5.0,
+          "scenery_rating": 4.8,
+          "must_know": "Best-conditioned course in America. Built by Steve Wynn at $60M. Limo picks you up from hotel. Must stay at MGM property.",
+          "designer": "Tom Fazio",
+          "tags": [
+            "bucket_list",
+            "ultra_premium",
+            "perfect_conditions"
+          ]
+        },
+        {
+          "name": "TPC Las Vegas",
+          "greens_fee_range": "$100-250",
+          "peak_season_fee": 250,
+          "off_peak_fee": 125,
+          "difficulty": "moderate",
+          "condition_rating": 4.4,
+          "must_know": "Home of the Shriners Open. Solid PGA Tour venue. 20 min from the Strip.",
+          "designer": "Bobby Weed / Raymond Floyd",
+          "tags": [
+            "pga_tour_venue",
+            "resort"
+          ]
+        },
+        {
+          "name": "Wolf Creek Golf Club",
+          "greens_fee_range": "$150-300",
+          "peak_season_fee": 300,
+          "off_peak_fee": 175,
+          "difficulty": "very hard",
+          "condition_rating": 4.3,
+          "scenery_rating": 5.0,
+          "must_know": "90 min from Strip in Mesquite but WORTH IT. Most visually stunning course in America. Extreme elevation changes. Unplayable for beginners, unforgettable for everyone else.",
+          "designer": "Dennis Rider",
+          "signature_holes": [
+            "#1 tee shot 200ft above fairway",
+            "#14 canyon par-3"
+          ],
+          "tags": [
+            "bucket_list",
+            "extreme",
+            "scenic"
+          ]
+        },
+        {
+          "name": "Paiute Golf Resort (Wolf Course)",
+          "greens_fee_range": "$70-180",
+          "peak_season_fee": 180,
+          "off_peak_fee": 85,
+          "twilight_fee": 55,
+          "difficulty": "moderate",
+          "condition_rating": 4.2,
+          "must_know": "Three Pete Dye courses on one property. Wolf is the best and toughest. 25 min from Strip. Great value.",
+          "designer": "Pete Dye",
+          "tags": [
+            "value",
+            "resort",
+            "3_courses"
+          ]
+        },
+        {
+          "name": "Cascata",
+          "greens_fee_range": "$200-400",
+          "peak_season_fee": 400,
+          "off_peak_fee": 225,
+          "difficulty": "moderate",
+          "condition_rating": 4.7,
+          "scenery_rating": 4.6,
+          "must_know": "Waterfall behind the clubhouse. Rees Jones design in Boulder City. Premium experience without the Shadow Creek price.",
+          "designer": "Rees Jones",
+          "tags": [
+            "premium",
+            "waterfall",
+            "scenic"
+          ]
+        }
+      ],
+      "hidden_gems": [
+        {
+          "name": "Coyote Springs Golf Club",
+          "greens_fee_range": "$55-110",
+          "must_know": "Nicklaus design 50 min from Strip. Massive development that stalled \u2014 incredible course at a fraction of what it should cost.",
+          "tags": [
+            "value",
+            "nicklaus"
+          ]
+        },
+        {
+          "name": "Las Vegas Paiute (Snow Mountain)",
+          "greens_fee_range": "$60-140",
+          "must_know": "Most forgiving of the 3 Paiute courses. Good for mixed skill groups.",
+          "tags": [
+            "value",
+            "forgiving"
+          ]
+        }
+      ],
+      "lodging_options": [
+        {
+          "type": "hotel",
+          "name": "MGM Grand / Bellagio / Aria",
+          "per_night_range": "$100-400",
+          "group_friendly": true,
+          "note": "Stay MGM property to access Shadow Creek. Strip location for nightlife."
+        },
+        {
+          "type": "hotel",
+          "name": "Caesars Palace / Paris / Flamingo",
+          "per_night_range": "$75-300",
+          "group_friendly": true,
+          "note": "Caesars properties often cheaper. Central Strip location."
+        },
+        {
+          "type": "airbnb",
+          "name": "Off-Strip house",
+          "typical_per_night": "$250-600 for 4BR",
+          "group_friendly": true,
+          "note": "15 min from Strip. Pool + hot tub. Good for large groups who want a home base."
+        }
+      ],
+      "dining": [
+        {
+          "name": "STK Steakhouse",
+          "type": "steakhouse",
+          "price": "$$$",
+          "group_note": "At the Cosmopolitan. DJ, scene, great steaks. Perfect golf trip dinner."
+        },
+        {
+          "name": "Gordon Ramsay Steak",
+          "type": "steakhouse",
+          "price": "$$$$",
+          "group_note": "At Paris. Upscale splurge night. Beef Wellington is the move."
+        },
+        {
+          "name": "In-N-Out Burger",
+          "type": "fast casual",
+          "price": "$",
+          "group_note": "Off the Strip. Late night tradition after a big night out."
+        },
+        {
+          "name": "Herbs & Rye",
+          "type": "cocktail bar",
+          "price": "$$",
+          "group_note": "Off-Strip speakeasy. Best cocktails in Vegas. Half-price happy hour 5-8pm."
+        }
+      ],
+      "non_golf_activities": [
+        "Pool party (Wet Republic, Encore Beach)",
+        "Shows (Cirque, comedy)",
+        "Sports betting",
+        "Nightclubs (XS, Hakkasan)",
+        "Day trip to Hoover Dam",
+        "Top Golf Las Vegas"
+      ],
+      "insider_tips": [
+        "Golf in the morning, pool in the afternoon, dinner + nightlife at night \u2014 that's the rhythm",
+        "Wolf Creek is 90 min away but absolutely worth the day trip for the experience",
+        "Book Shadow Creek ONLY if you have golfers who'll appreciate it \u2014 it's wasted on casual players",
+        "Paiute Wolf Course is the best value in Vegas \u2014 Pete Dye for under $100 on weekdays",
+        "Avoid Friday/Saturday night Strip restaurants \u2014 prices spike and waits are brutal. Do your big dinner Thursday or Sunday",
+        "Get a golf shuttle service \u2014 nobody wants to drive in Vegas, and DUI risk is real"
+      ],
+      "sample_itineraries": {
+        "3_day_vegas": {
+          "duration_nights": 3,
+          "ideal_group_size": "8-12",
+          "estimated_cost_pp": 1800,
+          "days": [
+            {
+              "day": 1,
+              "title": "Arrival & First Round",
+              "items": [
+                {
+                  "time": "10:00 AM",
+                  "type": "travel",
+                  "title": "Arrive LAS, check into hotel",
+                  "cost_pp": 0
+                },
+                {
+                  "time": "1:00 PM",
+                  "type": "tee_time",
+                  "title": "Paiute Wolf Course",
+                  "cost_pp": 120
+                },
+                {
+                  "time": "6:30 PM",
+                  "type": "dinner",
+                  "title": "STK at the Cosmopolitan",
+                  "cost_pp": 85
+                },
+                {
+                  "time": "9:30 PM",
+                  "type": "activity",
+                  "title": "Night out on the Strip",
+                  "cost_pp": 100
+                }
+              ]
+            },
+            {
+              "day": 2,
+              "title": "Premium Golf Day",
+              "items": [
+                {
+                  "time": "8:00 AM",
+                  "type": "tee_time",
+                  "title": "TPC Las Vegas",
+                  "cost_pp": 200
+                },
+                {
+                  "time": "2:00 PM",
+                  "type": "activity",
+                  "title": "Pool party or sports betting",
+                  "cost_pp": 50
+                },
+                {
+                  "time": "7:00 PM",
+                  "type": "dinner",
+                  "title": "Gordon Ramsay Steak",
+                  "cost_pp": 120
+                },
+                {
+                  "time": "10:00 PM",
+                  "type": "activity",
+                  "title": "Show or nightclub",
+                  "cost_pp": 100
+                }
+              ]
+            },
+            {
+              "day": 3,
+              "title": "Wolf Creek Day Trip",
+              "items": [
+                {
+                  "time": "6:30 AM",
+                  "type": "travel",
+                  "title": "Drive to Mesquite (90 min)",
+                  "cost_pp": 25
+                },
+                {
+                  "time": "8:30 AM",
+                  "type": "tee_time",
+                  "title": "Wolf Creek Golf Club",
+                  "cost_pp": 250
+                },
+                {
+                  "time": "3:00 PM",
+                  "type": "travel",
+                  "title": "Drive back to Vegas",
+                  "cost_pp": 0
+                },
+                {
+                  "time": "7:00 PM",
+                  "type": "dinner",
+                  "title": "Final dinner + awards ceremony",
+                  "cost_pp": 80
+                }
+              ]
+            },
+            {
+              "day": 4,
+              "title": "Departure",
+              "items": [
+                {
+                  "time": "11:00 AM",
+                  "type": "travel",
+                  "title": "Late checkout, depart LAS",
+                  "cost_pp": 0
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "austin-tx",
+      "destination": "Austin, TX",
+      "region": "South Central",
+      "nearest_airport": "AUS (Austin-Bergstrom)",
+      "airport_to_courses_drive": "15-40 min",
+      "best_months": [
+        "Oct",
+        "Nov",
+        "Mar",
+        "Apr",
+        "May"
+      ],
+      "avoid_months": [
+        "Jul",
+        "Aug"
+      ],
+      "avoid_reason": "100\u00b0F+ heat with high humidity. Miserable for walking.",
+      "vibe": [
+        "food-scene",
+        "live-music",
+        "laid-back",
+        "young-group",
+        "bachelor-party-friendly"
+      ],
+      "price_tier": "mid",
+      "avg_cost_per_person_per_day": {
+        "budget": 150,
+        "mid": 275,
+        "premium": 450
+      },
+      "group_size_sweet_spot": "8-12",
+      "why_go": "Best food and live music scene of any golf destination. Courses are solid, not spectacular \u2014 but the off-course experience is elite. Perfect for groups where not everyone is a hardcore golfer.",
+      "top_courses": [
+        {
+          "name": "Wolfdancer Golf Club",
+          "greens_fee_range": "$95-175",
+          "peak_season_fee": 175,
+          "off_peak_fee": 95,
+          "twilight_fee": 65,
+          "difficulty": "moderate",
+          "condition_rating": 4.3,
+          "scenery_rating": 4.4,
+          "must_know": "At Hyatt Lost Pines Resort. Hill Country terrain with creeks and elevation. Best resort course near Austin.",
+          "booking_lead_time": "1-2 weeks",
+          "designer": "Arthur Hills",
+          "tags": [
+            "resort",
+            "hill_country",
+            "scenic"
+          ]
+        },
+        {
+          "name": "Falconhead Golf Club",
+          "greens_fee_range": "$60-125",
+          "peak_season_fee": 125,
+          "off_peak_fee": 65,
+          "twilight_fee": 45,
+          "difficulty": "moderate",
+          "condition_rating": 4.1,
+          "scenery_rating": 4.0,
+          "must_know": "In Bee Cave, 25 min from downtown. Hill Country views, well-maintained, good value.",
+          "designer": "PB Dye",
+          "tags": [
+            "value",
+            "hill_country"
+          ]
+        },
+        {
+          "name": "Avery Ranch Golf Club",
+          "greens_fee_range": "$50-100",
+          "peak_season_fee": 100,
+          "off_peak_fee": 55,
+          "twilight_fee": 35,
+          "difficulty": "moderate",
+          "condition_rating": 3.9,
+          "scenery_rating": 3.8,
+          "must_know": "North Austin. Good muni-level course at a fair price. Not spectacular but solid for a warm-up round.",
+          "designer": "Andy Raugust",
+          "tags": [
+            "value",
+            "muni"
+          ]
+        },
+        {
+          "name": "ColoVista Golf Club",
+          "greens_fee_range": "$50-95",
+          "peak_season_fee": 95,
+          "off_peak_fee": 50,
+          "twilight_fee": 35,
+          "difficulty": "moderate-hard",
+          "condition_rating": 4.0,
+          "scenery_rating": 4.3,
+          "must_know": "On Lake Bastrop, 30 min east. Dramatic canyon holes. Hidden gem that plays way above its price point.",
+          "designer": "Bill Coore",
+          "tags": [
+            "hidden_gem",
+            "canyon",
+            "value"
+          ]
+        }
+      ],
+      "hidden_gems": [
+        {
+          "name": "Crystal Falls Golf Club",
+          "greens_fee_range": "$40-75",
+          "must_know": "In Leander, 30 min north. Hill Country terrain with some dramatic shots. Great value.",
+          "tags": [
+            "budget",
+            "hill_country"
+          ]
+        },
+        {
+          "name": "Vaaler Creek Golf Club",
+          "greens_fee_range": "$35-65",
+          "must_know": "45 min south in Blanco. Beautiful quiet Hill Country course. Perfect arrival day round.",
+          "tags": [
+            "budget",
+            "rural",
+            "peaceful"
+          ]
+        }
+      ],
+      "lodging_options": [
+        {
+          "type": "hotel",
+          "name": "Hotel Van Zandt (Rainey St)",
+          "per_night_range": "$200-400",
+          "group_friendly": true,
+          "note": "Walkable to Rainey Street bars. Pool. Perfect location for nightlife."
+        },
+        {
+          "type": "resort",
+          "name": "Hyatt Regency Lost Pines",
+          "per_night_range": "$250-500",
+          "group_friendly": true,
+          "note": "Wolfdancer course on-site. Lazy river, zip lines. More isolated but great for golf-focused groups."
+        },
+        {
+          "type": "airbnb",
+          "name": "East Austin / South Congress house",
+          "typical_per_night": "$250-600 for 4BR",
+          "group_friendly": true,
+          "note": "East Austin for trendy bars. SoCo for walkable shops/food. Pool houses available."
+        }
+      ],
+      "dining": [
+        {
+          "name": "Franklin Barbecue",
+          "type": "BBQ",
+          "price": "$$",
+          "group_note": "The best BBQ in the world. Line starts at 8am for 11am open. Worth it once. Pre-order for groups."
+        },
+        {
+          "name": "Uchi",
+          "type": "Japanese",
+          "price": "$$$",
+          "group_note": "James Beard award winner. Reserve 2+ weeks out. Best meal in Austin."
+        },
+        {
+          "name": "Terry Black's BBQ",
+          "type": "BBQ",
+          "price": "$$",
+          "group_note": "No insane line like Franklin. Nearly as good. Feed 12 guys easily."
+        },
+        {
+          "name": "Rainey Street bars",
+          "type": "bar district",
+          "price": "$$",
+          "group_note": "Converted bungalows turned into bars. The move for group nights out."
+        },
+        {
+          "name": "Torchy's Tacos",
+          "type": "tacos",
+          "price": "$",
+          "group_note": "Breakfast tacos are an Austin rite of passage. Multiple locations."
+        }
+      ],
+      "non_golf_activities": [
+        "6th Street live music crawl",
+        "Rainey Street bar hopping",
+        "Barton Springs Pool",
+        "Lake Austin boat rental",
+        "F1 COTA track experience (if available)",
+        "TopGolf Austin"
+      ],
+      "insider_tips": [
+        "Austin is a food + nightlife trip that happens to have golf \u2014 lean into that",
+        "Wolfdancer at Lost Pines is the standout course. Everything else is good, not great",
+        "Pre-order Franklin BBQ online \u2014 skip the 3-hour line and pick up at your time slot",
+        "Rainey Street is better than 6th Street for a golf group (less college chaos)",
+        "Uber everywhere \u2014 parking downtown is a nightmare and DUI enforcement is aggressive",
+        "If you add a day, do a Lake Travis boat day \u2014 rent a pontoon and bring a cooler"
+      ],
+      "sample_itineraries": {
+        "3_day_weekend": {
+          "duration_nights": 3,
+          "ideal_group_size": "8-12",
+          "estimated_cost_pp": 1200,
+          "days": [
+            {
+              "day": 1,
+              "title": "Arrival & BBQ",
+              "items": [
+                {
+                  "time": "11:00 AM",
+                  "type": "travel",
+                  "title": "Arrive AUS, Uber to Airbnb",
+                  "cost_pp": 0
+                },
+                {
+                  "time": "12:30 PM",
+                  "type": "food",
+                  "title": "Terry Black's BBQ",
+                  "cost_pp": 25
+                },
+                {
+                  "time": "3:00 PM",
+                  "type": "tee_time",
+                  "title": "Falconhead (afternoon rate)",
+                  "cost_pp": 65
+                },
+                {
+                  "time": "7:30 PM",
+                  "type": "dinner",
+                  "title": "Uchi (reserve ahead)",
+                  "cost_pp": 80
+                },
+                {
+                  "time": "10:00 PM",
+                  "type": "activity",
+                  "title": "Rainey Street bars",
+                  "cost_pp": 50
+                }
+              ]
+            },
+            {
+              "day": 2,
+              "title": "Golf + Live Music",
+              "items": [
+                {
+                  "time": "8:00 AM",
+                  "type": "tee_time",
+                  "title": "Wolfdancer Golf Club",
+                  "cost_pp": 150
+                },
+                {
+                  "time": "2:00 PM",
+                  "type": "food",
+                  "title": "Torchy's Tacos (breakfast tacos at 2pm, it's Austin)",
+                  "cost_pp": 12
+                },
+                {
+                  "time": "3:00 PM",
+                  "type": "activity",
+                  "title": "Barton Springs Pool or hotel pool",
+                  "cost_pp": 5
+                },
+                {
+                  "time": "7:00 PM",
+                  "type": "dinner",
+                  "title": "Casual dinner at Odd Duck",
+                  "cost_pp": 55
+                },
+                {
+                  "time": "9:30 PM",
+                  "type": "activity",
+                  "title": "6th Street live music",
+                  "cost_pp": 40
+                }
+              ]
+            },
+            {
+              "day": 3,
+              "title": "Final Round + Departure Prep",
+              "items": [
+                {
+                  "time": "8:00 AM",
+                  "type": "tee_time",
+                  "title": "ColoVista Golf Club",
+                  "cost_pp": 70
+                },
+                {
+                  "time": "1:00 PM",
+                  "type": "food",
+                  "title": "Franklin BBQ (pre-order pickup)",
+                  "cost_pp": 30
+                },
+                {
+                  "time": "3:00 PM",
+                  "type": "activity",
+                  "title": "Pool / pack",
+                  "cost_pp": 0
+                },
+                {
+                  "time": "7:00 PM",
+                  "type": "dinner",
+                  "title": "Final dinner + awards at Jacoby's",
+                  "cost_pp": 60
+                }
+              ]
+            },
+            {
+              "day": 4,
+              "title": "Departure",
+              "items": [
+                {
+                  "time": "10:00 AM",
+                  "type": "travel",
+                  "title": "Depart AUS",
+                  "cost_pp": 0
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "san-diego-ca",
+      "destination": "San Diego, CA",
+      "region": "West Coast",
+      "nearest_airport": "SAN (San Diego International)",
+      "airport_to_courses_drive": "15-45 min",
+      "best_months": [
+        "Jan",
+        "Feb",
+        "Mar",
+        "Apr",
+        "May",
+        "Sep",
+        "Oct",
+        "Nov",
+        "Dec"
+      ],
+      "avoid_months": [],
+      "avoid_reason": "No bad months \u2014 San Diego is year-round. Jun-Aug is busier and slightly more expensive but still perfect weather.",
+      "vibe": [
+        "laid-back",
+        "beach",
+        "coastal",
+        "resort"
+      ],
+      "price_tier": "mid",
+      "avg_cost_per_person_per_day": {
+        "budget": 175,
+        "mid": 300,
+        "premium": 500
+      },
+      "group_size_sweet_spot": "4-8",
+      "why_go": "Perfect weather 340 days a year, ocean-view courses, craft beer scene, incredible food, and Torrey Pines \u2014 one of the best public courses in America. Hard to have a bad time here.",
+      "top_courses": [
+        {
+          "name": "Torrey Pines (South Course)",
+          "greens_fee_range": "$175-250 (non-resident), $60 resident",
+          "peak_season_fee": 250,
+          "off_peak_fee": 175,
+          "difficulty": "hard",
+          "condition_rating": 4.5,
+          "scenery_rating": 4.9,
+          "must_know": "Hosted 2021 US Open and 2008 US Open (Tiger's iconic win). Ocean cliffs. Book 7 days out at 7pm PT through sandiego.gov. Sell out instantly for weekends.",
+          "booking_lead_time": "Book exactly 7 days out online \u2014 set an alarm",
+          "designer": "William Bell / Rees Jones redesign",
+          "signature_holes": [
+            "#3 par-3 clifftop",
+            "#12 par-4 ocean view"
+          ],
+          "tags": [
+            "bucket_list",
+            "championship",
+            "ocean",
+            "muni"
+          ]
+        },
+        {
+          "name": "Torrey Pines (North Course)",
+          "greens_fee_range": "$100-175 (non-resident)",
+          "peak_season_fee": 175,
+          "off_peak_fee": 100,
+          "difficulty": "moderate",
+          "condition_rating": 4.2,
+          "scenery_rating": 4.7,
+          "must_know": "Same ocean views, easier course, lower price. Recently renovated by Tom Weiskopf. Great if you can't get South tee time.",
+          "designer": "William Bell / Tom Weiskopf redesign",
+          "tags": [
+            "ocean",
+            "muni",
+            "value"
+          ]
+        },
+        {
+          "name": "Maderas Golf Club",
+          "greens_fee_range": "$100-200",
+          "peak_season_fee": 200,
+          "off_peak_fee": 110,
+          "twilight_fee": 75,
+          "difficulty": "moderate-hard",
+          "condition_rating": 4.5,
+          "scenery_rating": 4.3,
+          "must_know": "Best non-Torrey course in San Diego. Canyon routing, excellent conditions. Johnny Miller design in Poway.",
+          "designer": "Johnny Miller",
+          "tags": [
+            "premium",
+            "canyon"
+          ]
+        },
+        {
+          "name": "Coronado Municipal Golf Course",
+          "greens_fee_range": "$35-55",
+          "peak_season_fee": 55,
+          "off_peak_fee": 35,
+          "difficulty": "easy",
+          "condition_rating": 3.5,
+          "scenery_rating": 4.2,
+          "must_know": "Basic muni but the views of the Coronado Bridge and downtown skyline are incredible. Fun warm-up or wind-down round.",
+          "designer": "Jack Daray",
+          "tags": [
+            "budget",
+            "muni",
+            "views"
+          ]
+        }
+      ],
+      "hidden_gems": [
+        {
+          "name": "Steele Canyon (Ranch/Vineyard)",
+          "greens_fee_range": "$50-95",
+          "must_know": "27 holes east of San Diego. Ranch and Vineyard nines are the best combo. Great value with mountain views.",
+          "tags": [
+            "value",
+            "27_holes"
+          ]
+        },
+        {
+          "name": "Barona Creek Golf Club",
+          "greens_fee_range": "$60-120",
+          "must_know": "On Barona tribal land, 30 min east. Todd Eckenrode design. Casino on-site for after-round action.",
+          "tags": [
+            "value",
+            "casino"
+          ]
+        }
+      ],
+      "lodging_options": [
+        {
+          "type": "resort",
+          "name": "Lodge at Torrey Pines",
+          "per_night_range": "$400-800",
+          "group_friendly": false,
+          "note": "Luxury right at Torrey Pines. Priority tee times. Splurge option for small groups."
+        },
+        {
+          "type": "hotel",
+          "name": "Gaslamp Quarter hotels",
+          "per_night_range": "$150-350",
+          "group_friendly": true,
+          "note": "Walkable to restaurants and nightlife. Multiple options (Pendry, Hard Rock, Marriott)."
+        },
+        {
+          "type": "airbnb",
+          "name": "Pacific Beach / Mission Beach house",
+          "typical_per_night": "$300-700 for 4BR",
+          "group_friendly": true,
+          "note": "Beach house vibe. Walk to bars and restaurants. Best for the golf + beach combo trip."
+        }
+      ],
+      "dining": [
+        {
+          "name": "Born & Raised",
+          "type": "steakhouse",
+          "price": "$$$$",
+          "group_note": "Gaslamp. The best steak in San Diego. Old Hollywood vibe. Reserve 2 weeks out."
+        },
+        {
+          "name": "Puesto",
+          "type": "Mexican",
+          "price": "$$",
+          "group_note": "Elevated Mexican. Multiple locations. Blue corn tacos are incredible."
+        },
+        {
+          "name": "Hodad's",
+          "type": "burgers",
+          "price": "$",
+          "group_note": "Ocean Beach institution. Cash only. Best burger in SD. No-frills surf vibe."
+        },
+        {
+          "name": "Stone Brewing",
+          "type": "brewery",
+          "price": "$$",
+          "group_note": "Escondido location is stunning \u2014 gardens, great food, world-class IPA."
+        }
+      ],
+      "non_golf_activities": [
+        "Beach day (La Jolla Cove, Mission Beach)",
+        "Craft brewery trail",
+        "Surfing lessons",
+        "USS Midway Museum",
+        "Gaslamp nightlife",
+        "Sunset Cliffs at sunset"
+      ],
+      "insider_tips": [
+        "Torrey South tee times release 7 days out at 7pm PT \u2014 set an alarm or you'll miss it",
+        "Play Torrey North if you can't get South \u2014 same views, half the price, just easier",
+        "Pacific Beach Airbnb + morning surf + afternoon golf is the move for this trip",
+        "The craft beer scene is insane \u2014 Stone, Ballast Point, Modern Times, AleSmith all within 20 min",
+        "January-March is whale watching season \u2014 add a harbor cruise for non-golf downtime",
+        "Gaslamp is the nightlife hub but Pacific Beach has more relaxed bar scene for groups"
+      ],
+      "sample_itineraries": {
+        "3_day_coastal": {
+          "duration_nights": 3,
+          "ideal_group_size": "4-8",
+          "estimated_cost_pp": 1500,
+          "days": [
+            {
+              "day": 1,
+              "title": "Arrival & Beach Vibes",
+              "items": [
+                {
+                  "time": "11:00 AM",
+                  "type": "travel",
+                  "title": "Arrive SAN, Uber to PB Airbnb",
+                  "cost_pp": 0
+                },
+                {
+                  "time": "1:00 PM",
+                  "type": "tee_time",
+                  "title": "Coronado Muni (chill warm-up)",
+                  "cost_pp": 45
+                },
+                {
+                  "time": "5:00 PM",
+                  "type": "activity",
+                  "title": "Sunset Cliffs sunset beers",
+                  "cost_pp": 10
+                },
+                {
+                  "time": "7:30 PM",
+                  "type": "dinner",
+                  "title": "Born & Raised (Gaslamp)",
+                  "cost_pp": 100
+                }
+              ]
+            },
+            {
+              "day": 2,
+              "title": "Torrey Pines Day",
+              "items": [
+                {
+                  "time": "7:30 AM",
+                  "type": "tee_time",
+                  "title": "Torrey Pines South Course",
+                  "cost_pp": 225
+                },
+                {
+                  "time": "1:00 PM",
+                  "type": "food",
+                  "title": "Fish tacos at Oscars in PB",
+                  "cost_pp": 15
+                },
+                {
+                  "time": "3:00 PM",
+                  "type": "activity",
+                  "title": "La Jolla Cove / beach",
+                  "cost_pp": 0
+                },
+                {
+                  "time": "6:00 PM",
+                  "type": "activity",
+                  "title": "Stone Brewing Escondido",
+                  "cost_pp": 40
+                },
+                {
+                  "time": "8:30 PM",
+                  "type": "dinner",
+                  "title": "Puesto (Seaport Village)",
+                  "cost_pp": 45
+                }
+              ]
+            },
+            {
+              "day": 3,
+              "title": "Canyon Golf + Farewell",
+              "items": [
+                {
+                  "time": "8:00 AM",
+                  "type": "tee_time",
+                  "title": "Maderas Golf Club",
+                  "cost_pp": 160
+                },
+                {
+                  "time": "1:30 PM",
+                  "type": "food",
+                  "title": "Hodad's (Ocean Beach)",
+                  "cost_pp": 15
+                },
+                {
+                  "time": "3:00 PM",
+                  "type": "activity",
+                  "title": "Beach / pool / pack",
+                  "cost_pp": 0
+                },
+                {
+                  "time": "7:00 PM",
+                  "type": "dinner",
+                  "title": "Final dinner at Ironside Fish & Oyster",
+                  "cost_pp": 60
+                }
+              ]
+            },
+            {
+              "day": 4,
+              "title": "Departure",
+              "items": [
+                {
+                  "time": "10:00 AM",
+                  "type": "travel",
+                  "title": "Depart SAN",
+                  "cost_pp": 0
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "hilton-head-sc",
+      "destination": "Hilton Head Island, SC",
+      "region": "Southeast",
+      "nearest_airport": "SAV (Savannah/Hilton Head) or HHH (Hilton Head Island)",
+      "airport_to_courses_drive": "45 min from SAV, 10 min from HHH",
+      "best_months": [
+        "Mar",
+        "Apr",
+        "May",
+        "Sep",
+        "Oct",
+        "Nov"
+      ],
+      "avoid_months": [
+        "Jul",
+        "Aug"
+      ],
+      "avoid_reason": "Peak heat/humidity and hurricane season. Courses playable but brutal.",
+      "vibe": [
+        "resort",
+        "relaxed",
+        "family-friendly",
+        "lowcountry",
+        "couples"
+      ],
+      "price_tier": "mid",
+      "avg_cost_per_person_per_day": {
+        "budget": 175,
+        "mid": 300,
+        "premium": 500
+      },
+      "group_size_sweet_spot": "4-8",
+      "why_go": "Lowcountry charm with 25+ courses on a 12-mile island. Harbour Town is iconic, the bike paths are everywhere, and it's a more refined, less commercial version of Myrtle Beach.",
+      "top_courses": [
+        {
+          "name": "Harbour Town Golf Links",
+          "greens_fee_range": "$200-400 (must stay at Sea Pines Resort)",
+          "peak_season_fee": 400,
+          "off_peak_fee": 225,
+          "difficulty": "moderate",
+          "condition_rating": 4.6,
+          "scenery_rating": 4.8,
+          "must_know": "Home of the RBC Heritage (PGA Tour). The lighthouse at #18 is one of golf's most iconic finishes. Tight, tree-lined, Pete Dye gem. Must stay at Sea Pines.",
+          "booking_lead_time": "30+ days with resort stay",
+          "designer": "Pete Dye & Jack Nicklaus",
+          "signature_holes": [
+            "#18 par-4 with lighthouse",
+            "#17 par-3 over water"
+          ],
+          "tags": [
+            "bucket_list",
+            "pga_tour_venue",
+            "iconic",
+            "resort"
+          ]
+        },
+        {
+          "name": "Atlantic Dunes (Sea Pines)",
+          "greens_fee_range": "$125-250",
+          "peak_season_fee": 250,
+          "off_peak_fee": 125,
+          "difficulty": "moderate",
+          "condition_rating": 4.4,
+          "scenery_rating": 4.5,
+          "must_know": "Redesigned by Davis Love III in 2015. Ocean holes on the back 9. Best complement to Harbour Town at Sea Pines.",
+          "designer": "Davis Love III (redesign)",
+          "tags": [
+            "resort",
+            "ocean"
+          ]
+        },
+        {
+          "name": "Palmetto Dunes (Robert Trent Jones Course)",
+          "greens_fee_range": "$100-200",
+          "peak_season_fee": 200,
+          "off_peak_fee": 100,
+          "difficulty": "moderate",
+          "condition_rating": 4.2,
+          "scenery_rating": 4.3,
+          "must_know": "One of 3 courses at Palmetto Dunes resort. RTJ is the best of the three. Lagoon system throughout.",
+          "designer": "Robert Trent Jones Sr.",
+          "tags": [
+            "resort"
+          ]
+        },
+        {
+          "name": "Palmetto Hall (Arthur Hills Course)",
+          "greens_fee_range": "$65-130",
+          "peak_season_fee": 130,
+          "off_peak_fee": 65,
+          "difficulty": "moderate",
+          "condition_rating": 4.0,
+          "scenery_rating": 3.8,
+          "must_know": "Solid value option. Wide fairways, good conditions, no resort stay required.",
+          "designer": "Arthur Hills",
+          "tags": [
+            "value",
+            "public"
+          ]
+        }
+      ],
+      "hidden_gems": [
+        {
+          "name": "Old South Golf Links",
+          "greens_fee_range": "$50-100",
+          "must_know": "In Bluffton, 15 min off island. Clyde Johnston design with marsh views. Fraction of island prices.",
+          "tags": [
+            "value",
+            "marsh",
+            "off_island"
+          ]
+        },
+        {
+          "name": "Oyster Reef Golf Club",
+          "greens_fee_range": "$55-110",
+          "must_know": "Rees Jones design. Water on 10 of 18 holes. Great value alternative to the big resort courses.",
+          "tags": [
+            "value",
+            "water"
+          ]
+        }
+      ],
+      "lodging_options": [
+        {
+          "type": "resort",
+          "name": "Sea Pines Resort (villas)",
+          "per_night_range": "$200-500",
+          "group_friendly": true,
+          "note": "Only way to play Harbour Town. Villas are spacious. Bike everywhere inside the gate."
+        },
+        {
+          "type": "resort",
+          "name": "Palmetto Dunes Oceanfront Resort",
+          "per_night_range": "$175-400",
+          "group_friendly": true,
+          "note": "3 courses on-site. Beach access. Good for groups who want variety."
+        },
+        {
+          "type": "airbnb",
+          "name": "Off-plantation house",
+          "typical_per_night": "$200-500 for 4BR",
+          "group_friendly": true,
+          "note": "Can't play Harbour Town from here. But cheaper and more space."
+        }
+      ],
+      "dining": [
+        {
+          "name": "Skull Creek Boathouse",
+          "type": "seafood",
+          "price": "$$-$$$",
+          "group_note": "Sunset views over the marsh. Great raw bar. Reserve the deck for groups."
+        },
+        {
+          "name": "One Hot Mama's",
+          "type": "BBQ",
+          "price": "$$",
+          "group_note": "Best ribs on the island. Casual, fun, big portions."
+        },
+        {
+          "name": "Hudson's Seafood",
+          "type": "seafood",
+          "price": "$$-$$$",
+          "group_note": "On the water at Skull Creek. Old-school Lowcountry. She-crab soup."
+        },
+        {
+          "name": "Quarterdeck at Harbour Town",
+          "type": "casual",
+          "price": "$$",
+          "group_note": "Right at the marina. Watch boats while having post-round beers."
+        }
+      ],
+      "non_golf_activities": [
+        "Beach day",
+        "Biking (70+ miles of paths)",
+        "Kayaking through the marsh",
+        "Dolphin cruise",
+        "Fishing charter",
+        "Shelter Cove shopping"
+      ],
+      "insider_tips": [
+        "Stay at Sea Pines to play Harbour Town \u2014 it's the whole reason you go to HHH",
+        "Rent bikes inside Sea Pines \u2014 it's the best way to get around and very HHH",
+        "Play Harbour Town in the afternoon for the best light on #18 lighthouse",
+        "Fly into SAV and drive 45 min \u2014 flights to HHH are limited and expensive",
+        "Spring (Apr-May) is ideal: azaleas blooming, warm but not brutal, Heritage week energy",
+        "Bluffton (10 min away) has great restaurants and less tourist markup"
+      ],
+      "sample_itineraries": {
+        "4_day_lowcountry": {
+          "duration_nights": 4,
+          "ideal_group_size": "4-8",
+          "estimated_cost_pp": 1800,
+          "days": [
+            {
+              "day": 1,
+              "title": "Arrival & Warm-Up",
+              "items": [
+                {
+                  "time": "12:00 PM",
+                  "type": "travel",
+                  "title": "Arrive SAV, drive to Sea Pines",
+                  "cost_pp": 25
+                },
+                {
+                  "time": "2:30 PM",
+                  "type": "tee_time",
+                  "title": "Palmetto Hall Hills Course",
+                  "cost_pp": 90
+                },
+                {
+                  "time": "7:00 PM",
+                  "type": "dinner",
+                  "title": "Skull Creek Boathouse (sunset)",
+                  "cost_pp": 55
+                }
+              ]
+            },
+            {
+              "day": 2,
+              "title": "Harbour Town Day",
+              "items": [
+                {
+                  "time": "8:00 AM",
+                  "type": "tee_time",
+                  "title": "Harbour Town Golf Links",
+                  "cost_pp": 325
+                },
+                {
+                  "time": "2:00 PM",
+                  "type": "food",
+                  "title": "Lunch at Quarterdeck",
+                  "cost_pp": 20
+                },
+                {
+                  "time": "3:30 PM",
+                  "type": "activity",
+                  "title": "Beach / bike ride",
+                  "cost_pp": 0
+                },
+                {
+                  "time": "7:00 PM",
+                  "type": "dinner",
+                  "title": "One Hot Mama's",
+                  "cost_pp": 35
+                }
+              ]
+            },
+            {
+              "day": 3,
+              "title": "Ocean Golf",
+              "items": [
+                {
+                  "time": "8:00 AM",
+                  "type": "tee_time",
+                  "title": "Atlantic Dunes (Sea Pines)",
+                  "cost_pp": 180
+                },
+                {
+                  "time": "1:30 PM",
+                  "type": "tee_time",
+                  "title": "Palmetto Dunes RTJ Course",
+                  "cost_pp": 150
+                },
+                {
+                  "time": "7:00 PM",
+                  "type": "dinner",
+                  "title": "Hudson's Seafood",
+                  "cost_pp": 50
+                }
+              ]
+            },
+            {
+              "day": 4,
+              "title": "Beach Day + Departure Prep",
+              "items": [
+                {
+                  "time": "9:00 AM",
+                  "type": "activity",
+                  "title": "Beach morning / dolphin cruise",
+                  "cost_pp": 40
+                },
+                {
+                  "time": "12:00 PM",
+                  "type": "food",
+                  "title": "Lunch on island",
+                  "cost_pp": 20
+                },
+                {
+                  "time": "2:00 PM",
+                  "type": "activity",
+                  "title": "Pack + chill",
+                  "cost_pp": 0
+                },
+                {
+                  "time": "7:00 PM",
+                  "type": "dinner",
+                  "title": "Final dinner in Bluffton",
+                  "cost_pp": 55
+                }
+              ]
+            },
+            {
+              "day": 5,
+              "title": "Departure",
+              "items": [
+                {
+                  "time": "9:00 AM",
+                  "type": "travel",
+                  "title": "Drive to SAV, depart",
+                  "cost_pp": 0
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "pebble-beach-ca",
+      "destination": "Pebble Beach / Monterey, CA",
+      "region": "West Coast",
+      "nearest_airport": "MRY (Monterey) or SJC (San Jose) or SFO",
+      "airport_to_courses_drive": "10 min from MRY, 75 min from SJC, 2 hrs from SFO",
+      "best_months": [
+        "May",
+        "Jun",
+        "Jul",
+        "Aug",
+        "Sep",
+        "Oct"
+      ],
+      "avoid_months": [
+        "Dec",
+        "Jan",
+        "Feb"
+      ],
+      "avoid_reason": "Rainy season. Course is open but cold, wet, and often foggy. You're paying $600+ \u2014 you want sun.",
+      "vibe": [
+        "bucket-list",
+        "luxury",
+        "once-in-a-lifetime",
+        "special-occasion"
+      ],
+      "price_tier": "luxury",
+      "avg_cost_per_person_per_day": {
+        "budget": 400,
+        "mid": 650,
+        "premium": 1000
+      },
+      "group_size_sweet_spot": "4",
+      "why_go": "The #1 public course in America. If you play golf, you have to play Pebble Beach at least once. The coastline on holes 6-10 is the most beautiful stretch in golf.",
+      "top_courses": [
+        {
+          "name": "Pebble Beach Golf Links",
+          "greens_fee_range": "$595-625 (cart extra, caddie available)",
+          "peak_season_fee": 625,
+          "off_peak_fee": 595,
+          "difficulty": "hard",
+          "condition_rating": 4.7,
+          "scenery_rating": 5.0,
+          "must_know": "Must stay at Pebble Beach Resorts property for guaranteed tee time. Walk-on possible but rare. Caddie recommended ($75 + tip). #7 par-3 is 106 yards of pure adrenaline.",
+          "booking_lead_time": "Book with resort stay, 60+ days",
+          "walking_policy": "Walking encouraged, caddie available",
+          "caddie_available": true,
+          "caddie_fee": "$75 + $50-75 tip",
+          "designer": "Jack Neville & Douglas Grant (1919)",
+          "hosted_events": [
+            "US Open 2019",
+            "US Open 2010",
+            "US Open 2000",
+            "AT&T Pebble Beach Pro-Am annually"
+          ],
+          "signature_holes": [
+            "#7 par-3 downhill oceanside",
+            "#8 par-4 cliff approach",
+            "#18 par-5 along the bay"
+          ],
+          "tags": [
+            "bucket_list",
+            "#1_public_us",
+            "ocean",
+            "championship",
+            "top_5_world"
+          ]
+        },
+        {
+          "name": "Spyglass Hill",
+          "greens_fee_range": "$425-450",
+          "peak_season_fee": 450,
+          "off_peak_fee": 425,
+          "difficulty": "very hard",
+          "condition_rating": 4.6,
+          "scenery_rating": 4.7,
+          "must_know": "Harder than Pebble. Front 9 is dunes/ocean, back 9 is forest. Robert Trent Jones Sr. Many say it's the better golf course (just not the views).",
+          "designer": "Robert Trent Jones Sr.",
+          "tags": [
+            "championship",
+            "challenging",
+            "ocean"
+          ]
+        },
+        {
+          "name": "The Links at Spanish Bay",
+          "greens_fee_range": "$310-330",
+          "peak_season_fee": 330,
+          "off_peak_fee": 310,
+          "difficulty": "moderate",
+          "condition_rating": 4.3,
+          "scenery_rating": 4.5,
+          "must_know": "Scottish links-style on the ocean. Bagpiper plays at sunset from the Inn. The most atmospheric course on the peninsula.",
+          "designer": "Robert Trent Jones Jr., Tom Watson, Sandy Tatum",
+          "tags": [
+            "links",
+            "ocean",
+            "atmospheric"
+          ]
+        },
+        {
+          "name": "Pacific Grove Golf Links",
+          "greens_fee_range": "$25-55",
+          "peak_season_fee": 55,
+          "off_peak_fee": 25,
+          "difficulty": "easy",
+          "condition_rating": 3.5,
+          "scenery_rating": 4.4,
+          "must_know": "The 'poor man's Pebble Beach.' Municipal course with ocean views and deer on the fairways. Back 9 along the coast is surprisingly beautiful. Best $55 you'll spend.",
+          "designer": "Jack Neville",
+          "tags": [
+            "budget",
+            "muni",
+            "ocean",
+            "hidden_gem"
+          ]
+        }
+      ],
+      "hidden_gems": [
+        {
+          "name": "Bayonet & Black Horse (Bayonet)",
+          "greens_fee_range": "$60-130",
+          "must_know": "Former military course in Seaside. Brutally hard but great conditions and ocean views for a fraction of Pebble.",
+          "tags": [
+            "value",
+            "challenging",
+            "military"
+          ]
+        },
+        {
+          "name": "Pasadera Country Club",
+          "greens_fee_range": "$75-150",
+          "must_know": "Nicklaus design. Semi-private but public access available. Excellent conditions.",
+          "tags": [
+            "value",
+            "nicklaus"
+          ]
+        }
+      ],
+      "lodging_options": [
+        {
+          "type": "resort",
+          "name": "The Lodge at Pebble Beach",
+          "per_night_range": "$800-2000",
+          "group_friendly": false,
+          "note": "Guaranteed Pebble tee time. The ultimate. 2-person rooms only."
+        },
+        {
+          "type": "resort",
+          "name": "The Inn at Spanish Bay",
+          "per_night_range": "$600-1200",
+          "group_friendly": false,
+          "note": "On-site at Spanish Bay. Sunset bagpiper. Also gets Pebble tee times."
+        },
+        {
+          "type": "hotel",
+          "name": "Monterey hotels (Portola, Marriott)",
+          "per_night_range": "$150-350",
+          "group_friendly": true,
+          "note": "10-15 min from Pebble. Can try for public tee times. Much cheaper."
+        },
+        {
+          "type": "airbnb",
+          "name": "Pacific Grove cottage",
+          "typical_per_night": "$200-500 for 3BR",
+          "group_friendly": true,
+          "note": "Charming town. Walk to Pacific Grove muni. No guaranteed Pebble tee times."
+        }
+      ],
+      "dining": [
+        {
+          "name": "The Bench (Pebble Beach)",
+          "type": "American",
+          "price": "$$$$",
+          "group_note": "At The Lodge, overlooking #18 green. The celebration meal."
+        },
+        {
+          "name": "Roy's at Spanish Bay",
+          "type": "Hawaiian fusion",
+          "price": "$$$",
+          "group_note": "Great food, ocean views, more relaxed than The Bench."
+        },
+        {
+          "name": "Fisherman's Wharf (Monterey)",
+          "type": "seafood",
+          "price": "$$",
+          "group_note": "Classic clam chowder in a bread bowl. Tourist spot but fun."
+        },
+        {
+          "name": "Montrio Bistro",
+          "type": "American",
+          "price": "$$$",
+          "group_note": "Downtown Monterey. Great cocktails, creative menu. Reserve for groups."
+        }
+      ],
+      "non_golf_activities": [
+        "17-Mile Drive",
+        "Monterey Bay Aquarium",
+        "Cannery Row",
+        "Whale watching (seasonal)",
+        "Big Sur day trip",
+        "Wine tasting in Carmel Valley"
+      ],
+      "insider_tips": [
+        "Stay at an on-site resort to guarantee Pebble Beach tee times \u2014 it's the only reliable way",
+        "Pair Pebble + Spyglass for consecutive days. Spanish Bay on arrival day (links, no pressure)",
+        "Play Pacific Grove muni the evening before Pebble \u2014 it's $55 with ocean views and gets you calibrated",
+        "Walk Pebble with a caddie \u2014 riding dilutes the experience. Your caddie will be incredible",
+        "Afternoon fog is common Jun-Aug (the 'June Gloom'). Morning tee times have better chance of sun",
+        "17-Mile Drive is free if you're going to a Pebble Beach resort \u2014 save the $11.25 entrance fee",
+        "This trip works best as a foursome. It's too expensive for 8+ unless everyone is committed"
+      ],
+      "sample_itineraries": {
+        "3_day_dream_trip": {
+          "duration_nights": 3,
+          "ideal_group_size": "4",
+          "estimated_cost_pp": 3500,
+          "days": [
+            {
+              "day": 1,
+              "title": "Arrival & Spanish Bay",
+              "items": [
+                {
+                  "time": "11:00 AM",
+                  "type": "travel",
+                  "title": "Arrive MRY, drive to The Inn at Spanish Bay",
+                  "cost_pp": 0
+                },
+                {
+                  "time": "1:30 PM",
+                  "type": "tee_time",
+                  "title": "The Links at Spanish Bay",
+                  "cost_pp": 325
+                },
+                {
+                  "time": "6:00 PM",
+                  "type": "activity",
+                  "title": "Sunset bagpiper at Spanish Bay",
+                  "cost_pp": 0
+                },
+                {
+                  "time": "7:30 PM",
+                  "type": "dinner",
+                  "title": "Roy's at Spanish Bay",
+                  "cost_pp": 80
+                }
+              ]
+            },
+            {
+              "day": 2,
+              "title": "Pebble Beach",
+              "items": [
+                {
+                  "time": "8:00 AM",
+                  "type": "tee_time",
+                  "title": "Pebble Beach Golf Links (with caddie)",
+                  "cost_pp": 725
+                },
+                {
+                  "time": "2:00 PM",
+                  "type": "food",
+                  "title": "Lunch at The Bench (overlooking 18)",
+                  "cost_pp": 50
+                },
+                {
+                  "time": "4:00 PM",
+                  "type": "activity",
+                  "title": "17-Mile Drive / Carmel browsing",
+                  "cost_pp": 0
+                },
+                {
+                  "time": "7:00 PM",
+                  "type": "dinner",
+                  "title": "Montrio Bistro (Monterey)",
+                  "cost_pp": 70
+                }
+              ]
+            },
+            {
+              "day": 3,
+              "title": "Spyglass Hill",
+              "items": [
+                {
+                  "time": "8:00 AM",
+                  "type": "tee_time",
+                  "title": "Spyglass Hill",
+                  "cost_pp": 440
+                },
+                {
+                  "time": "1:30 PM",
+                  "type": "food",
+                  "title": "Lunch",
+                  "cost_pp": 30
+                },
+                {
+                  "time": "3:00 PM",
+                  "type": "activity",
+                  "title": "Monterey Bay Aquarium or wine tasting",
+                  "cost_pp": 50
+                },
+                {
+                  "time": "7:00 PM",
+                  "type": "dinner",
+                  "title": "Final dinner at The Bench",
+                  "cost_pp": 100
+                }
+              ]
+            },
+            {
+              "day": 4,
+              "title": "Departure",
+              "items": [
+                {
+                  "time": "9:00 AM",
+                  "type": "travel",
+                  "title": "Depart MRY",
+                  "cost_pp": 0
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "kiawah-island-sc",
+      "destination": "Kiawah Island, SC",
+      "region": "Southeast",
+      "nearest_airport": "CHS (Charleston International)",
+      "airport_to_courses_drive": "40-50 min",
+      "best_months": [
+        "Mar",
+        "Apr",
+        "May",
+        "Sep",
+        "Oct",
+        "Nov"
+      ],
+      "avoid_months": [
+        "Jul",
+        "Aug"
+      ],
+      "avoid_reason": "Peak heat, humidity, and hurricane season. Bugs are intense.",
+      "vibe": [
+        "premium",
+        "resort",
+        "ocean",
+        "lowcountry",
+        "couples"
+      ],
+      "price_tier": "premium",
+      "avg_cost_per_person_per_day": {
+        "budget": 275,
+        "mid": 450,
+        "premium": 700
+      },
+      "group_size_sweet_spot": "4-8",
+      "why_go": "The Ocean Course is a top-10 course in America and hosted the 2021 PGA Championship. Five courses on one island with world-class resort amenities. Add Charleston's food scene 45 min away.",
+      "top_courses": [
+        {
+          "name": "The Ocean Course",
+          "greens_fee_range": "$350-500 (must stay at resort)",
+          "peak_season_fee": 500,
+          "off_peak_fee": 350,
+          "difficulty": "very hard",
+          "condition_rating": 4.8,
+          "scenery_rating": 5.0,
+          "must_know": "Every hole has ocean views \u2014 only course in the US where this is true. Wind is ALWAYS a factor. Site of the 1991 Ryder Cup 'War by the Shore' and 2021 PGA Championship. Caddie mandatory.",
+          "walking_policy": "Walking encouraged, caddies available",
+          "caddie_available": true,
+          "caddie_fee": "$50-75 + tip",
+          "designer": "Pete Dye",
+          "hosted_events": [
+            "PGA Championship 2021",
+            "PGA Championship 2012",
+            "Ryder Cup 1991"
+          ],
+          "signature_holes": [
+            "#17 par-3 along the ocean",
+            "#18 par-4 ocean approach"
+          ],
+          "tags": [
+            "bucket_list",
+            "top_10_us",
+            "ocean",
+            "championship"
+          ]
+        },
+        {
+          "name": "Osprey Point",
+          "greens_fee_range": "$150-275",
+          "peak_season_fee": 275,
+          "off_peak_fee": 150,
+          "difficulty": "moderate",
+          "condition_rating": 4.3,
+          "scenery_rating": 4.2,
+          "must_know": "Tom Fazio design through marshes and lagoons. Most playable Kiawah course. Good warm-up before Ocean Course.",
+          "designer": "Tom Fazio",
+          "tags": [
+            "resort",
+            "forgiving",
+            "marsh"
+          ]
+        },
+        {
+          "name": "Turtle Point",
+          "greens_fee_range": "$150-275",
+          "peak_season_fee": 275,
+          "off_peak_fee": 150,
+          "difficulty": "moderate",
+          "condition_rating": 4.2,
+          "scenery_rating": 4.3,
+          "must_know": "Jack Nicklaus design. 3 holes along the Atlantic. Recently renovated.",
+          "designer": "Jack Nicklaus",
+          "tags": [
+            "resort",
+            "ocean"
+          ]
+        },
+        {
+          "name": "Cougar Point",
+          "greens_fee_range": "$125-225",
+          "peak_season_fee": 225,
+          "off_peak_fee": 125,
+          "difficulty": "moderate",
+          "condition_rating": 4.1,
+          "scenery_rating": 4.0,
+          "must_know": "Gary Player design along the Kiawah River. Shortest and most accessible course on the island.",
+          "designer": "Gary Player",
+          "tags": [
+            "resort",
+            "accessible"
+          ]
+        }
+      ],
+      "hidden_gems": [
+        {
+          "name": "Charleston Municipal Golf Course",
+          "greens_fee_range": "$20-40",
+          "must_know": "In Charleston proper. Basic but playable. Seth Raynor design from 1925. Great if you add a Charleston day.",
+          "tags": [
+            "budget",
+            "muni",
+            "historic"
+          ]
+        },
+        {
+          "name": "Links at Stono Ferry",
+          "greens_fee_range": "$40-80",
+          "must_know": "20 min from Kiawah. Good value course on the Stono River marsh. Quiet and scenic.",
+          "tags": [
+            "value",
+            "marsh"
+          ]
+        }
+      ],
+      "lodging_options": [
+        {
+          "type": "resort",
+          "name": "The Sanctuary at Kiawah Island",
+          "per_night_range": "$500-1200",
+          "group_friendly": false,
+          "note": "5-star luxury. Ocean Course access. The ultimate Kiawah experience."
+        },
+        {
+          "type": "resort",
+          "name": "Kiawah Island Golf Resort (villas)",
+          "per_night_range": "$250-600",
+          "group_friendly": true,
+          "note": "Villas and cottages across the island. Best option for groups. Pool, beach, bikes included."
+        },
+        {
+          "type": "airbnb",
+          "name": "Kiawah rental home",
+          "typical_per_night": "$300-800 for 4BR",
+          "group_friendly": true,
+          "note": "Inside the gate. Need resort access to play Ocean Course."
+        }
+      ],
+      "dining": [
+        {
+          "name": "The Ocean Room",
+          "type": "steakhouse/seafood",
+          "price": "$$$$",
+          "group_note": "At The Sanctuary. Ocean views. Black tie optional. Celebration dinner."
+        },
+        {
+          "name": "Tomasso at Turtle Point",
+          "type": "Italian",
+          "price": "$$$",
+          "group_note": "Best casual upscale on island. Great pasta."
+        },
+        {
+          "name": "Husk (Charleston)",
+          "type": "Southern",
+          "price": "$$$",
+          "group_note": "45 min away in Charleston. James Beard winner. Iconic Southern cuisine."
+        },
+        {
+          "name": "FIG (Charleston)",
+          "type": "farm-to-table",
+          "price": "$$$",
+          "group_note": "Charleston's best restaurant per many. Reserve 3+ weeks out."
+        }
+      ],
+      "non_golf_activities": [
+        "Beach day",
+        "Biking (30+ miles of trails)",
+        "Kayaking/paddleboarding",
+        "Charleston day trip (food + history)",
+        "Nature center / alligator spotting",
+        "Fishing charter"
+      ],
+      "insider_tips": [
+        "Play Ocean Course on a calm day if possible \u2014 wind can make it unplayable for high handicappers",
+        "Pair Kiawah with a Charleston day for the food \u2014 Husk, FIG, and Rodney Scott's BBQ are worth the drive",
+        "Stay in a villa, not The Sanctuary, unless it's a special occasion. Villas are more fun for groups",
+        "Osprey Point on arrival day, Ocean Course day 2 when you're warmed up and rested",
+        "Caddie on Ocean Course is worth every penny \u2014 they know the wind and the greens",
+        "Spring (Apr-May) is the sweet spot \u2014 warm, flowers blooming, before summer humidity hits"
+      ],
+      "sample_itineraries": {
+        "3_day_premium": {
+          "duration_nights": 3,
+          "ideal_group_size": "4-8",
+          "estimated_cost_pp": 2500,
+          "days": [
+            {
+              "day": 1,
+              "title": "Arrival & Warm-Up",
+              "items": [
+                {
+                  "time": "12:00 PM",
+                  "type": "travel",
+                  "title": "Arrive CHS, drive to Kiawah",
+                  "cost_pp": 30
+                },
+                {
+                  "time": "2:00 PM",
+                  "type": "tee_time",
+                  "title": "Osprey Point",
+                  "cost_pp": 200
+                },
+                {
+                  "time": "7:00 PM",
+                  "type": "dinner",
+                  "title": "Tomasso at Turtle Point",
+                  "cost_pp": 60
+                }
+              ]
+            },
+            {
+              "day": 2,
+              "title": "The Ocean Course",
+              "items": [
+                {
+                  "time": "8:30 AM",
+                  "type": "tee_time",
+                  "title": "The Ocean Course (with caddies)",
+                  "cost_pp": 500
+                },
+                {
+                  "time": "2:30 PM",
+                  "type": "food",
+                  "title": "Lunch at Atlantic Room",
+                  "cost_pp": 35
+                },
+                {
+                  "time": "4:00 PM",
+                  "type": "activity",
+                  "title": "Beach / pool / bikes",
+                  "cost_pp": 0
+                },
+                {
+                  "time": "7:00 PM",
+                  "type": "dinner",
+                  "title": "The Ocean Room (celebration)",
+                  "cost_pp": 100
+                }
+              ]
+            },
+            {
+              "day": 3,
+              "title": "Turtle Point + Charleston",
+              "items": [
+                {
+                  "time": "8:00 AM",
+                  "type": "tee_time",
+                  "title": "Turtle Point",
+                  "cost_pp": 200
+                },
+                {
+                  "time": "1:30 PM",
+                  "type": "travel",
+                  "title": "Drive to Charleston",
+                  "cost_pp": 0
+                },
+                {
+                  "time": "3:00 PM",
+                  "type": "activity",
+                  "title": "Walk King Street / historic district",
+                  "cost_pp": 0
+                },
+                {
+                  "time": "7:00 PM",
+                  "type": "dinner",
+                  "title": "Husk (Charleston)",
+                  "cost_pp": 75
+                }
+              ]
+            },
+            {
+              "day": 4,
+              "title": "Departure",
+              "items": [
+                {
+                  "time": "9:00 AM",
+                  "type": "travel",
+                  "title": "Depart CHS",
+                  "cost_pp": 0
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "bandon-dunes-or",
+      "destination": "Bandon Dunes, OR",
+      "region": "Pacific Northwest",
+      "nearest_airport": "OTH (North Bend/Coos Bay) or EUG (Eugene)",
+      "airport_to_courses_drive": "15 min from OTH, 3 hrs from EUG",
+      "best_months": [
+        "Jun",
+        "Jul",
+        "Aug",
+        "Sep",
+        "Oct"
+      ],
+      "avoid_months": [
+        "Dec",
+        "Jan",
+        "Feb"
+      ],
+      "avoid_reason": "Heavy rain and wind. Not worth the premium in winter.",
+      "vibe": [
+        "bucket-list",
+        "golf-purist",
+        "walking-only",
+        "links",
+        "boys-trip"
+      ],
+      "price_tier": "premium",
+      "avg_cost_per_person_per_day": {
+        "budget": 350,
+        "mid": 500,
+        "premium": 700
+      },
+      "group_size_sweet_spot": "4-8",
+      "why_go": "The greatest golf resort in America. Five world-class courses, all walking only, on the rugged Oregon coast. No houses, no roads, no distractions \u2014 just golf. Mecca for the serious golfer.",
+      "top_courses": [
+        {
+          "name": "Pacific Dunes",
+          "greens_fee_range": "$275-395",
+          "peak_season_fee": 395,
+          "off_peak_fee": 275,
+          "difficulty": "hard",
+          "condition_rating": 4.9,
+          "scenery_rating": 5.0,
+          "must_know": "#1 resort course in America. Tom Doak masterpiece. 11 holes with ocean views.",
+          "designer": "Tom Doak",
+          "walking_policy": "Walking only",
+          "caddie_available": true,
+          "tags": [
+            "bucket_list",
+            "#1_resort_us",
+            "links",
+            "ocean"
+          ]
+        },
+        {
+          "name": "Bandon Dunes",
+          "greens_fee_range": "$275-395",
+          "peak_season_fee": 395,
+          "off_peak_fee": 275,
+          "difficulty": "hard",
+          "condition_rating": 4.8,
+          "scenery_rating": 4.9,
+          "must_know": "The original. Ocean cliff holes on back 9 are jaw-dropping. The course that started it all.",
+          "designer": "David McLay Kidd",
+          "tags": [
+            "bucket_list",
+            "links",
+            "ocean"
+          ]
+        },
+        {
+          "name": "Sheep Ranch",
+          "greens_fee_range": "$275-395",
+          "peak_season_fee": 395,
+          "off_peak_fee": 275,
+          "difficulty": "moderate",
+          "condition_rating": 4.7,
+          "scenery_rating": 5.0,
+          "must_know": "Newest course (2020). Every hole has ocean views. Wide open, few bunkers. Most 'links' of all five.",
+          "designer": "Bill Coore & Ben Crenshaw",
+          "tags": [
+            "links",
+            "ocean",
+            "newest"
+          ]
+        },
+        {
+          "name": "Old Macdonald",
+          "greens_fee_range": "$275-395",
+          "peak_season_fee": 395,
+          "off_peak_fee": 275,
+          "difficulty": "moderate",
+          "condition_rating": 4.7,
+          "scenery_rating": 4.5,
+          "must_know": "Tribute to golden-age architecture. Massive double greens, huge fairways. Most unique of the five.",
+          "designer": "Tom Doak & Jim Urbina",
+          "tags": [
+            "links",
+            "strategic",
+            "golden_age"
+          ]
+        },
+        {
+          "name": "Bandon Trails",
+          "greens_fee_range": "$275-395",
+          "peak_season_fee": 395,
+          "off_peak_fee": 275,
+          "difficulty": "moderate-hard",
+          "condition_rating": 4.6,
+          "scenery_rating": 4.3,
+          "must_know": "Inland routing through coastal forest. No ocean but stunning. Feels like a different world.",
+          "designer": "Bill Coore & Ben Crenshaw",
+          "tags": [
+            "links",
+            "forest"
+          ]
+        }
+      ],
+      "hidden_gems": [
+        {
+          "name": "Bandon Preserve",
+          "greens_fee_range": "$100 (13-hole par-3)",
+          "must_know": "On-site par-3 with ocean views. All proceeds to charity. Perfect arrival day.",
+          "tags": [
+            "par_3",
+            "charity"
+          ]
+        },
+        {
+          "name": "The Punchbowl",
+          "greens_fee_range": "Free (18-hole putting course)",
+          "must_know": "Massive putting green by Tom Doak. Free for guests. Bet on it.",
+          "tags": [
+            "free",
+            "putting"
+          ]
+        }
+      ],
+      "lodging_options": [
+        {
+          "type": "resort",
+          "name": "Bandon Dunes Resort (Lodge/Cottages)",
+          "per_night_range": "$200-500",
+          "group_friendly": true,
+          "note": "On-site. Walk to all courses. Lodge rooms simple but comfortable. Communal vibe."
+        }
+      ],
+      "dining": [
+        {
+          "name": "The Gallery",
+          "type": "fine dining",
+          "price": "$$$",
+          "group_note": "Best meal on property. Pacific NW cuisine."
+        },
+        {
+          "name": "McKee's Pub",
+          "type": "pub",
+          "price": "$$",
+          "group_note": "THE post-round hub. Good whiskey selection."
+        },
+        {
+          "name": "Trails End Cookhouse",
+          "type": "BBQ",
+          "price": "$$",
+          "group_note": "Outdoor fire pits. Great for big groups."
+        }
+      ],
+      "non_golf_activities": [
+        "Punchbowl putting",
+        "Bandon Preserve par-3",
+        "Beach walk",
+        "Fishing",
+        "Whiskey by fire pit"
+      ],
+      "insider_tips": [
+        "Book 12+ months out for peak season (Jun-Sep)",
+        "Pacific Dunes + Bandon Dunes are the top 2 \u2014 schedule mid-trip when playing well",
+        "Forecaddies for groups \u2014 one caddie per foursome, you carry/push bags",
+        "Bring layers \u2014 65\u00b0 and sunny at 8am, 50\u00b0 with rain by noon",
+        "Fly into OTH if possible \u2014 15 min vs 3+ hrs from Eugene",
+        "NOT a nightlife trip. Golf monastery. Early rounds, pub dinner, bed by 10."
+      ],
+      "sample_itineraries": {
+        "4_day_pilgrimage": {
+          "duration_nights": 4,
+          "ideal_group_size": "4-8",
+          "estimated_cost_pp": 3200
+        }
+      }
+    },
+    {
+      "id": "streamsong-fl",
+      "destination": "Streamsong Resort, FL",
+      "region": "Southeast",
+      "nearest_airport": "TPA (Tampa) or MCO (Orlando)",
+      "airport_to_courses_drive": "75 min from TPA",
+      "best_months": [
+        "Oct",
+        "Nov",
+        "Dec",
+        "Jan",
+        "Feb",
+        "Mar",
+        "Apr"
+      ],
+      "avoid_months": [
+        "Jun",
+        "Jul",
+        "Aug"
+      ],
+      "avoid_reason": "Brutal Florida summer heat + daily thunderstorms.",
+      "vibe": [
+        "golf-purist",
+        "resort",
+        "modern",
+        "hidden-gem-vibe"
+      ],
+      "price_tier": "premium",
+      "avg_cost_per_person_per_day": {
+        "budget": 300,
+        "mid": 450,
+        "premium": 600
+      },
+      "group_size_sweet_spot": "4-8",
+      "why_go": "Three world-ranked courses on reclaimed phosphate mining land. Feels like Scotland in Florida. The Bandon Dunes of the Southeast.",
+      "top_courses": [
+        {
+          "name": "Streamsong Red",
+          "greens_fee_range": "$225-375",
+          "peak_season_fee": 375,
+          "off_peak_fee": 225,
+          "difficulty": "hard",
+          "condition_rating": 4.7,
+          "must_know": "Coore & Crenshaw. Links-style with natural sand. Walking encouraged.",
+          "designer": "Bill Coore & Ben Crenshaw",
+          "tags": [
+            "top_100",
+            "links"
+          ]
+        },
+        {
+          "name": "Streamsong Blue",
+          "greens_fee_range": "$225-375",
+          "peak_season_fee": 375,
+          "off_peak_fee": 225,
+          "difficulty": "hard",
+          "condition_rating": 4.7,
+          "must_know": "Tom Doak. More dramatic elevation, massive bunkers. Some say best of three.",
+          "designer": "Tom Doak",
+          "tags": [
+            "top_100",
+            "strategic"
+          ]
+        },
+        {
+          "name": "Streamsong Black",
+          "greens_fee_range": "$225-375",
+          "peak_season_fee": 375,
+          "off_peak_fee": 225,
+          "difficulty": "very hard",
+          "condition_rating": 4.6,
+          "must_know": "Gil Hanse. Toughest and newest. Dramatic bunkering.",
+          "designer": "Gil Hanse",
+          "tags": [
+            "challenging",
+            "newest"
+          ]
+        }
+      ],
+      "hidden_gems": [
+        {
+          "name": "The Chain (par-3)",
+          "greens_fee_range": "$75",
+          "must_know": "On-site 9-hole par-3 on old mine pits. Fun, creative.",
+          "tags": [
+            "par_3",
+            "fun"
+          ]
+        }
+      ],
+      "lodging_options": [
+        {
+          "type": "resort",
+          "name": "Streamsong Resort",
+          "per_night_range": "$300-600",
+          "group_friendly": true,
+          "note": "Only option. Modern, sleek. On-site dining, spa, pool."
+        }
+      ],
+      "dining": [
+        {
+          "name": "Restaurant Fifty-Nine",
+          "type": "fine dining",
+          "price": "$$$",
+          "group_note": "Southern-influenced. Best meal on property."
+        },
+        {
+          "name": "P205 Grille",
+          "type": "casual",
+          "price": "$$",
+          "group_note": "Post-round pub."
+        },
+        {
+          "name": "Hive Bar",
+          "type": "bar",
+          "price": "$$",
+          "group_note": "Craft cocktails + fire pit."
+        }
+      ],
+      "non_golf_activities": [
+        "Spa",
+        "Bass fishing",
+        "Sporting clays",
+        "Archery",
+        "Stargazing (zero light pollution)"
+      ],
+      "insider_tips": [
+        "Play all three \u2014 that's the whole point",
+        "Red most liked, Blue most respected, Black hardest",
+        "Walking is the way. Courses designed for it.",
+        "Zero nightlife \u2014 embrace it",
+        "Fly into Tampa. 75-min drive is easy.",
+        "Winter (Dec-Feb) is peak and best weather."
+      ],
+      "sample_itineraries": {
+        "3_day_golf_camp": {
+          "duration_nights": 3,
+          "ideal_group_size": "4-8",
+          "estimated_cost_pp": 2400
+        }
+      }
+    },
+    {
+      "id": "palm-springs-ca",
+      "destination": "Palm Springs / La Quinta, CA",
+      "region": "West Coast",
+      "nearest_airport": "PSP (Palm Springs International)",
+      "airport_to_courses_drive": "10-30 min",
+      "best_months": [
+        "Oct",
+        "Nov",
+        "Dec",
+        "Jan",
+        "Feb",
+        "Mar",
+        "Apr"
+      ],
+      "avoid_months": [
+        "Jun",
+        "Jul",
+        "Aug"
+      ],
+      "avoid_reason": "120\u00b0F+ desert heat. Insanely cheap rates but dangerously hot.",
+      "vibe": [
+        "resort",
+        "relaxed",
+        "mid-century",
+        "pool-scene"
+      ],
+      "price_tier": "mid",
+      "avg_cost_per_person_per_day": {
+        "budget": 150,
+        "mid": 300,
+        "premium": 500
+      },
+      "group_size_sweet_spot": "4-8",
+      "why_go": "120+ courses in the Coachella Valley. Mid-century aesthetic, mountain backdrop, resort pools. PGA West Stadium Course. Great winter escape.",
+      "top_courses": [
+        {
+          "name": "PGA West (Stadium Course)",
+          "greens_fee_range": "$150-350",
+          "peak_season_fee": 350,
+          "off_peak_fee": 150,
+          "difficulty": "very hard",
+          "condition_rating": 4.5,
+          "must_know": "Pete Dye's famous design. 'Alcatraz' par-3 #17. Co-hosts The American Express (PGA Tour).",
+          "designer": "Pete Dye",
+          "signature_holes": [
+            "#17 Alcatraz island par-3"
+          ],
+          "tags": [
+            "championship",
+            "pga_tour_venue",
+            "iconic"
+          ]
+        },
+        {
+          "name": "Indian Wells (Celebrity Course)",
+          "greens_fee_range": "$75-200",
+          "peak_season_fee": 200,
+          "off_peak_fee": 85,
+          "twilight_fee": 50,
+          "difficulty": "moderate",
+          "condition_rating": 4.3,
+          "must_know": "Beautiful mountain views. More forgiving than PGA West. Good value.",
+          "designer": "Clive Clark",
+          "tags": [
+            "resort",
+            "scenic",
+            "value"
+          ]
+        },
+        {
+          "name": "SilverRock Resort",
+          "greens_fee_range": "$60-175",
+          "peak_season_fee": 175,
+          "off_peak_fee": 60,
+          "difficulty": "moderate",
+          "must_know": "Arnold Palmer design. Municipal \u2014 great value. Previously hosted Skins Game.",
+          "designer": "Arnold Palmer",
+          "tags": [
+            "muni",
+            "value"
+          ]
+        },
+        {
+          "name": "Escena Golf Club",
+          "greens_fee_range": "$50-125",
+          "peak_season_fee": 125,
+          "off_peak_fee": 55,
+          "difficulty": "moderate",
+          "must_know": "Nicklaus design. Great conditions for price.",
+          "designer": "Jack Nicklaus",
+          "tags": [
+            "value",
+            "nicklaus"
+          ]
+        }
+      ],
+      "hidden_gems": [
+        {
+          "name": "Desert Willow (Firecliff)",
+          "greens_fee_range": "$65-150",
+          "must_know": "Palm Desert muni that plays like resort course. Mountain views, excellent value.",
+          "tags": [
+            "muni",
+            "value",
+            "scenic"
+          ]
+        },
+        {
+          "name": "Classic Club",
+          "greens_fee_range": "$50-125",
+          "must_know": "Arnold Palmer. Former Bob Hope Classic home. Wide fairways.",
+          "tags": [
+            "value",
+            "forgiving"
+          ]
+        }
+      ],
+      "lodging_options": [
+        {
+          "type": "resort",
+          "name": "La Quinta Resort & Club",
+          "per_night_range": "$250-600",
+          "group_friendly": true,
+          "note": "Iconic. Multiple pools. Casitas for groups."
+        },
+        {
+          "type": "hotel",
+          "name": "Arrive Hotel",
+          "per_night_range": "$200-400",
+          "group_friendly": true,
+          "note": "Hip, mid-century vibe. Great pool scene."
+        },
+        {
+          "type": "airbnb",
+          "name": "Mid-century modern house",
+          "typical_per_night": "$250-600 for 4BR",
+          "group_friendly": true,
+          "note": "THE Palm Springs move. Pool, mountain views, retro design."
+        }
+      ],
+      "dining": [
+        {
+          "name": "Workshop Kitchen + Bar",
+          "type": "American",
+          "price": "$$$",
+          "group_note": "Best restaurant in Palm Springs."
+        },
+        {
+          "name": "Lulu California Bistro",
+          "type": "American",
+          "price": "$$-$$$",
+          "group_note": "Palm Canyon Drive. Huge patio, live music."
+        },
+        {
+          "name": "El Jefe (Saguaro Hotel)",
+          "type": "Mexican",
+          "price": "$$",
+          "group_note": "Colorful pool hotel. Good tacos, great margaritas."
+        }
+      ],
+      "non_golf_activities": [
+        "Aerial Tramway",
+        "Pool day",
+        "Joshua Tree day trip",
+        "Architecture tours",
+        "Spa"
+      ],
+      "insider_tips": [
+        "Summer rates are insanely cheap but 120\u00b0F \u2014 only play before 8am",
+        "Rent a mid-century house \u2014 pool standard, it's THE Palm Springs experience",
+        "PGA West Stadium is the must-play. Pair with Indian Wells Celebrity for balance.",
+        "Joshua Tree is 45 min \u2014 great half-day trip",
+        "Peak season (Jan-Mar) book lodging early"
+      ],
+      "sample_itineraries": {
+        "3_day_desert": {
+          "duration_nights": 3,
+          "ideal_group_size": "4-8",
+          "estimated_cost_pp": 1400
+        }
+      }
+    },
+    {
+      "id": "savannah-ga",
+      "destination": "Savannah, GA",
+      "region": "Southeast",
+      "nearest_airport": "SAV (Savannah/Hilton Head International)",
+      "airport_to_courses_drive": "15-45 min",
+      "best_months": [
+        "Mar",
+        "Apr",
+        "May",
+        "Oct",
+        "Nov"
+      ],
+      "avoid_months": [
+        "Jul",
+        "Aug"
+      ],
+      "avoid_reason": "Extreme humidity and heat. Bugs relentless.",
+      "vibe": [
+        "food-scene",
+        "historic",
+        "lowcountry",
+        "laid-back",
+        "bourbon-trail"
+      ],
+      "price_tier": "mid",
+      "avg_cost_per_person_per_day": {
+        "budget": 150,
+        "mid": 250,
+        "premium": 400
+      },
+      "group_size_sweet_spot": "4-8",
+      "why_go": "Historic charm, incredible food scene, solid resort golf. Downtown is walkable and dripping with Southern character. The golf isn't Hilton Head-level but the total trip experience is elite.",
+      "top_courses": [
+        {
+          "name": "The Club at Savannah Harbor",
+          "greens_fee_range": "$100-200",
+          "peak_season_fee": 200,
+          "off_peak_fee": 100,
+          "difficulty": "moderate",
+          "condition_rating": 4.2,
+          "must_know": "Resort course on Hutchinson Island. Water taxi to River Street. Best option near downtown.",
+          "designer": "Sam Snead / Robert Cupp",
+          "tags": [
+            "resort",
+            "marsh"
+          ]
+        },
+        {
+          "name": "Crosswinds Golf Club",
+          "greens_fee_range": "$35-65",
+          "peak_season_fee": 65,
+          "off_peak_fee": 35,
+          "difficulty": "moderate",
+          "must_know": "Best public option. No frills but well-maintained.",
+          "tags": [
+            "budget",
+            "public"
+          ]
+        },
+        {
+          "name": "Savannah Quarters (Nicklaus)",
+          "greens_fee_range": "$50-90",
+          "must_know": "Nicklaus design in Pooler. Good value. 20 min from downtown.",
+          "tags": [
+            "value",
+            "nicklaus"
+          ]
+        }
+      ],
+      "hidden_gems": [
+        {
+          "name": "Palmetto Golf Club",
+          "greens_fee_range": "$25-50",
+          "must_know": "Oldest course in Georgia (1892). Historic and charming.",
+          "tags": [
+            "historic",
+            "budget"
+          ]
+        }
+      ],
+      "lodging_options": [
+        {
+          "type": "hotel",
+          "name": "Westin Savannah Harbor",
+          "per_night_range": "$175-350",
+          "group_friendly": true,
+          "note": "On-site course. Water taxi to River Street."
+        },
+        {
+          "type": "airbnb",
+          "name": "Historic district townhouse",
+          "typical_per_night": "$200-500 for 4BR",
+          "group_friendly": true,
+          "note": "Restored townhouses. Walk to bars/restaurants."
+        }
+      ],
+      "dining": [
+        {
+          "name": "The Grey",
+          "type": "fine dining",
+          "price": "$$$-$$$$",
+          "group_note": "Mashama Bailey's James Beard winner. Best meal in Savannah."
+        },
+        {
+          "name": "Mrs. Wilkes' Dining Room",
+          "type": "Southern",
+          "price": "$$",
+          "group_note": "Communal Southern lunch. Line at 10:30am. Cash only. Once in a lifetime."
+        },
+        {
+          "name": "Husk Savannah",
+          "type": "Southern",
+          "price": "$$$",
+          "group_note": "Sean Brock's outpost. Outstanding."
+        },
+        {
+          "name": "Treylor Park",
+          "type": "casual",
+          "price": "$$",
+          "group_note": "PB&J wings. Great cocktails. Late night."
+        }
+      ],
+      "non_golf_activities": [
+        "River Street bar crawl",
+        "Forsyth Park",
+        "Ghost tours",
+        "Bonaventure Cemetery",
+        "Tybee Island beach day",
+        "Leopold's Ice Cream"
+      ],
+      "insider_tips": [
+        "Savannah is a food + drinking + history trip with golf \u2014 lean into that",
+        "Open container laws \u2014 get a to-go cup from any bar",
+        "Play golf mornings, explore downtown afternoons, big dinner nights",
+        "Tybee Island 20 min east for beach day",
+        "April during azalea season is most beautiful"
+      ],
+      "sample_itineraries": {
+        "3_day_southern": {
+          "duration_nights": 3,
+          "ideal_group_size": "4-8",
+          "estimated_cost_pp": 1100
+        }
+      }
+    },
+    {
+      "id": "cabo-san-lucas-mx",
+      "destination": "Cabo San Lucas, MX",
+      "region": "International",
+      "nearest_airport": "SJD (Los Cabos International)",
+      "airport_to_courses_drive": "20-45 min",
+      "best_months": [
+        "Oct",
+        "Nov",
+        "Dec",
+        "Jan",
+        "Feb",
+        "Mar",
+        "Apr"
+      ],
+      "avoid_months": [
+        "Aug",
+        "Sep"
+      ],
+      "avoid_reason": "Hurricane season. Courses may close.",
+      "vibe": [
+        "resort",
+        "luxury",
+        "beach",
+        "nightlife",
+        "international"
+      ],
+      "price_tier": "premium",
+      "avg_cost_per_person_per_day": {
+        "budget": 200,
+        "mid": 400,
+        "premium": 700
+      },
+      "group_size_sweet_spot": "4-8",
+      "why_go": "Desert-meets-ocean courses unlike anything in the US. Nicklaus and Dye designs with Sea of Cortez views. All-inclusive resorts, fishing, Cabo nightlife.",
+      "top_courses": [
+        {
+          "name": "Quivira Golf Club",
+          "greens_fee_range": "$350-500",
+          "peak_season_fee": 500,
+          "off_peak_fee": 350,
+          "difficulty": "hard",
+          "condition_rating": 4.7,
+          "scenery_rating": 5.0,
+          "must_know": "Crown jewel. Holes cut into granite cliffs above Pacific. Must stay at Pueblo Bonito/Quivira resort.",
+          "designer": "Jack Nicklaus",
+          "signature_holes": [
+            "#5 clifftop par-3",
+            "#6 ocean cliff par-4"
+          ],
+          "tags": [
+            "bucket_list",
+            "ocean",
+            "cliffs"
+          ]
+        },
+        {
+          "name": "Cabo del Sol (Ocean Course)",
+          "greens_fee_range": "$275-400",
+          "peak_season_fee": 400,
+          "off_peak_fee": 275,
+          "difficulty": "moderate-hard",
+          "condition_rating": 4.5,
+          "scenery_rating": 4.8,
+          "must_know": "Nicklaus: 'best piece of golf property I've ever seen.' 7 holes on Sea of Cortez.",
+          "designer": "Jack Nicklaus",
+          "tags": [
+            "ocean",
+            "nicklaus",
+            "premium"
+          ]
+        },
+        {
+          "name": "Diamante (Dunes Course)",
+          "greens_fee_range": "$300-450",
+          "peak_season_fee": 450,
+          "off_peak_fee": 300,
+          "difficulty": "hard",
+          "condition_rating": 4.6,
+          "must_know": "Davis Love III links on Pacific dunes. Walking encouraged. Bandon Dunes in Mexico.",
+          "designer": "Davis Love III",
+          "tags": [
+            "links",
+            "dunes"
+          ]
+        },
+        {
+          "name": "Palmilla Golf Club",
+          "greens_fee_range": "$175-300",
+          "peak_season_fee": 300,
+          "off_peak_fee": 175,
+          "difficulty": "moderate",
+          "must_know": "Nicklaus 27-hole. More forgiving. Good value for area.",
+          "designer": "Jack Nicklaus",
+          "tags": [
+            "resort",
+            "forgiving"
+          ]
+        }
+      ],
+      "hidden_gems": [
+        {
+          "name": "Club Campestre San Jos\u00e9",
+          "greens_fee_range": "$100-200",
+          "must_know": "Nicklaus design. Less crowded, cheaper than marquee courses.",
+          "tags": [
+            "value",
+            "nicklaus"
+          ]
+        }
+      ],
+      "lodging_options": [
+        {
+          "type": "resort",
+          "name": "Pueblo Bonito Sunset Beach",
+          "per_night_range": "$250-500 (all-inclusive available)",
+          "group_friendly": true,
+          "note": "Quivira access. All-inclusive saves on food/drink."
+        },
+        {
+          "type": "airbnb",
+          "name": "Cabo corridor villa",
+          "typical_per_night": "$400-1000 for 4BR",
+          "group_friendly": true,
+          "note": "Pool, ocean view, chef service available."
+        }
+      ],
+      "dining": [
+        {
+          "name": "Edith's",
+          "type": "Mexican/grill",
+          "price": "$$$",
+          "group_note": "Open-air, live music, great steaks/lobster. Institution."
+        },
+        {
+          "name": "Manta (Cape Hotel)",
+          "type": "seafood/Asian",
+          "price": "$$$$",
+          "group_note": "Enrique Olvera. World-class."
+        },
+        {
+          "name": "Tacos Gardenias",
+          "type": "street tacos",
+          "price": "$",
+          "group_note": "Best fish tacos in Cabo. Cash only."
+        },
+        {
+          "name": "El Squid Roe",
+          "type": "nightclub",
+          "price": "$$",
+          "group_note": "Legendary Cabo party bar. One night mandatory."
+        }
+      ],
+      "non_golf_activities": [
+        "Deep sea fishing (marlin capital)",
+        "Medano Beach",
+        "Snorkeling",
+        "ATV tours",
+        "Nightlife",
+        "Sunset cruise"
+      ],
+      "insider_tips": [
+        "All-inclusive resort saves massive money on food/drinks",
+        "Quivira is the must-play \u2014 one of the most spectacular on Earth",
+        "Passport required. Check everyone's.",
+        "Use Uber \u2014 taxis overcharge tourists",
+        "Fishing is incredible \u2014 half-day charter mandatory for non-golf time",
+        "Don't drink tap water",
+        "Nov-Dec is prime: peak weather, fewer crowds, slightly lower prices"
+      ],
+      "sample_itineraries": {
+        "4_day_cabo": {
+          "duration_nights": 4,
+          "ideal_group_size": "4-8",
+          "estimated_cost_pp": 2800
+        }
+      }
+    },
+    {
+      "id": "branson-mo",
+      "destination": "Branson, MO",
+      "region": "Midwest",
+      "nearest_airport": "BKG (Branson) or SGF (Springfield, MO)",
+      "airport_to_courses_drive": "10 min from BKG, 45 min from SGF",
+      "best_months": [
+        "Apr",
+        "May",
+        "Sep",
+        "Oct"
+      ],
+      "avoid_months": [
+        "Jan",
+        "Feb"
+      ],
+      "avoid_reason": "Cold and most attractions/courses closed or limited.",
+      "vibe": [
+        "budget-friendly",
+        "family-friendly",
+        "Ozark-scenery",
+        "group-trip"
+      ],
+      "price_tier": "budget",
+      "avg_cost_per_person_per_day": {
+        "budget": 100,
+        "mid": 175,
+        "premium": 300
+      },
+      "group_size_sweet_spot": "8-16",
+      "why_go": "Best bang-for-your-buck golf trip in the Midwest. Ozark mountain scenery, courses under $100, lakeside lodging, and just enough nightlife to keep it fun. Perfect for dads trips and big reunion groups.",
+      "top_courses": [
+        {
+          "name": "Top of the Rock (Par-3 Course)",
+          "greens_fee_range": "$75-150",
+          "peak_season_fee": 150,
+          "off_peak_fee": 75,
+          "difficulty": "easy (par-3)",
+          "condition_rating": 4.5,
+          "scenery_rating": 4.8,
+          "must_know": "Jack Nicklaus par-3 course at Big Cedar Lodge. Caves, waterfalls, Table Rock Lake views. Hosted the Bass Pro Legends of Golf. Not a real round but an experience.",
+          "designer": "Jack Nicklaus",
+          "tags": [
+            "par_3",
+            "scenic",
+            "experience"
+          ]
+        },
+        {
+          "name": "Payne's Valley (Tiger Woods Design)",
+          "greens_fee_range": "$175-325",
+          "peak_season_fee": 325,
+          "off_peak_fee": 175,
+          "difficulty": "moderate",
+          "condition_rating": 4.6,
+          "scenery_rating": 4.7,
+          "must_know": "Tiger Woods' first public course design. 19th hole is a par-3 island green. At Big Cedar Lodge. The showpiece of Branson golf.",
+          "designer": "Tiger Woods",
+          "signature_holes": [
+            "#19 'The Bye' island par-3",
+            "#13 par-3 over canyon"
+          ],
+          "tags": [
+            "must_play",
+            "tiger_woods",
+            "scenic"
+          ]
+        },
+        {
+          "name": "Ozarks National",
+          "greens_fee_range": "$125-250",
+          "peak_season_fee": 250,
+          "off_peak_fee": 125,
+          "difficulty": "moderate-hard",
+          "condition_rating": 4.5,
+          "scenery_rating": 4.6,
+          "must_know": "Coore & Crenshaw design at Big Cedar. Links-style in the Ozarks \u2014 ridgeline routing with 360\u00b0 views. Walking encouraged.",
+          "designer": "Bill Coore & Ben Crenshaw",
+          "tags": [
+            "links",
+            "walking_encouraged",
+            "scenic"
+          ]
+        },
+        {
+          "name": "Branson Hills Golf Club",
+          "greens_fee_range": "$40-80",
+          "peak_season_fee": 80,
+          "off_peak_fee": 40,
+          "difficulty": "moderate",
+          "condition_rating": 4.0,
+          "scenery_rating": 4.0,
+          "must_know": "Chuck Smith design. Best value course in Branson. Ozark terrain, good conditions, won't break the bank.",
+          "designer": "Chuck Smith",
+          "tags": [
+            "value",
+            "public"
+          ]
+        }
+      ],
+      "hidden_gems": [
+        {
+          "name": "Ledgestone Country Club",
+          "greens_fee_range": "$50-100",
+          "must_know": "Semi-private but public access available. Tom Clark design. Beautiful Ozark routing.",
+          "tags": [
+            "value",
+            "semi_private"
+          ]
+        },
+        {
+          "name": "Holiday Hills Golf Club",
+          "greens_fee_range": "$25-50",
+          "must_know": "Basic but fun. Short course, cheap rate, good for a casual round when the group needs a breather.",
+          "tags": [
+            "budget",
+            "casual"
+          ]
+        }
+      ],
+      "lodging_options": [
+        {
+          "type": "resort",
+          "name": "Big Cedar Lodge",
+          "per_night_range": "$200-500",
+          "group_friendly": true,
+          "note": "Bass Pro's flagship resort. Cabins on Table Rock Lake. On-site courses. THE Branson golf resort."
+        },
+        {
+          "type": "cabin",
+          "name": "Table Rock Lake cabin rental",
+          "typical_per_night": "$150-400 for 4BR",
+          "group_friendly": true,
+          "note": "Lakefront cabins. Fire pit, dock, grills. Perfect for big groups."
+        },
+        {
+          "type": "hotel",
+          "name": "Branson strip hotels",
+          "per_night_range": "$60-150",
+          "group_friendly": true,
+          "note": "Budget hotels along 76 Country Blvd. Nothing fancy but cheap and functional."
+        }
+      ],
+      "dining": [
+        {
+          "name": "Top of the Rock (Osage Restaurant)",
+          "type": "American/Southern",
+          "price": "$$$",
+          "group_note": "At Big Cedar. Stunning views. Best upscale meal in Branson."
+        },
+        {
+          "name": "Gettin' Basted BBQ",
+          "type": "BBQ",
+          "price": "$$",
+          "group_note": "Award-winning BBQ. The pulled pork is incredible. Casual, big portions."
+        },
+        {
+          "name": "Florentina's Ristorante",
+          "type": "Italian",
+          "price": "$$-$$$",
+          "group_note": "Best Italian in Branson. Good for a nicer dinner without Big Cedar prices."
+        },
+        {
+          "name": "Billy Gail's Cafe",
+          "type": "breakfast",
+          "price": "$",
+          "group_note": "Famous for hubcap-sized pancakes. Cash only. The pre-round fuel stop."
+        }
+      ],
+      "non_golf_activities": [
+        "Table Rock Lake boating",
+        "Silver Dollar City theme park",
+        "Fishing",
+        "Shows on the Branson strip",
+        "Top of the Rock cave tour",
+        "Go-karts at Track Family Fun Parks"
+      ],
+      "insider_tips": [
+        "Big Cedar Lodge is the anchor \u2014 Payne's Valley + Ozarks National + Top of the Rock are all there",
+        "Book Big Cedar 3+ months out \u2014 it sells out, especially in fall",
+        "Branson Hills is the budget add-on round \u2014 $40-80 for solid Ozark golf",
+        "Table Rock Lake pontoon rental for a non-golf day \u2014 bring a cooler, bring music",
+        "Fall (Oct) has the best foliage in the Ozarks \u2014 stunning colors on every hole",
+        "Drive from SGF airport \u2014 Branson's airport has limited flights and higher fares"
+      ],
+      "sample_itineraries": {
+        "3_day_budget": {
+          "duration_nights": 3,
+          "ideal_group_size": "8-12",
+          "estimated_cost_pp": 950,
+          "days": [
+            {
+              "day": 1,
+              "title": "Arrival & Top of the Rock",
+              "items": [
+                {
+                  "time": "11:00 AM",
+                  "type": "travel",
+                  "title": "Arrive SGF, drive to Branson",
+                  "cost_pp": 25
+                },
+                {
+                  "time": "2:00 PM",
+                  "type": "tee_time",
+                  "title": "Top of the Rock (par-3)",
+                  "cost_pp": 100
+                },
+                {
+                  "time": "5:00 PM",
+                  "type": "activity",
+                  "title": "Cave tour + Lost Canyon Trail",
+                  "cost_pp": 20
+                },
+                {
+                  "time": "7:00 PM",
+                  "type": "dinner",
+                  "title": "Gettin' Basted BBQ",
+                  "cost_pp": 25
+                }
+              ]
+            },
+            {
+              "day": 2,
+              "title": "Payne's Valley",
+              "items": [
+                {
+                  "time": "8:00 AM",
+                  "type": "tee_time",
+                  "title": "Payne's Valley (Tiger Woods)",
+                  "cost_pp": 250
+                },
+                {
+                  "time": "2:00 PM",
+                  "type": "food",
+                  "title": "Lunch at Big Cedar",
+                  "cost_pp": 20
+                },
+                {
+                  "time": "3:30 PM",
+                  "type": "activity",
+                  "title": "Table Rock Lake pontoon rental",
+                  "cost_pp": 40
+                },
+                {
+                  "time": "7:00 PM",
+                  "type": "dinner",
+                  "title": "Osage Restaurant (Top of the Rock)",
+                  "cost_pp": 60
+                }
+              ]
+            },
+            {
+              "day": 3,
+              "title": "Budget Golf + Departure",
+              "items": [
+                {
+                  "time": "8:00 AM",
+                  "type": "tee_time",
+                  "title": "Branson Hills Golf Club",
+                  "cost_pp": 55
+                },
+                {
+                  "time": "1:00 PM",
+                  "type": "food",
+                  "title": "Billy Gail's pancakes",
+                  "cost_pp": 12
+                },
+                {
+                  "time": "3:00 PM",
+                  "type": "travel",
+                  "title": "Drive to SGF, depart",
+                  "cost_pp": 0
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "gulf-shores-al",
+      "destination": "Gulf Shores, AL",
+      "region": "Gulf Coast",
+      "nearest_airport": "PNS (Pensacola) or MOB (Mobile)",
+      "airport_to_courses_drive": "45-60 min from PNS, 60-75 min from MOB",
+      "best_months": [
+        "Mar",
+        "Apr",
+        "May",
+        "Sep",
+        "Oct",
+        "Nov"
+      ],
+      "avoid_months": [
+        "Jul",
+        "Aug"
+      ],
+      "avoid_reason": "Peak heat/humidity, hurricane risk, and peak tourist season.",
+      "vibe": [
+        "budget-friendly",
+        "beach",
+        "casual",
+        "group-trip"
+      ],
+      "price_tier": "budget",
+      "avg_cost_per_person_per_day": {
+        "budget": 100,
+        "mid": 175,
+        "premium": 275
+      },
+      "group_size_sweet_spot": "8-16",
+      "why_go": "The Robert Trent Jones Trail's Gulf Coast stops are criminally underrated \u2014 world-class architecture at muni prices. Add white sand beaches, seafood, and incredibly affordable lodging. The best-kept secret in budget golf trips.",
+      "top_courses": [
+        {
+          "name": "Kiva Dunes Golf Course",
+          "greens_fee_range": "$65-130",
+          "peak_season_fee": 130,
+          "off_peak_fee": 65,
+          "difficulty": "moderate-hard",
+          "condition_rating": 4.4,
+          "scenery_rating": 4.5,
+          "must_know": "Links-style on the Gulf of Mexico. Jerry Pate design. Wind is always a factor. Best course on the Alabama coast.",
+          "designer": "Jerry Pate",
+          "tags": [
+            "links",
+            "ocean",
+            "best_in_area"
+          ]
+        },
+        {
+          "name": "Craft Farms (Cotton Creek)",
+          "greens_fee_range": "$50-100",
+          "peak_season_fee": 100,
+          "off_peak_fee": 50,
+          "twilight_fee": 35,
+          "difficulty": "moderate",
+          "condition_rating": 4.1,
+          "scenery_rating": 4.0,
+          "must_know": "Arnold Palmer design. Two courses on the property \u2014 Cotton Creek is the better one. Good value, forgiving for all skill levels.",
+          "designer": "Arnold Palmer",
+          "tags": [
+            "resort",
+            "value",
+            "forgiving"
+          ]
+        },
+        {
+          "name": "Peninsula Golf & Racquet Club",
+          "greens_fee_range": "$50-90",
+          "peak_season_fee": 90,
+          "off_peak_fee": 50,
+          "difficulty": "moderate",
+          "condition_rating": 4.0,
+          "scenery_rating": 4.2,
+          "must_know": "Rees Jones design on Mobile Bay. Marsh and bay views. 27 holes \u2014 play the Lakes and Marsh nines for the best combo.",
+          "designer": "Rees Jones",
+          "tags": [
+            "value",
+            "marsh",
+            "27_holes"
+          ]
+        },
+        {
+          "name": "RTJ Trail \u2014 Magnolia Grove (Crossings)",
+          "greens_fee_range": "$40-70",
+          "peak_season_fee": 70,
+          "off_peak_fee": 40,
+          "difficulty": "moderate",
+          "condition_rating": 4.2,
+          "scenery_rating": 3.8,
+          "must_know": "Part of the Robert Trent Jones Golf Trail. 45 min north in Mobile. 54 holes, Crossings is the flagship. Insane value for RTJ design quality.",
+          "designer": "Robert Trent Jones Sr.",
+          "tags": [
+            "value",
+            "rtj_trail",
+            "54_holes"
+          ]
+        }
+      ],
+      "hidden_gems": [
+        {
+          "name": "Lakewood Golf Club",
+          "greens_fee_range": "$35-65",
+          "must_know": "At the Lakewood resort in Point Clear. 36 holes on Mobile Bay. Charming, old-school Southern resort feel.",
+          "tags": [
+            "resort",
+            "historic",
+            "value"
+          ]
+        },
+        {
+          "name": "TimberCreek Golf Club",
+          "greens_fee_range": "$30-55",
+          "must_know": "In Daphne, 30 min north. Solid muni-level course with good conditions. Cheapest playable round in the area.",
+          "tags": [
+            "budget",
+            "muni"
+          ]
+        }
+      ],
+      "lodging_options": [
+        {
+          "type": "condo",
+          "name": "Gulf Shores beachfront condo",
+          "per_night_range": "$100-300 for 2-3BR",
+          "group_friendly": true,
+          "note": "Right on the beach. Kitchen saves on meals. VRBO has tons of options."
+        },
+        {
+          "type": "resort",
+          "name": "The Lodge at Gulf State Park (Hilton)",
+          "per_night_range": "$150-300",
+          "group_friendly": true,
+          "note": "Beach resort with pool. No golf on-site but central to everything."
+        },
+        {
+          "type": "house",
+          "name": "Orange Beach rental house",
+          "typical_per_night": "$200-500 for 4BR",
+          "group_friendly": true,
+          "note": "More space than condos. Pool houses available. Good for 8+ groups."
+        }
+      ],
+      "dining": [
+        {
+          "name": "The Hangout",
+          "type": "casual/seafood",
+          "price": "$$",
+          "group_note": "On the beach. Live music, sand volleyball, communal tables. THE Gulf Shores hangout."
+        },
+        {
+          "name": "Fisher's at Orange Beach Marina",
+          "type": "seafood",
+          "price": "$$-$$$",
+          "group_note": "Fresh off the boat. Dockside dining. Best seafood in the area."
+        },
+        {
+          "name": "Lulu's (Jimmy Buffett's sister)",
+          "type": "casual",
+          "price": "$$",
+          "group_note": "On the ICW. Fun atmosphere, big groups welcome. Cheeseburger in Paradise vibes."
+        },
+        {
+          "name": "GT's on the Bay",
+          "type": "seafood/steaks",
+          "price": "$$$",
+          "group_note": "Upscale option on Wolf Bay. Good for the nice dinner night."
+        }
+      ],
+      "non_golf_activities": [
+        "Beach day (white sand!)",
+        "Deep sea fishing charter",
+        "Jet ski rentals",
+        "The Wharf entertainment district",
+        "Flora-Bama honky tonk (state line bar)",
+        "Kayaking in Bon Secour"
+      ],
+      "insider_tips": [
+        "Kiva Dunes is the marquee round \u2014 play it on the calmest wind day for the best experience",
+        "RTJ Trail at Magnolia Grove is 45 min north but the value is unbeatable \u2014 36 holes for under $100",
+        "Beachfront condos with kitchens are the move \u2014 cook breakfast, eat seafood out for dinner",
+        "Flora-Bama is the legendary bar on the FL/AL state line \u2014 one night there is mandatory",
+        "Fall (Sep-Oct) is the sweet spot: warm water, cheap lodging, no crowds, shoulder-season golf rates",
+        "Fly into Pensacola for more flight options \u2014 it's worth the extra 20 min drive"
+      ],
+      "sample_itineraries": {
+        "3_day_beach_golf": {
+          "duration_nights": 3,
+          "ideal_group_size": "8-16",
+          "estimated_cost_pp": 650,
+          "days": [
+            {
+              "day": 1,
+              "title": "Arrival & Beach",
+              "items": [
+                {
+                  "time": "11:00 AM",
+                  "type": "travel",
+                  "title": "Arrive PNS, drive to Gulf Shores condo",
+                  "cost_pp": 20
+                },
+                {
+                  "time": "1:00 PM",
+                  "type": "activity",
+                  "title": "Beach + settle in",
+                  "cost_pp": 0
+                },
+                {
+                  "time": "6:00 PM",
+                  "type": "dinner",
+                  "title": "The Hangout (beach bar)",
+                  "cost_pp": 30
+                },
+                {
+                  "time": "9:00 PM",
+                  "type": "activity",
+                  "title": "Flora-Bama",
+                  "cost_pp": 25
+                }
+              ]
+            },
+            {
+              "day": 2,
+              "title": "Golf Day",
+              "items": [
+                {
+                  "time": "7:30 AM",
+                  "type": "tee_time",
+                  "title": "Kiva Dunes",
+                  "cost_pp": 95
+                },
+                {
+                  "time": "1:00 PM",
+                  "type": "food",
+                  "title": "Lunch at condo (cook out)",
+                  "cost_pp": 10
+                },
+                {
+                  "time": "2:30 PM",
+                  "type": "tee_time",
+                  "title": "Craft Farms Cotton Creek (twilight)",
+                  "cost_pp": 50
+                },
+                {
+                  "time": "7:00 PM",
+                  "type": "dinner",
+                  "title": "Fisher's at Orange Beach Marina",
+                  "cost_pp": 45
+                }
+              ]
+            },
+            {
+              "day": 3,
+              "title": "More Golf + Departure Prep",
+              "items": [
+                {
+                  "time": "7:30 AM",
+                  "type": "tee_time",
+                  "title": "Peninsula (Lakes + Marsh)",
+                  "cost_pp": 65
+                },
+                {
+                  "time": "12:30 PM",
+                  "type": "food",
+                  "title": "Lulu's for lunch",
+                  "cost_pp": 20
+                },
+                {
+                  "time": "2:00 PM",
+                  "type": "activity",
+                  "title": "Beach / jet skis",
+                  "cost_pp": 30
+                },
+                {
+                  "time": "7:00 PM",
+                  "type": "dinner",
+                  "title": "GT's on the Bay (farewell dinner)",
+                  "cost_pp": 55
+                }
+              ]
+            },
+            {
+              "day": 4,
+              "title": "Departure",
+              "items": [
+                {
+                  "time": "9:00 AM",
+                  "type": "travel",
+                  "title": "Drive to PNS, depart",
+                  "cost_pp": 0
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "lake-tahoe-ca-nv",
+      "destination": "Lake Tahoe, CA/NV",
+      "region": "West Coast",
+      "nearest_airport": "RNO (Reno-Tahoe)",
+      "airport_to_courses_drive": "30-60 min",
+      "best_months": [
+        "Jun",
+        "Jul",
+        "Aug",
+        "Sep"
+      ],
+      "avoid_months": [
+        "Nov",
+        "Dec",
+        "Jan",
+        "Feb",
+        "Mar"
+      ],
+      "avoid_reason": "Courses closed for winter/snow. Tahoe is a ski destination Oct-Apr.",
+      "vibe": [
+        "mountain",
+        "scenic",
+        "outdoors",
+        "summer-escape",
+        "casino"
+      ],
+      "price_tier": "mid",
+      "avg_cost_per_person_per_day": {
+        "budget": 175,
+        "mid": 300,
+        "premium": 500
+      },
+      "group_size_sweet_spot": "4-8",
+      "why_go": "Mountain golf at 6,200+ feet elevation \u2014 your drives go 10-15% farther. Crystal-clear lake, pine forests, and casino nightlife on the Nevada side. Perfect summer escape.",
+      "top_courses": [
+        {
+          "name": "Edgewood Tahoe Golf Course",
+          "greens_fee_range": "$200-350",
+          "peak_season_fee": 350,
+          "off_peak_fee": 200,
+          "difficulty": "moderate",
+          "condition_rating": 4.6,
+          "scenery_rating": 5.0,
+          "must_know": "Hosts the American Century Celebrity Championship. Holes along Lake Tahoe are world-class views. George Fazio design. THE must-play at Tahoe.",
+          "designer": "George Fazio",
+          "signature_holes": [
+            "#17 par-3 on the lake",
+            "#16 par-5 lakeside"
+          ],
+          "tags": [
+            "must_play",
+            "lakeside",
+            "celebrity_tournament",
+            "scenic"
+          ]
+        },
+        {
+          "name": "Old Greenwood",
+          "greens_fee_range": "$100-200",
+          "peak_season_fee": 200,
+          "off_peak_fee": 100,
+          "difficulty": "moderate",
+          "condition_rating": 4.3,
+          "scenery_rating": 4.4,
+          "must_know": "Jack Nicklaus design in Truckee. Mountain meadow setting. Wider fairways, good for all skill levels. 15 min from North Shore.",
+          "designer": "Jack Nicklaus",
+          "tags": [
+            "nicklaus",
+            "mountain",
+            "forgiving"
+          ]
+        },
+        {
+          "name": "Coyote Moon Golf Course",
+          "greens_fee_range": "$90-175",
+          "peak_season_fee": 175,
+          "off_peak_fee": 90,
+          "difficulty": "moderate-hard",
+          "condition_rating": 4.4,
+          "scenery_rating": 4.5,
+          "must_know": "Carved through pine forest in Truckee. Some of the most dramatic elevation changes in golf. Brad Bell design. Hidden gem.",
+          "designer": "Brad Bell",
+          "tags": [
+            "mountain",
+            "forest",
+            "elevation"
+          ]
+        },
+        {
+          "name": "Incline Village Championship Course",
+          "greens_fee_range": "$100-190",
+          "peak_season_fee": 190,
+          "off_peak_fee": 100,
+          "difficulty": "hard",
+          "condition_rating": 4.2,
+          "scenery_rating": 4.6,
+          "must_know": "Robert Trent Jones Sr. design on the North Shore. Lake views, tight mountain layout. Challenging but beautiful.",
+          "designer": "Robert Trent Jones Sr.",
+          "tags": [
+            "mountain",
+            "lake_views",
+            "challenging"
+          ]
+        }
+      ],
+      "hidden_gems": [
+        {
+          "name": "Tahoe Donner Golf Course",
+          "greens_fee_range": "$50-95",
+          "must_know": "In Truckee. Shorter mountain course. Great conditions, deer on the fairways. Best value at Tahoe.",
+          "tags": [
+            "value",
+            "mountain",
+            "short"
+          ]
+        },
+        {
+          "name": "The Golf Courses at Incline Village (Mountain)",
+          "greens_fee_range": "$40-60",
+          "must_know": "Executive 18-hole course. Par-58. Fun, fast, and cheap. Good arrival day activity.",
+          "tags": [
+            "budget",
+            "executive",
+            "fun"
+          ]
+        }
+      ],
+      "lodging_options": [
+        {
+          "type": "resort",
+          "name": "Edgewood Tahoe Resort",
+          "per_night_range": "$400-900",
+          "group_friendly": false,
+          "note": "Luxury lakefront. On-site course. The splurge option."
+        },
+        {
+          "type": "casino",
+          "name": "Harrah's / Harvey's (South Shore)",
+          "per_night_range": "$100-250",
+          "group_friendly": true,
+          "note": "Casino hotels with everything. Pool, restaurants, gaming. Stateline NV location."
+        },
+        {
+          "type": "cabin",
+          "name": "Tahoe cabin rental",
+          "typical_per_night": "$250-700 for 4BR",
+          "group_friendly": true,
+          "note": "Best for groups. Hot tub, mountain views, fire pit. Book on VRBO/Airbnb."
+        }
+      ],
+      "dining": [
+        {
+          "name": "Edgewood Restaurant",
+          "type": "American/fine dining",
+          "price": "$$$$",
+          "group_note": "At the resort. Lake views. Celebration dinner."
+        },
+        {
+          "name": "Gar Woods Grill",
+          "type": "American",
+          "price": "$$$",
+          "group_note": "North Shore lakefront. Great deck. Famous Wet Woody cocktail."
+        },
+        {
+          "name": "Moody's Bistro (Truckee)",
+          "type": "American",
+          "price": "$$$",
+          "group_note": "Downtown Truckee. Live jazz, great food. Best restaurant in the area."
+        },
+        {
+          "name": "Base Camp Pizza",
+          "type": "pizza",
+          "price": "$$",
+          "group_note": "South Lake Tahoe. Wood-fired pizza, craft beer. Perfect casual night."
+        }
+      ],
+      "non_golf_activities": [
+        "Lake Tahoe boat cruise",
+        "Hiking (Emerald Bay, Rubicon Trail)",
+        "Casino gaming (South Shore)",
+        "Mountain biking",
+        "Kayak/paddleboard on the lake",
+        "River rafting (Truckee River)"
+      ],
+      "insider_tips": [
+        "Your ball flies 10-15% farther at altitude \u2014 club down and enjoy the bombs",
+        "Edgewood is the bucket list round \u2014 book 30+ days out for peak summer",
+        "Stay on South Shore for casino nightlife, North Shore for quieter mountain vibe",
+        "Truckee (15 min from North Shore) has the best restaurant scene at Tahoe",
+        "July-August is peak \u2014 book lodging and tee times 2-3 months out",
+        "Mountain weather changes fast \u2014 bring layers even in July. Morning rounds can be 50\u00b0F"
+      ],
+      "sample_itineraries": {
+        "3_day_mountain": {
+          "duration_nights": 3,
+          "ideal_group_size": "4-8",
+          "estimated_cost_pp": 1600,
+          "days": [
+            {
+              "day": 1,
+              "title": "Arrival & Truckee",
+              "items": [
+                {
+                  "time": "11:00 AM",
+                  "type": "travel",
+                  "title": "Arrive RNO, drive to Tahoe cabin",
+                  "cost_pp": 20
+                },
+                {
+                  "time": "2:00 PM",
+                  "type": "tee_time",
+                  "title": "Coyote Moon (Truckee)",
+                  "cost_pp": 140
+                },
+                {
+                  "time": "7:00 PM",
+                  "type": "dinner",
+                  "title": "Moody's Bistro (Truckee)",
+                  "cost_pp": 60
+                }
+              ]
+            },
+            {
+              "day": 2,
+              "title": "Edgewood Day",
+              "items": [
+                {
+                  "time": "8:00 AM",
+                  "type": "tee_time",
+                  "title": "Edgewood Tahoe",
+                  "cost_pp": 300
+                },
+                {
+                  "time": "2:00 PM",
+                  "type": "food",
+                  "title": "Lunch at Edgewood",
+                  "cost_pp": 35
+                },
+                {
+                  "time": "4:00 PM",
+                  "type": "activity",
+                  "title": "Lake / beach / paddleboard",
+                  "cost_pp": 30
+                },
+                {
+                  "time": "7:00 PM",
+                  "type": "dinner",
+                  "title": "Gar Woods Grill",
+                  "cost_pp": 55
+                },
+                {
+                  "time": "9:00 PM",
+                  "type": "activity",
+                  "title": "Casino night (Harrah's)",
+                  "cost_pp": 50
+                }
+              ]
+            },
+            {
+              "day": 3,
+              "title": "Mountain Golf + Departure",
+              "items": [
+                {
+                  "time": "8:00 AM",
+                  "type": "tee_time",
+                  "title": "Old Greenwood",
+                  "cost_pp": 160
+                },
+                {
+                  "time": "1:00 PM",
+                  "type": "food",
+                  "title": "Lunch in Truckee",
+                  "cost_pp": 20
+                },
+                {
+                  "time": "3:00 PM",
+                  "type": "travel",
+                  "title": "Drive to RNO, depart",
+                  "cost_pp": 0
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "mesquite-nv",
+      "destination": "Mesquite, NV",
+      "region": "Southwest",
+      "nearest_airport": "LAS (Harry Reid International, Las Vegas)",
+      "airport_to_courses_drive": "80 min from LAS",
+      "best_months": [
+        "Oct",
+        "Nov",
+        "Mar",
+        "Apr",
+        "May"
+      ],
+      "avoid_months": [
+        "Jun",
+        "Jul",
+        "Aug"
+      ],
+      "avoid_reason": "110\u00b0F+ desert heat. Courses offer dirt-cheap summer rates but it's brutal.",
+      "vibe": [
+        "budget-friendly",
+        "desert",
+        "casino",
+        "group-trip"
+      ],
+      "price_tier": "budget",
+      "avg_cost_per_person_per_day": {
+        "budget": 100,
+        "mid": 175,
+        "premium": 275
+      },
+      "group_size_sweet_spot": "8-16",
+      "why_go": "Desert golf at half the price of Vegas or Scottsdale. Wolf Creek alone is worth the trip \u2014 one of the most visually spectacular courses on Earth. Add 5-6 other solid courses, casino hotels under $100/night, and you have an incredible budget trip.",
+      "top_courses": [
+        {
+          "name": "Wolf Creek Golf Club",
+          "greens_fee_range": "$100-275",
+          "peak_season_fee": 275,
+          "off_peak_fee": 100,
+          "difficulty": "very hard",
+          "condition_rating": 4.3,
+          "scenery_rating": 5.0,
+          "must_know": "Most visually dramatic course in America. 200ft elevation drops from tee to fairway. Canyon walls, desert colors. Bring extra balls and a camera.",
+          "designer": "Dennis Rider",
+          "signature_holes": [
+            "#1 tee shot 200ft above fairway",
+            "#14 canyon par-3",
+            "#7 par-4"
+          ],
+          "tags": [
+            "bucket_list",
+            "extreme",
+            "scenic"
+          ]
+        },
+        {
+          "name": "CasaBlanca Golf Club",
+          "greens_fee_range": "$50-100",
+          "peak_season_fee": 100,
+          "off_peak_fee": 50,
+          "twilight_fee": 35,
+          "difficulty": "moderate",
+          "condition_rating": 4.0,
+          "scenery_rating": 4.0,
+          "must_know": "At the CasaBlanca resort. Good desert course, well-maintained. Best value for staying + playing in Mesquite.",
+          "designer": "Cal Olson",
+          "tags": [
+            "resort",
+            "value"
+          ]
+        },
+        {
+          "name": "Conestoga Golf Club",
+          "greens_fee_range": "$55-110",
+          "peak_season_fee": 110,
+          "off_peak_fee": 55,
+          "difficulty": "moderate",
+          "condition_rating": 4.1,
+          "scenery_rating": 4.2,
+          "must_know": "Gary Panks design with red rock canyon views. Good mix of challenge and playability.",
+          "designer": "Gary Panks",
+          "tags": [
+            "canyon",
+            "scenic",
+            "value"
+          ]
+        },
+        {
+          "name": "Falcon Ridge Golf Course",
+          "greens_fee_range": "$40-85",
+          "peak_season_fee": 85,
+          "off_peak_fee": 40,
+          "difficulty": "moderate",
+          "condition_rating": 3.9,
+          "scenery_rating": 4.0,
+          "must_know": "Budget-friendly option. Solid layout through desert terrain. Good for the budget round.",
+          "designer": "Cal Olson",
+          "tags": [
+            "budget",
+            "desert"
+          ]
+        }
+      ],
+      "hidden_gems": [
+        {
+          "name": "Coyote Springs Golf Club",
+          "greens_fee_range": "$55-110",
+          "must_know": "30 min south toward Vegas. Nicklaus design. Massive development that never materialized \u2014 world-class course at a fraction of what it should cost.",
+          "tags": [
+            "value",
+            "nicklaus",
+            "hidden_gem"
+          ]
+        },
+        {
+          "name": "Sand Hollow Resort (Utah)",
+          "greens_fee_range": "$75-150",
+          "must_know": "45 min north in St. George, UT. Red rock desert golf. Championship course is stunning.",
+          "tags": [
+            "worth_the_drive",
+            "red_rock"
+          ]
+        }
+      ],
+      "lodging_options": [
+        {
+          "type": "casino",
+          "name": "CasaBlanca Resort",
+          "per_night_range": "$60-150",
+          "group_friendly": true,
+          "note": "On-site course, casino, pool, restaurants. Best all-in-one option."
+        },
+        {
+          "type": "casino",
+          "name": "Eureka Casino Resort",
+          "per_night_range": "$50-120",
+          "group_friendly": true,
+          "note": "Budget casino hotel. Clean rooms, good buffet. No-frills base camp."
+        },
+        {
+          "type": "house",
+          "name": "Mesquite rental house",
+          "typical_per_night": "$150-350 for 4BR",
+          "group_friendly": true,
+          "note": "Golf community houses with mountain views. Good for big groups."
+        }
+      ],
+      "dining": [
+        {
+          "name": "Katherine's Steakhouse (CasaBlanca)",
+          "type": "steakhouse",
+          "price": "$$$",
+          "group_note": "Best restaurant in Mesquite. At the resort. Good steaks, reasonable prices."
+        },
+        {
+          "name": "Peggy Sue's Diner",
+          "type": "diner",
+          "price": "$",
+          "group_note": "On I-15 in Yermo. Classic roadside diner. Fun pit stop on the drive from Vegas."
+        },
+        {
+          "name": "Skydome Lounge (CasaBlanca)",
+          "type": "bar",
+          "price": "$$",
+          "group_note": "Sports bar with pool tables. Where the group ends up every night."
+        },
+        {
+          "name": "George's Corner",
+          "type": "casual",
+          "price": "$$",
+          "group_note": "In St. George if you venture to Sand Hollow. Great burgers and shakes."
+        }
+      ],
+      "non_golf_activities": [
+        "Casino gaming",
+        "Pool day",
+        "ATV desert tours",
+        "Valley of Fire State Park (30 min)",
+        "Zion National Park day trip (90 min)",
+        "Virgin River Trail hike"
+      ],
+      "insider_tips": [
+        "Wolf Creek is the ENTIRE reason to come here \u2014 plan everything around it",
+        "Stay at CasaBlanca for convenience \u2014 course + casino + hotel + restaurants in one spot",
+        "Drive from Las Vegas is scenic (I-15 through Valley of Fire area). Not a bad drive at all.",
+        "Play Wolf Creek morning, CasaBlanca afternoon for the perfect contrast day",
+        "If you extend to 4 days, do a Zion National Park day trip \u2014 it's 90 min and life-changing",
+        "Mesquite in November is perfect: 70\u00b0F days, low rates, uncrowded courses"
+      ],
+      "sample_itineraries": {
+        "3_day_desert": {
+          "duration_nights": 3,
+          "ideal_group_size": "8-12",
+          "estimated_cost_pp": 700,
+          "days": [
+            {
+              "day": 1,
+              "title": "Arrival & First Round",
+              "items": [
+                {
+                  "time": "10:00 AM",
+                  "type": "travel",
+                  "title": "Arrive LAS, drive to Mesquite (80 min)",
+                  "cost_pp": 25
+                },
+                {
+                  "time": "1:00 PM",
+                  "type": "tee_time",
+                  "title": "CasaBlanca Golf Club",
+                  "cost_pp": 70
+                },
+                {
+                  "time": "6:00 PM",
+                  "type": "dinner",
+                  "title": "Katherine's Steakhouse",
+                  "cost_pp": 45
+                },
+                {
+                  "time": "8:30 PM",
+                  "type": "activity",
+                  "title": "Casino night",
+                  "cost_pp": 30
+                }
+              ]
+            },
+            {
+              "day": 2,
+              "title": "Wolf Creek Day",
+              "items": [
+                {
+                  "time": "8:00 AM",
+                  "type": "tee_time",
+                  "title": "Wolf Creek Golf Club",
+                  "cost_pp": 200
+                },
+                {
+                  "time": "2:00 PM",
+                  "type": "food",
+                  "title": "Lunch",
+                  "cost_pp": 15
+                },
+                {
+                  "time": "3:30 PM",
+                  "type": "tee_time",
+                  "title": "Falcon Ridge (twilight)",
+                  "cost_pp": 45
+                },
+                {
+                  "time": "7:00 PM",
+                  "type": "dinner",
+                  "title": "Casual dinner at resort",
+                  "cost_pp": 30
+                }
+              ]
+            },
+            {
+              "day": 3,
+              "title": "Canyon Golf + Departure",
+              "items": [
+                {
+                  "time": "8:00 AM",
+                  "type": "tee_time",
+                  "title": "Conestoga Golf Club",
+                  "cost_pp": 80
+                },
+                {
+                  "time": "1:00 PM",
+                  "type": "food",
+                  "title": "Quick lunch",
+                  "cost_pp": 15
+                },
+                {
+                  "time": "2:30 PM",
+                  "type": "travel",
+                  "title": "Drive to LAS, depart (stop at Valley of Fire optional)",
+                  "cost_pp": 0
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "wisconsin-dells-wi",
+      "destination": "Wisconsin Dells / Sand Valley, WI",
+      "region": "Midwest",
+      "nearest_airport": "MSN (Madison) or MKE (Milwaukee)",
+      "airport_to_courses_drive": "60 min from MSN, 2.5 hrs from MKE",
+      "best_months": [
+        "Jun",
+        "Jul",
+        "Aug",
+        "Sep"
+      ],
+      "avoid_months": [
+        "Nov",
+        "Dec",
+        "Jan",
+        "Feb",
+        "Mar"
+      ],
+      "avoid_reason": "Courses closed for winter. Wisconsin winters are brutal.",
+      "vibe": [
+        "golf-purist",
+        "hidden-gem",
+        "walking-only",
+        "midwest-getaway"
+      ],
+      "price_tier": "mid",
+      "avg_cost_per_person_per_day": {
+        "budget": 175,
+        "mid": 325,
+        "premium": 475
+      },
+      "group_size_sweet_spot": "4-8",
+      "why_go": "Sand Valley is the Bandon Dunes of the Midwest \u2014 world-ranked courses, walking only, no pretension. Built on ancient sand deposits that create links-like terrain in central Wisconsin. The golf cognoscenti know about this place.",
+      "top_courses": [
+        {
+          "name": "Sand Valley",
+          "greens_fee_range": "$200-375 (with resort stay)",
+          "peak_season_fee": 375,
+          "off_peak_fee": 200,
+          "difficulty": "moderate-hard",
+          "condition_rating": 4.7,
+          "scenery_rating": 4.5,
+          "must_know": "Coore & Crenshaw design on sand dunes in the Wisconsin Northwoods. Wide fairways, strategic bunkering, walking only. The original course that put this place on the map.",
+          "walking_policy": "Walking only",
+          "caddie_available": true,
+          "designer": "Bill Coore & Ben Crenshaw",
+          "tags": [
+            "top_100",
+            "links",
+            "walking_only",
+            "sand"
+          ]
+        },
+        {
+          "name": "Mammoth Dunes",
+          "greens_fee_range": "$200-375",
+          "peak_season_fee": 375,
+          "off_peak_fee": 200,
+          "difficulty": "moderate",
+          "condition_rating": 4.7,
+          "scenery_rating": 4.4,
+          "must_know": "David McLay Kidd design. Widest fairways in golf \u2014 some 80+ yards. Incredibly fun and forgiving while still strategic. Many prefer it to Sand Valley.",
+          "designer": "David McLay Kidd",
+          "tags": [
+            "top_100",
+            "links",
+            "wide_fairways",
+            "fun"
+          ]
+        },
+        {
+          "name": "The Lido",
+          "greens_fee_range": "$200-375",
+          "peak_season_fee": 375,
+          "off_peak_fee": 200,
+          "difficulty": "hard",
+          "condition_rating": 4.8,
+          "scenery_rating": 4.3,
+          "must_know": "Painstaking recreation of the legendary 1917 C.B. Macdonald course that was destroyed in WWII. Opened 2023. One of the most anticipated courses in decades.",
+          "designer": "Tom Doak (recreating C.B. Macdonald)",
+          "tags": [
+            "historic_recreation",
+            "top_100",
+            "unique"
+          ]
+        },
+        {
+          "name": "Sedge Valley (par-3)",
+          "greens_fee_range": "$75-100",
+          "peak_season_fee": 100,
+          "off_peak_fee": 75,
+          "difficulty": "easy (par-3)",
+          "condition_rating": 4.5,
+          "scenery_rating": 4.3,
+          "must_know": "On-site par-3 course. Fun, fast, and a great way to settle bets on the last day.",
+          "tags": [
+            "par_3",
+            "fun"
+          ]
+        }
+      ],
+      "hidden_gems": [
+        {
+          "name": "Lawsonia Links",
+          "greens_fee_range": "$50-100",
+          "must_know": "30 min south in Green Lake. Langford & Moreau design from 1930. Top 100 value course in America. Essential add-on.",
+          "tags": [
+            "historic",
+            "value",
+            "top_100_value"
+          ]
+        },
+        {
+          "name": "Wild Rock Golf Club",
+          "greens_fee_range": "$40-80",
+          "must_know": "At the Wilderness Resort in the Dells. Good family-friendly option with waterpark on-site.",
+          "tags": [
+            "value",
+            "family"
+          ]
+        }
+      ],
+      "lodging_options": [
+        {
+          "type": "resort",
+          "name": "Sand Valley Resort (cottages/lodge)",
+          "per_night_range": "$200-450",
+          "group_friendly": true,
+          "note": "On-site. Cottages for groups, lodge rooms for smaller parties. Fire pits, communal dining. The only option for the full experience."
+        },
+        {
+          "type": "hotel",
+          "name": "Wisconsin Dells hotels",
+          "per_night_range": "$75-200",
+          "group_friendly": true,
+          "note": "Waterpark hotels galore. Budget option, 30 min from Sand Valley. More for families."
+        }
+      ],
+      "dining": [
+        {
+          "name": "Craig's Porch",
+          "type": "American",
+          "price": "$$$",
+          "group_note": "At Sand Valley Resort. Great food, overlooking the course. The gathering spot."
+        },
+        {
+          "name": "Mammoth Bar",
+          "type": "pub",
+          "price": "$$",
+          "group_note": "Post-round beers, casual food. Fire pit outside."
+        },
+        {
+          "name": "Ishnala Supper Club",
+          "type": "supper club",
+          "price": "$$$",
+          "group_note": "Wisconsin tradition. On Mirror Lake, 30 min away. Old-fashioned cocktails, prime rib. A must."
+        },
+        {
+          "name": "Field's at the Wilderness",
+          "type": "steakhouse",
+          "price": "$$$",
+          "group_note": "In the Dells. Good steakhouse option if staying off-site."
+        }
+      ],
+      "non_golf_activities": [
+        "Sedge Valley par-3",
+        "Hiking on-site trails",
+        "Canoeing/kayaking",
+        "Wisconsin Dells waterparks (if with family)",
+        "Bonfire + whiskey at resort",
+        "Fishing"
+      ],
+      "insider_tips": [
+        "Sand Valley is the Midwest's Bandon \u2014 treat it the same way. Golf monastery, not nightlife trip.",
+        "Play all three 18-hole courses if you have 3+ days. The Lido is the newest and most talked-about.",
+        "Mammoth Dunes is the most fun if you have higher handicappers \u2014 80-yard-wide fairways are forgiving",
+        "Lawsonia Links is 30 min south and a TOP value add \u2014 $50-100 for a top-100-caliber course",
+        "Book 3+ months out for peak summer. Sand Valley has limited capacity and sells out.",
+        "Wisconsin supper clubs are a cultural experience \u2014 go to Ishnala for the old-fashioned + prime rib ritual",
+        "Fly into Madison for the best flight options. The 60-min drive through farm country is scenic."
+      ],
+      "sample_itineraries": {
+        "3_day_links": {
+          "duration_nights": 3,
+          "ideal_group_size": "4-8",
+          "estimated_cost_pp": 2100,
+          "days": [
+            {
+              "day": 1,
+              "title": "Arrival & Mammoth Dunes",
+              "items": [
+                {
+                  "time": "10:00 AM",
+                  "type": "travel",
+                  "title": "Arrive MSN, drive to Sand Valley (60 min)",
+                  "cost_pp": 20
+                },
+                {
+                  "time": "1:00 PM",
+                  "type": "tee_time",
+                  "title": "Mammoth Dunes",
+                  "cost_pp": 325
+                },
+                {
+                  "time": "6:00 PM",
+                  "type": "activity",
+                  "title": "Sedge Valley par-3 + beers",
+                  "cost_pp": 75
+                },
+                {
+                  "time": "7:30 PM",
+                  "type": "dinner",
+                  "title": "Craig's Porch",
+                  "cost_pp": 55
+                }
+              ]
+            },
+            {
+              "day": 2,
+              "title": "Sand Valley + The Lido",
+              "items": [
+                {
+                  "time": "7:30 AM",
+                  "type": "tee_time",
+                  "title": "Sand Valley",
+                  "cost_pp": 350
+                },
+                {
+                  "time": "1:00 PM",
+                  "type": "food",
+                  "title": "Quick lunch at Mammoth Bar",
+                  "cost_pp": 20
+                },
+                {
+                  "time": "2:30 PM",
+                  "type": "tee_time",
+                  "title": "The Lido",
+                  "cost_pp": 350
+                },
+                {
+                  "time": "7:30 PM",
+                  "type": "dinner",
+                  "title": "Ishnala Supper Club",
+                  "cost_pp": 65
+                }
+              ]
+            },
+            {
+              "day": 3,
+              "title": "Lawsonia + Departure",
+              "items": [
+                {
+                  "time": "8:00 AM",
+                  "type": "travel",
+                  "title": "Drive to Green Lake (30 min)",
+                  "cost_pp": 0
+                },
+                {
+                  "time": "8:45 AM",
+                  "type": "tee_time",
+                  "title": "Lawsonia Links",
+                  "cost_pp": 80
+                },
+                {
+                  "time": "1:30 PM",
+                  "type": "food",
+                  "title": "Lunch",
+                  "cost_pp": 15
+                },
+                {
+                  "time": "3:00 PM",
+                  "type": "travel",
+                  "title": "Drive to MSN, depart",
+                  "cost_pp": 0
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "st-andrews-scotland",
+      "destination": "St. Andrews, Scotland",
+      "region": "International",
+      "nearest_airport": "EDI (Edinburgh) or GLA (Glasgow)",
+      "airport_to_courses_drive": "90 min from EDI, 2 hrs from GLA",
+      "best_months": [
+        "May",
+        "Jun",
+        "Jul",
+        "Aug",
+        "Sep"
+      ],
+      "avoid_months": [
+        "Nov",
+        "Dec",
+        "Jan",
+        "Feb"
+      ],
+      "avoid_reason": "Cold, wet, short daylight hours. Some courses close or have limited availability.",
+      "vibe": [
+        "bucket-list",
+        "golf-purist",
+        "historic",
+        "once-in-a-lifetime",
+        "international"
+      ],
+      "price_tier": "luxury",
+      "avg_cost_per_person_per_day": {
+        "budget": 300,
+        "mid": 500,
+        "premium": 850
+      },
+      "group_size_sweet_spot": "4",
+      "why_go": "The Home of Golf. The Old Course is where it all started. Walking the same fairways as Bobby Jones, Jack Nicklaus, and Tiger Woods is a spiritual experience for any golfer. Plus Scotland's whisky, pubs, and countryside are world-class.",
+      "top_courses": [
+        {
+          "name": "The Old Course at St Andrews",
+          "greens_fee_range": "\u00a3295-325 (~$375-415)",
+          "peak_season_fee": 325,
+          "difficulty": "moderate (but the wind!)",
+          "condition_rating": 4.5,
+          "scenery_rating": 4.8,
+          "must_know": "Ballot system \u2014 apply 2 days before, results at 4pm. Or book a guaranteed tee time through Old Course Experience package (\u00a3\u00a3\u00a3). Walking only, caddie essential. Sunday is closed (rest day tradition). The Swilcan Bridge on #18 is the most famous photo in golf.",
+          "booking_lead_time": "Ballot 2 days prior, or book package 12+ months out",
+          "walking_policy": "Walking only",
+          "caddie_available": true,
+          "caddie_fee": "\u00a375-100 + tip",
+          "designer": "Nature / Old Tom Morris",
+          "hosted_events": [
+            "The Open Championship (multiple)"
+          ],
+          "signature_holes": [
+            "#17 Road Hole par-4",
+            "#18 with Swilcan Bridge",
+            "#1 with widest fairway in golf"
+          ],
+          "tags": [
+            "bucket_list",
+            "home_of_golf",
+            "historic",
+            "championship",
+            "walking_only"
+          ]
+        },
+        {
+          "name": "The New Course (St Andrews Links)",
+          "greens_fee_range": "\u00a3100-150 (~$125-190)",
+          "difficulty": "moderate",
+          "condition_rating": 4.3,
+          "must_know": "Don't let the name fool you \u2014 it opened in 1895. Excellent links golf without the Old Course lottery. Often available same-day.",
+          "designer": "Old Tom Morris",
+          "tags": [
+            "links",
+            "historic",
+            "value"
+          ]
+        },
+        {
+          "name": "Kingsbarns Golf Links",
+          "greens_fee_range": "\u00a3250-350 (~$315-440)",
+          "peak_season_fee": 350,
+          "difficulty": "moderate-hard",
+          "condition_rating": 4.7,
+          "scenery_rating": 4.9,
+          "must_know": "15 min from St Andrews. Clifftop links with North Sea views on nearly every hole. Many say it's the best 'modern links' course in Scotland.",
+          "designer": "Kyle Phillips",
+          "tags": [
+            "modern_links",
+            "ocean",
+            "clifftop",
+            "must_play"
+          ]
+        },
+        {
+          "name": "Carnoustie Golf Links (Championship)",
+          "greens_fee_range": "\u00a3200-275 (~$250-345)",
+          "difficulty": "very hard",
+          "condition_rating": 4.6,
+          "scenery_rating": 4.2,
+          "must_know": "30 min from St Andrews. 'Car-nasty' is the hardest Open Championship venue. Barry Burn on #18 has decided Opens. For low handicappers.",
+          "designer": "Allan Robertson / James Braid",
+          "hosted_events": [
+            "The Open Championship 2018, 2007, 1999"
+          ],
+          "tags": [
+            "championship",
+            "hardest_open_venue",
+            "links"
+          ]
+        }
+      ],
+      "hidden_gems": [
+        {
+          "name": "Crail Golfing Society (Balcomie Links)",
+          "greens_fee_range": "\u00a360-90",
+          "must_know": "7th oldest club in the world. Clifftop links in a tiny fishing village 10 min from St Andrews. Authentic, uncrowded, stunning.",
+          "tags": [
+            "historic",
+            "clifftop",
+            "value"
+          ]
+        },
+        {
+          "name": "Elie Golf House Club",
+          "greens_fee_range": "\u00a350-80",
+          "must_know": "Uses a periscope in the starter's hut to check the 1st fairway. Charming links course overlooking the Firth of Forth. Pure Scottish golf.",
+          "tags": [
+            "quirky",
+            "authentic",
+            "value"
+          ]
+        }
+      ],
+      "lodging_options": [
+        {
+          "type": "hotel",
+          "name": "Old Course Hotel",
+          "per_night_range": "\u00a3350-800 (~$440-1000)",
+          "group_friendly": false,
+          "note": "Overlooks the Road Hole (#17). Iconic. Kohler spa. Book 6+ months out."
+        },
+        {
+          "type": "hotel",
+          "name": "Rusacks St Andrews",
+          "per_night_range": "\u00a3250-600",
+          "group_friendly": false,
+          "note": "On the 18th hole of the Old Course. Recently renovated. Rooftop bar."
+        },
+        {
+          "type": "guesthouse",
+          "name": "St Andrews B&Bs/guesthouses",
+          "per_night_range": "\u00a3100-200",
+          "group_friendly": true,
+          "note": "Plenty of B&Bs in town. Walking distance to everything. Book early for summer."
+        },
+        {
+          "type": "airbnb",
+          "name": "St Andrews flat/cottage",
+          "typical_per_night": "\u00a3200-500 for 3BR",
+          "group_friendly": true,
+          "note": "Town is walkable. Get something on The Scores for ocean views."
+        }
+      ],
+      "dining": [
+        {
+          "name": "The Jigger Inn",
+          "type": "pub",
+          "price": "$$",
+          "group_note": "Adjacent to the Old Course Hotel. Historic pub. THE post-round pint spot."
+        },
+        {
+          "name": "Forgans",
+          "type": "British",
+          "price": "$$-$$$",
+          "group_note": "On Market Street. Great cocktails, solid food. Upstairs bar is lively."
+        },
+        {
+          "name": "Adamson",
+          "type": "fine dining",
+          "price": "$$$-$$$$",
+          "group_note": "Best restaurant in St Andrews. Reserve ahead. Worth one splurge night."
+        },
+        {
+          "name": "Tailend Fish Bar",
+          "type": "fish & chips",
+          "price": "$",
+          "group_note": "Best fish & chips in town. Takeaway or sit down. Essential."
+        },
+        {
+          "name": "Vic's Bar",
+          "type": "pub",
+          "price": "$$",
+          "group_note": "Traditional Scottish pub. Good whisky selection. Locals' favorite."
+        }
+      ],
+      "non_golf_activities": [
+        "St Andrews Cathedral ruins",
+        "Whisky tasting at Kingsbarns Distillery",
+        "Walk along West Sands beach (Chariots of Fire)",
+        "Edinburgh day trip",
+        "Visit St Andrews University",
+        "Pub crawl on South Street"
+      ],
+      "insider_tips": [
+        "Enter the Old Course ballot early \u2014 results come at 4pm, 2 days before. Have a backup plan.",
+        "If you miss the ballot, show up as a single at dawn for a walk-on \u2014 it works more than you'd think",
+        "A caddie on the Old Course is non-negotiable. They know every hidden bunker and slope.",
+        "Play Kingsbarns the day before the Old Course \u2014 it's spectacular and gets you links-ready",
+        "Bring rain gear and layers for EVERY round. Scottish weather changes every 30 minutes.",
+        "Pint at the Jigger Inn after the Old Course is a sacred ritual. Don't skip it.",
+        "Passport required. Check visa requirements. No issues for US citizens for short stays.",
+        "Rent a car \u2014 courses are spread out and public transport to Carnoustie/Kingsbarns is limited",
+        "Kingsbarns Distillery is 10 min from the golf course \u2014 combine the two for a great day",
+        "A Scotland trip works best as 4-5 days to justify the travel. Don't rush it."
+      ],
+      "sample_itineraries": {
+        "5_day_scotland": {
+          "duration_nights": 5,
+          "ideal_group_size": "4",
+          "estimated_cost_pp": 5000,
+          "days": [
+            {
+              "day": 1,
+              "title": "Arrival & Crail",
+              "items": [
+                {
+                  "time": "10:00 AM",
+                  "type": "travel",
+                  "title": "Arrive EDI, drive to St Andrews (90 min)",
+                  "cost_pp": 40
+                },
+                {
+                  "time": "1:00 PM",
+                  "type": "food",
+                  "title": "Fish & chips at Tailend",
+                  "cost_pp": 15
+                },
+                {
+                  "time": "3:00 PM",
+                  "type": "tee_time",
+                  "title": "Crail Balcomie Links",
+                  "cost_pp": 80
+                },
+                {
+                  "time": "7:00 PM",
+                  "type": "dinner",
+                  "title": "Forgans + Jigger Inn pint",
+                  "cost_pp": 55
+                }
+              ]
+            },
+            {
+              "day": 2,
+              "title": "Kingsbarns Day",
+              "items": [
+                {
+                  "time": "8:30 AM",
+                  "type": "tee_time",
+                  "title": "Kingsbarns Golf Links",
+                  "cost_pp": 400
+                },
+                {
+                  "time": "2:00 PM",
+                  "type": "activity",
+                  "title": "Kingsbarns Distillery tour + tasting",
+                  "cost_pp": 25
+                },
+                {
+                  "time": "5:00 PM",
+                  "type": "activity",
+                  "title": "Walk West Sands beach",
+                  "cost_pp": 0
+                },
+                {
+                  "time": "7:30 PM",
+                  "type": "dinner",
+                  "title": "Adamson (fine dining)",
+                  "cost_pp": 80
+                }
+              ]
+            },
+            {
+              "day": 3,
+              "title": "The Old Course",
+              "items": [
+                {
+                  "time": "8:00 AM",
+                  "type": "tee_time",
+                  "title": "The Old Course (with caddie)",
+                  "cost_pp": 500
+                },
+                {
+                  "time": "1:30 PM",
+                  "type": "food",
+                  "title": "Lunch + pint at Jigger Inn",
+                  "cost_pp": 25
+                },
+                {
+                  "time": "3:00 PM",
+                  "type": "tee_time",
+                  "title": "The New Course (afternoon)",
+                  "cost_pp": 150
+                },
+                {
+                  "time": "7:30 PM",
+                  "type": "dinner",
+                  "title": "Celebration dinner at The Seafood Restaurant",
+                  "cost_pp": 75
+                }
+              ]
+            },
+            {
+              "day": 4,
+              "title": "Carnoustie Day",
+              "items": [
+                {
+                  "time": "7:30 AM",
+                  "type": "travel",
+                  "title": "Drive to Carnoustie (30 min)",
+                  "cost_pp": 0
+                },
+                {
+                  "time": "8:30 AM",
+                  "type": "tee_time",
+                  "title": "Carnoustie Championship Course",
+                  "cost_pp": 300
+                },
+                {
+                  "time": "2:00 PM",
+                  "type": "travel",
+                  "title": "Drive back to St Andrews",
+                  "cost_pp": 0
+                },
+                {
+                  "time": "3:30 PM",
+                  "type": "activity",
+                  "title": "Cathedral ruins / town exploring",
+                  "cost_pp": 0
+                },
+                {
+                  "time": "7:00 PM",
+                  "type": "dinner",
+                  "title": "Vic's Bar + whisky night",
+                  "cost_pp": 50
+                }
+              ]
+            },
+            {
+              "day": 5,
+              "title": "Elie + Departure",
+              "items": [
+                {
+                  "time": "8:30 AM",
+                  "type": "tee_time",
+                  "title": "Elie Golf House Club",
+                  "cost_pp": 70
+                },
+                {
+                  "time": "1:00 PM",
+                  "type": "food",
+                  "title": "Pub lunch in Elie",
+                  "cost_pp": 20
+                },
+                {
+                  "time": "3:00 PM",
+                  "type": "travel",
+                  "title": "Drive to EDI (60 min), depart",
+                  "cost_pp": 0
+                }
+              ]
+            }
+          ]
+        }
+      }
+    }
+  ]
+}
