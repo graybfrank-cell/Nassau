@@ -330,7 +330,7 @@ export default function TripDetailPage() {
   // Group schedule by date
   const sortedSchedule = [...trip.schedule].sort((a, b) => {
     if (a.date !== b.date) return a.date.localeCompare(b.date);
-    return a.time.localeCompare(b.time);
+    return timeToMinutes(a.time) - timeToMinutes(b.time);
   });
   const scheduleDates = Array.from(new Set(sortedSchedule.map((s) => s.date))).sort();
 
@@ -1186,8 +1186,33 @@ function formatDate(dateStr: string): string {
 
 function formatTime(timeStr: string): string {
   if (!timeStr) return "";
+  // If already formatted with AM/PM, return as-is
+  if (/[AaPp][Mm]/.test(timeStr)) return timeStr.trim();
+  // Parse 24h format like "14:30"
   const [h, m] = timeStr.split(":").map(Number);
+  if (isNaN(h) || isNaN(m)) return timeStr;
   const ampm = h >= 12 ? "PM" : "AM";
   const hour = h % 12 || 12;
   return `${hour}:${m.toString().padStart(2, "0")} ${ampm}`;
+}
+
+/** Convert a time string to minutes for sorting (e.g. "2:00 PM" → 840) */
+function timeToMinutes(timeStr: string): number {
+  if (!timeStr) return 9999;
+  // Try "H:MM AM/PM" format
+  const ampmMatch = timeStr.match(/^(\d{1,2}):(\d{2})\s*([AaPp][Mm])$/);
+  if (ampmMatch) {
+    let h = parseInt(ampmMatch[1], 10);
+    const m = parseInt(ampmMatch[2], 10);
+    const isPM = /[Pp][Mm]/.test(ampmMatch[3]);
+    if (isPM && h !== 12) h += 12;
+    if (!isPM && h === 12) h = 0;
+    return h * 60 + m;
+  }
+  // Try 24h "HH:MM" format
+  const parts = timeStr.split(":").map(Number);
+  if (parts.length >= 2 && !isNaN(parts[0]) && !isNaN(parts[1])) {
+    return parts[0] * 60 + parts[1];
+  }
+  return 9999;
 }
