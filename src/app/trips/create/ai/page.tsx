@@ -222,11 +222,15 @@ export default function AITripPlanningPage() {
     };
 
     try {
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 60000);
       const res = await fetch("/api/trips/ai-ideate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
+        signal: controller.signal,
       });
+      clearTimeout(timeout);
 
       if (!res.ok) {
         const body = await res.json().catch(() => ({}));
@@ -602,7 +606,7 @@ export default function AITripPlanningPage() {
           </h2>
           <p className="mt-2 text-sm text-zinc-500">
             Analyzing courses, checking availability, and building your perfect
-            itinerary. This takes about 10-15 seconds.
+            itinerary. This takes about 15-30 seconds.
           </p>
           <div className="mt-6">
             <Loader2 className="mx-auto h-6 w-6 animate-spin text-emerald-600" />
