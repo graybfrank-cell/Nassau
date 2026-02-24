@@ -10,6 +10,7 @@ import {
   removeMember,
   addItineraryItem,
   removeItineraryItem,
+  updateItineraryItem,
   getExpenses,
   getRounds,
   getSkinsGames,
@@ -238,6 +239,18 @@ export default function TripDetailPage() {
       await refresh();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to delete event");
+    }
+  }
+
+  async function handleToggleBooking(eventId: string, currentStatus: string) {
+    if (!trip) return;
+    setError(null);
+    try {
+      const newStatus = currentStatus === "booked" ? "needs_booking" : "booked";
+      await updateItineraryItem(tripId, eventId, { booking_status: newStatus });
+      await refresh();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to update booking status");
     }
   }
 
@@ -846,20 +859,22 @@ export default function TripDetailPage() {
                         const typeConfig = SCHEDULE_TYPES.find(
                           (t) => t.value === event.type
                         );
+                        const hasBookingStatus = event.bookingStatus === "needs_booking" || event.bookingStatus === "booked";
+                        const isBooked = event.bookingStatus === "booked";
                         return (
                           <div
                             key={event.id}
                             className="group flex items-center gap-3 rounded-lg px-3 py-2 hover:bg-zinc-50"
                           >
                             <span
-                              className={`rounded-full px-2 py-0.5 text-xs font-medium ${
+                              className={`shrink-0 rounded-full px-2 py-0.5 text-xs font-medium ${
                                 typeConfig?.color || "bg-zinc-100 text-zinc-700"
                               }`}
                             >
                               {typeConfig?.label || event.type}
                             </span>
                             {event.time && (
-                              <span className="text-xs font-medium text-zinc-500">
+                              <span className="shrink-0 text-xs font-medium text-zinc-500">
                                 {formatTime(event.time)}
                               </span>
                             )}
@@ -867,13 +882,31 @@ export default function TripDetailPage() {
                               {event.title}
                             </span>
                             {event.description && (
-                              <span className="hidden text-xs text-zinc-400 sm:block">
+                              <span className="hidden max-w-48 truncate text-xs text-zinc-400 sm:block">
                                 {event.description}
                               </span>
                             )}
+                            {event.cost > 0 && (
+                              <span className="shrink-0 text-xs font-medium text-zinc-500">
+                                ${event.cost}/pp
+                              </span>
+                            )}
+                            {hasBookingStatus && (
+                              <button
+                                onClick={() => handleToggleBooking(event.id, event.bookingStatus)}
+                                className={`shrink-0 rounded-full px-2 py-0.5 text-[10px] font-medium transition-colors ${
+                                  isBooked
+                                    ? "bg-green-100 text-green-700 hover:bg-green-200"
+                                    : "bg-red-100 text-red-700 hover:bg-red-200"
+                                }`}
+                                title={isBooked ? "Click to mark as needs booking" : "Click to mark as booked"}
+                              >
+                                {isBooked ? "\u2705 Booked" : "\uD83D\uDD34 Needs Booking"}
+                              </button>
+                            )}
                             <button
                               onClick={() => handleDeleteEvent(event.id)}
-                              className="rounded-md p-1 text-zinc-300 opacity-0 transition-all hover:bg-red-50 hover:text-red-500 group-hover:opacity-100"
+                              className="shrink-0 rounded-md p-1 text-zinc-300 opacity-0 transition-all hover:bg-red-50 hover:text-red-500 group-hover:opacity-100"
                             >
                               <Trash2 className="h-3.5 w-3.5" />
                             </button>

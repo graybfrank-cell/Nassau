@@ -302,20 +302,7 @@ export default function AITripPlanningPage() {
     setCreating(true);
     setError(null);
 
-    const itineraryItems = (finalTrip.itinerary || []).flatMap((day) =>
-      (day.items || []).map((item, idx) => ({
-        day_number: day.day,
-        date: startDate
-          ? (() => { const d = new Date(startDate + "T12:00:00"); d.setDate(d.getDate() + day.day - 1); return d.toISOString().split("T")[0]; })()
-          : "",
-        time: item.time,
-        title: item.title,
-        type: item.type === "tee_time" ? "golf" : item.type,
-        description: "",
-        sort_order: (day.day - 1) * 10 + idx,
-      }))
-    );
-
+    // Calculate trip dates
     let tripStart = startDate;
     let tripEnd = endDate;
     if (!tripStart) {
@@ -329,7 +316,59 @@ export default function AITripPlanningPage() {
       tripEnd = d.toISOString().split("T")[0];
     }
 
+    // Map AI type values to DB schedule types
+    function mapType(aiType: string): string {
+      switch (aiType) {
+        case "tee_time": return "tee_time";
+        case "food": return "dinner";
+        case "activity": return "activity";
+        case "travel": return "travel";
+        default: return "other";
+      }
+    }
+
+    // Build itinerary items with cost + booking status
+    const itineraryItems = (finalTrip.itinerary || []).flatMap((day) =>
+      (day.items || []).map((item, idx) => {
+        let dateStr = "";
+        if (tripStart) {
+          const d = new Date(tripStart + "T12:00:00");
+          d.setDate(d.getDate() + day.day - 1);
+          dateStr = d.toISOString().split("T")[0];
+        }
+        // Build description from course info if available
+        const course = finalTrip.courses?.find(
+          (c) => c.name === item.title || item.title.includes(c.name)
+        );
+        const desc = course?.why || "";
+
+        return {
+          day_number: day.day,
+          date: dateStr,
+          time: item.time,
+          title: item.title,
+          type: mapType(item.type),
+          description: desc,
+          cost: item.cost_pp || 0,
+          booking_status: item.type === "tee_time" || item.type === "food" ? "needs_booking" : "",
+          sort_order: (day.day - 1) * 10 + idx,
+        };
+      })
+    );
+
+    // Build lodging JSON
+    const lodging = finalTrip.lodging ? {
+      name: finalTrip.lodging.name,
+      address: "",
+      checkIn: "",
+      checkOut: "",
+      confirmationNumber: "",
+      phone: "",
+      notes: `${finalTrip.lodging.type} \u00B7 $${finalTrip.lodging.per_night}/night\n${finalTrip.lodging.why}`,
+    } : undefined;
+
     try {
+      // Create trip with itinerary items
       const res = await fetch("/api/trips", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -350,6 +389,16 @@ export default function AITripPlanningPage() {
         throw new Error(body.error || "Failed to create trip");
       }
       const trip = await res.json();
+
+      // Save lodging via PATCH if available
+      if (lodging) {
+        await fetch(`/api/trips/${trip.id}`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ lodging }),
+        });
+      }
+
       router.push(`/trips/${trip.id}`);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to create trip");

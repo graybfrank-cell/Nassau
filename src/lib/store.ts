@@ -99,6 +99,20 @@ export async function addItineraryItem(
   return mapItineraryItem(row);
 }
 
+export async function updateItineraryItem(
+  tripId: string,
+  itemId: string,
+  updates: Partial<{ booking_status: string }>
+): Promise<ScheduleItem> {
+  const res = await fetch(`/api/trips/${tripId}/itinerary/${itemId}`, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(updates),
+  });
+  await assertOk(res);
+  return mapItineraryItem(await res.json());
+}
+
 export async function removeItineraryItem(
   tripId: string,
   itemId: string
@@ -332,6 +346,8 @@ function mapItineraryItem(row: any): ScheduleItem {
     title: row.title || "",
     description: row.description || "",
     type: row.type || "other",
+    cost: Number(row.cost) || 0,
+    bookingStatus: row.booking_status || "",
   };
 }
 
