@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
+import { createClient } from "@/lib/supabase/client";
 import {
   getTrip,
   updateTrip,
@@ -74,6 +75,9 @@ export default function TripDetailPage() {
 
   const [trip, setTrip] = useState<Trip | null>(null);
   const [loading, setLoading] = useState(true);
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
+  const [editingName, setEditingName] = useState(false);
+  const [nameDraft, setNameDraft] = useState("");
   const [expenseCount, setExpenseCount] = useState(0);
   const [roundCount, setRoundCount] = useState(0);
   const [skinsCount, setSkinsCount] = useState(0);
@@ -111,7 +115,12 @@ export default function TripDetailPage() {
 
   useEffect(() => {
     setLoading(true);
-    refresh().finally(() => setLoading(false));
+    (async () => {
+      const supabase = createClient();
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) setCurrentUserId(user.id);
+      await refresh();
+    })().finally(() => setLoading(false));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tripId]);
 
@@ -272,6 +281,21 @@ export default function TripDetailPage() {
     }
   }
 
+  async function handleSaveName() {
+    if (!trip || !nameDraft.trim() || nameDraft.trim() === trip.name) {
+      setEditingName(false);
+      return;
+    }
+    setError(null);
+    try {
+      await updateTrip(tripId, { name: nameDraft.trim() } as Partial<Trip>);
+      setEditingName(false);
+      await refresh();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to update trip name");
+    }
+  }
+
   async function handleInviteEmails(e: React.FormEvent) {
     e.preventDefault();
     if (!trip || !inviteEmails.trim()) return;
@@ -341,6 +365,11 @@ export default function TripDetailPage() {
       </div>
     );
   }
+
+  // Determine if the current user is the trip captain
+  const isCaptain = currentUserId
+    ? trip.members.some((m) => m.userId === currentUserId && m.role === "CAPTAIN")
+    : false;
 
   // Leaderboard preview
   const leaderboard = buildLeaderboardPreview(scorecards);
@@ -456,9 +485,33 @@ export default function TripDetailPage() {
         <div className="mt-6 rounded-xl border border-zinc-200 bg-white p-6 shadow-sm">
           <div className="flex items-start justify-between">
             <div>
-              <h1 className="text-2xl font-bold tracking-tight text-zinc-900">
-                {trip.name}
-              </h1>
+              {editingName ? (
+                <div className="flex items-center gap-2">
+                  <input
+                    autoFocus
+                    type="text"
+                    value={nameDraft}
+                    onChange={(e) => setNameDraft(e.target.value)}
+                    onBlur={() => handleSaveName()}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") (e.target as HTMLInputElement).blur();
+                      if (e.key === "Escape") { setEditingName(false); }
+                    }}
+                    className="w-full rounded-md border border-emerald-300 px-2 py-1 text-2xl font-bold tracking-tight text-zinc-900 outline-none focus:ring-2 focus:ring-emerald-500/20"
+                  />
+                </div>
+              ) : (
+                <h1
+                  className={`text-2xl font-bold tracking-tight text-zinc-900${isCaptain ? " cursor-pointer hover:text-emerald-700" : ""}`}
+                  onClick={isCaptain ? () => { setNameDraft(trip.name); setEditingName(true); } : undefined}
+                  title={isCaptain ? "Click to edit trip name" : undefined}
+                >
+                  {trip.name}
+                  {isCaptain && (
+                    <Pencil className="ml-2 inline h-4 w-4 text-zinc-300" />
+                  )}
+                </h1>
+              )}
               {trip.destination && (
                 <p className="mt-1 text-sm text-zinc-500">{trip.destination}</p>
               )}
@@ -849,17 +902,27 @@ export default function TripDetailPage() {
                           >
                             {/* Top row: checkbox + title + cost + day/time */}
                             <div className="flex items-start gap-3">
-                              <button
-                                onClick={() => handleToggleBooking(item.id, item.bookingStatus)}
-                                className="mt-0.5 shrink-0"
-                                title={isBooked ? "Mark as needs booking" : "Mark as booked"}
-                              >
-                                {isBooked ? (
-                                  <CheckCircle2 className="h-5 w-5 text-emerald-600" />
-                                ) : (
-                                  <Circle className="h-5 w-5 text-zinc-300 hover:text-emerald-400" />
-                                )}
-                              </button>
+                              {isCaptain ? (
+                                <button
+                                  onClick={() => handleToggleBooking(item.id, item.bookingStatus)}
+                                  className="mt-0.5 shrink-0"
+                                  title={isBooked ? "Mark as needs booking" : "Mark as booked"}
+                                >
+                                  {isBooked ? (
+                                    <CheckCircle2 className="h-5 w-5 text-emerald-600" />
+                                  ) : (
+                                    <Circle className="h-5 w-5 text-zinc-300 hover:text-emerald-400" />
+                                  )}
+                                </button>
+                              ) : (
+                                <span className="mt-0.5 shrink-0">
+                                  {isBooked ? (
+                                    <CheckCircle2 className="h-5 w-5 text-emerald-600" />
+                                  ) : (
+                                    <Circle className="h-5 w-5 text-zinc-300" />
+                                  )}
+                                </span>
+                              )}
                               <div className="min-w-0 flex-1">
                                 <div className="flex items-center gap-2">
                                   <span
@@ -887,28 +950,61 @@ export default function TripDetailPage() {
                               </div>
                             </div>
 
-                            {/* Contact info row — inline editable */}
+                            {/* Contact info row — inline editable for captain, read-only for members */}
                             {!isBooked && (
                               <div className="mt-2 ml-8 flex flex-wrap items-center gap-x-4 gap-y-1.5 text-xs text-zinc-500">
-                                <InlineContactField
-                                  icon={<Phone className="h-3 w-3" />}
-                                  label="Phone"
-                                  value={item.phone}
-                                  onSave={(v) => handleUpdateContactField(item.id, "phone", v)}
-                                />
-                                <InlineContactField
-                                  icon={<Globe className="h-3 w-3" />}
-                                  label="Website"
-                                  value={item.website}
-                                  isUrl
-                                  onSave={(v) => handleUpdateContactField(item.id, "website", v)}
-                                />
-                                <InlineContactField
-                                  icon={<Mail className="h-3 w-3" />}
-                                  label="Email"
-                                  value={item.email}
-                                  onSave={(v) => handleUpdateContactField(item.id, "email", v)}
-                                />
+                                {isCaptain ? (
+                                  <>
+                                    <InlineContactField
+                                      icon={<Phone className="h-3 w-3" />}
+                                      label="Phone"
+                                      value={item.phone}
+                                      onSave={(v) => handleUpdateContactField(item.id, "phone", v)}
+                                    />
+                                    <InlineContactField
+                                      icon={<Globe className="h-3 w-3" />}
+                                      label="Website"
+                                      value={item.website}
+                                      isUrl
+                                      onSave={(v) => handleUpdateContactField(item.id, "website", v)}
+                                    />
+                                    <InlineContactField
+                                      icon={<Mail className="h-3 w-3" />}
+                                      label="Email"
+                                      value={item.email}
+                                      onSave={(v) => handleUpdateContactField(item.id, "email", v)}
+                                    />
+                                  </>
+                                ) : (
+                                  <>
+                                    {item.phone && (
+                                      <span className="inline-flex items-center gap-1">
+                                        <Phone className="h-3 w-3" />
+                                        {item.phone}
+                                      </span>
+                                    )}
+                                    {item.website && (
+                                      <span className="inline-flex items-center gap-1">
+                                        <Globe className="h-3 w-3" />
+                                        <a
+                                          href={item.website.startsWith("http") ? item.website : `https://${item.website}`}
+                                          target="_blank"
+                                          rel="noopener noreferrer"
+                                          className="text-emerald-600 underline hover:text-emerald-700"
+                                        >
+                                          {item.website.replace(/^https?:\/\//, "")}
+                                          <ExternalLink className="ml-0.5 inline h-2.5 w-2.5" />
+                                        </a>
+                                      </span>
+                                    )}
+                                    {item.email && (
+                                      <span className="inline-flex items-center gap-1">
+                                        <Mail className="h-3 w-3" />
+                                        {item.email}
+                                      </span>
+                                    )}
+                                  </>
+                                )}
                                 {bookBy && (
                                   <span className="text-zinc-400">
                                     {"\u23F0"} Book by: {bookBy} ({weeksBefore} before trip)
@@ -1117,7 +1213,7 @@ export default function TripDetailPage() {
                                 ${event.cost}/pp
                               </span>
                             )}
-                            {hasBookingStatus && (
+                            {hasBookingStatus && isCaptain && (
                               <button
                                 onClick={() => handleToggleBooking(event.id, event.bookingStatus)}
                                 className={`shrink-0 rounded-full px-2 py-0.5 text-[10px] font-medium transition-colors ${
@@ -1129,6 +1225,17 @@ export default function TripDetailPage() {
                               >
                                 {isBooked ? "\u2705 Booked" : "\uD83D\uDD34 Needs Booking"}
                               </button>
+                            )}
+                            {hasBookingStatus && !isCaptain && (
+                              <span
+                                className={`shrink-0 rounded-full px-2 py-0.5 text-[10px] font-medium ${
+                                  isBooked
+                                    ? "bg-green-100 text-green-700"
+                                    : "bg-red-100 text-red-700"
+                                }`}
+                              >
+                                {isBooked ? "\u2705 Booked" : "\uD83D\uDD34 Needs Booking"}
+                              </span>
                             )}
                             <button
                               onClick={() => handleDeleteEvent(event.id)}

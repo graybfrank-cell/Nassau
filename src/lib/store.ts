@@ -329,6 +329,7 @@ export async function deleteScorecard(id: string): Promise<void> {
 function mapMember(row: any): Member {
   return {
     id: row.id,
+    userId: row.user_id || undefined,
     name: row.name || "",
     handicap: Number(row.handicap) || 0,
     email: row.email || undefined,
