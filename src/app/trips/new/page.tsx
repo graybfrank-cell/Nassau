@@ -14,9 +14,9 @@ const paths = [
   {
     emoji: "\uD83E\uDD16",
     title: "Help Me Figure It Out",
-    description: "Not sure where to go? Let Nassau's AI help.",
+    description: "Not sure where to go? Answer a few questions and our AI will plan the perfect trip.",
     href: "/trips/create/ai",
-    available: false,
+    available: true,
   },
   {
     emoji: "\uD83D\uDD0D",
