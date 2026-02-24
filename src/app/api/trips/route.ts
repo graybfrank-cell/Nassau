@@ -59,15 +59,25 @@ export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
 
-    // Build itinerary placeholder items from date range
-    const itineraryItems: {
-      day_number: number;
-      date: string;
-      title: string;
-      type: string;
-      sort_order: number;
-    }[] = [];
-    if (body.startDate && body.endDate) {
+    // Build itinerary items: use provided items if available, else generate placeholders
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    let itineraryItems: any[] = [];
+    if (Array.isArray(body.itineraryItems) && body.itineraryItems.length > 0) {
+      // Use AI-generated or client-provided items
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      itineraryItems = body.itineraryItems.map((item: any, idx: number) => ({
+        day_number: item.day_number ?? null,
+        date: item.date || "",
+        time: item.time || "",
+        title: item.title || "",
+        type: item.type || "other",
+        description: item.description || "",
+        cost: item.cost ?? 0,
+        booking_status: item.booking_status || "",
+        sort_order: item.sort_order ?? idx,
+      }));
+    } else if (body.startDate && body.endDate) {
+      // Generate placeholder items from date range
       const start = new Date(body.startDate + "T12:00:00");
       const end = new Date(body.endDate + "T12:00:00");
       const days =

@@ -29,6 +29,9 @@ export async function ensureDbColumns(): Promise<void> {
     "ALTER TABLE trip_members ADD COLUMN IF NOT EXISTS invited_at TIMESTAMPTZ",
     "ALTER TABLE trip_members ADD COLUMN IF NOT EXISTS rsvp_at TIMESTAMPTZ",
 
+    // itinerary_items table — booking status field
+    "ALTER TABLE itinerary_items ADD COLUMN IF NOT EXISTS booking_status TEXT DEFAULT ''",
+
     // scorecards table — golf course API fields
     "ALTER TABLE scorecards ADD COLUMN IF NOT EXISTS course_api_id INTEGER",
     "ALTER TABLE scorecards ADD COLUMN IF NOT EXISTS tee_name TEXT DEFAULT ''",
