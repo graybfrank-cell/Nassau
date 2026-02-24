@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { MapPin, Calendar, Users, Check, AlertCircle } from "lucide-react";
@@ -35,7 +35,6 @@ const STATUS_BADGE: Record<string, { label: string; color: string; icon: string 
 
 export default function TripSharePage() {
   const params = useParams();
-  const router = useRouter();
   const shareCode = params.shareCode as string;
 
   const [trip, setTrip] = useState<TripData | null>(null);
@@ -51,13 +50,18 @@ export default function TripSharePage() {
       // Check auth
       const supabase = createClient();
       const { data: { user } } = await supabase.auth.getUser();
+      console.log("[RSVP] Auth check:", user ? `logged in as ${user.id}` : "not logged in");
       if (user) setUserId(user.id);
 
       // Fetch trip by share code
+      console.log("[RSVP] Fetching trip by share code:", shareCode);
       const res = await fetch(`/api/trip/${shareCode}`);
       if (res.ok) {
-        setTrip(await res.json());
+        const data = await res.json();
+        console.log("[RSVP] Trip loaded:", data.id, data.name, "members:", data.members.length);
+        setTrip(data);
       } else {
+        console.error("[RSVP] Trip fetch failed:", res.status);
         setNotFound(true);
       }
       setLoading(false);
@@ -66,22 +70,41 @@ export default function TripSharePage() {
   }, [shareCode]);
 
   async function handleRSVP(status: "GOING" | "MAYBE" | "DECLINED") {
-    if (!trip || !userId) return;
+    console.log("[RSVP] handleRSVP called with status:", status);
+    console.log("[RSVP] trip:", trip?.id, "userId:", userId);
+
+    if (!trip) {
+      console.warn("[RSVP] No trip data — aborting");
+      return;
+    }
+    if (!userId) {
+      console.warn("[RSVP] No userId — user not logged in, aborting");
+      setError("You must be signed in to RSVP.");
+      return;
+    }
+
     setRsvpLoading(true);
     setError(null);
     setSuccess(null);
 
     try {
+      console.log("[RSVP] Calling POST /api/trips/" + trip.id + "/rsvp with status:", status);
       const res = await fetch(`/api/trips/${trip.id}/rsvp`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ status }),
       });
 
+      console.log("[RSVP] Response status:", res.status);
+
       if (!res.ok) {
         const body = await res.json().catch(() => ({}));
+        console.error("[RSVP] API error:", body);
         throw new Error(body.error || "Failed to RSVP");
       }
+
+      const result = await res.json();
+      console.log("[RSVP] RSVP success:", result);
 
       setSuccess(
         status === "GOING"
@@ -91,10 +114,15 @@ export default function TripSharePage() {
             : "No worries. Hope to see you next time!"
       );
 
-      // Refresh trip data
+      // Refresh trip data to show updated status
       const tripRes = await fetch(`/api/trip/${shareCode}`);
-      if (tripRes.ok) setTrip(await tripRes.json());
+      if (tripRes.ok) {
+        const refreshed = await tripRes.json();
+        console.log("[RSVP] Trip refreshed, members:", refreshed.members.length);
+        setTrip(refreshed);
+      }
     } catch (err) {
+      console.error("[RSVP] Error:", err);
       setError(err instanceof Error ? err.message : "Failed to RSVP");
     }
     setRsvpLoading(false);
@@ -139,6 +167,7 @@ export default function TripSharePage() {
   const myMember = userId
     ? trip.members.find((m) => m.userId === userId)
     : null;
+  const isCaptain = myMember?.role === "CAPTAIN";
 
   const duration = (() => {
     if (!trip.startDate || !trip.endDate) return null;
@@ -202,49 +231,57 @@ export default function TripSharePage() {
           {/* RSVP section */}
           {userId ? (
             <div className="mt-6">
-              {myMember && myMember.rsvpStatus !== "PENDING" && (
-                <p className="mb-3 text-center text-sm text-zinc-500">
-                  Your current status:{" "}
-                  <span className="font-medium">
-                    {STATUS_BADGE[myMember.rsvpStatus]?.label || myMember.rsvpStatus}
-                  </span>
-                </p>
+              {isCaptain ? (
+                <div className="rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-center text-sm text-amber-700">
+                  You&apos;re the captain of this trip &mdash; you&apos;re locked in as Going!
+                </div>
+              ) : (
+                <>
+                  {myMember && myMember.rsvpStatus !== "PENDING" && (
+                    <p className="mb-3 text-center text-sm text-zinc-500">
+                      Your current status:{" "}
+                      <span className="font-medium">
+                        {STATUS_BADGE[myMember.rsvpStatus]?.label || myMember.rsvpStatus}
+                      </span>
+                    </p>
+                  )}
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => handleRSVP("GOING")}
+                      disabled={rsvpLoading}
+                      className={`flex-1 rounded-lg py-2.5 text-sm font-semibold transition-colors disabled:opacity-50 ${
+                        myMember?.rsvpStatus === "GOING"
+                          ? "bg-green-600 text-white"
+                          : "border border-green-300 text-green-700 hover:bg-green-50"
+                      }`}
+                    >
+                      {rsvpLoading ? "..." : "I'm In!"}
+                    </button>
+                    <button
+                      onClick={() => handleRSVP("MAYBE")}
+                      disabled={rsvpLoading}
+                      className={`flex-1 rounded-lg py-2.5 text-sm font-semibold transition-colors disabled:opacity-50 ${
+                        myMember?.rsvpStatus === "MAYBE"
+                          ? "bg-yellow-500 text-white"
+                          : "border border-yellow-300 text-yellow-700 hover:bg-yellow-50"
+                      }`}
+                    >
+                      {rsvpLoading ? "..." : "Maybe"}
+                    </button>
+                    <button
+                      onClick={() => handleRSVP("DECLINED")}
+                      disabled={rsvpLoading}
+                      className={`flex-1 rounded-lg py-2.5 text-sm font-semibold transition-colors disabled:opacity-50 ${
+                        myMember?.rsvpStatus === "DECLINED"
+                          ? "bg-red-600 text-white"
+                          : "border border-red-300 text-red-700 hover:bg-red-50"
+                      }`}
+                    >
+                      {rsvpLoading ? "..." : "Can't Make It"}
+                    </button>
+                  </div>
+                </>
               )}
-              <div className="flex gap-2">
-                <button
-                  onClick={() => handleRSVP("GOING")}
-                  disabled={rsvpLoading || (myMember?.role === "CAPTAIN")}
-                  className={`flex-1 rounded-lg py-2.5 text-sm font-semibold transition-colors disabled:opacity-50 ${
-                    myMember?.rsvpStatus === "GOING"
-                      ? "bg-green-600 text-white"
-                      : "border border-green-300 text-green-700 hover:bg-green-50"
-                  }`}
-                >
-                  I&apos;m In!
-                </button>
-                <button
-                  onClick={() => handleRSVP("MAYBE")}
-                  disabled={rsvpLoading || myMember?.role === "CAPTAIN"}
-                  className={`flex-1 rounded-lg py-2.5 text-sm font-semibold transition-colors disabled:opacity-50 ${
-                    myMember?.rsvpStatus === "MAYBE"
-                      ? "bg-yellow-500 text-white"
-                      : "border border-yellow-300 text-yellow-700 hover:bg-yellow-50"
-                  }`}
-                >
-                  Maybe
-                </button>
-                <button
-                  onClick={() => handleRSVP("DECLINED")}
-                  disabled={rsvpLoading || myMember?.role === "CAPTAIN"}
-                  className={`flex-1 rounded-lg py-2.5 text-sm font-semibold transition-colors disabled:opacity-50 ${
-                    myMember?.rsvpStatus === "DECLINED"
-                      ? "bg-red-600 text-white"
-                      : "border border-red-300 text-red-700 hover:bg-red-50"
-                  }`}
-                >
-                  Can&apos;t Make It
-                </button>
-              </div>
             </div>
           ) : (
             <div className="mt-6 text-center">
@@ -278,7 +315,7 @@ export default function TripSharePage() {
                     </span>
                     {m.role === "CAPTAIN" && (
                       <span className="rounded-full bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-700">
-                        {"\uD83D\uDC51"} Captain
+                        Captain
                       </span>
                     )}
                   </div>
