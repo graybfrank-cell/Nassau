@@ -44,6 +44,7 @@ export async function POST(
       yardages: body.yardages || [],
       handicaps: body.handicaps || [],
       players: body.players || [],
+      itinerary_item_id: body.itineraryItemId || null,
     },
   });
   return NextResponse.json(scorecard, { status: 201 });

@@ -40,6 +40,7 @@ export async function POST(
       day_number: body.dayNumber || null,
       players: body.players || [],
       holes: body.holes || [],
+      itinerary_item_id: body.itineraryItemId || null,
     },
   });
   return NextResponse.json(game, { status: 201 });

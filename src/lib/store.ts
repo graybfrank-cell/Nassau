@@ -181,6 +181,7 @@ export async function createRound(data: {
   date?: string;
   groupSize?: number;
   groups: string[][];
+  itineraryItemId?: string;
 }): Promise<Round> {
   const res = await fetch(`/api/trips/${data.tripId}/rounds`, {
     method: "POST",
@@ -224,6 +225,7 @@ export async function createSkinsGame(data: {
   stake: number;
   players: string[];
   holes: { number: number; scores: Record<string, number> }[];
+  itineraryItemId?: string;
 }): Promise<SkinsGame> {
   const res = await fetch(`/api/trips/${data.tripId}/skins`, {
     method: "POST",
@@ -233,6 +235,7 @@ export async function createSkinsGame(data: {
       buyIn: data.stake,
       players: data.players,
       holes: data.holes,
+      itineraryItemId: data.itineraryItemId,
     }),
   });
   await assertOk(res);
@@ -423,6 +426,7 @@ function mapRound(row: any): Round {
     courseName: row.course_name || "",
     date: row.date || "",
     groups: row.groups || [],
+    itineraryItemId: row.itinerary_item_id || undefined,
     createdAt: row.created_at,
   };
 }
@@ -436,6 +440,7 @@ function mapSkinsGame(row: any): SkinsGame {
     players: row.players || [],
     stake: Number(row.buy_in ?? row.stake) || 5,
     holes: row.holes || [],
+    itineraryItemId: row.itinerary_item_id || undefined,
     createdAt: row.created_at,
   };
 }
@@ -454,6 +459,7 @@ function mapScorecard(row: any): Scorecard {
     yardages: row.yardages || [],
     handicaps: row.handicaps || [],
     players: row.players || [],
+    itineraryItemId: row.itinerary_item_id || undefined,
     createdAt: row.created_at,
   };
 }
