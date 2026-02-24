@@ -17,7 +17,7 @@ import {
   getSkinsGames,
   getScorecards,
 } from "@/lib/store";
-import { Trip, Lodging, ScheduleItem, Scorecard } from "@/lib/types";
+import { Trip, Lodging, ScheduleItem, Scorecard, Round, SkinsGame } from "@/lib/types";
 import {
   ArrowLeft,
   Users,
@@ -50,6 +50,7 @@ import {
   CheckCircle2,
   Circle,
 } from "lucide-react";
+import RoundHub from "@/components/RoundHub";
 
 const SCHEDULE_TYPES = [
   { value: "tee_time", label: "Tee Time", color: "bg-emerald-100 text-emerald-700" },
@@ -83,6 +84,8 @@ export default function TripDetailPage() {
   const [skinsCount, setSkinsCount] = useState(0);
   const [scorecardCount, setScorecardCount] = useState(0);
   const [scorecards, setScorecards] = useState<Scorecard[]>([]);
+  const [rounds, setRounds] = useState<Round[]>([]);
+  const [skinsGames, setSkinsGames] = useState<SkinsGame[]>([]);
   const [showAddMember, setShowAddMember] = useState(false);
   const [memberName, setMemberName] = useState("");
   const [memberHandicap, setMemberHandicap] = useState("");
@@ -131,14 +134,16 @@ export default function TripDetailPage() {
       setLodgingForm(t.lodging);
       setArrivalTime(t.arrivalTime);
       setDepartureTime(t.departureTime);
-      const [expenses, rounds, skins, sc] = await Promise.all([
+      const [expenses, rds, skins, sc] = await Promise.all([
         getExpenses(tripId),
         getRounds(tripId),
         getSkinsGames(tripId),
         getScorecards({ tripId }),
       ]);
       setExpenseCount(expenses.length);
-      setRoundCount(rounds.length);
+      setRounds(rds);
+      setRoundCount(rds.length);
+      setSkinsGames(skins);
       setSkinsCount(skins.length);
       setScorecardCount(sc.length);
       setScorecards(sc);
@@ -618,6 +623,16 @@ export default function TripDetailPage() {
             </button>
           </div>
         </div>
+
+        {/* Round Hub Cards */}
+        <RoundHub
+          trip={trip}
+          rounds={rounds}
+          scorecards={scorecards}
+          skinsGames={skinsGames}
+          currentUserId={currentUserId}
+          onRefresh={refresh}
+        />
 
         {/* Two-column layout for lodging + leaderboard */}
         <div className="mt-6 grid gap-6 lg:grid-cols-2">

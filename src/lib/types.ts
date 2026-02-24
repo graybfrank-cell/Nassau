@@ -65,6 +65,7 @@ export interface Round {
   courseName: string;
   date: string;
   groups: string[][]; // arrays of member ids
+  itineraryItemId?: string;
   createdAt: string;
 }
 
@@ -80,6 +81,7 @@ export interface SkinsGame {
   players: string[]; // member ids
   stake: number;
   holes: SkinsHole[];
+  itineraryItemId?: string;
   createdAt: string;
 }
 
@@ -102,6 +104,7 @@ export interface Scorecard {
   yardages: number[]; // yardage for each hole
   handicaps: number[]; // handicap index for each hole
   players: ScorecardPlayer[];
+  itineraryItemId?: string;
   createdAt: string;
 }
 
