@@ -40,6 +40,11 @@ export async function ensureDbColumns(): Promise<void> {
     "ALTER TABLE scorecards ADD COLUMN IF NOT EXISTS tee_name TEXT DEFAULT ''",
     "ALTER TABLE scorecards ADD COLUMN IF NOT EXISTS yardages JSONB DEFAULT '[]'",
     "ALTER TABLE scorecards ADD COLUMN IF NOT EXISTS handicaps JSONB DEFAULT '[]'",
+
+    // Round Hub — link rounds, skins, scorecards to itinerary tee times
+    "ALTER TABLE rounds ADD COLUMN IF NOT EXISTS itinerary_item_id TEXT",
+    "ALTER TABLE skins_games ADD COLUMN IF NOT EXISTS itinerary_item_id TEXT",
+    "ALTER TABLE scorecards ADD COLUMN IF NOT EXISTS itinerary_item_id TEXT",
   ];
 
   for (const sql of statements) {
