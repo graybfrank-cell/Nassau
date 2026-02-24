@@ -102,7 +102,7 @@ export async function addItineraryItem(
 export async function updateItineraryItem(
   tripId: string,
   itemId: string,
-  updates: Partial<{ booking_status: string }>
+  updates: Partial<{ booking_status: string; phone: string; website: string; email: string }>
 ): Promise<ScheduleItem> {
   const res = await fetch(`/api/trips/${tripId}/itinerary/${itemId}`, {
     method: "PATCH",
@@ -348,6 +348,9 @@ function mapItineraryItem(row: any): ScheduleItem {
     type: row.type || "other",
     cost: Number(row.cost) || 0,
     bookingStatus: row.booking_status || "",
+    phone: row.phone || "",
+    website: row.website || "",
+    email: row.email || "",
   };
 }
 

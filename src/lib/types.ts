@@ -26,6 +26,9 @@ export interface ScheduleItem {
   type: "tee_time" | "dinner" | "activity" | "travel" | "other";
   cost: number;
   bookingStatus: string;
+  phone: string;
+  website: string;
+  email: string;
 }
 
 export interface Trip {

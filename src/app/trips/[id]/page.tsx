@@ -44,6 +44,10 @@ import {
   Mail,
   Send,
   RotateCw,
+  Globe,
+  ExternalLink,
+  CheckCircle2,
+  Circle,
 } from "lucide-react";
 
 const SCHEDULE_TYPES = [
@@ -254,6 +258,20 @@ export default function TripDetailPage() {
     }
   }
 
+  async function handleUpdateContactField(
+    eventId: string,
+    field: "phone" | "website" | "email",
+    value: string
+  ) {
+    if (!trip) return;
+    try {
+      await updateItineraryItem(tripId, eventId, { [field]: value });
+      await refresh();
+    } catch {
+      // silent — field reverts on next refresh
+    }
+  }
+
   async function handleInviteEmails(e: React.FormEvent) {
     e.preventDefault();
     if (!trip || !inviteEmails.trim()) return;
@@ -335,6 +353,47 @@ export default function TripDetailPage() {
   const scheduleDates = Array.from(new Set(sortedSchedule.map((s) => s.date))).sort();
 
   const hasLodging = trip.lodging.name || trip.lodging.address;
+
+  // Booking checklist: items that need booking
+  const bookableItems = trip.schedule.filter(
+    (s) => s.bookingStatus === "needs_booking" || s.bookingStatus === "booked"
+  );
+  const bookedCount = bookableItems.filter((s) => s.bookingStatus === "booked").length;
+  const totalBookable = bookableItems.length;
+  const allBooked = totalBookable > 0 && bookedCount === totalBookable;
+
+  // Group by type category
+  const checklistGroups: { label: string; icon: string; items: ScheduleItem[] }[] = [];
+  const teeTimeItems = bookableItems.filter((i) => i.type === "tee_time");
+  const dinnerItems = bookableItems.filter((i) => i.type === "dinner");
+  const activityItems = bookableItems.filter((i) => i.type === "activity" || i.type === "travel" || i.type === "other");
+  if (teeTimeItems.length > 0) checklistGroups.push({ label: "TEE TIMES", icon: "\uD83C\uDFCC\uFE0F", items: teeTimeItems });
+  if (dinnerItems.length > 0) checklistGroups.push({ label: "DINNER RESERVATIONS", icon: "\uD83C\uDF7D\uFE0F", items: dinnerItems });
+  if (activityItems.length > 0) checklistGroups.push({ label: "ACTIVITIES", icon: "\uD83C\uDFAF", items: activityItems });
+
+  // Compute "book by" deadline based on trip start and item type
+  function getBookByDate(item: ScheduleItem): string | null {
+    if (!trip?.startDate) return null;
+    if (item.type === "activity" || item.type === "travel" || item.type === "other") return null;
+    const start = new Date(trip.startDate + "T12:00:00");
+    const weeksBeforeMap: Record<string, number> = {
+      tee_time: 1,
+      dinner: 1,
+    };
+    const weeksBefore = weeksBeforeMap[item.type] ?? 1;
+    const deadline = new Date(start);
+    deadline.setDate(deadline.getDate() - weeksBefore * 7);
+    return deadline.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+  }
+
+  // Find which day number an item falls on
+  function getDayLabel(item: ScheduleItem): string {
+    if (!trip?.startDate || !item.date) return "";
+    const start = new Date(trip.startDate + "T12:00:00");
+    const itemDate = new Date(item.date + "T12:00:00");
+    const dayNum = Math.round((itemDate.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)) + 1;
+    return dayNum > 0 ? `Day ${dayNum}` : "";
+  }
 
   const featureCards = [
     {
@@ -733,6 +792,173 @@ export default function TripDetailPage() {
             )}
           </div>
         </div>
+
+        {/* Booking Checklist */}
+        {totalBookable > 0 && (
+          <div className="mt-6 rounded-xl border border-zinc-200 bg-white p-6 shadow-sm">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <CheckCircle2 className="h-5 w-5 text-zinc-400" />
+                <h2 className="text-lg font-semibold text-zinc-900">Booking Checklist</h2>
+              </div>
+              <span className="text-xs font-medium text-zinc-500">
+                {bookedCount} of {totalBookable} booked
+              </span>
+            </div>
+
+            {/* Progress bar */}
+            <div className="mt-3">
+              <div className="h-2 w-full overflow-hidden rounded-full bg-zinc-100">
+                <div
+                  className={`h-full rounded-full transition-all duration-500 ${
+                    allBooked ? "bg-emerald-500" : "bg-emerald-400"
+                  }`}
+                  style={{ width: `${totalBookable > 0 ? (bookedCount / totalBookable) * 100 : 0}%` }}
+                />
+              </div>
+            </div>
+
+            {/* Celebration state */}
+            {allBooked ? (
+              <div className="mt-5 rounded-lg border border-emerald-200 bg-emerald-50 px-5 py-4 text-center">
+                <p className="text-base font-semibold text-emerald-800">
+                  {"\uD83C\uDF89"} Everything&apos;s booked! Your crew is all set.
+                </p>
+              </div>
+            ) : (
+              <div className="mt-5 space-y-6">
+                {checklistGroups.map((group) => (
+                  <div key={group.label}>
+                    <h3 className="text-xs font-bold uppercase tracking-wider text-zinc-400">
+                      {group.icon} {group.label}
+                    </h3>
+                    <div className="mt-2 space-y-3">
+                      {group.items.map((item) => {
+                        const isBooked = item.bookingStatus === "booked";
+                        const dayLabel = getDayLabel(item);
+                        const bookBy = getBookByDate(item);
+                        const weeksBefore = item.type === "tee_time" ? "1 week" : "1 week";
+                        return (
+                          <div
+                            key={item.id}
+                            className={`rounded-lg border px-4 py-3 transition-colors ${
+                              isBooked
+                                ? "border-emerald-200 bg-emerald-50/50"
+                                : "border-zinc-200 bg-white"
+                            }`}
+                          >
+                            {/* Top row: checkbox + title + cost + day/time */}
+                            <div className="flex items-start gap-3">
+                              <button
+                                onClick={() => handleToggleBooking(item.id, item.bookingStatus)}
+                                className="mt-0.5 shrink-0"
+                                title={isBooked ? "Mark as needs booking" : "Mark as booked"}
+                              >
+                                {isBooked ? (
+                                  <CheckCircle2 className="h-5 w-5 text-emerald-600" />
+                                ) : (
+                                  <Circle className="h-5 w-5 text-zinc-300 hover:text-emerald-400" />
+                                )}
+                              </button>
+                              <div className="min-w-0 flex-1">
+                                <div className="flex items-center gap-2">
+                                  <span
+                                    className={`text-sm font-semibold ${
+                                      isBooked ? "text-emerald-800 line-through" : "text-zinc-900"
+                                    }`}
+                                  >
+                                    {item.title}
+                                  </span>
+                                  {isBooked && (
+                                    <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-semibold text-emerald-700">
+                                      Booked
+                                    </span>
+                                  )}
+                                </div>
+                                <div className="mt-0.5 flex flex-wrap items-center gap-x-3 gap-y-0.5 text-xs text-zinc-500">
+                                  {item.cost > 0 && <span>${item.cost}/pp</span>}
+                                  {dayLabel && item.time && (
+                                    <span>
+                                      {dayLabel}, {formatTime(item.time)}
+                                    </span>
+                                  )}
+                                  {dayLabel && !item.time && <span>{dayLabel}</span>}
+                                </div>
+                              </div>
+                            </div>
+
+                            {/* Contact info row — inline editable */}
+                            {!isBooked && (
+                              <div className="mt-2 ml-8 flex flex-wrap items-center gap-x-4 gap-y-1.5 text-xs text-zinc-500">
+                                <InlineContactField
+                                  icon={<Phone className="h-3 w-3" />}
+                                  label="Phone"
+                                  value={item.phone}
+                                  onSave={(v) => handleUpdateContactField(item.id, "phone", v)}
+                                />
+                                <InlineContactField
+                                  icon={<Globe className="h-3 w-3" />}
+                                  label="Website"
+                                  value={item.website}
+                                  isUrl
+                                  onSave={(v) => handleUpdateContactField(item.id, "website", v)}
+                                />
+                                <InlineContactField
+                                  icon={<Mail className="h-3 w-3" />}
+                                  label="Email"
+                                  value={item.email}
+                                  onSave={(v) => handleUpdateContactField(item.id, "email", v)}
+                                />
+                                {bookBy && (
+                                  <span className="text-zinc-400">
+                                    {"\u23F0"} Book by: {bookBy} ({weeksBefore} before trip)
+                                  </span>
+                                )}
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {/* Lodging booking reminder */}
+            {hasLodging && trip.lodging.name && (
+              <div className="mt-5 border-t border-zinc-100 pt-4">
+                <h3 className="text-xs font-bold uppercase tracking-wider text-zinc-400">
+                  {"\uD83C\uDFE8"} LODGING
+                </h3>
+                <div className="mt-2 rounded-lg border border-zinc-200 bg-white px-4 py-3">
+                  <div className="flex items-center gap-2 text-sm">
+                    <Hotel className="h-4 w-4 text-zinc-400" />
+                    <span className="font-semibold text-zinc-900">{trip.lodging.name}</span>
+                  </div>
+                  {trip.lodging.phone && (
+                    <div className="mt-1 ml-6 flex items-center gap-1.5 text-xs text-zinc-500">
+                      <Phone className="h-3 w-3" />
+                      {trip.lodging.phone}
+                    </div>
+                  )}
+                  {trip.lodging.notes && (
+                    <p className="mt-1 ml-6 text-xs text-zinc-400">{trip.lodging.notes}</p>
+                  )}
+                  {trip.startDate && (
+                    <p className="mt-1 ml-6 text-xs text-zinc-400">
+                      {"\u23F0"} Book by: {(() => {
+                        const start = new Date(trip.startDate + "T12:00:00");
+                        start.setDate(start.getDate() - 14);
+                        return start.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+                      })()} (2 weeks before trip)
+                    </p>
+                  )}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
 
         {/* Schedule */}
         <div className="mt-6 rounded-xl border border-zinc-200 bg-white p-6 shadow-sm">
@@ -1137,6 +1363,96 @@ export default function TripDetailPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+// --- Inline Editable Contact Field ---
+
+function InlineContactField({
+  icon,
+  label,
+  value,
+  isUrl,
+  onSave,
+}: {
+  icon: React.ReactNode;
+  label: string;
+  value: string;
+  isUrl?: boolean;
+  onSave: (value: string) => void;
+}) {
+  const [editing, setEditing] = useState(false);
+  const [draft, setDraft] = useState(value);
+
+  function handleBlur() {
+    setEditing(false);
+    if (draft.trim() !== value) {
+      onSave(draft.trim());
+    }
+  }
+
+  function handleKeyDown(e: React.KeyboardEvent) {
+    if (e.key === "Enter") {
+      (e.target as HTMLInputElement).blur();
+    } else if (e.key === "Escape") {
+      setDraft(value);
+      setEditing(false);
+    }
+  }
+
+  if (editing) {
+    return (
+      <span className="inline-flex items-center gap-1">
+        {icon}
+        <input
+          autoFocus
+          type="text"
+          value={draft}
+          onChange={(e) => setDraft(e.target.value)}
+          onBlur={handleBlur}
+          onKeyDown={handleKeyDown}
+          placeholder={label}
+          className="w-40 rounded border border-emerald-300 bg-white px-1.5 py-0.5 text-xs text-zinc-700 outline-none focus:ring-1 focus:ring-emerald-400"
+        />
+      </span>
+    );
+  }
+
+  if (value) {
+    return (
+      <span className="inline-flex items-center gap-1">
+        {icon}
+        {isUrl ? (
+          <a
+            href={value.startsWith("http") ? value : `https://${value}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-emerald-600 underline hover:text-emerald-700"
+          >
+            {value.replace(/^https?:\/\//, "")}
+            <ExternalLink className="ml-0.5 inline h-2.5 w-2.5" />
+          </a>
+        ) : (
+          <span>{value}</span>
+        )}
+        <button
+          onClick={() => { setDraft(value); setEditing(true); }}
+          className="text-zinc-300 hover:text-zinc-500"
+        >
+          <Pencil className="h-2.5 w-2.5" />
+        </button>
+      </span>
+    );
+  }
+
+  return (
+    <button
+      onClick={() => { setDraft(""); setEditing(true); }}
+      className="inline-flex items-center gap-1 text-zinc-300 hover:text-zinc-500"
+    >
+      {icon}
+      <span className="underline">{label}</span>
+    </button>
   );
 }
 
