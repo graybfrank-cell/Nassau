@@ -99,6 +99,20 @@ export async function addItineraryItem(
   return mapItineraryItem(row);
 }
 
+export async function updateItineraryItem(
+  tripId: string,
+  itemId: string,
+  updates: Partial<{ booking_status: string; phone: string; website: string; email: string }>
+): Promise<ScheduleItem> {
+  const res = await fetch(`/api/trips/${tripId}/itinerary/${itemId}`, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(updates),
+  });
+  await assertOk(res);
+  return mapItineraryItem(await res.json());
+}
+
 export async function removeItineraryItem(
   tripId: string,
   itemId: string
@@ -167,6 +181,7 @@ export async function createRound(data: {
   date?: string;
   groupSize?: number;
   groups: string[][];
+  itineraryItemId?: string;
 }): Promise<Round> {
   const res = await fetch(`/api/trips/${data.tripId}/rounds`, {
     method: "POST",
@@ -210,6 +225,7 @@ export async function createSkinsGame(data: {
   stake: number;
   players: string[];
   holes: { number: number; scores: Record<string, number> }[];
+  itineraryItemId?: string;
 }): Promise<SkinsGame> {
   const res = await fetch(`/api/trips/${data.tripId}/skins`, {
     method: "POST",
@@ -219,6 +235,7 @@ export async function createSkinsGame(data: {
       buyIn: data.stake,
       players: data.players,
       holes: data.holes,
+      itineraryItemId: data.itineraryItemId,
     }),
   });
   await assertOk(res);
@@ -315,6 +332,7 @@ export async function deleteScorecard(id: string): Promise<void> {
 function mapMember(row: any): Member {
   return {
     id: row.id,
+    userId: row.user_id || undefined,
     name: row.name || "",
     handicap: Number(row.handicap) || 0,
     email: row.email || undefined,
@@ -332,6 +350,11 @@ function mapItineraryItem(row: any): ScheduleItem {
     title: row.title || "",
     description: row.description || "",
     type: row.type || "other",
+    cost: Number(row.cost) || 0,
+    bookingStatus: row.booking_status || "",
+    phone: row.phone || "",
+    website: row.website || "",
+    email: row.email || "",
   };
 }
 
@@ -403,6 +426,7 @@ function mapRound(row: any): Round {
     courseName: row.course_name || "",
     date: row.date || "",
     groups: row.groups || [],
+    itineraryItemId: row.itinerary_item_id || undefined,
     createdAt: row.created_at,
   };
 }
@@ -416,6 +440,7 @@ function mapSkinsGame(row: any): SkinsGame {
     players: row.players || [],
     stake: Number(row.buy_in ?? row.stake) || 5,
     holes: row.holes || [],
+    itineraryItemId: row.itinerary_item_id || undefined,
     createdAt: row.created_at,
   };
 }
@@ -434,6 +459,7 @@ function mapScorecard(row: any): Scorecard {
     yardages: row.yardages || [],
     handicaps: row.handicaps || [],
     players: row.players || [],
+    itineraryItemId: row.itinerary_item_id || undefined,
     createdAt: row.created_at,
   };
 }
