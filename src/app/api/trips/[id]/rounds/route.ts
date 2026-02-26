@@ -40,6 +40,7 @@ export async function POST(
       date: body.date || "",
       group_size: body.groupSize || 4,
       groups: body.groups || [],
+      itinerary_item_id: body.itineraryItemId || null,
     },
   });
   return NextResponse.json(round, { status: 201 });
