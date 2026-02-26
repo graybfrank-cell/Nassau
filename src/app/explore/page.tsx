@@ -844,19 +844,20 @@ export default function NassauExplore() {
             className="text-emerald-200/80 text-sm mb-6 max-w-md mx-auto"
             style={{ fontFamily: "'DM Sans', sans-serif" }}
           >
-            Tell Nassau what you&apos;re looking for and our AI will build a
-            custom trip in under 30 seconds.
+            Tell Nassau what you&apos;re looking for and our expertly trained
+            trip advisor will build a custom trip in under 60 seconds.
           </p>
-          <button
-            className="px-8 py-3.5 rounded-full text-base font-bold transition hover:shadow-xl"
+          <a
+            href="/trips/create/ai"
+            className="inline-block px-8 py-3.5 rounded-full text-base font-bold transition hover:shadow-xl"
             style={{
               backgroundColor: "#D4A843",
               color: "#0C2E1E",
               fontFamily: "'DM Sans', sans-serif",
             }}
           >
-            Build My Trip with AI {"✨"}
-          </button>
+            Plan My Trip {"✨"}
+          </a>
         </div>
       </div>
 
