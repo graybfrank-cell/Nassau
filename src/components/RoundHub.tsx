@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import {
   createRound,
   updateRound,
@@ -444,11 +444,51 @@ function ScorecardTab({
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
 
+  // Local state for scores — this is the key fix: controlled inputs need local state
+  // so typing works immediately without waiting for API round-trips
+  const [localScores, setLocalScores] = useState<(number | null)[][]>([]);
+  const [localPars, setLocalPars] = useState<number[]>(DEFAULT_PARS);
+
+  // Refs for Tab navigation across all score inputs
+  const inputRefs = useRef<Map<string, HTMLInputElement>>(new Map());
+
+  // Sync local state when scorecard prop changes (initial load, external refresh)
+  useEffect(() => {
+    if (scorecard) {
+      setLocalScores(scorecard.players.map((p) => [...p.scores]));
+      setLocalPars(
+        scorecard.pars.length === 18 ? [...scorecard.pars] : [...DEFAULT_PARS]
+      );
+    }
+  }, [scorecard]);
+
+  const refKey = (pi: number, hi: number) => `${pi}-${hi}`;
+
+  const setInputRef = useCallback(
+    (pi: number, hi: number) => (el: HTMLInputElement | null) => {
+      const key = refKey(pi, hi);
+      if (el) inputRefs.current.set(key, el);
+      else inputRefs.current.delete(key);
+    },
+    []
+  );
+
+  // Focus the next hole input (same player) on Tab / Enter
+  function focusNextHole(playerIdx: number, holeIdx: number) {
+    const nextHole = holeIdx + 1;
+    if (nextHole < 18) {
+      const next = inputRefs.current.get(refKey(playerIdx, nextHole));
+      if (next) {
+        next.focus();
+        next.select();
+      }
+    }
+  }
+
   async function handleCreate() {
     if (!currentUserId) return;
     setLoading(true);
     try {
-      // Use players from round pairings if available, otherwise all trip members
       const playerIds = round
         ? round.groups.flat()
         : trip.members.map((m) => m.id);
@@ -482,39 +522,56 @@ function ScorecardTab({
     setLoading(false);
   }
 
-  async function handleScoreChange(
+  // Save a single score via the granular PATCH endpoint
+  async function saveScore(
     playerIdx: number,
     holeIdx: number,
     value: string
   ) {
     if (!scorecard) return;
+    const parsed =
+      value === "" ? null : Math.min(Math.max(parseInt(value) || 1, 1), 15);
+
+    // Update local state immediately so the UI reflects the validated value
+    setLocalScores((prev) => {
+      const next = prev.map((row) => [...row]);
+      if (next[playerIdx]) next[playerIdx][holeIdx] = parsed;
+      return next;
+    });
+
     setSaving(true);
     try {
-      const updatedPlayers = scorecard.players.map((p, pi) => {
-        if (pi !== playerIdx) return p;
-        const newScores = [...p.scores];
-        newScores[holeIdx] =
-          value === "" ? null : Math.min(Math.max(parseInt(value) || 0, 0), 20);
-        return { ...p, scores: newScores };
-      });
-      await updateScorecard(scorecard.id, { players: updatedPlayers });
-      await onRefresh();
+      const res = await fetch(
+        `/api/scorecards/${scorecard.id}/entries/${playerIdx}/${holeIdx}`,
+        {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ score: parsed }),
+        }
+      );
+      if (!res.ok) throw new Error("Save failed");
     } catch {
-      // silent
+      // Revert on error by refreshing from server
+      await onRefresh();
     }
     setSaving(false);
   }
 
   async function handleParChange(holeIdx: number, value: string) {
     if (!scorecard) return;
+    const parsed = parseInt(value) || 4;
+    setLocalPars((prev) => {
+      const next = [...prev];
+      next[holeIdx] = parsed;
+      return next;
+    });
     setSaving(true);
     try {
-      const newPars = [...scorecard.pars];
-      newPars[holeIdx] = parseInt(value) || 4;
+      const newPars = [...localPars];
+      newPars[holeIdx] = parsed;
       await updateScorecard(scorecard.id, { pars: newPars });
-      await onRefresh();
     } catch {
-      // silent
+      await onRefresh();
     }
     setSaving(false);
   }
@@ -538,7 +595,7 @@ function ScorecardTab({
     );
   }
 
-  const pars = scorecard.pars.length === 18 ? scorecard.pars : DEFAULT_PARS;
+  const pars = localPars;
   const front9Par = pars.slice(0, 9).reduce((a, b) => a + b, 0);
   const back9Par = pars.slice(9, 18).reduce((a, b) => a + b, 0);
   const totalPar = front9Par + back9Par;
@@ -551,11 +608,13 @@ function ScorecardTab({
           {scorecard.players.length !== 1 ? "s" : ""} · Par {totalPar}
         </p>
         {saving && (
-          <span className="text-xs text-zinc-400">Saving...</span>
+          <span className="text-xs text-amber-500 animate-pulse">
+            Saving...
+          </span>
         )}
       </div>
       <div className="overflow-x-auto -mx-5 px-5">
-        <table className="w-full text-xs min-w-[700px]">
+        <table className="w-full text-xs min-w-[750px]">
           <thead>
             <tr className="border-b border-zinc-200">
               <th className="px-1 py-1.5 text-left font-semibold text-zinc-500 sticky left-0 bg-white z-10 min-w-[80px]">
@@ -564,26 +623,26 @@ function ScorecardTab({
               {Array.from({ length: 9 }, (_, i) => (
                 <th
                   key={i}
-                  className="px-1 py-1.5 text-center font-semibold text-zinc-500 w-9"
+                  className="px-0.5 py-1.5 text-center font-semibold text-zinc-500 min-w-[36px]"
                 >
                   {i + 1}
                 </th>
               ))}
-              <th className="px-1 py-1.5 text-center font-bold text-zinc-700 bg-zinc-50 w-10">
+              <th className="px-1 py-1.5 text-center font-bold text-zinc-700 bg-zinc-50 min-w-[40px]">
                 OUT
               </th>
               {Array.from({ length: 9 }, (_, i) => (
                 <th
                   key={i + 9}
-                  className="px-1 py-1.5 text-center font-semibold text-zinc-500 w-9"
+                  className="px-0.5 py-1.5 text-center font-semibold text-zinc-500 min-w-[36px]"
                 >
                   {i + 10}
                 </th>
               ))}
-              <th className="px-1 py-1.5 text-center font-bold text-zinc-700 bg-zinc-50 w-10">
+              <th className="px-1 py-1.5 text-center font-bold text-zinc-700 bg-zinc-50 min-w-[40px]">
                 IN
               </th>
-              <th className="px-1 py-1.5 text-center font-bold text-zinc-700 bg-zinc-50 w-10">
+              <th className="px-1 py-1.5 text-center font-bold text-zinc-700 bg-zinc-50 min-w-[40px]">
                 TOT
               </th>
             </tr>
@@ -600,7 +659,7 @@ function ScorecardTab({
                     max="6"
                     value={p}
                     onChange={(e) => handleParChange(i, e.target.value)}
-                    className="w-7 rounded border border-zinc-200 px-0 py-0.5 text-center text-xs text-zinc-600 focus:border-emerald-500 focus:outline-none"
+                    className="min-w-[32px] min-h-[32px] w-8 rounded border border-zinc-200 px-0 py-0.5 text-center text-xs text-zinc-600 focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500/30"
                   />
                 </td>
               ))}
@@ -615,7 +674,7 @@ function ScorecardTab({
                     max="6"
                     value={p}
                     onChange={(e) => handleParChange(i + 9, e.target.value)}
-                    className="w-7 rounded border border-zinc-200 px-0 py-0.5 text-center text-xs text-zinc-600 focus:border-emerald-500 focus:outline-none"
+                    className="min-w-[32px] min-h-[32px] w-8 rounded border border-zinc-200 px-0 py-0.5 text-center text-xs text-zinc-600 focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500/30"
                   />
                 </td>
               ))}
@@ -629,14 +688,15 @@ function ScorecardTab({
           </thead>
           <tbody>
             {scorecard.players.map((player, pi) => {
-              const front9 = player.scores
+              const scores = localScores[pi] ?? player.scores;
+              const front9 = scores
                 .slice(0, 9)
                 .reduce((a: number, b) => a + (b ?? 0), 0);
-              const back9 = player.scores
+              const back9 = scores
                 .slice(9, 18)
                 .reduce((a: number, b) => a + (b ?? 0), 0);
               const total = front9 + back9;
-              const hasAnyScores = player.scores.some((s) => s !== null);
+              const hasAnyScores = scores.some((s) => s !== null);
 
               return (
                 <tr
@@ -646,68 +706,44 @@ function ScorecardTab({
                   <td className="px-1 py-1 text-left font-medium text-zinc-700 sticky left-0 bg-white z-10 truncate max-w-[80px]">
                     {player.name}
                   </td>
-                  {player.scores.slice(0, 9).map((score, hi) => (
-                    <td
-                      key={hi}
-                      className={`px-0.5 py-0.5 text-center ${scoreClass(score, pars[hi])}`}
-                    >
-                      <input
-                        type="number"
-                        min="1"
-                        max="20"
-                        value={score ?? ""}
-                        onBlur={(e) =>
-                          handleScoreChange(pi, hi, e.target.value)
-                        }
-                        onChange={(e) => {
-                          // Optimistic local update for responsiveness
-                          const val = e.target.value;
-                          e.target.dataset.pending = val;
+                  {/* Front 9 */}
+                  {scores.slice(0, 9).map((score, hi) => (
+                    <td key={hi} className="px-0.5 py-0.5 text-center">
+                      <ScoreInput
+                        value={score}
+                        par={pars[hi]}
+                        ref={setInputRef(pi, hi)}
+                        onChange={(val) => {
+                          setLocalScores((prev) => {
+                            const next = prev.map((row) => [...row]);
+                            if (next[pi]) next[pi][hi] = val;
+                            return next;
+                          });
                         }}
-                        onKeyDown={(e) => {
-                          if (e.key === "Enter" || e.key === "Tab") {
-                            handleScoreChange(
-                              pi,
-                              hi,
-                              (e.target as HTMLInputElement).value
-                            );
-                          }
-                        }}
-                        className={`w-7 rounded border border-zinc-200 px-0 py-0.5 text-center text-xs focus:border-emerald-500 focus:outline-none ${scoreClass(score, pars[hi])}`}
-                        placeholder="-"
+                        onSave={(val) => saveScore(pi, hi, val)}
+                        onAdvance={() => focusNextHole(pi, hi)}
                       />
                     </td>
                   ))}
                   <td className="px-1 py-1 text-center font-bold text-zinc-700 bg-zinc-50">
                     {hasAnyScores ? front9 : "-"}
                   </td>
-                  {player.scores.slice(9, 18).map((score, hi) => (
-                    <td
-                      key={hi + 9}
-                      className={`px-0.5 py-0.5 text-center ${scoreClass(score, pars[hi + 9])}`}
-                    >
-                      <input
-                        type="number"
-                        min="1"
-                        max="20"
-                        value={score ?? ""}
-                        onBlur={(e) =>
-                          handleScoreChange(pi, hi + 9, e.target.value)
-                        }
-                        onChange={(e) => {
-                          e.target.dataset.pending = e.target.value;
+                  {/* Back 9 */}
+                  {scores.slice(9, 18).map((score, hi) => (
+                    <td key={hi + 9} className="px-0.5 py-0.5 text-center">
+                      <ScoreInput
+                        value={score}
+                        par={pars[hi + 9]}
+                        ref={setInputRef(pi, hi + 9)}
+                        onChange={(val) => {
+                          setLocalScores((prev) => {
+                            const next = prev.map((row) => [...row]);
+                            if (next[pi]) next[pi][hi + 9] = val;
+                            return next;
+                          });
                         }}
-                        onKeyDown={(e) => {
-                          if (e.key === "Enter" || e.key === "Tab") {
-                            handleScoreChange(
-                              pi,
-                              hi + 9,
-                              (e.target as HTMLInputElement).value
-                            );
-                          }
-                        }}
-                        className={`w-7 rounded border border-zinc-200 px-0 py-0.5 text-center text-xs focus:border-emerald-500 focus:outline-none ${scoreClass(score, pars[hi + 9])}`}
-                        placeholder="-"
+                        onSave={(val) => saveScore(pi, hi + 9, val)}
+                        onAdvance={() => focusNextHole(pi, hi + 9)}
                       />
                     </td>
                   ))}
@@ -726,6 +762,87 @@ function ScorecardTab({
     </div>
   );
 }
+
+// ─── Score Input Cell ───────────────────────────────────────────
+
+import React from "react";
+
+const ScoreInput = React.forwardRef<
+  HTMLInputElement,
+  {
+    value: number | null;
+    par: number;
+    onChange: (val: number | null) => void;
+    onSave: (rawValue: string) => void;
+    onAdvance: () => void;
+  }
+>(function ScoreInput({ value, par, onChange, onSave, onAdvance }, ref) {
+  const [editing, setEditing] = useState(false);
+  const [draft, setDraft] = useState("");
+
+  function handleFocus() {
+    setEditing(true);
+    setDraft(value !== null ? String(value) : "");
+  }
+
+  function commitAndBlur() {
+    setEditing(false);
+    const trimmed = draft.trim();
+    if (trimmed === "" && value === null) return; // no change
+    if (trimmed !== "" && parseInt(trimmed) === value) return; // no change
+    onSave(trimmed);
+  }
+
+  function handleKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      commitAndBlur();
+      onAdvance();
+    }
+    if (e.key === "Tab") {
+      // Let default Tab behavior fire, but save first
+      commitAndBlur();
+      // After a tick, advance to next hole (same player row)
+      setTimeout(() => onAdvance(), 0);
+      e.preventDefault();
+    }
+  }
+
+  const colorClass = scoreClass(value, par);
+
+  return (
+    <input
+      ref={ref}
+      type="text"
+      inputMode="numeric"
+      pattern="[0-9]*"
+      min={1}
+      max={15}
+      value={editing ? draft : value !== null ? String(value) : ""}
+      placeholder="-"
+      onFocus={handleFocus}
+      onBlur={commitAndBlur}
+      onChange={(e) => {
+        const raw = e.target.value.replace(/[^0-9]/g, "").slice(0, 2);
+        setDraft(raw);
+        const n = parseInt(raw);
+        if (!isNaN(n) && n >= 1 && n <= 15) {
+          onChange(n);
+        } else if (raw === "") {
+          onChange(null);
+        }
+      }}
+      onKeyDown={handleKeyDown}
+      className={`min-w-[32px] min-h-[32px] w-8 h-8 rounded border px-0 py-0.5 text-center text-xs transition-colors focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/30 ${
+        editing
+          ? "border-emerald-400 bg-white"
+          : colorClass
+            ? `border-transparent ${colorClass}`
+            : "border-zinc-200"
+      }`}
+    />
+  );
+});
 
 // ─── Leaderboard Tab ────────────────────────────────────────────
 
