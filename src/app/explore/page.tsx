@@ -1,14 +1,73 @@
 "use client";
 
 import { useState, useMemo } from "react";
+import { useRouter } from "next/navigation";
+import knowledgeBase from "@/data/nassau-knowledge-base.json";
 
 // ============================================
-// NASSAU EXPLORE PAGE v2 - Real Photography
-// Pinterest-style masonry feed of 50 curated trips
-// Photos: Unsplash (Free for commercial use, no attribution required)
+// NASSAU EXPLORE PAGE v3 — Knowledge Base Powered
+// All data derived from nassau-knowledge-base.json
+// ZERO API calls. No Claude/Anthropic calls. Pure static data.
 // ============================================
 
-// ─── Types ──────────────────────────────────────────────────────
+// ─── KB Types ────────────────────────────────────────────────────
+
+interface KBItineraryItem {
+  time: string;
+  type: string;
+  title: string;
+  cost_pp: number;
+}
+
+interface KBItineraryDay {
+  day: number;
+  title: string;
+  items: KBItineraryItem[];
+}
+
+interface KBItinerary {
+  duration_nights: number;
+  ideal_group_size: string;
+  estimated_cost_pp: number;
+  days: KBItineraryDay[];
+}
+
+interface KBCourse {
+  name: string;
+  greens_fee_range: string;
+  peak_season_fee?: number;
+  off_peak_fee?: number;
+  difficulty?: string;
+  condition_rating?: number;
+  scenery_rating?: number;
+  must_know?: string;
+  designer?: string;
+  signature_holes?: string[];
+  tags?: string[];
+}
+
+interface KBDestination {
+  id: string;
+  destination: string;
+  region: string;
+  nearest_airport: string;
+  best_months: string[];
+  avoid_months: string[];
+  vibe: string[];
+  price_tier: string;
+  avg_cost_per_person_per_day: { budget: number; mid: number; premium: number };
+  group_size_sweet_spot: string;
+  why_go: string;
+  top_courses: KBCourse[];
+  hidden_gems: { name: string; greens_fee_range: string; must_know?: string }[];
+  lodging_options: { type: string; name: string; per_night_range?: string; typical_per_night?: string; note?: string }[];
+  dining: { name: string; type: string; price: string; group_note?: string }[];
+  non_golf_activities: { name: string; note?: string }[];
+  insider_tips: string[];
+  sample_itineraries: Record<string, KBItinerary>;
+}
+
+// ─── Derive display data from KB ─────────────────────────────────
 
 interface TripData {
   id: string;
@@ -22,17 +81,200 @@ interface TripData {
   courses: number;
   nights: number;
   best: string;
-  featured?: boolean;
+  featured: boolean;
   height: "tall" | "medium" | "short";
+  // KB-sourced rich data for the modal
+  whyGo: string;
+  topCourses: KBCourse[];
+  hiddenGems: { name: string; greens_fee_range: string; must_know?: string }[];
+  lodging: { type: string; name: string; per_night_range?: string; typical_per_night?: string; note?: string }[];
+  dining: { name: string; type: string; price: string; group_note?: string }[];
+  nonGolf: { name: string; note?: string }[];
+  insiderTips: string[];
+  itinerary: KBItinerary | null;
+  itineraryKey: string | null;
+  groupSize: string;
+  costPerDay: { budget: number; mid: number; premium: number };
 }
+
+// Map KB vibe slugs → display labels
+const VIBE_LABEL_MAP: Record<string, string> = {
+  "premium": "Resort",
+  "resort": "Resort",
+  "nightlife": "Party",
+  "bachelor-party-friendly": "Bachelor",
+  "budget-friendly": "Budget",
+  "volume-golf": "Competitive",
+  "group-trip": "Relaxed",
+  "bucket-list": "Bucket List",
+  "bucket_list": "Bucket List",
+  "traditional": "Relaxed",
+  "golf-purist": "Competitive",
+  "historic": "Relaxed",
+  "father-son": "Father-Son",
+  "entertainment": "Party",
+  "food-scene": "Relaxed",
+  "live-music": "Party",
+  "laid-back": "Relaxed",
+  "young-group": "Party",
+  "beach": "Relaxed",
+  "coastal": "Relaxed",
+  "relaxed": "Relaxed",
+  "family-friendly": "Father-Son",
+  "lowcountry": "Relaxed",
+  "couples": "Relaxed",
+  "luxury": "Bucket List",
+  "once-in-a-lifetime": "Bucket List",
+  "special-occasion": "Bucket List",
+  "ocean": "Relaxed",
+  "walking-only": "Competitive",
+  "links": "Competitive",
+  "boys-trip": "Party",
+  "modern": "Resort",
+  "hidden-gem-vibe": "Relaxed",
+  "hidden-gem": "Relaxed",
+  "mid-century": "Relaxed",
+  "pool-scene": "Resort",
+  "bourbon-trail": "Party",
+  "international": "Bucket List",
+  "mountain": "Scenic",
+  "scenic": "Scenic",
+  "outdoors": "Relaxed",
+  "summer-escape": "Relaxed",
+  "casino": "Party",
+  "desert": "Relaxed",
+  "midwest-getaway": "Relaxed",
+  "competitive": "Competitive",
+  "corporate": "Corporate",
+  "party": "Party",
+  "Ozark-scenery": "Scenic",
+  "casual": "Relaxed",
+};
+
+// Map KB price_tier → dollar signs
+const TIER_MAP: Record<string, string> = {
+  budget: "$",
+  "budget-mid": "$-$$",
+  mid: "$$",
+  "mid-high": "$$-$$$",
+  premium: "$$$",
+  luxury: "$$$$",
+};
+
+// Featured destination IDs (editor's picks)
+const FEATURED_IDS = new Set([
+  "scottsdale-az", "pinehurst-nc", "pebble-beach-monterey-ca",
+  "bandon-dunes-or", "st-andrews-scotland", "kohler-wi",
+  "rtj-trail-al", "kapalua-maui-hi", "southwest-ireland",
+]);
+
+// Card height based on price tier
+function cardHeight(tier: string): "tall" | "medium" | "short" {
+  if (tier === "luxury" || tier === "premium") return "tall";
+  if (tier === "mid-high" || tier === "mid") return "medium";
+  return "short";
+}
+
+// Format best_months array into compact range like "Mar-May"
+function formatBestMonths(months: string[]): string {
+  if (!months || months.length === 0) return "Year-round";
+  if (months.length <= 2) return months.join("-");
+  return `${months[0]}-${months[months.length - 1]}`;
+}
+
+// Get unique display vibes from KB vibe array (max 2)
+function mapVibes(kbVibes: string[]): string[] {
+  const seen = new Set<string>();
+  const result: string[] = [];
+  for (const v of kbVibes) {
+    const label = VIBE_LABEL_MAP[v] || v.replace(/-/g, " ").replace(/\b\w/g, c => c.toUpperCase());
+    if (!seen.has(label)) {
+      seen.add(label);
+      result.push(label);
+    }
+    if (result.length >= 2) break;
+  }
+  return result;
+}
+
+// Build the tagline from KB why_go (first sentence, capped)
+function buildTagline(whyGo: string): string {
+  const first = whyGo.split(/[.!]/).filter(Boolean)[0]?.trim() || whyGo;
+  if (first.length <= 60) return first;
+  return first.slice(0, 57).replace(/\s+\S*$/, "") + "...";
+}
+
+// Build trip title from destination name
+function buildTitle(dest: string, kbVibes: string[]): string {
+  const city = dest.split(",")[0].trim();
+  // Use fun title patterns based on primary vibe
+  const primaryVibe = kbVibes[0] || "";
+  if (primaryVibe.includes("bachelor") || primaryVibe.includes("nightlife")) return `The ${city} Classic`;
+  if (primaryVibe.includes("budget")) return `${city} Value Trip`;
+  if (primaryVibe.includes("bucket") || primaryVibe.includes("luxury")) return `${city} Dream Trip`;
+  if (primaryVibe.includes("golf-purist") || primaryVibe.includes("competitive")) return `${city} Championship`;
+  if (primaryVibe.includes("father-son") || primaryVibe.includes("family")) return `${city} Family Getaway`;
+  if (primaryVibe.includes("corporate")) return `${city} Executive Retreat`;
+  if (primaryVibe.includes("relaxed") || primaryVibe.includes("laid-back")) return `${city} Getaway`;
+  return `The ${city} Trip`;
+}
+
+// Derive all trip cards from knowledge base at module level (no API calls)
+const destinations: KBDestination[] = (knowledgeBase as unknown as { destinations: KBDestination[] }).destinations;
+
+const TRIPS_DATA: TripData[] = destinations.map((d) => {
+  // Get first available itinerary
+  const itinKeys = Object.keys(d.sample_itineraries);
+  const itineraryKey = itinKeys[0] || null;
+  const itinerary = itineraryKey ? (d.sample_itineraries as Record<string, KBItinerary>)[itineraryKey] : null;
+
+  // Calculate cost from itinerary estimated_cost_pp, or fallback to avg_cost * nights
+  const nights = itinerary?.duration_nights ?? 3;
+  const cost = itinerary?.estimated_cost_pp ?? d.avg_cost_per_person_per_day.mid * nights;
+
+  // Count tee_time items across itinerary days for course count
+  const courseCount = itinerary?.days
+    ? itinerary.days.reduce((sum, day) => sum + (day.items || []).filter(i => i.type === "tee_time").length, 0)
+    : d.top_courses.length;
+
+  const isFeatured = FEATURED_IDS.has(d.id);
+  const height = isFeatured ? "tall" as const : cardHeight(d.price_tier);
+
+  return {
+    id: d.id,
+    dest: d.destination,
+    region: d.region,
+    tagline: buildTagline(d.why_go),
+    vibe: mapVibes(d.vibe),
+    tier: TIER_MAP[d.price_tier] || "$$",
+    cost,
+    title: buildTitle(d.destination, d.vibe),
+    courses: courseCount,
+    nights,
+    best: formatBestMonths(d.best_months),
+    featured: isFeatured,
+    height,
+    whyGo: d.why_go,
+    topCourses: d.top_courses,
+    hiddenGems: d.hidden_gems,
+    lodging: d.lodging_options,
+    dining: d.dining,
+    nonGolf: d.non_golf_activities,
+    insiderTips: d.insider_tips,
+    itinerary,
+    itineraryKey,
+    groupSize: d.group_size_sweet_spot,
+    costPerDay: d.avg_cost_per_person_per_day,
+  };
+});
+
+// ─── Photo Map ──────────────────────────────────────────────────
 
 interface PhotoEntry {
   photo: string;
   fallback: string;
   credit: string;
 }
-
-// ─── Photo Map ──────────────────────────────────────────────────
 
 const PHOTO_MAP: Record<string, PhotoEntry> = {
   "scottsdale-az": { photo: "photo-1682686581362-e05e14b37bcb", fallback: "from-amber-600 to-orange-800", credit: "Unsplash" },
@@ -91,64 +333,9 @@ function unsplashUrl(photoId: string, w = 600, h = 400): string {
   return `https://images.unsplash.com/${photoId}?w=${w}&h=${h}&fit=crop&q=80&auto=format`;
 }
 
-// ─── Trip Data ──────────────────────────────────────────────────
-
-const TRIPS_DATA: TripData[] = [
-  { id: "scottsdale-az", dest: "Scottsdale, AZ", region: "Southwest", tagline: "Desert golf + Old Town nightlife", vibe: ["Party", "Resort"], tier: "$$-$$$", cost: 1400, title: "The Scottsdale Classic", courses: 5, nights: 3, best: "Oct-Apr", featured: true, height: "tall" },
-  { id: "myrtle-beach-sc", dest: "Myrtle Beach, SC", region: "Southeast", tagline: "80+ courses, endless packages", vibe: ["Budget", "Party"], tier: "$", cost: 600, title: "Grand Strand Marathon", courses: 5, nights: 3, best: "Mar-May", height: "medium" },
-  { id: "pinehurst-nc", dest: "Pinehurst, NC", region: "Southeast", tagline: "The cathedral of American golf", vibe: ["Bucket List", "Competitive"], tier: "$$$", cost: 2000, title: "Sandhills Grand Slam", courses: 6, nights: 4, best: "Mar-May", featured: true, height: "tall" },
-  { id: "las-vegas-nv", dest: "Las Vegas, NV", region: "Southwest", tagline: "Golf by day, Vegas by night", vibe: ["Party", "Bachelor"], tier: "$$", cost: 1100, title: "Vegas High Roller Open", courses: 5, nights: 3, best: "Oct-Mar", height: "short" },
-  { id: "austin-tx", dest: "Austin, TX", region: "South Central", tagline: "BBQ, live music, solid links", vibe: ["Relaxed", "Party"], tier: "$$", cost: 850, title: "Keep Austin Golfing", courses: 4, nights: 3, best: "Oct-Nov", height: "medium" },
-  { id: "san-diego-ca", dest: "San Diego, CA", region: "West Coast", tagline: "Year-round perfection on the Pacific", vibe: ["Relaxed", "Bucket List"], tier: "$$", cost: 950, title: "SoCal Coastal Links", courses: 4, nights: 3, best: "Year-round", height: "medium" },
-  { id: "hilton-head-sc", dest: "Hilton Head, SC", region: "Southeast", tagline: "Harbour Town and Lowcountry charm", vibe: ["Relaxed", "Corporate"], tier: "$$-$$$", cost: 1200, title: "Lowcountry Invitational", courses: 4, nights: 3, best: "Mar-May", height: "short" },
-  { id: "pebble-beach-monterey-ca", dest: "Pebble Beach, CA", region: "West Coast", tagline: "The #1 public course in America", vibe: ["Bucket List"], tier: "$$$$", cost: 3000, title: "Pebble Beach Dream", courses: 4, nights: 3, best: "Apr-Oct", featured: true, height: "tall" },
-  { id: "kiawah-island-sc", dest: "Kiawah Island, SC", region: "Southeast", tagline: "The War by the Shore lives on", vibe: ["Bucket List", "Competitive"], tier: "$$$", cost: 1800, title: "Kiawah Ocean Championship", courses: 4, nights: 3, best: "Mar-May", height: "medium" },
-  { id: "bandon-dunes-or", dest: "Bandon Dunes, OR", region: "Pacific NW", tagline: "Golf as it was meant to be", vibe: ["Bucket List", "Competitive"], tier: "$$$", cost: 2200, title: "Bandon Pilgrimage", courses: 5, nights: 4, best: "May-Oct", featured: true, height: "tall" },
-  { id: "streamsong-fl", dest: "Streamsong, FL", region: "Southeast", tagline: "Three top-100 courses, one resort", vibe: ["Competitive", "Corporate"], tier: "$$$", cost: 1500, title: "Streamsong Triple Crown", courses: 3, nights: 3, best: "Oct-Apr", height: "medium" },
-  { id: "palm-springs-ca", dest: "Palm Springs, CA", region: "West Coast", tagline: "Mid-century cool meets desert heat", vibe: ["Relaxed", "Resort"], tier: "$$", cost: 900, title: "Desert Oasis Getaway", courses: 4, nights: 3, best: "Nov-Apr", height: "short" },
-  { id: "savannah-ga", dest: "Savannah, GA", region: "Southeast", tagline: "Spanish moss and Southern hospitality", vibe: ["Relaxed", "Father-Son"], tier: "$$", cost: 800, title: "Savannah Gentlemen's Trip", courses: 3, nights: 3, best: "Mar-May", height: "medium" },
-  { id: "cabo-san-lucas-mx", dest: "Cabo San Lucas, MX", region: "International", tagline: "Ocean cliffs and tequila sunsets", vibe: ["Party", "Bachelor"], tier: "$$$", cost: 1600, title: "Cabo Classic", courses: 4, nights: 4, best: "Oct-May", height: "tall" },
-  { id: "branson-mo", dest: "Branson, MO", region: "Midwest", tagline: "Ozark mountain golf at budget prices", vibe: ["Budget", "Father-Son"], tier: "$", cost: 500, title: "Ozark Mountain Open", courses: 4, nights: 3, best: "Apr-Oct", height: "short" },
-  { id: "gulf-shores-al", dest: "Gulf Shores, AL", region: "Gulf Coast", tagline: "White sand beaches, RTJ golf", vibe: ["Budget", "Relaxed"], tier: "$", cost: 550, title: "Gulf Coast Getaway", courses: 4, nights: 3, best: "Mar-May", height: "short" },
-  { id: "lake-tahoe-ca", dest: "Lake Tahoe, CA/NV", region: "Mountain West", tagline: "Alpine golf at 6,000 feet", vibe: ["Relaxed", "Scenic"], tier: "$$", cost: 1000, title: "High Sierra Links", courses: 4, nights: 3, best: "Jun-Sep", height: "medium" },
-  { id: "mesquite-nv", dest: "Mesquite, NV", region: "Southwest", tagline: "Red rock desert golf, half the Vegas price", vibe: ["Budget", "Competitive"], tier: "$", cost: 550, title: "Desert Value Championship", courses: 4, nights: 3, best: "Oct-Apr", height: "short" },
-  { id: "wisconsin-dells-sand-valley-wi", dest: "Sand Valley, WI", region: "Midwest", tagline: "The Bandon of the Midwest", vibe: ["Competitive", "Bucket List"], tier: "$$-$$$", cost: 1300, title: "Sand Valley Quest", courses: 4, nights: 3, best: "May-Sep", height: "medium" },
-  { id: "st-andrews-scotland", dest: "St. Andrews, Scotland", region: "International", tagline: "The home of golf", vibe: ["Bucket List"], tier: "$$$$", cost: 3500, title: "St. Andrews Pilgrimage", courses: 4, nights: 5, best: "May-Sep", featured: true, height: "tall" },
-  { id: "charleston-sc", dest: "Charleston, SC", region: "Southeast", tagline: "History, Husk, and the Ocean Course", vibe: ["Relaxed", "Corporate"], tier: "$$-$$$", cost: 1200, title: "Charleston Classic", courses: 5, nights: 3, best: "Mar-May", height: "medium" },
-  { id: "nashville-tn", dest: "Nashville, TN", region: "Southeast", tagline: "18 holes, 18 honky-tonks", vibe: ["Party", "Bachelor"], tier: "$-$$", cost: 850, title: "Honky-Tonk Open", courses: 4, nights: 3, best: "Apr-May", height: "medium" },
-  { id: "destin-fl", dest: "Destin / 30A, FL", region: "Gulf Coast", tagline: "Emerald water, white sand, solid golf", vibe: ["Party", "Relaxed"], tier: "$-$$", cost: 750, title: "Emerald Coast Classic", courses: 4, nights: 3, best: "Mar-May", height: "short" },
-  { id: "orlando-fl", dest: "Orlando, FL", region: "Southeast", tagline: "More top courses than you'd expect", vibe: ["Party", "Corporate"], tier: "$$", cost: 900, title: "Orlando Championship Tour", courses: 4, nights: 3, best: "Oct-Mar", height: "medium" },
-  { id: "williamsburg-va", dest: "Williamsburg, VA", region: "Mid-Atlantic", tagline: "Colonial charm, championship courses", vibe: ["Father-Son", "Relaxed"], tier: "$$", cost: 800, title: "Colonial Championship", courses: 3, nights: 3, best: "Apr-May", height: "short" },
-  { id: "reynolds-lake-oconee-ga", dest: "Reynolds Lake Oconee, GA", region: "Southeast", tagline: "Six courses, one stunning lake", vibe: ["Corporate", "Relaxed"], tier: "$$$", cost: 1500, title: "Lake Oconee Executive Retreat", courses: 4, nights: 3, best: "Mar-May", height: "medium" },
-  { id: "rtj-trail-al", dest: "RTJ Trail, AL", region: "Southeast", tagline: "Best golf value in America", vibe: ["Budget", "Competitive"], tier: "$", cost: 650, title: "RTJ Trail Road Trip", courses: 4, nights: 4, best: "Mar-May", featured: true, height: "tall" },
-  { id: "cape-cod-ma", dest: "Cape Cod, MA", region: "Northeast", tagline: "Links golf and lobster rolls", vibe: ["Relaxed", "Father-Son"], tier: "$$", cost: 900, title: "Cape Cod Links Tour", courses: 3, nights: 3, best: "Jun-Sep", height: "short" },
-  { id: "kohler-wi", dest: "Kohler / Whistling Straits, WI", region: "Midwest", tagline: "Ryder Cup venue on Lake Michigan", vibe: ["Bucket List", "Competitive"], tier: "$$$", cost: 1800, title: "Kohler Grand Slam", courses: 4, nights: 3, best: "May-Sep", featured: true, height: "tall" },
-  { id: "tucson-az", dest: "Tucson, AZ", region: "Southwest", tagline: "Scottsdale quality, 30% cheaper", vibe: ["Relaxed", "Father-Son"], tier: "$$", cost: 800, title: "Desert Links Tour", courses: 4, nights: 3, best: "Oct-Apr", height: "short" },
-  { id: "bend-or", dest: "Bend, OR", region: "Pacific NW", tagline: "Mountain golf + 30 breweries", vibe: ["Relaxed", "Competitive"], tier: "$$", cost: 950, title: "Bend Brews & Views", courses: 4, nights: 3, best: "Jun-Sep", height: "medium" },
-  { id: "park-city-ut", dest: "Park City, UT", region: "Mountain West", tagline: "Ski town summer golf at altitude", vibe: ["Relaxed", "Corporate"], tier: "$$-$$$", cost: 950, title: "Mountain Links & Main Street", courses: 4, nights: 3, best: "Jun-Sep", height: "short" },
-  { id: "coeur-dalene-id", dest: "Coeur d'Alene, ID", region: "Pacific NW", tagline: "The famous floating green", vibe: ["Bucket List", "Relaxed"], tier: "$$-$$$", cost: 1100, title: "Lake & Links", courses: 3, nights: 3, best: "Jun-Sep", height: "medium" },
-  { id: "amelia-island-fl", dest: "Amelia Island, FL", region: "Southeast", tagline: "Refined island golf without the crowds", vibe: ["Relaxed", "Corporate"], tier: "$$-$$$", cost: 1000, title: "Island Championship", courses: 4, nights: 3, best: "Mar-May", height: "short" },
-  { id: "pawleys-island-sc", dest: "Pawleys Island, SC", region: "Southeast", tagline: "Caledonia & True Blue — top 100 gems", vibe: ["Relaxed", "Competitive"], tier: "$$", cost: 850, title: "Lowcountry Links", courses: 4, nights: 3, best: "Mar-May", height: "medium" },
-  { id: "sedona-az", dest: "Sedona, AZ", region: "Southwest", tagline: "Red rock golf you'll never forget", vibe: ["Bucket List", "Relaxed"], tier: "$$-$$$", cost: 1100, title: "Red Rock Championship", courses: 3, nights: 3, best: "Mar-May", height: "tall" },
-  { id: "french-lick-in", dest: "French Lick, IN", region: "Midwest", tagline: "Pete Dye hilltop masterpiece + casino", vibe: ["Competitive", "Father-Son"], tier: "$$", cost: 900, title: "Hoosier National Championship", courses: 3, nights: 3, best: "May-Oct", height: "short" },
-  { id: "atlantic-city-nj", dest: "Atlantic City, NJ", region: "Northeast", tagline: "Links golf and casino nights", vibe: ["Party", "Competitive"], tier: "$$", cost: 900, title: "Shore Links & Casino Nights", courses: 4, nights: 3, best: "May-Oct", height: "medium" },
-  { id: "finger-lakes-ny", dest: "Finger Lakes, NY", region: "Northeast", tagline: "Wine country meets fairways", vibe: ["Relaxed", "Father-Son"], tier: "$-$$", cost: 750, title: "Wine Country Links", courses: 4, nights: 3, best: "Jun-Sep", height: "short" },
-  { id: "kapalua-maui-hi", dest: "Kapalua, Maui, HI", region: "Hawaii", tagline: "PGA Tour venue meets paradise", vibe: ["Bucket List", "Relaxed"], tier: "$$$$", cost: 2500, title: "Maui Bucket List", courses: 4, nights: 4, best: "Apr-Nov", featured: true, height: "tall" },
-  { id: "riviera-maya-mx", dest: "Riviera Maya, MX", region: "International", tagline: "All-inclusive + PGA Tour golf", vibe: ["Party", "Bachelor"], tier: "$$", cost: 1200, title: "Riviera Maya Golf & Beach", courses: 4, nights: 4, best: "Nov-Apr", height: "medium" },
-  { id: "punta-cana-dr", dest: "Punta Cana, DR", region: "International", tagline: "Caribbean all-inclusive golf", vibe: ["Party", "Bachelor"], tier: "$$", cost: 1400, title: "Caribbean Championship", courses: 4, nights: 4, best: "Dec-Apr", height: "medium" },
-  { id: "algarve-portugal", dest: "Algarve, Portugal", region: "International", tagline: "Europe's premier golf coast", vibe: ["Bucket List", "Corporate"], tier: "$$-$$$", cost: 2000, title: "Algarve Grand Tour", courses: 4, nights: 5, best: "Mar-Jun", height: "tall" },
-  { id: "southwest-ireland", dest: "Southwest Ireland", region: "International", tagline: "Links golf, Guinness, and craic", vibe: ["Bucket List", "Competitive"], tier: "$$-$$$", cost: 2200, title: "Wild Atlantic Links", courses: 4, nights: 5, best: "May-Sep", featured: true, height: "tall" },
-  { id: "torrey-pines-la-jolla-ca", dest: "Torrey Pines, CA", region: "West Coast", tagline: "US Open venue on the cliffs", vibe: ["Bucket List", "Competitive"], tier: "$$-$$$", cost: 1100, title: "Ocean Cliffs Championship", courses: 3, nights: 3, best: "Sep-Nov", height: "medium" },
-  { id: "hershey-pa", dest: "Hershey, PA", region: "Mid-Atlantic", tagline: "Sweet golf in chocolate country", vibe: ["Father-Son", "Relaxed"], tier: "$$", cost: 800, title: "Sweetest Fairways", courses: 4, nights: 3, best: "May-Oct", height: "short" },
-  { id: "grand-rapids-mi", dest: "Grand Rapids, MI", region: "Midwest", tagline: "Beer City USA + Arcadia Bluffs", vibe: ["Relaxed", "Competitive"], tier: "$-$$", cost: 800, title: "Beer City Links Tour", courses: 4, nights: 3, best: "Jun-Sep", height: "medium" },
-  { id: "ozarks-ar", dest: "Hot Springs, AR", region: "South Central", tagline: "9 courses, $30-60 each. Seriously.", vibe: ["Budget", "Relaxed"], tier: "$", cost: 500, title: "Ozark Value Championship", courses: 4, nights: 3, best: "Mar-May", height: "short" },
-  { id: "pinehurst-extended-nc", dest: "Pinehurst (Extended)", region: "Southeast", tagline: "No. 2, No. 4, Tobacco Road — the full Sandhills", vibe: ["Bucket List", "Competitive"], tier: "$$$", cost: 2000, title: "Sandhills Deep Dive", courses: 5, nights: 4, best: "Mar-May", height: "medium" },
-  { id: "bethlehem-lehigh-valley-pa", dest: "Bethlehem, PA", region: "Mid-Atlantic", tagline: "Saucon Valley + Steel City vibes", vibe: ["Competitive", "Relaxed"], tier: "$-$$", cost: 600, title: "Steel City Links", courses: 4, nights: 2, best: "May-Oct", height: "short" },
-];
-
 // ─── Constants ──────────────────────────────────────────────────
 
-const VIBES = ["All", "Bucket List", "Party", "Relaxed", "Competitive", "Father-Son", "Budget", "Corporate", "Bachelor"];
+const VIBES = ["All", "Bucket List", "Party", "Relaxed", "Competitive", "Father-Son", "Budget", "Corporate", "Bachelor", "Resort", "Scenic"];
 const REGIONS = ["All", "Southeast", "Southwest", "West Coast", "Midwest", "Pacific NW", "Northeast", "Mid-Atlantic", "International", "Mountain West", "Gulf Coast", "Hawaii", "South Central"];
 const PRICES = ["All", "$", "$-$$", "$$", "$$-$$$", "$$$", "$$$$"];
 
@@ -163,6 +350,15 @@ const ACCENT_COLORS: Record<string, string> = {
   Bachelor: "#E65100",
   Resort: "#E8751A",
   Scenic: "#0277BD",
+};
+
+// Emoji for itinerary item types
+const TYPE_EMOJI: Record<string, string> = {
+  tee_time: "\u26F3",
+  dinner: "\uD83C\uDF7D\uFE0F",
+  activity: "\uD83C\uDFAF",
+  travel: "\u2708\uFE0F",
+  other: "\uD83D\uDCCC",
 };
 
 // ─── Image With Fallback ────────────────────────────────────────
@@ -251,7 +447,7 @@ function TripCard({
               className="absolute top-3 left-3 bg-amber-400 text-amber-900 text-xs font-bold px-2.5 py-1 rounded-full flex items-center gap-1 shadow-lg z-10"
               style={{ fontFamily: "'DM Sans', sans-serif" }}
             >
-              {"⭐"} EDITOR&apos;S PICK
+              {"\u2B50"} EDITOR&apos;S PICK
             </div>
           )}
 
@@ -297,9 +493,9 @@ function TripCard({
             className="flex items-center gap-3 text-xs text-gray-500 mb-2.5"
             style={{ fontFamily: "'DM Sans', sans-serif" }}
           >
-            <span>{"🌙"} {trip.nights}N</span>
-            <span>{"⛳"} {trip.courses} rounds</span>
-            <span>{"📅"} {trip.best}</span>
+            <span>{"\uD83C\uDF19"} {trip.nights}N</span>
+            <span>{"\u26F3"} {trip.courses} rounds</span>
+            <span>{"\uD83D\uDCC5"} {trip.best}</span>
           </div>
 
           {/* Vibe tags */}
@@ -355,8 +551,62 @@ function TripModal({
   trip: TripData;
   onClose: () => void;
 }) {
+  const router = useRouter();
+  const [creating, setCreating] = useState(false);
   const pm = PHOTO_MAP[trip.id];
   const imgUrl = pm ? unsplashUrl(pm.photo, 800, 400) : null;
+
+  // "Plan This Trip" — create from KB data, no Claude API
+  async function handlePlanTrip() {
+    setCreating(true);
+    try {
+      const itinerary = trip.itinerary;
+      // Build itinerary items from KB sample_itinerary days
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const itineraryItems: any[] = [];
+      if (itinerary) {
+        let sortOrder = 0;
+        for (const day of itinerary.days) {
+          for (const item of day.items) {
+            itineraryItems.push({
+              day_number: day.day,
+              date: "",
+              time: item.time,
+              title: item.title,
+              type: item.type === "tee_time" ? "tee_time" : item.type === "dinner" ? "dinner" : item.type === "travel" ? "travel" : item.type === "activity" ? "activity" : "other",
+              description: `Day ${day.day}: ${day.title}`,
+              cost: item.cost_pp ?? 0,
+              booking_status: "",
+              sort_order: sortOrder++,
+            });
+          }
+        }
+      }
+
+      const res = await fetch("/api/trips", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: trip.title,
+          destination: trip.dest,
+          startDate: "",
+          endDate: "",
+          vibe: trip.vibe.join(", "),
+          budgetTier: trip.tier,
+          groupSizeTarget: trip.groupSize,
+          notes: `Created from Nassau Explore — ${trip.dest}. ${trip.whyGo.slice(0, 200)}`,
+          itineraryItems,
+        }),
+      });
+
+      if (!res.ok) throw new Error("Failed to create trip");
+      const data = await res.json();
+      router.push(`/trips/${data.id}`);
+    } catch (err) {
+      console.error("Plan trip error:", err);
+      setCreating(false);
+    }
+  }
 
   return (
     <div
@@ -402,17 +652,18 @@ function TripModal({
             onClick={onClose}
             className="absolute top-4 right-4 w-8 h-8 bg-black/30 backdrop-blur-sm rounded-full flex items-center justify-center text-white hover:bg-black/50 transition"
           >
-            {"✕"}
+            {"\u2715"}
           </button>
         </div>
 
         {/* Body */}
         <div className="p-5">
+          {/* Why go */}
           <p
-            className="text-gray-700 text-base leading-relaxed mb-4"
+            className="text-gray-700 text-sm leading-relaxed mb-4"
             style={{ fontFamily: "'DM Sans', sans-serif" }}
           >
-            {trip.tagline}
+            {trip.whyGo}
           </p>
 
           {/* Quick stats */}
@@ -462,6 +713,65 @@ function TripModal({
             ))}
           </div>
 
+          {/* Sample Itinerary */}
+          {trip.itinerary && (
+            <div className="mb-5">
+              <h3
+                className="text-sm font-bold mb-3"
+                style={{ color: "#0C2E1E", fontFamily: "'DM Sans', sans-serif" }}
+              >
+                Sample Itinerary &middot; {trip.itinerary.duration_nights} nights &middot; {trip.itinerary.ideal_group_size} players
+              </h3>
+              <div className="space-y-3">
+                {trip.itinerary.days.map((day) => (
+                  <div key={day.day} className="bg-gray-50 rounded-xl p-3">
+                    <div
+                      className="text-xs font-semibold mb-2"
+                      style={{ color: "#0C2E1E", fontFamily: "'DM Sans', sans-serif" }}
+                    >
+                      Day {day.day}: {day.title}
+                    </div>
+                    <div className="space-y-1.5">
+                      {day.items.map((item, idx) => (
+                        <div key={idx} className="flex items-start gap-2 text-xs" style={{ fontFamily: "'DM Sans', sans-serif" }}>
+                          <span className="shrink-0 w-14 text-gray-400">{item.time}</span>
+                          <span className="shrink-0">{TYPE_EMOJI[item.type] || "\uD83D\uDCCC"}</span>
+                          <span className="text-gray-700 flex-1">{item.title}</span>
+                          {item.cost_pp > 0 && (
+                            <span className="text-gray-400 shrink-0">${item.cost_pp}</span>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Top Courses */}
+          {trip.topCourses.length > 0 && (
+            <div className="mb-5">
+              <h3
+                className="text-sm font-bold mb-2"
+                style={{ color: "#0C2E1E", fontFamily: "'DM Sans', sans-serif" }}
+              >
+                Top Courses
+              </h3>
+              <div className="space-y-2">
+                {trip.topCourses.slice(0, 4).map((c) => (
+                  <div key={c.name} className="flex items-center justify-between text-xs bg-gray-50 rounded-lg px-3 py-2" style={{ fontFamily: "'DM Sans', sans-serif" }}>
+                    <div>
+                      <div className="font-medium text-gray-800">{c.name}</div>
+                      {c.difficulty && <span className="text-gray-400">{c.difficulty}</span>}
+                    </div>
+                    <span className="text-gray-500 font-medium">{c.greens_fee_range}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
           {/* Price */}
           <div className="bg-gradient-to-r from-emerald-50 to-teal-50 rounded-xl p-4 mb-5 border border-emerald-100">
             <div className="flex items-center justify-between">
@@ -501,17 +811,24 @@ function TripModal({
                 </div>
               </div>
             </div>
+            <div className="mt-2 flex gap-4 text-xs text-gray-500" style={{ fontFamily: "'DM Sans', sans-serif" }}>
+              <span>Budget: ${trip.costPerDay.budget}/day</span>
+              <span>Mid: ${trip.costPerDay.mid}/day</span>
+              <span>Premium: ${trip.costPerDay.premium}/day</span>
+            </div>
           </div>
 
           {/* CTA */}
           <button
-            className="w-full py-3.5 rounded-xl text-white font-bold text-base transition-all duration-200 hover:shadow-lg active:scale-[0.98]"
+            onClick={handlePlanTrip}
+            disabled={creating}
+            className="w-full py-3.5 rounded-xl text-white font-bold text-base transition-all duration-200 hover:shadow-lg active:scale-[0.98] disabled:opacity-60"
             style={{
               backgroundColor: "#0C2E1E",
               fontFamily: "'DM Sans', sans-serif",
             }}
           >
-            Plan This Trip &rarr;
+            {creating ? "Creating your trip..." : "Plan This Trip \u2192"}
           </button>
           <p
             className="text-center text-xs text-gray-400 mt-2"
@@ -611,12 +928,13 @@ export default function NassauExplore() {
                 style={{ fontFamily: "'DM Sans', sans-serif" }}
               />
               <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-sm">
-                {"🔍"}
+                {"\uD83D\uDD0D"}
               </span>
             </div>
           </div>
 
-          <button
+          <a
+            href="/trips/create/ai"
             className="px-4 py-2 rounded-full text-sm font-semibold text-white transition hover:shadow-lg hidden sm:block"
             style={{
               backgroundColor: "#0C2E1E",
@@ -624,7 +942,7 @@ export default function NassauExplore() {
             }}
           >
             Plan a Trip
-          </button>
+          </a>
         </div>
       </header>
 
@@ -662,7 +980,7 @@ export default function NassauExplore() {
               fontFamily: "'DM Sans', sans-serif",
             }}
           >
-            {"☰"} Filters{" "}
+            {"\u2630"} Filters{" "}
             {activeFilterCount > 0 && (
               <span className="bg-white text-emerald-900 w-5 h-5 rounded-full text-xs flex items-center justify-center font-bold">
                 {activeFilterCount}
@@ -793,7 +1111,7 @@ export default function NassauExplore() {
 
         {filteredTrips.length === 0 && (
           <div className="text-center py-20">
-            <div className="text-5xl mb-4">{"🏌️‍♂️"}</div>
+            <div className="text-5xl mb-4">{"\uD83C\uDFCC\uFE0F\u200D\u2642\uFE0F"}</div>
             <h3
               className="text-xl font-bold mb-2"
               style={{
@@ -856,7 +1174,7 @@ export default function NassauExplore() {
               fontFamily: "'DM Sans', sans-serif",
             }}
           >
-            Plan My Trip {"✨"}
+            Plan My Trip {"\u2728"}
           </a>
         </div>
       </div>
