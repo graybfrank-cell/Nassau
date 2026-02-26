@@ -24,12 +24,14 @@ export interface ScheduleItem {
   time: string;
   title: string;
   description: string;
-  type: "tee_time" | "dinner" | "activity" | "travel" | "other";
+  type: "tee_time" | "dinner" | "activity" | "travel" | "other" | "lodging" | "entertainment";
   cost: number;
   bookingStatus: string;
   phone: string;
   website: string;
   email: string;
+  notes: string;
+  sortOrder: number;
 }
 
 export interface Trip {

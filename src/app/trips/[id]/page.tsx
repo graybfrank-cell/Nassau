@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
@@ -27,6 +27,9 @@ import {
   Plus,
   X,
   ChevronRight,
+  ChevronLeft,
+  ChevronUp,
+  ChevronDown,
   Link2,
   Check,
   ClipboardList,
@@ -49,15 +52,19 @@ import {
   ExternalLink,
   CheckCircle2,
   Circle,
+  GripVertical,
+  Loader2,
 } from "lucide-react";
 import RoundHub from "@/components/RoundHub";
 
 const SCHEDULE_TYPES = [
-  { value: "tee_time", label: "Tee Time", color: "bg-emerald-100 text-emerald-700" },
-  { value: "dinner", label: "Dinner", color: "bg-rose-100 text-rose-700" },
-  { value: "activity", label: "Activity", color: "bg-blue-100 text-blue-700" },
-  { value: "travel", label: "Travel", color: "bg-purple-100 text-purple-700" },
-  { value: "other", label: "Other", color: "bg-zinc-100 text-zinc-700" },
+  { value: "tee_time", label: "Tee Time", emoji: "\u26F3", color: "bg-emerald-100 text-emerald-700", border: "border-l-emerald-500" },
+  { value: "dinner", label: "Dining", emoji: "\uD83C\uDF7D\uFE0F", color: "bg-rose-100 text-rose-700", border: "border-l-rose-500" },
+  { value: "activity", label: "Activity", emoji: "\uD83C\uDFAF", color: "bg-blue-100 text-blue-700", border: "border-l-blue-500" },
+  { value: "travel", label: "Travel", emoji: "\u2708\uFE0F", color: "bg-purple-100 text-purple-700", border: "border-l-purple-500" },
+  { value: "lodging", label: "Lodging", emoji: "\uD83C\uDFE8", color: "bg-amber-100 text-amber-700", border: "border-l-amber-500" },
+  { value: "entertainment", label: "Entertainment", emoji: "\uD83C\uDF89", color: "bg-pink-100 text-pink-700", border: "border-l-pink-500" },
+  { value: "other", label: "Other", emoji: "\uD83D\uDCCC", color: "bg-zinc-100 text-zinc-700", border: "border-l-zinc-400" },
 ] as const;
 
 const EMPTY_LODGING: Lodging = {
@@ -109,6 +116,26 @@ export default function TripDetailPage() {
   const [eventDesc, setEventDesc] = useState("");
   const [eventType, setEventType] = useState<ScheduleItem["type"]>("tee_time");
   const [error, setError] = useState<string | null>(null);
+
+  // Edit modal
+  const [editingItem, setEditingItem] = useState<ScheduleItem | null>(null);
+  const [editForm, setEditForm] = useState({
+    title: "", time: "", type: "activity" as string, date: "", cost: "",
+    notes: "",
+  });
+  const [editSaving, setEditSaving] = useState(false);
+  const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
+  // Add per-day
+  const [addForDate, setAddForDate] = useState<string | null>(null);
+  const [addForm, setAddForm] = useState({
+    title: "", time: "", type: "activity" as string, cost: "", notes: "",
+  });
+  const [addSaving, setAddSaving] = useState(false);
+  // Drag state
+  const [dragId, setDragId] = useState<string | null>(null);
+  const [dragOverId, setDragOverId] = useState<string | null>(null);
+  // Optimistic schedule
+  const [optimisticSchedule, setOptimisticSchedule] = useState<ScheduleItem[] | null>(null);
 
   // Invite
   const [showInvite, setShowInvite] = useState(false);
@@ -253,10 +280,217 @@ export default function TripDetailPage() {
     if (!trip) return;
     setError(null);
     try {
+      // Optimistic remove with fade
+      setOptimisticSchedule((prev) =>
+        (prev ?? trip.schedule).filter((s) => s.id !== eventId)
+      );
       await removeItineraryItem(tripId, eventId);
       await refresh();
+      setOptimisticSchedule(null);
     } catch (err) {
+      setOptimisticSchedule(null);
       setError(err instanceof Error ? err.message : "Failed to delete event");
+    }
+  }
+
+  // --- Edit modal handlers ---
+  function openEditModal(item: ScheduleItem) {
+    setEditingItem(item);
+    setEditForm({
+      title: item.title,
+      time: item.time,
+      type: item.type,
+      date: item.date,
+      cost: item.cost > 0 ? String(item.cost) : "",
+      notes: item.notes || "",
+    });
+    setDeleteConfirm(null);
+  }
+
+  async function handleEditSave() {
+    if (!editingItem || !trip) return;
+    setEditSaving(true);
+    setError(null);
+    try {
+      // Optimistic update
+      const updated: ScheduleItem = {
+        ...editingItem,
+        title: editForm.title,
+        time: editForm.time,
+        type: editForm.type as ScheduleItem["type"],
+        date: editForm.date,
+        cost: parseFloat(editForm.cost) || 0,
+        notes: editForm.notes,
+      };
+      setOptimisticSchedule((prev) =>
+        (prev ?? trip.schedule).map((s) => (s.id === updated.id ? updated : s))
+      );
+      await updateItineraryItem(tripId, editingItem.id, {
+        title: editForm.title,
+        time: editForm.time,
+        type: editForm.type,
+        date: editForm.date,
+        cost: parseFloat(editForm.cost) || 0,
+        notes: editForm.notes,
+      });
+      setEditingItem(null);
+      await refresh();
+      setOptimisticSchedule(null);
+    } catch (err) {
+      setOptimisticSchedule(null);
+      setError(err instanceof Error ? err.message : "Failed to save");
+    }
+    setEditSaving(false);
+  }
+
+  async function handleEditDelete() {
+    if (!editingItem) return;
+    setEditSaving(true);
+    await handleDeleteEvent(editingItem.id);
+    setEditingItem(null);
+    setEditSaving(false);
+    setDeleteConfirm(null);
+  }
+
+  // --- Add per-day handlers ---
+  function openAddForDay(date: string, existingEvents: ScheduleItem[]) {
+    setAddForDate(date);
+    // Default time: 2 hours after last event, or 08:00
+    let defaultTime = "08:00";
+    if (existingEvents.length > 0) {
+      const last = existingEvents[existingEvents.length - 1];
+      const mins = timeToMinutes(last.time);
+      if (mins < 9999) {
+        const next = mins + 120;
+        const h = Math.floor(next / 60);
+        const m = next % 60;
+        if (h < 24) {
+          defaultTime = `${h.toString().padStart(2, "0")}:${m.toString().padStart(2, "0")}`;
+        }
+      }
+    }
+    setAddForm({ title: "", time: defaultTime, type: "activity", cost: "", notes: "" });
+  }
+
+  async function handleAddForDay() {
+    if (!trip || !addForDate || !addForm.title.trim()) return;
+    setAddSaving(true);
+    setError(null);
+    try {
+      await addItineraryItem(tripId, {
+        date: addForDate,
+        time: addForm.time,
+        title: addForm.title.trim(),
+        description: "",
+        type: addForm.type as ScheduleItem["type"],
+        cost: parseFloat(addForm.cost) || 0,
+        notes: addForm.notes,
+      });
+      setAddForDate(null);
+      await refresh();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to add event");
+    }
+    setAddSaving(false);
+  }
+
+  // --- Reorder handlers ---
+  async function handleMoveItem(itemId: string, direction: "up" | "down", dayEvents: ScheduleItem[]) {
+    const idx = dayEvents.findIndex((e) => e.id === itemId);
+    if (idx < 0) return;
+    const swapIdx = direction === "up" ? idx - 1 : idx + 1;
+    if (swapIdx < 0 || swapIdx >= dayEvents.length) return;
+
+    const reordered = [...dayEvents];
+    [reordered[idx], reordered[swapIdx]] = [reordered[swapIdx], reordered[idx]];
+
+    // Optimistic update
+    const allSchedule = optimisticSchedule ?? trip!.schedule;
+    const otherEvents = allSchedule.filter((s) => s.date !== dayEvents[0].date);
+    const updatedDayEvents = reordered.map((e, i) => ({ ...e, sortOrder: i }));
+    setOptimisticSchedule([...otherEvents, ...updatedDayEvents]);
+
+    try {
+      await fetch(`/api/trips/${tripId}/itinerary/reorder`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          items: updatedDayEvents.map((e, i) => ({ id: e.id, sort_order: i })),
+        }),
+      });
+      await refresh();
+      setOptimisticSchedule(null);
+    } catch {
+      setOptimisticSchedule(null);
+    }
+  }
+
+  // --- Drag-and-drop handlers ---
+  function handleDragStart(e: React.DragEvent, itemId: string) {
+    setDragId(itemId);
+    e.dataTransfer.effectAllowed = "move";
+  }
+
+  function handleDragOver(e: React.DragEvent, itemId: string) {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = "move";
+    setDragOverId(itemId);
+  }
+
+  async function handleDrop(e: React.DragEvent, targetId: string, dayEvents: ScheduleItem[]) {
+    e.preventDefault();
+    if (!dragId || dragId === targetId) {
+      setDragId(null);
+      setDragOverId(null);
+      return;
+    }
+    const fromIdx = dayEvents.findIndex((e) => e.id === dragId);
+    const toIdx = dayEvents.findIndex((e) => e.id === targetId);
+    if (fromIdx < 0 || toIdx < 0) {
+      setDragId(null);
+      setDragOverId(null);
+      return;
+    }
+    const reordered = [...dayEvents];
+    const [moved] = reordered.splice(fromIdx, 1);
+    reordered.splice(toIdx, 0, moved);
+
+    const allSchedule = optimisticSchedule ?? trip!.schedule;
+    const otherEvents = allSchedule.filter((s) => s.date !== dayEvents[0].date);
+    const updatedDayEvents = reordered.map((e, i) => ({ ...e, sortOrder: i }));
+    setOptimisticSchedule([...otherEvents, ...updatedDayEvents]);
+    setDragId(null);
+    setDragOverId(null);
+
+    try {
+      await fetch(`/api/trips/${tripId}/itinerary/reorder`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          items: updatedDayEvents.map((e, i) => ({ id: e.id, sort_order: i })),
+        }),
+      });
+      await refresh();
+      setOptimisticSchedule(null);
+    } catch {
+      setOptimisticSchedule(null);
+    }
+  }
+
+  // --- Quick move between days ---
+  async function handleQuickMove(item: ScheduleItem, targetDate: string) {
+    if (!trip) return;
+    // Optimistic
+    const allSchedule = optimisticSchedule ?? trip.schedule;
+    setOptimisticSchedule(
+      allSchedule.map((s) => (s.id === item.id ? { ...s, date: targetDate } : s))
+    );
+    try {
+      await updateItineraryItem(tripId, item.id, { date: targetDate });
+      await refresh();
+      setOptimisticSchedule(null);
+    } catch {
+      setOptimisticSchedule(null);
     }
   }
 
@@ -371,25 +605,64 @@ export default function TripDetailPage() {
     );
   }
 
-  // Determine if the current user is the trip captain
+  // Determine if the current user is the trip captain or co-captain (can edit)
   const isCaptain = currentUserId
-    ? trip.members.some((m) => m.userId === currentUserId && m.role === "CAPTAIN")
+    ? trip.members.some(
+        (m) =>
+          m.userId === currentUserId &&
+          (m.role === "CAPTAIN" || m.role === "CO_CAPTAIN")
+      )
     : false;
 
   // Leaderboard preview
   const leaderboard = buildLeaderboardPreview(scorecards);
 
-  // Group schedule by date
-  const sortedSchedule = [...trip.schedule].sort((a, b) => {
+  // Group schedule by date — use optimistic if available
+  const liveSchedule = optimisticSchedule ?? trip.schedule;
+  const sortedSchedule = [...liveSchedule].sort((a, b) => {
     if (a.date !== b.date) return a.date.localeCompare(b.date);
+    if (a.sortOrder !== b.sortOrder) return a.sortOrder - b.sortOrder;
     return timeToMinutes(a.time) - timeToMinutes(b.time);
   });
   const scheduleDates = Array.from(new Set(sortedSchedule.map((s) => s.date))).sort();
 
+  // Compute day number from trip start for date labels & day dropdown
+  function dayNumberFor(date: string): number {
+    if (!trip?.startDate || !date) return 0;
+    const start = new Date(trip.startDate + "T12:00:00");
+    const d = new Date(date + "T12:00:00");
+    return Math.round((d.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)) + 1;
+  }
+
+  // Generate list of trip dates for the day dropdown in the edit modal
+  const tripDates: { date: string; label: string }[] = [];
+  if (trip.startDate && trip.endDate) {
+    const s = new Date(trip.startDate + "T12:00:00");
+    const e = new Date(trip.endDate + "T12:00:00");
+    for (let d = new Date(s); d <= e; d.setDate(d.getDate() + 1)) {
+      const iso = d.toISOString().split("T")[0];
+      const dayNum = dayNumberFor(iso);
+      const label = `Day ${dayNum} \u2014 ${d.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" })}`;
+      tripDates.push({ date: iso, label });
+    }
+  }
+  // Also add any schedule dates not covered by start/end
+  for (const sd of scheduleDates) {
+    if (!tripDates.find((t) => t.date === sd)) {
+      const dayNum = dayNumberFor(sd);
+      const d = new Date(sd + "T12:00:00");
+      const label = dayNum > 0
+        ? `Day ${dayNum} \u2014 ${d.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" })}`
+        : d.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" });
+      tripDates.push({ date: sd, label });
+    }
+  }
+  tripDates.sort((a, b) => a.date.localeCompare(b.date));
+
   const hasLodging = trip.lodging.name || trip.lodging.address;
 
   // Booking checklist: items that need booking
-  const bookableItems = trip.schedule.filter(
+  const bookableItems = liveSchedule.filter(
     (s) => s.bookingStatus === "needs_booking" || s.bookingStatus === "booked"
   );
   const bookedCount = bookableItems.filter((s) => s.bookingStatus === "booked").length;
@@ -1078,196 +1351,412 @@ export default function TripDetailPage() {
               <CalendarDays className="h-5 w-5 text-zinc-400" />
               <h2 className="text-lg font-semibold text-zinc-900">Schedule</h2>
             </div>
-            <button
-              onClick={() => setShowAddEvent(!showAddEvent)}
-              className="inline-flex items-center gap-1.5 rounded-lg bg-emerald-600 px-3 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-emerald-700"
-            >
-              <Plus className="h-3.5 w-3.5" />
-              Add Event
-            </button>
+            {isCaptain && (
+              <button
+                onClick={() => {
+                  setShowAddEvent(!showAddEvent);
+                  if (!showAddEvent && trip.startDate) setEventDate(trip.startDate);
+                }}
+                className="inline-flex items-center gap-1.5 rounded-lg bg-emerald-600 px-3 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-emerald-700"
+              >
+                <Plus className="h-3.5 w-3.5" />
+                Add Event
+              </button>
+            )}
           </div>
 
-          {showAddEvent && (
+          {showAddEvent && isCaptain && (
             <form
               onSubmit={handleAddEvent}
               className="mt-4 rounded-lg border border-zinc-200 bg-zinc-50 p-4"
             >
               <div className="grid gap-3 sm:grid-cols-2">
                 <div>
-                  <label className="block text-xs font-medium text-zinc-600">
-                    Date *
-                  </label>
-                  <input
-                    type="date"
-                    required
-                    value={eventDate}
-                    onChange={(e) => setEventDate(e.target.value)}
-                    className="mt-1 block w-full rounded-md border border-zinc-300 px-3 py-1.5 text-sm text-zinc-900 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
-                  />
+                  <label className="block text-xs font-medium text-zinc-600">Date *</label>
+                  <input type="date" required value={eventDate} onChange={(e) => setEventDate(e.target.value)} className="mt-1 block w-full rounded-md border border-zinc-300 px-3 py-1.5 text-sm text-zinc-900 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20" />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-zinc-600">
-                    Time
-                  </label>
-                  <input
-                    type="time"
-                    value={eventTime}
-                    onChange={(e) => setEventTime(e.target.value)}
-                    className="mt-1 block w-full rounded-md border border-zinc-300 px-3 py-1.5 text-sm text-zinc-900 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
-                  />
+                  <label className="block text-xs font-medium text-zinc-600">Time</label>
+                  <input type="time" value={eventTime} onChange={(e) => setEventTime(e.target.value)} className="mt-1 block w-full rounded-md border border-zinc-300 px-3 py-1.5 text-sm text-zinc-900 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20" />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-zinc-600">
-                    Title *
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    value={eventTitle}
-                    onChange={(e) => setEventTitle(e.target.value)}
-                    placeholder="TPC Scottsdale - Round 1"
-                    className="mt-1 block w-full rounded-md border border-zinc-300 px-3 py-1.5 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
-                  />
+                  <label className="block text-xs font-medium text-zinc-600">Title *</label>
+                  <input type="text" required value={eventTitle} onChange={(e) => setEventTitle(e.target.value)} placeholder="TPC Scottsdale - Round 1" className="mt-1 block w-full rounded-md border border-zinc-300 px-3 py-1.5 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20" />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-zinc-600">
-                    Type
-                  </label>
-                  <select
-                    value={eventType}
-                    onChange={(e) =>
-                      setEventType(e.target.value as ScheduleItem["type"])
-                    }
-                    className="mt-1 block w-full rounded-md border border-zinc-300 px-3 py-1.5 text-sm text-zinc-900 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
-                  >
-                    {SCHEDULE_TYPES.map((t) => (
-                      <option key={t.value} value={t.value}>
-                        {t.label}
-                      </option>
-                    ))}
+                  <label className="block text-xs font-medium text-zinc-600">Type</label>
+                  <select value={eventType} onChange={(e) => setEventType(e.target.value as ScheduleItem["type"])} className="mt-1 block w-full rounded-md border border-zinc-300 px-3 py-1.5 text-sm text-zinc-900 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20">
+                    {SCHEDULE_TYPES.map((t) => (<option key={t.value} value={t.value}>{t.emoji} {t.label}</option>))}
                   </select>
                 </div>
                 <div className="sm:col-span-2">
-                  <label className="block text-xs font-medium text-zinc-600">
-                    Description
-                  </label>
-                  <input
-                    type="text"
-                    value={eventDesc}
-                    onChange={(e) => setEventDesc(e.target.value)}
-                    placeholder="Optional details"
-                    className="mt-1 block w-full rounded-md border border-zinc-300 px-3 py-1.5 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
-                  />
+                  <label className="block text-xs font-medium text-zinc-600">Description</label>
+                  <input type="text" value={eventDesc} onChange={(e) => setEventDesc(e.target.value)} placeholder="Optional details" className="mt-1 block w-full rounded-md border border-zinc-300 px-3 py-1.5 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20" />
                 </div>
               </div>
               <div className="mt-4 flex gap-3">
-                <button
-                  type="submit"
-                  className="rounded-md bg-emerald-600 px-4 py-1.5 text-sm font-medium text-white hover:bg-emerald-700"
-                >
-                  Add
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setShowAddEvent(false)}
-                  className="rounded-md border border-zinc-300 px-4 py-1.5 text-sm font-medium text-zinc-600 hover:bg-zinc-50"
-                >
-                  Cancel
-                </button>
+                <button type="submit" className="rounded-md bg-emerald-600 px-4 py-1.5 text-sm font-medium text-white hover:bg-emerald-700">Add</button>
+                <button type="button" onClick={() => setShowAddEvent(false)} className="rounded-md border border-zinc-300 px-4 py-1.5 text-sm font-medium text-zinc-600 hover:bg-zinc-50">Cancel</button>
               </div>
             </form>
           )}
 
-          {trip.schedule.length === 0 ? (
+          {liveSchedule.length === 0 ? (
             <p className="mt-3 text-sm text-zinc-400">
-              No events scheduled yet. Add tee times, dinners, and activities.
+              No events scheduled yet.{isCaptain ? " Add tee times, dinners, and activities." : ""}
             </p>
           ) : (
-            <div className="mt-4 space-y-5">
-              {scheduleDates.map((date) => {
-                const events = sortedSchedule.filter((e) => e.date === date);
+            <div className="mt-4 space-y-6">
+              {scheduleDates.map((date, dateIdx) => {
+                const dayEvents = sortedSchedule.filter((e) => e.date === date);
+                const dayNum = dayNumberFor(date);
+                const dayLabel = dayNum > 0 ? `Day ${dayNum}` : "";
+                const prevDate = dateIdx > 0 ? scheduleDates[dateIdx - 1] : null;
+                const nextDate = dateIdx < scheduleDates.length - 1 ? scheduleDates[dateIdx + 1] : null;
                 return (
                   <div key={date}>
-                    <h3 className="text-xs font-semibold uppercase tracking-wider text-zinc-400">
+                    <h3 className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-zinc-400">
+                      {dayLabel && <span className="text-zinc-500">{dayLabel}</span>}
+                      {dayLabel && <span>&mdash;</span>}
                       {formatDate(date)}
                     </h3>
                     <div className="mt-2 space-y-1.5">
-                      {events.map((event) => {
-                        const typeConfig = SCHEDULE_TYPES.find(
-                          (t) => t.value === event.type
-                        );
-                        const hasBookingStatus = event.bookingStatus === "needs_booking" || event.bookingStatus === "booked";
-                        const isBooked = event.bookingStatus === "booked";
+                      {dayEvents.map((event, idx) => {
+                        const typeConfig = SCHEDULE_TYPES.find((t) => t.value === event.type);
+                        const isDragging = dragId === event.id;
+                        const isDragOver = dragOverId === event.id;
                         return (
                           <div
                             key={event.id}
-                            className="group flex items-center gap-3 rounded-lg px-3 py-2 hover:bg-zinc-50"
+                            draggable={isCaptain}
+                            onDragStart={isCaptain ? (e) => handleDragStart(e, event.id) : undefined}
+                            onDragOver={isCaptain ? (e) => handleDragOver(e, event.id) : undefined}
+                            onDrop={isCaptain ? (e) => handleDrop(e, event.id, dayEvents) : undefined}
+                            onDragEnd={() => { setDragId(null); setDragOverId(null); }}
+                            className={`group relative rounded-lg border-l-4 ${typeConfig?.border || "border-l-zinc-300"} border border-zinc-200 bg-white px-3 py-2.5 transition-all ${
+                              isDragging ? "opacity-40" : ""
+                            } ${isDragOver ? "ring-2 ring-emerald-400 ring-offset-1" : ""} ${
+                              isCaptain ? "cursor-pointer hover:shadow-sm" : ""
+                            }`}
+                            onClick={isCaptain ? () => openEditModal(event) : undefined}
                           >
-                            <span
-                              className={`shrink-0 rounded-full px-2 py-0.5 text-xs font-medium ${
-                                typeConfig?.color || "bg-zinc-100 text-zinc-700"
-                              }`}
-                            >
-                              {typeConfig?.label || event.type}
-                            </span>
-                            {event.time && (
-                              <span className="shrink-0 text-xs font-medium text-zinc-500">
-                                {formatTime(event.time)}
+                            <div className="flex items-center gap-2.5">
+                              {/* Drag handle — captain only */}
+                              {isCaptain && (
+                                <span
+                                  className="shrink-0 cursor-grab touch-none text-zinc-300 hover:text-zinc-500 active:cursor-grabbing min-w-[20px]"
+                                  onClick={(e) => e.stopPropagation()}
+                                  onMouseDown={(e) => e.stopPropagation()}
+                                >
+                                  <GripVertical className="h-4 w-4" />
+                                </span>
+                              )}
+                              {/* Type emoji + time + title */}
+                              <span className="shrink-0 text-base">{typeConfig?.emoji || "\uD83D\uDCCC"}</span>
+                              {event.time && (
+                                <span className="shrink-0 text-xs font-semibold text-zinc-500">
+                                  {formatTime(event.time)}
+                                </span>
+                              )}
+                              <span className="text-sm font-semibold text-zinc-900">
+                                {event.title}
                               </span>
-                            )}
-                            <span className="flex-1 text-sm font-medium text-zinc-900">
-                              {event.title}
-                            </span>
-                            {event.description && (
-                              <span className="hidden max-w-48 truncate text-xs text-zinc-400 sm:block">
-                                {event.description}
+                              <span className="flex-1" />
+                              {/* Cost + type label */}
+                              {event.cost > 0 && (
+                                <span className="hidden shrink-0 text-xs font-medium text-zinc-500 sm:block">
+                                  ${event.cost}/person
+                                </span>
+                              )}
+                              <span className={`hidden shrink-0 rounded-full px-2 py-0.5 text-[10px] font-medium sm:inline ${typeConfig?.color || "bg-zinc-100 text-zinc-700"}`}>
+                                {typeConfig?.label || event.type}
                               </span>
+                              {/* Captain edit/delete + reorder */}
+                              {isCaptain && (
+                                <div className="flex shrink-0 items-center gap-0.5 opacity-0 transition-opacity group-hover:opacity-100" onClick={(e) => e.stopPropagation()}>
+                                  {/* Reorder arrows */}
+                                  <button
+                                    onClick={() => handleMoveItem(event.id, "up", dayEvents)}
+                                    disabled={idx === 0}
+                                    className="rounded p-1 text-zinc-300 hover:bg-zinc-100 hover:text-zinc-600 disabled:opacity-30 min-w-[28px] min-h-[28px] flex items-center justify-center"
+                                    title="Move up"
+                                  >
+                                    <ChevronUp className="h-3.5 w-3.5" />
+                                  </button>
+                                  <button
+                                    onClick={() => handleMoveItem(event.id, "down", dayEvents)}
+                                    disabled={idx === dayEvents.length - 1}
+                                    className="rounded p-1 text-zinc-300 hover:bg-zinc-100 hover:text-zinc-600 disabled:opacity-30 min-w-[28px] min-h-[28px] flex items-center justify-center"
+                                    title="Move down"
+                                  >
+                                    <ChevronDown className="h-3.5 w-3.5" />
+                                  </button>
+                                  {/* Quick day move */}
+                                  {prevDate && (
+                                    <button
+                                      onClick={() => handleQuickMove(event, prevDate)}
+                                      className="rounded p-1 text-zinc-300 hover:bg-zinc-100 hover:text-zinc-600 min-w-[28px] min-h-[28px] flex items-center justify-center"
+                                      title={`Move to ${formatDate(prevDate)}`}
+                                    >
+                                      <ChevronLeft className="h-3.5 w-3.5" />
+                                    </button>
+                                  )}
+                                  {nextDate && (
+                                    <button
+                                      onClick={() => handleQuickMove(event, nextDate)}
+                                      className="rounded p-1 text-zinc-300 hover:bg-zinc-100 hover:text-zinc-600 min-w-[28px] min-h-[28px] flex items-center justify-center"
+                                      title={`Move to ${formatDate(nextDate)}`}
+                                    >
+                                      <ChevronRight className="h-3.5 w-3.5" />
+                                    </button>
+                                  )}
+                                  {/* Edit icon */}
+                                  <button
+                                    onClick={() => openEditModal(event)}
+                                    className="rounded p-1 text-zinc-300 hover:bg-zinc-100 hover:text-zinc-600 min-w-[28px] min-h-[28px] flex items-center justify-center"
+                                    title="Edit"
+                                  >
+                                    <Pencil className="h-3 w-3" />
+                                  </button>
+                                  {/* Delete icon */}
+                                  <button
+                                    onClick={() => {
+                                      if (deleteConfirm === event.id) {
+                                        handleDeleteEvent(event.id);
+                                        setDeleteConfirm(null);
+                                      } else {
+                                        setDeleteConfirm(event.id);
+                                        setTimeout(() => setDeleteConfirm(null), 3000);
+                                      }
+                                    }}
+                                    className={`rounded p-1 min-w-[28px] min-h-[28px] flex items-center justify-center transition-colors ${
+                                      deleteConfirm === event.id
+                                        ? "bg-red-100 text-red-600"
+                                        : "text-zinc-300 hover:bg-red-50 hover:text-red-500"
+                                    }`}
+                                    title={deleteConfirm === event.id ? "Click again to confirm" : "Delete"}
+                                  >
+                                    <Trash2 className="h-3 w-3" />
+                                  </button>
+                                </div>
+                              )}
+                            </div>
+                            {/* Second row: cost (mobile) + description/notes */}
+                            {(event.cost > 0 || event.description || event.notes) && (
+                              <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-0.5 pl-0 text-xs text-zinc-500" style={{ paddingLeft: isCaptain ? "28px" : "0" }}>
+                                {event.cost > 0 && (
+                                  <span className="sm:hidden">${event.cost}/person</span>
+                                )}
+                                {event.description && <span>{event.description}</span>}
+                                {event.notes && <span className="italic text-zinc-400">{event.notes}</span>}
+                              </div>
                             )}
-                            {event.cost > 0 && (
-                              <span className="shrink-0 text-xs font-medium text-zinc-500">
-                                ${event.cost}/pp
-                              </span>
-                            )}
-                            {hasBookingStatus && isCaptain && (
-                              <button
-                                onClick={() => handleToggleBooking(event.id, event.bookingStatus)}
-                                className={`shrink-0 rounded-full px-2 py-0.5 text-[10px] font-medium transition-colors ${
-                                  isBooked
-                                    ? "bg-green-100 text-green-700 hover:bg-green-200"
-                                    : "bg-red-100 text-red-700 hover:bg-red-200"
-                                }`}
-                                title={isBooked ? "Click to mark as needs booking" : "Click to mark as booked"}
-                              >
-                                {isBooked ? "\u2705 Booked" : "\uD83D\uDD34 Needs Booking"}
-                              </button>
-                            )}
-                            {hasBookingStatus && !isCaptain && (
-                              <span
-                                className={`shrink-0 rounded-full px-2 py-0.5 text-[10px] font-medium ${
-                                  isBooked
-                                    ? "bg-green-100 text-green-700"
-                                    : "bg-red-100 text-red-700"
-                                }`}
-                              >
-                                {isBooked ? "\u2705 Booked" : "\uD83D\uDD34 Needs Booking"}
-                              </span>
-                            )}
-                            <button
-                              onClick={() => handleDeleteEvent(event.id)}
-                              className="shrink-0 rounded-md p-1 text-zinc-300 opacity-0 transition-all hover:bg-red-50 hover:text-red-500 group-hover:opacity-100"
-                            >
-                              <Trash2 className="h-3.5 w-3.5" />
-                            </button>
                           </div>
                         );
                       })}
                     </div>
+                    {/* Add to this day — captain only */}
+                    {isCaptain && (
+                      <>
+                        {addForDate === date ? (
+                          <div className="mt-2 rounded-lg border border-zinc-200 bg-zinc-50 p-3">
+                            <div className="grid gap-2 sm:grid-cols-3">
+                              <input
+                                type="text"
+                                autoFocus
+                                value={addForm.title}
+                                onChange={(e) => setAddForm({ ...addForm, title: e.target.value })}
+                                placeholder="Event title *"
+                                className="col-span-1 rounded-md border border-zinc-300 px-3 py-1.5 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+                              />
+                              <input
+                                type="time"
+                                value={addForm.time}
+                                onChange={(e) => setAddForm({ ...addForm, time: e.target.value })}
+                                className="rounded-md border border-zinc-300 px-3 py-1.5 text-sm text-zinc-900 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+                              />
+                              <select
+                                value={addForm.type}
+                                onChange={(e) => setAddForm({ ...addForm, type: e.target.value })}
+                                className="rounded-md border border-zinc-300 px-3 py-1.5 text-sm text-zinc-900 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+                              >
+                                {SCHEDULE_TYPES.map((t) => (<option key={t.value} value={t.value}>{t.emoji} {t.label}</option>))}
+                              </select>
+                            </div>
+                            <div className="mt-2 grid gap-2 sm:grid-cols-2">
+                              <input
+                                type="number"
+                                value={addForm.cost}
+                                onChange={(e) => setAddForm({ ...addForm, cost: e.target.value })}
+                                placeholder="$ Cost per person (optional)"
+                                className="rounded-md border border-zinc-300 px-3 py-1.5 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+                              />
+                              <input
+                                type="text"
+                                value={addForm.notes}
+                                onChange={(e) => setAddForm({ ...addForm, notes: e.target.value })}
+                                placeholder="Notes (optional)"
+                                className="rounded-md border border-zinc-300 px-3 py-1.5 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+                              />
+                            </div>
+                            <div className="mt-2 flex gap-2">
+                              <button
+                                onClick={handleAddForDay}
+                                disabled={addSaving || !addForm.title.trim()}
+                                className="inline-flex items-center gap-1 rounded-md bg-emerald-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-emerald-700 disabled:opacity-50"
+                              >
+                                {addSaving ? <Loader2 className="h-3 w-3 animate-spin" /> : <Plus className="h-3 w-3" />}
+                                Add
+                              </button>
+                              <button
+                                onClick={() => setAddForDate(null)}
+                                className="rounded-md border border-zinc-300 px-3 py-1.5 text-xs font-medium text-zinc-600 hover:bg-zinc-50"
+                              >
+                                Cancel
+                              </button>
+                            </div>
+                          </div>
+                        ) : (
+                          <button
+                            onClick={() => openAddForDay(date, dayEvents)}
+                            className="mt-2 inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs font-medium text-zinc-400 transition-colors hover:bg-zinc-100 hover:text-zinc-600"
+                          >
+                            <Plus className="h-3 w-3" />
+                            Add to {dayLabel || formatDate(date)}
+                          </button>
+                        )}
+                      </>
+                    )}
                   </div>
                 );
               })}
             </div>
           )}
         </div>
+
+        {/* Edit Modal / Drawer */}
+        {editingItem && (
+          <div
+            className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/40 backdrop-blur-sm"
+            onClick={() => setEditingItem(null)}
+          >
+            <div
+              className="w-full max-w-lg rounded-t-2xl sm:rounded-2xl bg-white p-6 shadow-xl max-h-[90vh] overflow-y-auto animate-[slideUp_200ms_ease-out]"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-semibold text-zinc-900">Edit Event</h3>
+                <button
+                  onClick={() => setEditingItem(null)}
+                  className="rounded-md p-1 text-zinc-400 hover:bg-zinc-100 hover:text-zinc-600"
+                >
+                  <X className="h-5 w-5" />
+                </button>
+              </div>
+
+              <div className="space-y-3">
+                <div>
+                  <label className="block text-xs font-medium text-zinc-600">Title *</label>
+                  <input type="text" value={editForm.title} onChange={(e) => setEditForm({ ...editForm, title: e.target.value })} className="mt-1 block w-full rounded-md border border-zinc-300 px-3 py-2 text-sm text-zinc-900 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20" />
+                </div>
+                <div className="grid gap-3 sm:grid-cols-2">
+                  <div>
+                    <label className="block text-xs font-medium text-zinc-600">Time</label>
+                    <input type="time" value={editForm.time} onChange={(e) => setEditForm({ ...editForm, time: e.target.value })} className="mt-1 block w-full rounded-md border border-zinc-300 px-3 py-2 text-sm text-zinc-900 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20" />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-medium text-zinc-600">Type</label>
+                    <div className="mt-1 flex flex-wrap gap-1.5">
+                      {SCHEDULE_TYPES.map((t) => (
+                        <button
+                          key={t.value}
+                          type="button"
+                          onClick={() => setEditForm({ ...editForm, type: t.value })}
+                          className={`rounded-full px-2.5 py-1 text-xs font-medium transition-all min-h-[32px] ${
+                            editForm.type === t.value
+                              ? `${t.color} ring-2 ring-offset-1 ring-current`
+                              : "bg-zinc-100 text-zinc-500 hover:bg-zinc-200"
+                          }`}
+                        >
+                          {t.emoji} {t.label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-zinc-600">Day</label>
+                  {tripDates.length > 0 ? (
+                    <select value={editForm.date} onChange={(e) => setEditForm({ ...editForm, date: e.target.value })} className="mt-1 block w-full rounded-md border border-zinc-300 px-3 py-2 text-sm text-zinc-900 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20">
+                      {tripDates.map((td) => (<option key={td.date} value={td.date}>{td.label}</option>))}
+                    </select>
+                  ) : (
+                    <input type="date" value={editForm.date} onChange={(e) => setEditForm({ ...editForm, date: e.target.value })} className="mt-1 block w-full rounded-md border border-zinc-300 px-3 py-2 text-sm text-zinc-900 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20" />
+                  )}
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-zinc-600">Est. cost per person</label>
+                  <div className="relative mt-1">
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-zinc-400">$</span>
+                    <input type="number" value={editForm.cost} onChange={(e) => setEditForm({ ...editForm, cost: e.target.value })} placeholder="0" className="block w-full rounded-md border border-zinc-300 pl-7 pr-3 py-2 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20" />
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-zinc-600">Notes</label>
+                  <textarea value={editForm.notes} onChange={(e) => setEditForm({ ...editForm, notes: e.target.value })} rows={2} placeholder="Optional notes..." className="mt-1 block w-full rounded-md border border-zinc-300 px-3 py-2 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20" />
+                </div>
+              </div>
+
+              {/* Actions */}
+              <div className="mt-5 flex items-center justify-between">
+                <button
+                  onClick={handleEditSave}
+                  disabled={editSaving || !editForm.title.trim()}
+                  className="inline-flex items-center gap-1.5 rounded-lg bg-emerald-600 px-5 py-2 text-sm font-semibold text-white transition-colors hover:bg-emerald-700 disabled:opacity-50 min-h-[44px]"
+                >
+                  {editSaving && <Loader2 className="h-4 w-4 animate-spin" />}
+                  Save
+                </button>
+                <button
+                  onClick={() => setEditingItem(null)}
+                  className="rounded-lg border border-zinc-300 px-4 py-2 text-sm font-medium text-zinc-600 hover:bg-zinc-50 min-h-[44px]"
+                >
+                  Cancel
+                </button>
+              </div>
+
+              {/* Delete */}
+              <div className="mt-4 border-t border-zinc-100 pt-4">
+                {deleteConfirm === editingItem.id ? (
+                  <div className="flex items-center gap-3">
+                    <span className="text-sm text-red-600">Delete &ldquo;{editingItem.title}&rdquo;?</span>
+                    <button
+                      onClick={handleEditDelete}
+                      disabled={editSaving}
+                      className="rounded-md bg-red-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-red-700 disabled:opacity-50"
+                    >
+                      Delete
+                    </button>
+                    <button
+                      onClick={() => setDeleteConfirm(null)}
+                      className="text-xs text-zinc-400 hover:text-zinc-600"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                ) : (
+                  <button
+                    onClick={() => setDeleteConfirm(editingItem.id)}
+                    className="inline-flex items-center gap-1.5 text-sm font-medium text-red-500 hover:text-red-600"
+                  >
+                    <Trash2 className="h-3.5 w-3.5" />
+                    Delete this event
+                  </button>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Members & Invite Section */}
         <div className="mt-6 rounded-xl border border-zinc-200 bg-white p-6 shadow-sm">
@@ -1484,6 +1973,14 @@ export default function TripDetailPage() {
           ))}
         </div>
       </div>
+
+      {/* Keyframes */}
+      <style jsx global>{`
+        @keyframes slideUp {
+          from { opacity: 0; transform: translateY(40px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+      `}</style>
     </div>
   );
 }
