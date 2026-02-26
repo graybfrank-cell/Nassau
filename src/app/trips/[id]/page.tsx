@@ -40,6 +40,9 @@ import {
   PlaneTakeoff,
   PlaneLanding,
   AlertCircle,
+  Mail,
+  Send,
+  RotateCw,
 } from "lucide-react";
 
 const SCHEDULE_TYPES = [
@@ -65,6 +68,7 @@ export default function TripDetailPage() {
   const tripId = params.id as string;
 
   const [trip, setTrip] = useState<Trip | null>(null);
+  const [loading, setLoading] = useState(true);
   const [expenseCount, setExpenseCount] = useState(0);
   const [roundCount, setRoundCount] = useState(0);
   const [skinsCount, setSkinsCount] = useState(0);
@@ -94,8 +98,15 @@ export default function TripDetailPage() {
   const [eventType, setEventType] = useState<ScheduleItem["type"]>("tee_time");
   const [error, setError] = useState<string | null>(null);
 
+  // Invite
+  const [showInvite, setShowInvite] = useState(false);
+  const [inviteEmails, setInviteEmails] = useState("");
+  const [inviteSending, setInviteSending] = useState(false);
+  const [inviteSuccess, setInviteSuccess] = useState<string | null>(null);
+
   useEffect(() => {
-    refresh();
+    setLoading(true);
+    refresh().finally(() => setLoading(false));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tripId]);
 
@@ -228,6 +239,59 @@ export default function TripDetailPage() {
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to delete event");
     }
+  }
+
+  async function handleInviteEmails(e: React.FormEvent) {
+    e.preventDefault();
+    if (!trip || !inviteEmails.trim()) return;
+    setInviteSending(true);
+    setError(null);
+    setInviteSuccess(null);
+    try {
+      const emails = inviteEmails
+        .split(/[,\n]+/)
+        .map((e) => e.trim())
+        .filter(Boolean);
+      if (emails.length === 0) return;
+
+      const res = await fetch(`/api/trips/${tripId}/invite`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ emails }),
+      });
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({}));
+        throw new Error(body.error || "Failed to send invites");
+      }
+      const data = await res.json();
+      const invited = data.results.filter(
+        (r: { status: string }) => r.status === "invited"
+      ).length;
+      const alreadyInvited = data.results.filter(
+        (r: { status: string }) => r.status === "already_invited"
+      ).length;
+
+      const parts = [];
+      if (invited > 0)
+        parts.push(`Invited ${invited} member${invited > 1 ? "s" : ""}`);
+      if (alreadyInvited > 0)
+        parts.push(`${alreadyInvited} already invited`);
+      setInviteSuccess(parts.join(". ") || "Done!");
+      setInviteEmails("");
+      setShowInvite(false);
+      await refresh();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to send invites");
+    }
+    setInviteSending(false);
+  }
+
+  if (loading) {
+    return (
+      <div className="flex min-h-[calc(100vh-64px)] items-center justify-center">
+        <p className="text-sm text-zinc-400">Loading...</p>
+      </div>
+    );
   }
 
   if (!trip) {
@@ -824,7 +888,7 @@ export default function TripDetailPage() {
           )}
         </div>
 
-        {/* Members Section */}
+        {/* Members & Invite Section */}
         <div className="mt-6 rounded-xl border border-zinc-200 bg-white p-6 shadow-sm">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
@@ -832,16 +896,90 @@ export default function TripDetailPage() {
               <h2 className="text-lg font-semibold text-zinc-900">
                 Members ({trip.members.length})
               </h2>
+              {(() => {
+                const going = trip.members.filter(
+                  (m) => m.rsvpStatus === "GOING"
+                ).length;
+                return going > 0 ? (
+                  <span className="text-xs text-zinc-400">
+                    {going} confirmed
+                  </span>
+                ) : null;
+              })()}
             </div>
-            <button
-              onClick={() => setShowAddMember(!showAddMember)}
-              className="inline-flex items-center gap-1.5 rounded-lg bg-emerald-600 px-3 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-emerald-700"
-            >
-              <Plus className="h-3.5 w-3.5" />
-              Add Member
-            </button>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => setShowInvite(!showInvite)}
+                className="inline-flex items-center gap-1.5 rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-1.5 text-xs font-semibold text-emerald-700 transition-colors hover:bg-emerald-100"
+              >
+                <Mail className="h-3.5 w-3.5" />
+                Invite Crew
+              </button>
+              <button
+                onClick={() => setShowAddMember(!showAddMember)}
+                className="inline-flex items-center gap-1.5 rounded-lg bg-emerald-600 px-3 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-emerald-700"
+              >
+                <Plus className="h-3.5 w-3.5" />
+                Add Member
+              </button>
+            </div>
           </div>
 
+          {/* Invite success toast */}
+          {inviteSuccess && (
+            <div className="mt-3 flex items-center gap-2 rounded-lg border border-green-200 bg-green-50 px-4 py-2.5 text-sm text-green-700">
+              <Check className="h-4 w-4 shrink-0" />
+              {inviteSuccess}
+              <button
+                onClick={() => setInviteSuccess(null)}
+                className="ml-auto text-green-400 hover:text-green-600"
+              >
+                <X className="h-3.5 w-3.5" />
+              </button>
+            </div>
+          )}
+
+          {/* Email Invite Form */}
+          {showInvite && (
+            <form
+              onSubmit={handleInviteEmails}
+              className="mt-4 rounded-lg border border-zinc-200 bg-zinc-50 p-4"
+            >
+              <label className="block text-xs font-medium text-zinc-600">
+                Email addresses (comma or newline separated)
+              </label>
+              <textarea
+                value={inviteEmails}
+                onChange={(e) => setInviteEmails(e.target.value)}
+                rows={3}
+                placeholder={"john@example.com, mike@example.com\nor paste multiple emails..."}
+                className="mt-1 block w-full rounded-md border border-zinc-300 px-3 py-1.5 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+              />
+              <div className="mt-3 flex gap-3">
+                <button
+                  type="submit"
+                  disabled={inviteSending || !inviteEmails.trim()}
+                  className="inline-flex items-center gap-1.5 rounded-md bg-emerald-600 px-4 py-1.5 text-sm font-medium text-white hover:bg-emerald-700 disabled:opacity-50"
+                >
+                  {inviteSending ? (
+                    <RotateCw className="h-3.5 w-3.5 animate-spin" />
+                  ) : (
+                    <Send className="h-3.5 w-3.5" />
+                  )}
+                  {inviteSending ? "Sending..." : "Send Invites"}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setShowInvite(false)}
+                  className="rounded-md border border-zinc-300 px-4 py-1.5 text-sm font-medium text-zinc-600 hover:bg-zinc-50"
+                >
+                  Cancel
+                </button>
+              </div>
+            </form>
+          )}
+
+          {/* Add Member Form (manual) */}
           {showAddMember && (
             <form
               onSubmit={handleAddMember}
@@ -888,33 +1026,57 @@ export default function TripDetailPage() {
             </form>
           )}
 
+          {/* Member List */}
           {trip.members.length === 0 ? (
             <p className="mt-4 text-sm text-zinc-400">
-              No members yet. Add players to get started.
+              No members yet. Add players or invite by email.
             </p>
           ) : (
             <div className="mt-4 grid gap-2 sm:grid-cols-2">
-              {trip.members.map((member) => (
-                <div
-                  key={member.id}
-                  className="group flex items-center justify-between rounded-lg border border-zinc-100 px-3 py-2"
-                >
-                  <div>
-                    <span className="text-sm font-medium text-zinc-900">
-                      {member.name}
-                    </span>
-                    <span className="ml-2 text-xs text-zinc-400">
-                      HCP {member.handicap}
-                    </span>
-                  </div>
-                  <button
-                    onClick={() => handleRemoveMember(member.id)}
-                    className="rounded-md p-1 text-zinc-300 opacity-0 transition-all hover:bg-red-50 hover:text-red-500 group-hover:opacity-100"
+              {trip.members.map((member) => {
+                const rsvp = member.rsvpStatus || "PENDING";
+                const badgeMap: Record<string, { color: string; label: string }> = {
+                  GOING: { color: "bg-green-100 text-green-700", label: "Going" },
+                  MAYBE: { color: "bg-yellow-100 text-yellow-700", label: "Maybe" },
+                  DECLINED: { color: "bg-red-100 text-red-700", label: "Declined" },
+                  PENDING: { color: "bg-zinc-100 text-zinc-500", label: "Pending" },
+                };
+                const badge = badgeMap[rsvp] || badgeMap.PENDING;
+
+                return (
+                  <div
+                    key={member.id}
+                    className="group flex items-center justify-between rounded-lg border border-zinc-100 px-3 py-2"
                   >
-                    <X className="h-3.5 w-3.5" />
-                  </button>
-                </div>
-              ))}
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm font-medium text-zinc-900">
+                        {member.name}
+                      </span>
+                      {member.role === "CAPTAIN" && (
+                        <span className="rounded-full bg-amber-100 px-1.5 py-0.5 text-[10px] font-semibold text-amber-700">
+                          {"\uD83D\uDC51"}
+                        </span>
+                      )}
+                      <span className="text-xs text-zinc-400">
+                        HCP {member.handicap}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <span
+                        className={`rounded-full px-2 py-0.5 text-[10px] font-medium ${badge.color}`}
+                      >
+                        {badge.label}
+                      </span>
+                      <button
+                        onClick={() => handleRemoveMember(member.id)}
+                        className="rounded-md p-1 text-zinc-300 opacity-0 transition-all hover:bg-red-50 hover:text-red-500 group-hover:opacity-100"
+                      >
+                        <X className="h-3.5 w-3.5" />
+                      </button>
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           )}
         </div>

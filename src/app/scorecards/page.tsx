@@ -7,6 +7,7 @@ import { createClient } from "@/lib/supabase/client";
 import { getScorecards, createScorecard, deleteScorecard } from "@/lib/store";
 import { Scorecard } from "@/lib/types";
 import { Plus, ClipboardList, Trash2, ArrowLeft, AlertCircle } from "lucide-react";
+import CourseSearch from "@/components/CourseSearch";
 
 const DEFAULT_PARS = [4, 4, 4, 3, 5, 4, 3, 4, 5, 4, 4, 3, 5, 4, 4, 3, 4, 5];
 
@@ -16,10 +17,17 @@ export default function ScorecardsPage() {
   const [scorecards, setScorecards] = useState<Scorecard[]>([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
-  const [courseName, setCourseName] = useState("");
   const [date, setDate] = useState("");
   const [playerNames, setPlayerNames] = useState("");
   const [error, setError] = useState<string | null>(null);
+
+  // Course search state
+  const [courseName, setCourseName] = useState("");
+  const [courseApiId, setCourseApiId] = useState<number | null>(null);
+  const [teeName, setTeeName] = useState("");
+  const [pars, setPars] = useState<number[]>(DEFAULT_PARS);
+  const [yardages, setYardages] = useState<number[]>([]);
+  const [handicaps, setHandicaps] = useState<number[]>([]);
 
   useEffect(() => {
     const supabase = createClient();
@@ -36,6 +44,22 @@ export default function ScorecardsPage() {
 
   async function refresh() {
     if (userId) setScorecards(await getScorecards({ userId }));
+  }
+
+  function handleCourseSelect(data: {
+    courseName: string;
+    courseApiId: number | null;
+    teeName: string;
+    pars: number[];
+    yardages: number[];
+    handicaps: number[];
+  }) {
+    setCourseName(data.courseName);
+    setCourseApiId(data.courseApiId);
+    setTeeName(data.teeName);
+    setPars(data.pars);
+    setYardages(data.yardages);
+    setHandicaps(data.handicaps);
   }
 
   async function handleCreate(e: React.FormEvent) {
@@ -58,12 +82,21 @@ export default function ScorecardsPage() {
         userId,
         tripId: null,
         courseName: courseName.trim(),
+        courseApiId,
+        teeName,
         date,
-        pars: DEFAULT_PARS,
+        pars,
+        yardages,
+        handicaps,
         players,
       });
 
       setCourseName("");
+      setCourseApiId(null);
+      setTeeName("");
+      setPars(DEFAULT_PARS);
+      setYardages([]);
+      setHandicaps([]);
       setDate("");
       setPlayerNames("");
       setShowForm(false);
@@ -137,17 +170,8 @@ export default function ScorecardsPage() {
               Start a Scorecard
             </h2>
             <div className="mt-4 grid gap-4 sm:grid-cols-2">
-              <div>
-                <label className="block text-sm font-medium text-zinc-700">
-                  Course Name
-                </label>
-                <input
-                  type="text"
-                  value={courseName}
-                  onChange={(e) => setCourseName(e.target.value)}
-                  placeholder="TPC Scottsdale"
-                  className="mt-1 block w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
-                />
+              <div className="sm:col-span-2">
+                <CourseSearch onSelect={handleCourseSelect} />
               </div>
               <div>
                 <label className="block text-sm font-medium text-zinc-700">
@@ -224,6 +248,9 @@ export default function ScorecardsPage() {
                     <h3 className="font-semibold text-zinc-900">
                       {sc.courseName || "Untitled Round"}
                     </h3>
+                    {sc.teeName && (
+                      <p className="text-xs text-emerald-600">{sc.teeName} tees</p>
+                    )}
                     {sc.date && (
                       <p className="mt-1 text-sm text-zinc-400">{sc.date}</p>
                     )}
