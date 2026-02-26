@@ -25,6 +25,10 @@ import {
   Trophy,
   Medal,
   Users,
+  Camera,
+  Check,
+  X,
+  Loader2,
 } from "lucide-react";
 
 // ─── Types ──────────────────────────────────────────────────────
@@ -449,6 +453,74 @@ function ScorecardTab({
   const [localScores, setLocalScores] = useState<(number | null)[][]>([]);
   const [localPars, setLocalPars] = useState<number[]>(DEFAULT_PARS);
 
+  // ─── OCR photo upload state ─────────────────────────────────
+  const [ocrUploading, setOcrUploading] = useState(false);
+  const [ocrResult, setOcrResult] = useState<{
+    players: { name: string; scores: (number | null)[]; total: number | null }[];
+    pars?: (number | null)[];
+    confidence?: string;
+    notes?: string;
+  } | null>(null);
+  const [ocrError, setOcrError] = useState<string | null>(null);
+  const [ocrConfirming, setOcrConfirming] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  async function handlePhotoUpload(file: File) {
+    if (!scorecard || !trip) return;
+    setOcrUploading(true);
+    setOcrError(null);
+    setOcrResult(null);
+
+    const formData = new FormData();
+    formData.append("photo", file);
+
+    try {
+      const res = await fetch(
+        `/api/trips/${trip.id}/scorecards/${scorecard.id}/upload-photo`,
+        { method: "POST", body: formData }
+      );
+      const data = await res.json();
+      if (!res.ok) {
+        setOcrError(data.error || "Failed to process photo");
+        return;
+      }
+      setOcrResult(data.extracted);
+    } catch {
+      setOcrError("Network error. Check your connection and try again.");
+    } finally {
+      setOcrUploading(false);
+    }
+  }
+
+  async function handleOcrConfirm() {
+    if (!scorecard || !trip || !ocrResult) return;
+    setOcrConfirming(true);
+    try {
+      const res = await fetch(
+        `/api/trips/${trip.id}/scorecards/${scorecard.id}/confirm-ocr`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            players: ocrResult.players,
+            pars: ocrResult.pars,
+          }),
+        }
+      );
+      if (!res.ok) {
+        const data = await res.json();
+        setOcrError(data.error || "Failed to save scores");
+        return;
+      }
+      setOcrResult(null);
+      await onRefresh();
+    } catch {
+      setOcrError("Network error. Check your connection and try again.");
+    } finally {
+      setOcrConfirming(false);
+    }
+  }
+
   // Refs for Tab navigation across all score inputs
   const inputRefs = useRef<Map<string, HTMLInputElement>>(new Map());
 
@@ -607,12 +679,169 @@ function ScorecardTab({
           {scorecard.players.length} player
           {scorecard.players.length !== 1 ? "s" : ""} · Par {totalPar}
         </p>
-        {saving && (
-          <span className="text-xs text-amber-500 animate-pulse">
-            Saving...
-          </span>
-        )}
+        <div className="flex items-center gap-2">
+          {saving && (
+            <span className="text-xs text-amber-500 animate-pulse">
+              Saving...
+            </span>
+          )}
+          {/* Photo upload button */}
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/jpeg,image/png,image/webp"
+            className="hidden"
+            onChange={(e) => {
+              const f = e.target.files?.[0];
+              if (f) handlePhotoUpload(f);
+              e.target.value = "";
+            }}
+          />
+          <button
+            onClick={() => fileInputRef.current?.click()}
+            disabled={ocrUploading}
+            className="inline-flex items-center gap-1 rounded-lg border border-zinc-200 bg-white px-2.5 py-1.5 text-xs font-medium text-zinc-600 hover:bg-zinc-50 hover:border-zinc-300 disabled:opacity-50 transition"
+            title="Upload scorecard photo for AI score extraction"
+          >
+            {ocrUploading ? (
+              <Loader2 className="h-3.5 w-3.5 animate-spin" />
+            ) : (
+              <Camera className="h-3.5 w-3.5" />
+            )}
+            {ocrUploading ? "Reading..." : "Scan Photo"}
+          </button>
+        </div>
       </div>
+
+      {/* OCR error */}
+      {ocrError && (
+        <div className="mb-3 flex items-start gap-2 rounded-lg bg-red-50 border border-red-200 px-3 py-2">
+          <X className="h-4 w-4 text-red-500 mt-0.5 shrink-0" />
+          <div className="flex-1">
+            <p className="text-xs text-red-700">{ocrError}</p>
+          </div>
+          <button
+            onClick={() => setOcrError(null)}
+            className="text-red-400 hover:text-red-600"
+          >
+            <X className="h-3.5 w-3.5" />
+          </button>
+        </div>
+      )}
+
+      {/* OCR confirmation modal */}
+      {ocrResult && (
+        <div className="mb-4 rounded-xl border border-emerald-200 bg-emerald-50/50 p-4">
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center gap-2">
+              <Camera className="h-4 w-4 text-emerald-600" />
+              <h4
+                className="text-sm font-semibold text-emerald-800"
+              >
+                Scores Extracted from Photo
+              </h4>
+            </div>
+            {ocrResult.confidence && (
+              <span
+                className={`text-xs px-2 py-0.5 rounded-full font-medium ${
+                  ocrResult.confidence === "high"
+                    ? "bg-emerald-100 text-emerald-700"
+                    : ocrResult.confidence === "medium"
+                      ? "bg-amber-100 text-amber-700"
+                      : "bg-red-100 text-red-700"
+                }`}
+              >
+                {ocrResult.confidence} confidence
+              </span>
+            )}
+          </div>
+
+          {ocrResult.notes && (
+            <p className="text-xs text-zinc-500 mb-3 italic">
+              {ocrResult.notes}
+            </p>
+          )}
+
+          {/* Preview extracted scores */}
+          <div className="overflow-x-auto -mx-1 px-1 mb-3">
+            <table className="w-full text-xs min-w-[500px]">
+              <thead>
+                <tr className="border-b border-emerald-200">
+                  <th className="px-1 py-1 text-left font-semibold text-emerald-700 min-w-[70px]">
+                    Player
+                  </th>
+                  {Array.from({ length: 18 }, (_, i) => (
+                    <th
+                      key={i}
+                      className="px-0.5 py-1 text-center font-medium text-emerald-600 w-6"
+                    >
+                      {i + 1}
+                    </th>
+                  ))}
+                  <th className="px-1 py-1 text-center font-bold text-emerald-700">
+                    TOT
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {ocrResult.players.map((player, pi) => {
+                  const total = player.scores.reduce(
+                    (a: number, b) => a + (b ?? 0),
+                    0
+                  );
+                  return (
+                    <tr key={pi} className="border-b border-emerald-100">
+                      <td className="px-1 py-1 font-medium text-zinc-700 truncate max-w-[70px]">
+                        {player.name}
+                      </td>
+                      {player.scores.map((s, hi) => (
+                        <td
+                          key={hi}
+                          className={`px-0.5 py-1 text-center ${
+                            s !== null
+                              ? "text-zinc-800"
+                              : "text-zinc-300"
+                          }`}
+                        >
+                          {s ?? "-"}
+                        </td>
+                      ))}
+                      <td className="px-1 py-1 text-center font-bold text-zinc-700">
+                        {total || "-"}
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+
+          {/* Confirm / Cancel buttons */}
+          <div className="flex items-center gap-2">
+            <button
+              onClick={handleOcrConfirm}
+              disabled={ocrConfirming}
+              className="inline-flex items-center gap-1.5 rounded-lg bg-emerald-600 px-4 py-2 text-xs font-semibold text-white hover:bg-emerald-700 disabled:opacity-50 transition"
+            >
+              {ocrConfirming ? (
+                <Loader2 className="h-3.5 w-3.5 animate-spin" />
+              ) : (
+                <Check className="h-3.5 w-3.5" />
+              )}
+              {ocrConfirming ? "Saving..." : "Apply Scores"}
+            </button>
+            <button
+              onClick={() => setOcrResult(null)}
+              disabled={ocrConfirming}
+              className="inline-flex items-center gap-1.5 rounded-lg border border-zinc-200 bg-white px-4 py-2 text-xs font-medium text-zinc-600 hover:bg-zinc-50 disabled:opacity-50 transition"
+            >
+              <X className="h-3.5 w-3.5" />
+              Discard
+            </button>
+          </div>
+        </div>
+      )}
+
       <div className="overflow-x-auto -mx-5 px-5">
         <table className="w-full text-xs min-w-[750px]">
           <thead>
