@@ -50,6 +50,7 @@ model Trips {
   rounds         Rounds[]
   skinsGames     SkinsGames[]
   scorecards     Scorecards[]
+  datePolls      DatePolls[]
 
   @@index([created_by])
   @@map("trips")
@@ -200,6 +201,58 @@ model Scorecards {
   @@index([user_id])
   @@index([trip_id])
   @@map("scorecards")
+}
+
+// ─── date_polls ─────────────────────────────────────────────
+model DatePolls {
+  id               String    @id @default(cuid())
+  trip_id          String    @db.Uuid
+  created_by       String    @db.Uuid
+  status           String    @default("active") // "active", "closed", "locked"
+  deadline         DateTime  @db.Timestamptz()
+  created_at       DateTime  @default(now()) @db.Timestamptz()
+  closed_at        DateTime? @db.Timestamptz()
+  locked_option_id String?
+
+  trip    Trips              @relation(fields: [trip_id], references: [id], onDelete: Cascade)
+  options DatePollOptions[]
+  votes   DatePollVotes[]
+
+  @@index([trip_id])
+  @@map("date_polls")
+}
+
+// ─── date_poll_options ──────────────────────────────────────
+model DatePollOptions {
+  id         String   @id @default(cuid())
+  poll_id    String
+  start_date DateTime @db.Timestamptz()
+  end_date   DateTime @db.Timestamptz()
+  label      String?
+  sort_order Int      @default(0)
+
+  poll  DatePolls       @relation(fields: [poll_id], references: [id], onDelete: Cascade)
+  votes DatePollVotes[]
+
+  @@index([poll_id])
+  @@map("date_poll_options")
+}
+
+// ─── date_poll_votes ────────────────────────────────────────
+model DatePollVotes {
+  id        String   @id @default(cuid())
+  poll_id   String
+  option_id String
+  user_id   String   @db.Uuid
+  vote      String   // "yes", "maybe", "no"
+  voted_at  DateTime @default(now()) @db.Timestamptz()
+
+  poll   DatePolls       @relation(fields: [poll_id], references: [id], onDelete: Cascade)
+  option DatePollOptions @relation(fields: [option_id], references: [id], onDelete: Cascade)
+
+  @@unique([poll_id, option_id, user_id])
+  @@index([poll_id])
+  @@map("date_poll_votes")
 }
 
 // ─── waitlist ────────────────────────────────────────────────

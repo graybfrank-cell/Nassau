@@ -54,6 +54,9 @@ import {
   Circle,
   GripVertical,
   Loader2,
+  Vote,
+  Lock,
+  Download,
 } from "lucide-react";
 import RoundHub from "@/components/RoundHub";
 
@@ -143,6 +146,24 @@ export default function TripDetailPage() {
   const [inviteSending, setInviteSending] = useState(false);
   const [inviteSuccess, setInviteSuccess] = useState<string | null>(null);
 
+  // Date Poll
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [datePoll, setDatePoll] = useState<any>(null);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [pollOptions, setPollOptions] = useState<any[]>([]);
+  const [pollUserVotes, setPollUserVotes] = useState<Record<string, string>>({});
+  const [showCreatePoll, setShowCreatePoll] = useState(false);
+  const [pollNights, setPollNights] = useState(3);
+  const [pollStep, setPollStep] = useState(1); // 1=nights, 2=suggestions, 3=confirm
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [pollSuggestions, setPollSuggestions] = useState<any>(null);
+  const [pollDraftOptions, setPollDraftOptions] = useState<{ start_date: string; end_date: string; label: string }[]>([]);
+  const [pollCreating, setPollCreating] = useState(false);
+  const [pollLoadingSuggestions, setPollLoadingSuggestions] = useState(false);
+  const [pollVoting, setPollVoting] = useState(false);
+  const [pollLocking, setPollLocking] = useState(false);
+  const [pollLockConfirm, setPollLockConfirm] = useState<string | null>(null);
+
   useEffect(() => {
     setLoading(true);
     (async () => {
@@ -174,6 +195,18 @@ export default function TripDetailPage() {
       setSkinsCount(skins.length);
       setScorecardCount(sc.length);
       setScorecards(sc);
+      // Fetch date poll
+      try {
+        const pollRes = await fetch(`/api/trips/${tripId}/date-poll`);
+        if (pollRes.ok) {
+          const pollData = await pollRes.json();
+          setDatePoll(pollData.poll);
+          setPollOptions(pollData.options || []);
+          setPollUserVotes(pollData.userVotes || {});
+        }
+      } catch {
+        // Poll fetch failure is non-critical
+      }
     }
   }
 
@@ -580,6 +613,135 @@ export default function TripDetailPage() {
     setInviteSending(false);
   }
 
+  // --- Date Poll Handlers ---
+  async function handleFetchSuggestions() {
+    setPollLoadingSuggestions(true);
+    try {
+      const dest = encodeURIComponent(trip?.destination || "");
+      const res = await fetch(`/api/trips/${tripId}/date-poll/suggestions?duration=${pollNights}&destination=${dest}`);
+      if (res.ok) {
+        const data = await res.json();
+        setPollSuggestions(data);
+        // Pre-fill draft options from suggestions
+        const drafts = (data.suggestions || []).map((s: { start_date: string; end_date: string; tag: string }) => ({
+          start_date: s.start_date,
+          end_date: s.end_date,
+          label: "",
+        }));
+        setPollDraftOptions(drafts.length > 0 ? drafts : [
+          { start_date: "", end_date: "", label: "" },
+          { start_date: "", end_date: "", label: "" },
+        ]);
+      }
+    } catch {
+      // Suggestions non-critical — user can enter manually
+      setPollDraftOptions([
+        { start_date: "", end_date: "", label: "" },
+        { start_date: "", end_date: "", label: "" },
+        { start_date: "", end_date: "", label: "" },
+      ]);
+    }
+    setPollLoadingSuggestions(false);
+    setPollStep(2);
+  }
+
+  function handlePollOptionDateChange(idx: number, startDate: string) {
+    setPollDraftOptions((prev) => {
+      const next = [...prev];
+      next[idx] = {
+        ...next[idx],
+        start_date: startDate,
+        end_date: startDate ? addDaysISO(startDate, pollNights) : "",
+      };
+      return next;
+    });
+  }
+
+  function handleRemovePollOption(idx: number) {
+    setPollDraftOptions((prev) => prev.filter((_, i) => i !== idx));
+  }
+
+  function handleAddPollOption() {
+    if (pollDraftOptions.length >= 5) return;
+    setPollDraftOptions((prev) => [...prev, { start_date: "", end_date: "", label: "" }]);
+  }
+
+  async function handleCreatePoll() {
+    const validOptions = pollDraftOptions.filter((o) => o.start_date && o.end_date);
+    if (validOptions.length < 2) return;
+    setPollCreating(true);
+    setError(null);
+    try {
+      const res = await fetch(`/api/trips/${tripId}/date-poll`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ options: validOptions, duration_nights: pollNights }),
+      });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.error || "Failed to create poll");
+      }
+      setShowCreatePoll(false);
+      setPollStep(1);
+      await refresh();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to create poll");
+    }
+    setPollCreating(false);
+  }
+
+  async function handleCastVotes(votes: { option_id: string; vote: string }[]) {
+    setPollVoting(true);
+    setError(null);
+    try {
+      const res = await fetch(`/api/trips/${tripId}/date-poll/vote`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ votes }),
+      });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.error || "Failed to cast vote");
+      }
+      await refresh();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to cast vote");
+    }
+    setPollVoting(false);
+  }
+
+  async function handleLockDates(optionId: string) {
+    setPollLocking(true);
+    setError(null);
+    try {
+      const res = await fetch(`/api/trips/${tripId}/date-poll/lock`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ option_id: optionId }),
+      });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.error || "Failed to lock dates");
+      }
+      const data = await res.json();
+      // Download .ics file
+      if (data.ics) {
+        const blob = new Blob([data.ics], { type: "text/calendar" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `${trip?.name || "trip"}.ics`;
+        a.click();
+        URL.revokeObjectURL(url);
+      }
+      setPollLockConfirm(null);
+      await refresh();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to lock dates");
+    }
+    setPollLocking(false);
+  }
+
   if (loading) {
     return (
       <div className="flex min-h-[calc(100vh-64px)] items-center justify-center">
@@ -896,6 +1058,279 @@ export default function TripDetailPage() {
             </button>
           </div>
         </div>
+
+        {/* ─── Date Poll Section ─── */}
+        {datePoll?.status === "locked" && trip.startDate && trip.endDate ? (
+          /* Locked dates display */
+          <div className="mt-6 rounded-xl border-2 border-emerald-200 bg-emerald-50/30 p-5 shadow-sm">
+            <div className="flex items-center gap-2">
+              <Lock className="h-5 w-5 text-emerald-600" />
+              <h2 className="text-lg font-semibold text-zinc-900">Trip Dates Locked</h2>
+            </div>
+            <p className="mt-2 text-sm text-zinc-700">
+              <span className="font-semibold">{formatDateShort(trip.startDate)} — {formatDateShort(trip.endDate)}</span>
+              {" "}({nightsBetween(trip.startDate, trip.endDate)} night{nightsBetween(trip.startDate, trip.endDate) !== 1 ? "s" : ""})
+            </p>
+          </div>
+        ) : datePoll?.status === "active" || datePoll?.status === "closed" ? (
+          /* Active / Closed poll — voting UI */
+          <DatePollVotingCard
+            poll={datePoll}
+            options={pollOptions}
+            userVotes={pollUserVotes}
+            members={trip.members}
+            currentUserId={currentUserId}
+            isCaptain={currentUserId ? trip.members.some((m) => m.userId === currentUserId && (m.role === "CAPTAIN" || m.role === "CO_CAPTAIN")) : false}
+            voting={pollVoting}
+            locking={pollLocking}
+            lockConfirm={pollLockConfirm}
+            onVote={handleCastVotes}
+            onLockConfirm={setPollLockConfirm}
+            onLock={handleLockDates}
+          />
+        ) : !trip.startDate && !trip.endDate && !datePoll ? (
+          /* No dates, no poll — prompt captain */
+          currentUserId && trip.members.some((m) => m.userId === currentUserId && (m.role === "CAPTAIN" || m.role === "CO_CAPTAIN")) ? (
+            <div className="mt-6 rounded-xl border-2 border-dashed border-zinc-300 bg-white p-6 text-center shadow-sm">
+              <CalendarDays className="mx-auto h-8 w-8 text-zinc-400" />
+              <h2 className="mt-3 text-lg font-semibold text-zinc-900">When&apos;s the trip?</h2>
+              <p className="mt-1 text-sm text-zinc-500">
+                Pick a few possible date windows and let the crew vote.
+              </p>
+              <button
+                onClick={() => { setShowCreatePoll(true); setPollStep(1); }}
+                className="mt-4 inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-emerald-700"
+              >
+                <Vote className="h-4 w-4" />
+                Set Up Date Poll
+              </button>
+            </div>
+          ) : null
+        ) : null}
+
+        {/* Create Poll Modal */}
+        {showCreatePoll && (
+          <div
+            className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/40 backdrop-blur-sm"
+            onClick={() => setShowCreatePoll(false)}
+          >
+            <div
+              className="w-full max-w-lg rounded-t-2xl sm:rounded-2xl bg-white p-6 shadow-xl max-h-[90vh] overflow-y-auto animate-[slideUp_200ms_ease-out]"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-semibold text-zinc-900">
+                  {pollStep === 1 ? "Trip Duration" : pollStep === 2 ? "Pick Date Windows" : "Confirm & Send"}
+                </h3>
+                <button onClick={() => setShowCreatePoll(false)} className="rounded-md p-1 text-zinc-400 hover:bg-zinc-100 hover:text-zinc-600">
+                  <X className="h-5 w-5" />
+                </button>
+              </div>
+
+              {/* Step 1: Nights */}
+              {pollStep === 1 && (
+                <div>
+                  <p className="text-sm text-zinc-500 mb-4">How many nights is this trip?</p>
+                  <div className="flex flex-wrap gap-2">
+                    {[2, 3, 4, 5, 6, 7].map((n) => (
+                      <button
+                        key={n}
+                        onClick={() => setPollNights(n)}
+                        className={`rounded-full px-4 py-2 text-sm font-medium transition-colors min-h-[44px] ${
+                          pollNights === n
+                            ? "bg-emerald-100 text-emerald-700 ring-2 ring-emerald-500/30"
+                            : "bg-zinc-100 text-zinc-600 hover:bg-zinc-200"
+                        }`}
+                      >
+                        {n} night{n !== 1 ? "s" : ""}
+                      </button>
+                    ))}
+                  </div>
+                  <button
+                    onClick={handleFetchSuggestions}
+                    disabled={pollLoadingSuggestions}
+                    className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-lg bg-emerald-600 px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-emerald-700 disabled:opacity-50"
+                  >
+                    {pollLoadingSuggestions ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
+                    {pollLoadingSuggestions ? "Getting suggestions..." : "Next — Pick Dates"}
+                  </button>
+                </div>
+              )}
+
+              {/* Step 2: Suggestions + Edit */}
+              {pollStep === 2 && (
+                <div>
+                  {/* KB suggestions info */}
+                  {pollSuggestions?.bestMonths?.length > 0 && (
+                    <div className="mb-4 rounded-lg border border-blue-100 bg-blue-50 p-3 text-sm">
+                      <p className="font-medium text-blue-800">
+                        {"\uD83D\uDCA1"} Best months for {pollSuggestions.destination || trip.destination}: {pollSuggestions.bestMonths.join(", ")}
+                      </p>
+                      {pollSuggestions.avoidMonths?.length > 0 && (
+                        <p className="mt-1 text-blue-600">
+                          {"\u26A0\uFE0F"} Avoid: {pollSuggestions.avoidMonths.join(", ")}{pollSuggestions.avoidReason ? ` — ${pollSuggestions.avoidReason}` : ""}
+                        </p>
+                      )}
+                    </div>
+                  )}
+
+                  {/* Pre-filled suggestion chips */}
+                  {pollSuggestions?.suggestions?.length > 0 && (
+                    <div className="mb-4">
+                      <p className="mb-2 text-xs font-medium uppercase tracking-wide text-zinc-500">Suggested windows</p>
+                      <div className="flex flex-wrap gap-2">
+                        {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+                        {pollSuggestions.suggestions.map((s: any, i: number) => {
+                          const isSelected = pollDraftOptions.some((o) => o.start_date === s.start_date);
+                          return (
+                            <button
+                              key={i}
+                              onClick={() => {
+                                if (isSelected) {
+                                  setPollDraftOptions((prev) => prev.filter((o) => o.start_date !== s.start_date));
+                                } else {
+                                  setPollDraftOptions((prev) => [...prev, { start_date: s.start_date, end_date: s.end_date, label: "" }]);
+                                }
+                              }}
+                              className={`rounded-lg border px-3 py-2 text-left text-sm transition-colors ${
+                                isSelected
+                                  ? "border-emerald-300 bg-emerald-50 text-emerald-800"
+                                  : "border-zinc-200 bg-white text-zinc-700 hover:border-zinc-300"
+                              }`}
+                            >
+                              <span className="font-medium">{s.label}</span>
+                              {s.tag && (
+                                <span className="ml-2 text-xs text-zinc-500">{s.tag}</span>
+                              )}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Editable options */}
+                  <div className="space-y-3">
+                    {pollDraftOptions.map((opt, idx) => (
+                      <div key={idx} className="rounded-lg border border-zinc-200 bg-zinc-50 p-3">
+                        <div className="flex items-center justify-between mb-2">
+                          <span className="text-xs font-semibold text-zinc-500">Option {String.fromCharCode(65 + idx)}</span>
+                          {pollDraftOptions.length > 2 && (
+                            <button onClick={() => handleRemovePollOption(idx)} className="text-xs text-red-400 hover:text-red-600">Remove</button>
+                          )}
+                        </div>
+                        <div className="grid gap-2 sm:grid-cols-2">
+                          <div>
+                            <label className="block text-xs text-zinc-500">Start date</label>
+                            <input
+                              type="date"
+                              value={opt.start_date}
+                              onChange={(e) => handlePollOptionDateChange(idx, e.target.value)}
+                              min={addDaysISO(new Date().toISOString().split("T")[0], 7)}
+                              className="mt-1 block w-full rounded-md border border-zinc-300 px-3 py-1.5 text-sm text-zinc-900 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-xs text-zinc-500">End date</label>
+                            <input
+                              type="date"
+                              value={opt.end_date}
+                              readOnly
+                              className="mt-1 block w-full rounded-md border border-zinc-200 bg-zinc-100 px-3 py-1.5 text-sm text-zinc-500"
+                            />
+                          </div>
+                        </div>
+                        <input
+                          type="text"
+                          value={opt.label}
+                          onChange={(e) => {
+                            setPollDraftOptions((prev) => {
+                              const next = [...prev];
+                              next[idx] = { ...next[idx], label: e.target.value };
+                              return next;
+                            });
+                          }}
+                          placeholder='Optional label (e.g. "Spring Break")'
+                          className="mt-2 block w-full rounded-md border border-zinc-300 px-3 py-1.5 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+                        />
+                      </div>
+                    ))}
+                  </div>
+
+                  {pollDraftOptions.length < 5 && (
+                    <button
+                      onClick={handleAddPollOption}
+                      className="mt-3 inline-flex items-center gap-1 text-sm font-medium text-emerald-600 hover:text-emerald-700"
+                    >
+                      <Plus className="h-3.5 w-3.5" />
+                      Add Option
+                    </button>
+                  )}
+
+                  <div className="mt-5 flex gap-3">
+                    <button
+                      onClick={() => setPollStep(1)}
+                      className="rounded-lg border border-zinc-300 px-4 py-2 text-sm font-medium text-zinc-600 hover:bg-zinc-50"
+                    >
+                      Back
+                    </button>
+                    <button
+                      onClick={() => setPollStep(3)}
+                      disabled={pollDraftOptions.filter((o) => o.start_date && o.end_date).length < 2}
+                      className="flex-1 rounded-lg bg-emerald-600 px-5 py-2 text-sm font-semibold text-white transition-colors hover:bg-emerald-700 disabled:opacity-40 disabled:cursor-not-allowed"
+                    >
+                      Review & Send
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {/* Step 3: Confirm */}
+              {pollStep === 3 && (
+                <div>
+                  <p className="text-sm text-zinc-500 mb-4">
+                    Your crew will have <strong>72 hours</strong> to vote. Everyone with an email on file gets notified.
+                  </p>
+                  <div className="space-y-2">
+                    {pollDraftOptions.filter((o) => o.start_date && o.end_date).map((opt, idx) => (
+                      <div key={idx} className="flex items-center gap-3 rounded-lg border border-zinc-200 bg-white px-4 py-3">
+                        <span className="flex h-7 w-7 items-center justify-center rounded-full bg-emerald-100 text-xs font-bold text-emerald-700">
+                          {String.fromCharCode(65 + idx)}
+                        </span>
+                        <div>
+                          <p className="text-sm font-medium text-zinc-900">
+                            {formatDateShort(opt.start_date)} — {formatDateShort(opt.end_date)}
+                          </p>
+                          <p className="text-xs text-zinc-500">
+                            {pollNights} night{pollNights !== 1 ? "s" : ""}
+                            {opt.label ? ` · "${opt.label}"` : ""}
+                          </p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className="mt-5 flex gap-3">
+                    <button
+                      onClick={() => setPollStep(2)}
+                      className="rounded-lg border border-zinc-300 px-4 py-2 text-sm font-medium text-zinc-600 hover:bg-zinc-50"
+                    >
+                      Back
+                    </button>
+                    <button
+                      onClick={handleCreatePoll}
+                      disabled={pollCreating}
+                      className="flex-1 inline-flex items-center justify-center gap-2 rounded-lg bg-emerald-600 px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-emerald-700 disabled:opacity-50"
+                    >
+                      {pollCreating ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
+                      {pollCreating ? "Creating..." : "Send Poll to Crew"}
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
 
         {/* Round Hub Cards */}
         <RoundHub
@@ -2150,4 +2585,294 @@ function timeToMinutes(timeStr: string): number {
     return parts[0] * 60 + parts[1];
   }
   return 9999;
+}
+
+// --- Date Poll helpers ---
+
+function addDaysISO(dateStr: string, days: number): string {
+  const d = new Date(dateStr + "T12:00:00");
+  d.setDate(d.getDate() + days);
+  return d.toISOString().split("T")[0];
+}
+
+function formatDateShort(dateStr: string): string {
+  if (!dateStr) return "";
+  const d = new Date(dateStr + "T12:00:00");
+  return d.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" });
+}
+
+function nightsBetween(start: string, end: string): number {
+  const s = new Date(start + "T12:00:00");
+  const e = new Date(end + "T12:00:00");
+  return Math.round((e.getTime() - s.getTime()) / (1000 * 60 * 60 * 24));
+}
+
+function formatCountdown(deadline: string | Date): string {
+  const dl = new Date(deadline);
+  const now = new Date();
+  const diff = dl.getTime() - now.getTime();
+  if (diff <= 0) return "Voting closed";
+  const hours = Math.floor(diff / (1000 * 60 * 60));
+  const days = Math.floor(hours / 24);
+  const remainHours = hours % 24;
+  if (days > 0) return `${days}d ${remainHours}h left`;
+  if (hours > 0) return `${hours}h left`;
+  const mins = Math.floor(diff / (1000 * 60));
+  return `${mins}m left`;
+}
+
+// --- Date Poll Voting Card ---
+
+function DatePollVotingCard({
+  poll,
+  options,
+  userVotes,
+  members,
+  currentUserId,
+  isCaptain,
+  voting,
+  locking,
+  lockConfirm,
+  onVote,
+  onLockConfirm,
+  onLock,
+}: {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  poll: any;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  options: any[];
+  userVotes: Record<string, string>;
+  members: { id: string; userId?: string; name: string }[];
+  currentUserId: string | null;
+  isCaptain: boolean;
+  voting: boolean;
+  locking: boolean;
+  lockConfirm: string | null;
+  onVote: (votes: { option_id: string; vote: string }[]) => void;
+  onLockConfirm: (id: string | null) => void;
+  onLock: (optionId: string) => void;
+}) {
+  const [draftVotes, setDraftVotes] = useState<Record<string, string>>({});
+  const isActive = poll.status === "active" && new Date(poll.deadline) > new Date();
+  const isClosed = poll.status === "closed" || (poll.status === "active" && new Date(poll.deadline) <= new Date());
+
+  // Init draft votes from existing
+  useEffect(() => {
+    if (Object.keys(userVotes).length > 0) {
+      setDraftVotes(userVotes);
+    }
+  }, [userVotes]);
+
+  const hasChanges = JSON.stringify(draftVotes) !== JSON.stringify(userVotes);
+  const allVoted = options.every((opt) => draftVotes[opt.id]);
+
+  // Find best option
+  const optionScores = options.map((opt) => {
+    const yesCount = (opt.votes || []).filter((v: { vote: string }) => v.vote === "yes").length;
+    const noCount = (opt.votes || []).filter((v: { vote: string }) => v.vote === "no").length;
+    return { id: opt.id, yesCount, noCount, score: yesCount * 2 - noCount };
+  });
+  const bestOption = optionScores.length > 0
+    ? optionScores.reduce((a, b) => (b.score > a.score || (b.score === a.score && b.noCount < a.noCount) ? b : a))
+    : null;
+
+  // Count unique voters
+  const allVoteUsers = new Set<string>();
+  for (const opt of options) {
+    for (const v of opt.votes || []) {
+      allVoteUsers.add(v.userId);
+    }
+  }
+  const votedCount = allVoteUsers.size;
+  const totalMembers = members.length;
+
+  function getMemberNameByUserId(userId: string): string {
+    const m = members.find((m) => m.userId === userId);
+    return m?.name?.split(" ")[0] || "?";
+  }
+
+  function handleSubmitVotes() {
+    const votes = Object.entries(draftVotes).map(([option_id, vote]) => ({ option_id, vote }));
+    if (votes.length > 0) onVote(votes);
+  }
+
+  return (
+    <div className={`mt-6 rounded-xl border-2 ${isActive ? "border-emerald-200" : "border-zinc-200"} bg-white p-5 shadow-sm`}>
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <Vote className="h-5 w-5 text-emerald-600" />
+          <h2 className="text-lg font-semibold text-zinc-900">
+            {isActive ? "Vote on Trip Dates" : "Date Poll Results"}
+          </h2>
+        </div>
+        <span className={`rounded-full px-2.5 py-1 text-xs font-medium ${
+          isActive ? "bg-emerald-100 text-emerald-700" : "bg-zinc-100 text-zinc-600"
+        }`}>
+          {isActive ? formatCountdown(poll.deadline) : "Voting closed"}
+        </span>
+      </div>
+
+      {/* Voter progress */}
+      <div className="mt-3 flex items-center gap-2">
+        <div className="h-1.5 flex-1 rounded-full bg-zinc-100 overflow-hidden">
+          <div
+            className="h-full rounded-full bg-emerald-500 transition-all"
+            style={{ width: `${totalMembers > 0 ? (votedCount / totalMembers) * 100 : 0}%` }}
+          />
+        </div>
+        <span className="text-xs text-zinc-500">{votedCount} of {totalMembers} voted</span>
+      </div>
+
+      {/* Options */}
+      <div className="mt-4 space-y-3">
+        {options.map((opt, idx) => {
+          const startDate = new Date(opt.start_date);
+          const endDate = new Date(opt.end_date);
+          const nights = Math.round((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24));
+          const startStr = startDate.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+          const endStr = endDate.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+          const startDay = startDate.toLocaleDateString("en-US", { weekday: "short" });
+          const endDay = endDate.toLocaleDateString("en-US", { weekday: "short" });
+          const currentVote = draftVotes[opt.id] || "";
+          const isBest = bestOption?.id === opt.id;
+          const yesVotes = (opt.votes || []).filter((v: { vote: string }) => v.vote === "yes");
+          const maybeVotes = (opt.votes || []).filter((v: { vote: string }) => v.vote === "maybe");
+          const noVotes = (opt.votes || []).filter((v: { vote: string }) => v.vote === "no");
+
+          return (
+            <div
+              key={opt.id}
+              className={`rounded-lg border ${
+                isBest && (isClosed || votedCount >= 2) ? "border-emerald-300 bg-emerald-50/30" : "border-zinc-200"
+              } p-4`}
+            >
+              <div className="flex items-start justify-between">
+                <div>
+                  <div className="flex items-center gap-2">
+                    <span className="flex h-6 w-6 items-center justify-center rounded-full bg-zinc-100 text-xs font-bold text-zinc-600">
+                      {String.fromCharCode(65 + idx)}
+                    </span>
+                    <p className="text-sm font-semibold text-zinc-900">
+                      {startStr} — {endStr}
+                    </p>
+                  </div>
+                  <p className="mt-0.5 ml-8 text-xs text-zinc-500">
+                    {startDay}–{endDay} · {nights} night{nights !== 1 ? "s" : ""}
+                    {opt.label ? ` · "${opt.label}"` : ""}
+                  </p>
+                </div>
+                {isBest && (isClosed || votedCount >= 2) && (
+                  <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-semibold text-emerald-700">
+                    Best match
+                  </span>
+                )}
+              </div>
+
+              {/* Vote buttons */}
+              {isActive && (
+                <div className="mt-3 flex gap-2">
+                  {[
+                    { value: "yes", label: "Works", emoji: "\u2705", bg: "bg-green-50 text-green-700 border-green-200", active: "bg-green-100 ring-2 ring-green-500/30" },
+                    { value: "maybe", label: "Maybe", emoji: "\u26A0\uFE0F", bg: "bg-yellow-50 text-yellow-700 border-yellow-200", active: "bg-yellow-100 ring-2 ring-yellow-500/30" },
+                    { value: "no", label: "Can't", emoji: "\u274C", bg: "bg-red-50 text-red-700 border-red-200", active: "bg-red-100 ring-2 ring-red-500/30" },
+                  ].map((btn) => (
+                    <button
+                      key={btn.value}
+                      onClick={() => setDraftVotes((prev) => ({ ...prev, [opt.id]: btn.value }))}
+                      className={`flex-1 rounded-lg border px-3 py-2.5 text-sm font-medium transition-all min-h-[44px] ${
+                        currentVote === btn.value ? btn.active : `${btn.bg} hover:opacity-80`
+                      }`}
+                    >
+                      {btn.emoji} {btn.label}
+                    </button>
+                  ))}
+                </div>
+              )}
+
+              {/* Voter names */}
+              {(opt.votes?.length > 0) && (
+                <div className="mt-2.5 flex flex-wrap gap-1.5">
+                  {yesVotes.map((v: { userId: string }) => (
+                    <span key={v.userId} className="rounded-full bg-green-100 px-2 py-0.5 text-[10px] font-medium text-green-700">
+                      {"\u2705"} {getMemberNameByUserId(v.userId)}
+                    </span>
+                  ))}
+                  {maybeVotes.map((v: { userId: string }) => (
+                    <span key={v.userId} className="rounded-full bg-yellow-100 px-2 py-0.5 text-[10px] font-medium text-yellow-700">
+                      {"\u26A0\uFE0F"} {getMemberNameByUserId(v.userId)}
+                    </span>
+                  ))}
+                  {noVotes.map((v: { userId: string }) => (
+                    <span key={v.userId} className="rounded-full bg-red-100 px-2 py-0.5 text-[10px] font-medium text-red-700">
+                      {"\u274C"} {getMemberNameByUserId(v.userId)}
+                    </span>
+                  ))}
+                </div>
+              )}
+
+              {/* Lock button for captain */}
+              {isCaptain && (isClosed || votedCount === totalMembers) && (
+                <div className="mt-3 border-t border-zinc-100 pt-3">
+                  {lockConfirm === opt.id ? (
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs text-zinc-600">Lock in these dates?</span>
+                      <button
+                        onClick={() => onLock(opt.id)}
+                        disabled={locking}
+                        className="inline-flex items-center gap-1 rounded-md bg-emerald-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-emerald-700 disabled:opacity-50"
+                      >
+                        {locking ? <Loader2 className="h-3 w-3 animate-spin" /> : <Lock className="h-3 w-3" />}
+                        {locking ? "Locking..." : "Confirm"}
+                      </button>
+                      <button
+                        onClick={() => onLockConfirm(null)}
+                        className="text-xs text-zinc-400 hover:text-zinc-600"
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  ) : (
+                    <button
+                      onClick={() => onLockConfirm(opt.id)}
+                      className="inline-flex items-center gap-1.5 text-xs font-medium text-emerald-600 hover:text-emerald-700"
+                    >
+                      <Lock className="h-3 w-3" />
+                      Lock In These Dates
+                    </button>
+                  )}
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Best match summary */}
+      {bestOption && votedCount >= 2 && (
+        <p className="mt-3 text-xs text-zinc-500">
+          {"\uD83D\uDCA1"} Best match: Option {String.fromCharCode(65 + options.findIndex((o) => o.id === bestOption.id))}
+          {" "}({bestOption.yesCount} {"\u2705"}{bestOption.noCount > 0 ? `, ${bestOption.noCount} \u274C` : ""})
+        </p>
+      )}
+
+      {/* Submit votes button */}
+      {isActive && allVoted && hasChanges && (
+        <button
+          onClick={handleSubmitVotes}
+          disabled={voting}
+          className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-lg bg-emerald-600 px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-emerald-700 disabled:opacity-50 min-h-[44px]"
+        >
+          {voting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Check className="h-4 w-4" />}
+          {voting ? "Submitting..." : "Submit Votes"}
+        </button>
+      )}
+
+      {/* All voted message */}
+      {votedCount === totalMembers && totalMembers > 0 && isActive && (
+        <p className="mt-3 text-center text-xs text-emerald-600 font-medium">
+          Everyone&apos;s voted! {isCaptain ? "You can lock in dates now." : "Waiting for the captain to lock in dates."}
+        </p>
+      )}
+    </div>
+  );
 }
