@@ -1162,8 +1162,8 @@ export default function NassauExplore() {
             className="text-emerald-200/80 text-sm mb-6 max-w-md mx-auto"
             style={{ fontFamily: "'DM Sans', sans-serif" }}
           >
-            Tell Nassau what you&apos;re looking for and our expertly trained
-            trip advisor will build a custom trip in under 60 seconds.
+            Tell Nassau what you&apos;re looking for and we&apos;ll build a
+            custom trip for your crew in under 60 seconds.
           </p>
           <a
             href="/trips/create/ai"
