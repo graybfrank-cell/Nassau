@@ -113,6 +113,7 @@ interface KBDest {
   price_tier: string;
   courses: number;
   best_months: string[];
+  nearest_airport: string;
 }
 
 const KB_DESTINATIONS: KBDest[] = (
@@ -124,7 +125,17 @@ const KB_DESTINATIONS: KBDest[] = (
   price_tier: d.price_tier as string,
   courses: (d.top_courses as unknown[])?.length ?? 0,
   best_months: (d.best_months as string[]) ?? [],
+  nearest_airport: (d.nearest_airport as string) ?? "",
 }));
+
+interface PlacesPrediction {
+  description: string;
+  place_id: string;
+  structured_formatting?: {
+    main_text: string;
+    secondary_text: string;
+  };
+}
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -267,9 +278,61 @@ export default function CreateTripWizardPage() {
       (d) =>
         d.name.toLowerCase().includes(q) ||
         d.region.toLowerCase().includes(q) ||
-        d.id.toLowerCase().includes(q)
+        d.id.toLowerCase().includes(q) ||
+        d.nearest_airport.toLowerCase().includes(q)
     ).slice(0, 8);
   }, [destSearch]);
+
+  // ---- Google Places autocomplete (debounced, KB-first fallback) ----
+
+  const [placesResults, setPlacesResults] = useState<PlacesPrediction[]>([]);
+  const placesAbortRef = useRef<AbortController | null>(null);
+  const placesTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    // Clear previous timer
+    if (placesTimerRef.current) clearTimeout(placesTimerRef.current);
+
+    // Don't fetch if search is short or KB already has 3+ matches
+    if (destSearch.trim().length < 2 || filteredDests.length >= 3) {
+      setPlacesResults([]);
+      return;
+    }
+
+    // Debounce 300ms
+    placesTimerRef.current = setTimeout(() => {
+      // Abort any in-flight request
+      if (placesAbortRef.current) placesAbortRef.current.abort();
+      const controller = new AbortController();
+      placesAbortRef.current = controller;
+
+      fetch(
+        `/api/places/autocomplete?input=${encodeURIComponent(destSearch.trim())}`,
+        { signal: controller.signal }
+      )
+        .then((res) => res.json())
+        .then((data) => {
+          if (!controller.signal.aborted) {
+            setPlacesResults(data.predictions ?? []);
+          }
+        })
+        .catch(() => {
+          // Network error or abort — silently ignore
+          if (!controller.signal.aborted) setPlacesResults([]);
+        });
+    }, 300);
+
+    return () => {
+      if (placesTimerRef.current) clearTimeout(placesTimerRef.current);
+    };
+  }, [destSearch, filteredDests.length]);
+
+  // Compute how many Google Places results to show (max 8 total minus KB results)
+  const maxGoogleResults = Math.max(0, 8 - filteredDests.length);
+  const googleResults = placesResults.slice(0, maxGoogleResults);
+  const hasDropdownResults =
+    destSearch.trim().length > 0 &&
+    (filteredDests.length > 0 || googleResults.length > 0);
 
   const names = useMemo(() => {
     if (!destination.trim() || !vibe) return [];
@@ -344,6 +407,25 @@ export default function CreateTripWizardPage() {
     setSelectedKBDest(d);
     setDestFocused(false);
     setNameGenerated(false);
+  }
+
+  function handleGooglePlaceSelect(prediction: PlacesPrediction) {
+    // Use main_text (city name) if available, strip country for US results
+    let display = prediction.description;
+    const sf = prediction.structured_formatting;
+    if (sf?.main_text && sf?.secondary_text) {
+      // Strip ", USA" / ", United States" from the secondary text
+      const secondary = sf.secondary_text
+        .replace(/,\s*(USA|United States)$/i, "")
+        .trim();
+      display = secondary ? `${sf.main_text}, ${secondary}` : sf.main_text;
+    }
+    setDestination(display);
+    setDestSearch(display);
+    setSelectedKBDest(null);
+    setDestFocused(false);
+    setNameGenerated(false);
+    setPlacesResults([]);
   }
 
   function handlePopularClick(name: string) {
@@ -604,6 +686,7 @@ export default function CreateTripWizardPage() {
                         setDestSearch("");
                         setDestination("");
                         setSelectedKBDest(null);
+                        setPlacesResults([]);
                         destInputRef.current?.focus();
                       }}
                       className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-600"
@@ -613,30 +696,70 @@ export default function CreateTripWizardPage() {
                   )}
                 </div>
 
-                {/* Dropdown results */}
-                {destFocused && filteredDests.length > 0 && (
+                {/* Dropdown results — KB first, then Google Places */}
+                {destFocused && hasDropdownResults && (
                   <div
                     ref={destDropdownRef}
-                    className="absolute z-20 mt-1 w-full rounded-lg border border-zinc-200 bg-white shadow-lg max-h-72 overflow-y-auto"
+                    className="absolute z-20 mt-1 w-full rounded-lg border border-zinc-200 bg-white shadow-lg max-h-80 overflow-y-auto"
                   >
+                    {/* KB results */}
                     {filteredDests.map((d) => (
                       <button
-                        key={d.id}
+                        key={`kb-${d.id}`}
                         type="button"
                         onClick={() => handleDestSelect(d)}
-                        className="w-full px-4 py-3 text-left hover:bg-emerald-50 transition-colors flex items-center justify-between border-b border-zinc-100 last:border-0"
+                        className="w-full px-4 py-3 text-left hover:bg-emerald-50 transition-colors flex items-center justify-between border-b border-zinc-100"
                       >
-                        <div>
-                          <span className="text-sm font-medium text-zinc-900">
-                            {d.name}
-                          </span>
-                          <span className="ml-2 text-xs text-zinc-400">
-                            {d.region}
+                        <div className="flex items-center gap-2 min-w-0">
+                          <div className="min-w-0">
+                            <span className="text-sm font-medium text-zinc-900">
+                              {d.name}
+                            </span>
+                            <span className="ml-2 text-xs text-zinc-400">
+                              {d.region}
+                            </span>
+                          </div>
+                          <span className="shrink-0 rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-medium text-emerald-700">
+                            {"\uD83C\uDFCC\uFE0F"} Nassau Destination
                           </span>
                         </div>
-                        <span className="text-xs font-medium text-emerald-600">
+                        <span className="shrink-0 ml-2 text-xs font-medium text-emerald-600">
                           {priceTierIndicator(d.price_tier)}
                         </span>
+                      </button>
+                    ))}
+
+                    {/* Divider between KB and Google results */}
+                    {filteredDests.length > 0 && googleResults.length > 0 && (
+                      <div className="border-t border-zinc-200 px-4 py-1.5 bg-zinc-50">
+                        <span className="text-[10px] font-medium text-zinc-400 uppercase tracking-wider">
+                          More places
+                        </span>
+                      </div>
+                    )}
+
+                    {/* Google Places results */}
+                    {googleResults.map((p) => (
+                      <button
+                        key={`gp-${p.place_id}`}
+                        type="button"
+                        onClick={() => handleGooglePlaceSelect(p)}
+                        className="w-full px-4 py-3 text-left hover:bg-zinc-50 transition-colors flex items-center gap-2 border-b border-zinc-100 last:border-0"
+                      >
+                        <span className="shrink-0 text-zinc-400">
+                          {"\uD83D\uDCCD"}
+                        </span>
+                        <div className="min-w-0">
+                          <span className="text-sm font-medium text-zinc-900">
+                            {p.structured_formatting?.main_text ??
+                              p.description}
+                          </span>
+                          {p.structured_formatting?.secondary_text && (
+                            <span className="ml-2 text-xs text-zinc-400">
+                              {p.structured_formatting.secondary_text}
+                            </span>
+                          )}
+                        </div>
                       </button>
                     ))}
                   </div>
