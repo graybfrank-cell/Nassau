@@ -91,10 +91,14 @@ model ItineraryItems {
   type        String   @default("other")
   title       String   @default("")
   description String   @default("")
-  cost        Decimal  @default(0)
-  booking_url String   @default("")
-  notes       String   @default("")
-  sort_order  Int      @default(0)
+  cost           Decimal  @default(0)
+  booking_url    String   @default("")
+  booking_status String   @default("")
+  phone          String   @default("")
+  website        String   @default("")
+  email          String   @default("")
+  notes          String   @default("")
+  sort_order     Int      @default(0)
   created_at  DateTime @default(now()) @db.Timestamptz()
 
   trip Trips @relation(fields: [trip_id], references: [id], onDelete: Cascade)
@@ -140,14 +144,15 @@ model ExpenseSplits {
 
 // ─── rounds ──────────────────────────────────────────────────
 model Rounds {
-  id          String   @id @default(uuid()) @db.Uuid
-  trip_id     String   @db.Uuid
-  name        String   @default("")
-  course_name String   @default("")
-  date        String   @default("")
-  group_size  Int      @default(4)
-  groups      Json     @default("[]")
-  created_at  DateTime @default(now()) @db.Timestamptz()
+  id                  String   @id @default(uuid()) @db.Uuid
+  trip_id             String   @db.Uuid
+  name                String   @default("")
+  course_name         String   @default("")
+  date                String   @default("")
+  group_size          Int      @default(4)
+  groups              Json     @default("[]")
+  itinerary_item_id   String?  @db.Uuid
+  created_at          DateTime @default(now()) @db.Timestamptz()
 
   trip Trips @relation(fields: [trip_id], references: [id], onDelete: Cascade)
 
@@ -157,14 +162,15 @@ model Rounds {
 
 // ─── skins_games ─────────────────────────────────────────────
 model SkinsGames {
-  id         String   @id @default(uuid()) @db.Uuid
-  trip_id    String   @db.Uuid
-  name       String   @default("")
-  buy_in     Decimal  @default(5)
-  day_number Int?
-  players    Json     @default("[]")
-  holes      Json     @default("[]")
-  created_at DateTime @default(now()) @db.Timestamptz()
+  id                  String   @id @default(uuid()) @db.Uuid
+  trip_id             String   @db.Uuid
+  name                String   @default("")
+  buy_in              Decimal  @default(5)
+  day_number          Int?
+  players             Json     @default("[]")
+  holes               Json     @default("[]")
+  itinerary_item_id   String?  @db.Uuid
+  created_at          DateTime @default(now()) @db.Timestamptz()
 
   trip Trips @relation(fields: [trip_id], references: [id], onDelete: Cascade)
 
@@ -174,18 +180,19 @@ model SkinsGames {
 
 // ─── scorecards ──────────────────────────────────────────────
 model Scorecards {
-  id            String   @id @default(uuid()) @db.Uuid
-  user_id       String   @db.Uuid
-  trip_id       String?  @db.Uuid
-  course_name   String   @default("")
-  course_api_id Int?
-  tee_name      String   @default("")
-  date          String   @default("")
-  pars          Json     @default("[]")
-  yardages      Json     @default("[]")
-  handicaps     Json     @default("[]")
-  players       Json     @default("[]")
-  created_at    DateTime @default(now()) @db.Timestamptz()
+  id                  String   @id @default(uuid()) @db.Uuid
+  user_id             String   @db.Uuid
+  trip_id             String?  @db.Uuid
+  course_name         String   @default("")
+  course_api_id       Int?
+  tee_name            String   @default("")
+  date                String   @default("")
+  pars                Json     @default("[]")
+  yardages            Json     @default("[]")
+  handicaps           Json     @default("[]")
+  players             Json     @default("[]")
+  itinerary_item_id   String?  @db.Uuid
+  created_at          DateTime @default(now()) @db.Timestamptz()
 
   user Profiles @relation(fields: [user_id], references: [id], onDelete: Cascade)
   trip Trips?   @relation(fields: [trip_id], references: [id], onDelete: Cascade)
