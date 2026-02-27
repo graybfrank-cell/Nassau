@@ -4,13 +4,20 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
-import { getTrips, deleteTrip } from "@/lib/store";
-import { Trip } from "@/lib/types";
-import { Plus, MapPin, Users, Calendar, Trash2, ClipboardList, AlertCircle } from "lucide-react";
+import { getTrips, createTrip, deleteTrip } from "@/lib/store";
+import { getGameRounds } from "@/lib/game-store";
+import { Trip, GameRound } from "@/lib/types";
+import { Plus, MapPin, Users, Calendar, Trash2, AlertCircle, Trophy } from "lucide-react";
 
 export default function DashboardPage() {
   const router = useRouter();
   const [trips, setTrips] = useState<Trip[]>([]);
+  const [recentRounds, setRecentRounds] = useState<GameRound[]>([]);
+  const [showForm, setShowForm] = useState(false);
+  const [name, setName] = useState("");
+  const [destination, setDestination] = useState("");
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -26,13 +33,43 @@ export default function DashboardPage() {
           return;
         }
 
-        setTrips(await getTrips());
+        const [t, r] = await Promise.all([getTrips(), getGameRounds()]);
+        setTrips(t);
+        setRecentRounds(r.slice(0, 3));
       } else {
         router.push("/login");
       }
       setLoading(false);
     });
   }, [router]);
+
+  async function refresh() {
+    const [t, r] = await Promise.all([getTrips(), getGameRounds()]);
+    setTrips(t);
+    setRecentRounds(r.slice(0, 3));
+  }
+
+  async function handleCreate(e: React.FormEvent) {
+    e.preventDefault();
+    if (!name.trim()) return;
+    setError(null);
+    try {
+      await createTrip({
+        name: name.trim(),
+        destination: destination.trim(),
+        startDate,
+        endDate,
+      });
+      setName("");
+      setDestination("");
+      setStartDate("");
+      setEndDate("");
+      setShowForm(false);
+      await refresh();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to create trip");
+    }
+  }
 
   async function handleDelete(tripId: string) {
     setError(null);
@@ -75,11 +112,11 @@ export default function DashboardPage() {
           </div>
           <div className="flex items-center gap-3">
             <Link
-              href="/scorecards"
+              href="/rounds/new"
               className="inline-flex items-center gap-2 rounded-lg border border-zinc-200 bg-white px-4 py-2.5 text-sm font-semibold text-zinc-700 transition-colors hover:bg-zinc-50"
             >
-              <ClipboardList className="h-4 w-4" />
-              Scorecards
+              <Trophy className="h-4 w-4" />
+              Quick Round
             </Link>
             <Link
               href="/trips/new"
@@ -90,6 +127,128 @@ export default function DashboardPage() {
             </Link>
           </div>
         </div>
+
+        {/* Create Form */}
+        {showForm && (
+          <form
+            onSubmit={handleCreate}
+            className="mt-6 rounded-xl border border-zinc-200 bg-white p-6 shadow-sm"
+          >
+            <h2 className="text-lg font-semibold text-zinc-900">
+              Create a New Trip
+            </h2>
+            <div className="mt-4 grid gap-4 sm:grid-cols-2">
+              <div>
+                <label className="block text-sm font-medium text-zinc-700">
+                  Trip Name *
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="Scottsdale 2026"
+                  className="mt-1 block w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-zinc-700">
+                  Destination
+                </label>
+                <input
+                  type="text"
+                  value={destination}
+                  onChange={(e) => setDestination(e.target.value)}
+                  placeholder="Scottsdale, AZ"
+                  className="mt-1 block w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-zinc-700">
+                  Start Date
+                </label>
+                <input
+                  type="date"
+                  value={startDate}
+                  onChange={(e) => setStartDate(e.target.value)}
+                  className="mt-1 block w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm text-zinc-900 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-zinc-700">
+                  End Date
+                </label>
+                <input
+                  type="date"
+                  value={endDate}
+                  onChange={(e) => setEndDate(e.target.value)}
+                  className="mt-1 block w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm text-zinc-900 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+                />
+              </div>
+            </div>
+            <div className="mt-6 flex gap-3">
+              <button
+                type="submit"
+                className="rounded-lg bg-emerald-600 px-5 py-2 text-sm font-semibold text-white transition-colors hover:bg-emerald-700"
+              >
+                Create Trip
+              </button>
+              <button
+                type="button"
+                onClick={() => setShowForm(false)}
+                className="rounded-lg border border-zinc-300 px-5 py-2 text-sm font-medium text-zinc-600 transition-colors hover:bg-zinc-50"
+              >
+                Cancel
+              </button>
+            </div>
+          </form>
+        )}
+
+        {/* Recent Rounds */}
+        {recentRounds.length > 0 && (
+          <div className="mt-8">
+            <div className="flex items-center justify-between">
+              <h2 className="text-lg font-semibold text-zinc-900">
+                Recent Rounds
+              </h2>
+              <Link
+                href="/rounds"
+                className="text-sm font-medium text-emerald-600 hover:text-emerald-700"
+              >
+                View All &rarr;
+              </Link>
+            </div>
+            <div className="mt-3 grid gap-3 sm:grid-cols-3">
+              {recentRounds.map((round) => {
+                const bestScore = round.scorecards
+                  .filter((sc) => sc.total && sc.total > 0)
+                  .sort((a, b) => (a.total || 999) - (b.total || 999))[0];
+                return (
+                  <Link
+                    key={round.id}
+                    href={`/rounds/${round.id}`}
+                    className="rounded-lg border border-zinc-200 bg-white p-4 shadow-sm transition-shadow hover:shadow-md"
+                  >
+                    <p className="text-sm font-semibold text-zinc-900">
+                      {round.courseName}
+                    </p>
+                    <p className="mt-1 text-xs text-zinc-400">
+                      {new Date(round.teeTime).toLocaleDateString("en-US", {
+                        month: "short",
+                        day: "numeric",
+                      })}
+                    </p>
+                    {bestScore && (
+                      <p className="mt-1 text-xs text-emerald-600">
+                        Low: {bestScore.total}
+                      </p>
+                    )}
+                  </Link>
+                );
+              })}
+            </div>
+          </div>
+        )}
 
         {/* Trip List */}
         {trips.length === 0 ? (
