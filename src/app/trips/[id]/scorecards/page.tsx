@@ -7,6 +7,7 @@ import { createClient } from "@/lib/supabase/client";
 import { getTrip, getScorecards, createScorecard, deleteScorecard } from "@/lib/store";
 import { Trip, Scorecard } from "@/lib/types";
 import { ArrowLeft, Plus, ClipboardList, Trash2, AlertCircle } from "lucide-react";
+import CourseSearch from "@/components/shared/CourseSearch";
 
 const DEFAULT_PARS = [4, 4, 4, 3, 5, 4, 3, 4, 5, 4, 4, 3, 5, 4, 4, 3, 4, 5];
 
@@ -158,13 +159,13 @@ export default function TripScorecardsPage() {
                 <label className="block text-sm font-medium text-zinc-700">
                   Course Name
                 </label>
-                <input
-                  type="text"
-                  value={courseName}
-                  onChange={(e) => setCourseName(e.target.value)}
-                  placeholder="TPC Scottsdale"
-                  className="mt-1 block w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
-                />
+                <div className="mt-1">
+                  <CourseSearch
+                    value={courseName}
+                    onChange={setCourseName}
+                    placeholder="Search for a course…"
+                  />
+                </div>
               </div>
               <div>
                 <label className="block text-sm font-medium text-zinc-700">
