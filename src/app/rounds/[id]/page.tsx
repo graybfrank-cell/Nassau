@@ -21,6 +21,8 @@ import ScorecardGrid from "@/components/shared/ScorecardGrid";
 import SkinsCalculator from "@/components/shared/SkinsCalculator";
 import ExpenseList from "@/components/shared/ExpenseList";
 import SettlementList from "@/components/shared/SettlementList";
+import ScorecardScanner from "@/components/shared/ScorecardScanner";
+import ReceiptScanner from "@/components/shared/ReceiptScanner";
 import {
   ArrowLeft,
   Users,
@@ -261,6 +263,68 @@ export default function RoundDashboardPage() {
       await refresh();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to save scores");
+    }
+  }
+
+  async function handleScorecardScanned(
+    scannedPlayers: { name: string; holes: number[] }[]
+  ) {
+    setError(null);
+    try {
+      for (const scanned of scannedPlayers) {
+        // Fuzzy match scanned name to confirmed players
+        const match = confirmedPlayers.find((p) => {
+          const pName = p.name.toLowerCase();
+          const sName = scanned.name.toLowerCase();
+          return (
+            pName === sName ||
+            pName.includes(sName) ||
+            sName.includes(pName)
+          );
+        });
+        if (match) {
+          await saveGameScorecard(roundId, {
+            playerId: match.id,
+            holes: scanned.holes,
+          });
+        }
+      }
+      await refresh();
+    } catch (err) {
+      setError(
+        err instanceof Error ? err.message : "Failed to save scanned scores"
+      );
+    }
+  }
+
+  async function handleReceiptScanned(
+    scannedExpenses: {
+      description: string;
+      amount: number;
+      category: string;
+    }[]
+  ) {
+    setError(null);
+    try {
+      // Find the current user's player id to use as paidBy
+      const myPlayer = round!.players.find((p) => p.userId === userId);
+      const paidBy = myPlayer?.id || confirmedPlayers[0]?.id;
+      const splitAmong = confirmedPlayers.map((p) => p.id);
+
+      for (const expense of scannedExpenses) {
+        await addGameExpense(roundId, {
+          description: expense.description,
+          amount: expense.amount,
+          paidBy,
+          splitAmong,
+          category: expense.category,
+        });
+      }
+      await refresh();
+    } catch (err) {
+      setError(
+        err instanceof Error ? err.message : "Failed to save scanned expenses"
+      );
     }
   }
 
@@ -533,9 +597,17 @@ export default function RoundDashboardPage() {
 
         {/* Scorecard */}
         <div className="mt-6 rounded-xl border border-zinc-200 bg-white p-6 shadow-sm">
-          <div className="flex items-center gap-2 mb-4">
-            <ClipboardList className="h-5 w-5 text-zinc-400" />
-            <h2 className="text-lg font-semibold text-zinc-900">Scorecard</h2>
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-2">
+              <ClipboardList className="h-5 w-5 text-zinc-400" />
+              <h2 className="text-lg font-semibold text-zinc-900">Scorecard</h2>
+            </div>
+            {confirmedPlayers.length > 0 && (
+              <ScorecardScanner
+                scanEndpoint={`/api/game-rounds/${roundId}/scorecards/scan`}
+                onScanned={handleScorecardScanned}
+              />
+            )}
           </div>
 
           {confirmedPlayers.length === 0 ? (
@@ -582,9 +654,17 @@ export default function RoundDashboardPage() {
 
         {/* Expenses */}
         <div className="mt-6 rounded-xl border border-zinc-200 bg-white p-6 shadow-sm">
-          <div className="flex items-center gap-2 mb-4">
-            <DollarSign className="h-5 w-5 text-zinc-400" />
-            <h2 className="text-lg font-semibold text-zinc-900">Expenses</h2>
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-2">
+              <DollarSign className="h-5 w-5 text-zinc-400" />
+              <h2 className="text-lg font-semibold text-zinc-900">Expenses</h2>
+            </div>
+            {confirmedPlayers.length > 0 && (
+              <ReceiptScanner
+                scanEndpoint={`/api/game-rounds/${roundId}/expenses/scan-receipt`}
+                onScanned={handleReceiptScanned}
+              />
+            )}
           </div>
 
           <ExpenseList
