@@ -45,8 +45,12 @@ export async function POST(req: NextRequest) {
       user_id: user.id,
       trip_id: body.tripId || null,
       course_name: body.courseName || "",
+      course_api_id: body.courseApiId || null,
+      tee_name: body.teeName || "",
       date: body.date || "",
       pars: body.pars || [],
+      yardages: body.yardages || [],
+      handicaps: body.handicaps || [],
       players: body.players || [],
     },
   });

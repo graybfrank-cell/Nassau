@@ -1,7 +1,11 @@
 export interface Member {
   id: string;
+  userId?: string;
   name: string;
   handicap: number;
+  email?: string;
+  role?: string;
+  rsvpStatus?: string;
 }
 
 export interface Lodging {
@@ -21,6 +25,11 @@ export interface ScheduleItem {
   title: string;
   description: string;
   type: "tee_time" | "dinner" | "activity" | "travel" | "other";
+  cost: number;
+  bookingStatus: string;
+  phone: string;
+  website: string;
+  email: string;
 }
 
 export interface Trip {
@@ -56,6 +65,7 @@ export interface Round {
   courseName: string;
   date: string;
   groups: string[][]; // arrays of member ids
+  itineraryItemId?: string;
   createdAt: string;
 }
 
@@ -71,6 +81,7 @@ export interface SkinsGame {
   players: string[]; // member ids
   stake: number;
   holes: SkinsHole[];
+  itineraryItemId?: string;
   createdAt: string;
 }
 
@@ -86,9 +97,14 @@ export interface Scorecard {
   userId: string;
   tripId: string | null;
   courseName: string;
+  courseApiId: number | null;
+  teeName: string;
   date: string;
   pars: number[]; // par for each hole
+  yardages: number[]; // yardage for each hole
+  handicaps: number[]; // handicap index for each hole
   players: ScorecardPlayer[];
+  itineraryItemId?: string;
   createdAt: string;
 }
 

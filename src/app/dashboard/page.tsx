@@ -75,7 +75,7 @@ export default function DashboardPage() {
     setError(null);
     try {
       await deleteTrip(tripId);
-      await refresh();
+      setTrips(await getTrips());
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to delete trip");
     }
@@ -118,13 +118,13 @@ export default function DashboardPage() {
               <Trophy className="h-4 w-4" />
               Quick Round
             </Link>
-            <button
-              onClick={() => setShowForm(!showForm)}
+            <Link
+              href="/trips/new"
               className="inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-emerald-700"
             >
               <Plus className="h-4 w-4" />
               New Trip
-            </button>
+            </Link>
           </div>
         </div>
 
@@ -287,7 +287,7 @@ export default function DashboardPage() {
                     <div className="mt-1 flex items-center gap-1.5 text-sm text-zinc-500">
                       <Calendar className="h-3.5 w-3.5" />
                       {trip.startDate && trip.endDate
-                        ? `${trip.startDate} — ${trip.endDate}`
+                        ? `${trip.startDate} \u2014 ${trip.endDate}`
                         : trip.startDate || trip.endDate}
                     </div>
                   )}
