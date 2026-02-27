@@ -20,6 +20,10 @@ model Profiles {
   tripMembers TripMembers[]
   scorecards  Scorecards[]
 
+  // Commissioner Mode
+  game_rounds_as_commissioner GameRounds[]
+  game_round_players          GamePlayers[]
+
   @@map("profiles")
 }
 
@@ -190,4 +194,127 @@ model Waitlists {
   created_at DateTime @default(now()) @db.Timestamptz()
 
   @@map("waitlist")
+}
+
+// ═══════════════════════════════════════════════════════════════
+// COMMISSIONER MODE — Standalone Rounds
+// ═══════════════════════════════════════════════════════════════
+
+// ─── game_rounds ─────────────────────────────────────────────
+model GameRounds {
+  id              String   @id @default(uuid()) @db.Uuid
+  commissioner_id String   @db.Uuid
+  course_name     String
+  course_id       String?
+  course_location String?
+  course_lat      Float?
+  course_lng      Float?
+  tee_time        DateTime @db.Timestamptz()
+  status          String   @default("upcoming") // "upcoming", "in_progress", "completed"
+  share_code      String   @unique @default(uuid())
+  notes           String?
+  created_at      DateTime @default(now()) @db.Timestamptz()
+  updated_at      DateTime @updatedAt @db.Timestamptz()
+
+  commissioner Profiles          @relation(fields: [commissioner_id], references: [id], onDelete: Cascade)
+  players      GamePlayers[]
+  scorecards   GameScorecards[]
+  skins_game   GameSkinsGames?
+  expenses     GameExpenses[]
+  settlements  GameSettlements[]
+
+  @@index([commissioner_id])
+  @@map("game_rounds")
+}
+
+// ─── game_players ────────────────────────────────────────────
+model GamePlayers {
+  id        String   @id @default(uuid()) @db.Uuid
+  round_id  String   @db.Uuid
+  user_id   String?  @db.Uuid
+  name      String
+  email     String?
+  status    String   @default("invited") // "invited", "confirmed", "declined"
+  role      String   @default("PLAYER") // "COMMISSIONER", "PLAYER"
+  joined_at DateTime @default(now()) @db.Timestamptz()
+
+  round GameRounds @relation(fields: [round_id], references: [id], onDelete: Cascade)
+  user  Profiles?  @relation(fields: [user_id], references: [id], onDelete: SetNull)
+
+  @@unique([round_id, user_id])
+  @@unique([round_id, email])
+  @@index([round_id])
+  @@index([user_id])
+  @@map("game_players")
+}
+
+// ─── game_scorecards ─────────────────────────────────────────
+model GameScorecards {
+  id         String   @id @default(uuid()) @db.Uuid
+  round_id   String   @db.Uuid
+  player_id  String   @db.Uuid
+  holes      Json     @default("[]")
+  total      Int?
+  front_nine Int?
+  back_nine  Int?
+  photo_url  String?
+  created_at DateTime @default(now()) @db.Timestamptz()
+  updated_at DateTime @updatedAt @db.Timestamptz()
+
+  round GameRounds @relation(fields: [round_id], references: [id], onDelete: Cascade)
+
+  @@unique([round_id, player_id])
+  @@index([round_id])
+  @@map("game_scorecards")
+}
+
+// ─── game_skins_games ────────────────────────────────────────
+model GameSkinsGames {
+  id         String   @id @default(uuid()) @db.Uuid
+  round_id   String   @unique @db.Uuid
+  buy_in     Decimal  @default(20) @db.Decimal(10, 2)
+  status     String   @default("active") // "active", "completed"
+  results    Json?
+  created_at DateTime @default(now()) @db.Timestamptz()
+
+  round GameRounds @relation(fields: [round_id], references: [id], onDelete: Cascade)
+
+  @@map("game_skins_games")
+}
+
+// ─── game_expenses ───────────────────────────────────────────
+model GameExpenses {
+  id          String   @id @default(uuid()) @db.Uuid
+  round_id    String   @db.Uuid
+  description String
+  amount      Decimal  @default(0) @db.Decimal(10, 2)
+  paid_by     String   @db.Uuid
+  split_among Json     @default("[]")
+  category    String   @default("other")
+  created_at  DateTime @default(now()) @db.Timestamptz()
+
+  round GameRounds @relation(fields: [round_id], references: [id], onDelete: Cascade)
+
+  @@index([round_id])
+  @@map("game_expenses")
+}
+
+// ─── game_settlements ────────────────────────────────────────
+model GameSettlements {
+  id          String    @id @default(uuid()) @db.Uuid
+  round_id    String    @db.Uuid
+  from_player String    @db.Uuid
+  to_player   String    @db.Uuid
+  amount      Decimal   @default(0) @db.Decimal(10, 2)
+  reason      String    @default("combined")
+  settled     Boolean   @default(false)
+  settled_at  DateTime? @db.Timestamptz()
+  settled_by  String?   @db.Uuid
+  created_at  DateTime  @default(now()) @db.Timestamptz()
+
+  round GameRounds @relation(fields: [round_id], references: [id], onDelete: Cascade)
+
+  @@unique([round_id, from_player, to_player])
+  @@index([round_id])
+  @@map("game_settlements")
 }

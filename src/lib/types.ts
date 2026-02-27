@@ -99,3 +99,86 @@ export interface AppData {
   skinsGames: SkinsGame[];
   scorecards: Scorecard[];
 }
+
+// ═══════════════════════════════════════════════════════════
+// Commissioner Mode Types
+// ═══════════════════════════════════════════════════════════
+
+export interface GameRound {
+  id: string;
+  commissionerId: string;
+  courseName: string;
+  courseId?: string;
+  courseLocation?: string;
+  courseLat?: number;
+  courseLng?: number;
+  teeTime: string;
+  status: "upcoming" | "in_progress" | "completed";
+  shareCode: string;
+  notes?: string;
+  players: GamePlayer[];
+  scorecards: GameScorecard[];
+  skinsGame?: GameSkinsGame | null;
+  expenses: GameExpense[];
+  settlements: GameSettlement[];
+  createdAt: string;
+}
+
+export interface GamePlayer {
+  id: string;
+  roundId: string;
+  userId?: string;
+  name: string;
+  email?: string;
+  status: "invited" | "confirmed" | "declined";
+  role: "COMMISSIONER" | "PLAYER";
+  joinedAt: string;
+}
+
+export interface GameScorecard {
+  id: string;
+  roundId: string;
+  playerId: string;
+  holes: number[];
+  total?: number;
+  frontNine?: number;
+  backNine?: number;
+  photoUrl?: string;
+  createdAt: string;
+}
+
+export interface GameSkinsGame {
+  id: string;
+  roundId: string;
+  buyIn: number;
+  status: "active" | "completed";
+  results?: {
+    holes: { hole: number; winnerId: string | null; carryover: boolean }[];
+    payouts: Record<string, number>;
+  };
+  createdAt: string;
+}
+
+export interface GameExpense {
+  id: string;
+  roundId: string;
+  description: string;
+  amount: number;
+  paidBy: string;
+  splitAmong: string[];
+  category: string;
+  createdAt: string;
+}
+
+export interface GameSettlement {
+  id: string;
+  roundId: string;
+  fromPlayer: string;
+  toPlayer: string;
+  amount: number;
+  reason: string;
+  settled: boolean;
+  settledAt?: string;
+  settledBy?: string;
+  createdAt: string;
+}
