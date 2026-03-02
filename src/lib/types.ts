@@ -1,7 +1,11 @@
 export interface Member {
   id: string;
+  userId?: string;
   name: string;
   handicap: number;
+  email?: string;
+  role?: string;
+  rsvpStatus?: string;
 }
 
 export interface Lodging {
@@ -21,6 +25,11 @@ export interface ScheduleItem {
   title: string;
   description: string;
   type: "tee_time" | "dinner" | "activity" | "travel" | "other";
+  cost: number;
+  bookingStatus: string;
+  phone: string;
+  website: string;
+  email: string;
 }
 
 export interface Trip {
@@ -56,6 +65,7 @@ export interface Round {
   courseName: string;
   date: string;
   groups: string[][]; // arrays of member ids
+  itineraryItemId?: string;
   createdAt: string;
 }
 
@@ -71,6 +81,7 @@ export interface SkinsGame {
   players: string[]; // member ids
   stake: number;
   holes: SkinsHole[];
+  itineraryItemId?: string;
   createdAt: string;
 }
 
@@ -86,9 +97,14 @@ export interface Scorecard {
   userId: string;
   tripId: string | null;
   courseName: string;
+  courseApiId: number | null;
+  teeName: string;
   date: string;
   pars: number[]; // par for each hole
+  yardages: number[]; // yardage for each hole
+  handicaps: number[]; // handicap index for each hole
   players: ScorecardPlayer[];
+  itineraryItemId?: string;
   createdAt: string;
 }
 
@@ -98,4 +114,87 @@ export interface AppData {
   rounds: Round[];
   skinsGames: SkinsGame[];
   scorecards: Scorecard[];
+}
+
+// ═══════════════════════════════════════════════════════════
+// Commissioner Mode Types
+// ═══════════════════════════════════════════════════════════
+
+export interface GameRound {
+  id: string;
+  commissionerId: string;
+  courseName: string;
+  courseId?: string;
+  courseLocation?: string;
+  courseLat?: number;
+  courseLng?: number;
+  teeTime: string;
+  status: "upcoming" | "in_progress" | "completed";
+  shareCode: string;
+  notes?: string;
+  players: GamePlayer[];
+  scorecards: GameScorecard[];
+  skinsGame?: GameSkinsGame | null;
+  expenses: GameExpense[];
+  settlements: GameSettlement[];
+  createdAt: string;
+}
+
+export interface GamePlayer {
+  id: string;
+  roundId: string;
+  userId?: string;
+  name: string;
+  email?: string;
+  status: "invited" | "confirmed" | "declined";
+  role: "COMMISSIONER" | "PLAYER";
+  joinedAt: string;
+}
+
+export interface GameScorecard {
+  id: string;
+  roundId: string;
+  playerId: string;
+  holes: number[];
+  total?: number;
+  frontNine?: number;
+  backNine?: number;
+  photoUrl?: string;
+  createdAt: string;
+}
+
+export interface GameSkinsGame {
+  id: string;
+  roundId: string;
+  buyIn: number;
+  status: "active" | "completed";
+  results?: {
+    holes: { hole: number; winnerId: string | null; carryover: boolean }[];
+    payouts: Record<string, number>;
+  };
+  createdAt: string;
+}
+
+export interface GameExpense {
+  id: string;
+  roundId: string;
+  description: string;
+  amount: number;
+  paidBy: string;
+  splitAmong: string[];
+  category: string;
+  createdAt: string;
+}
+
+export interface GameSettlement {
+  id: string;
+  roundId: string;
+  fromPlayer: string;
+  toPlayer: string;
+  amount: number;
+  reason: string;
+  settled: boolean;
+  settledAt?: string;
+  settledBy?: string;
+  createdAt: string;
 }

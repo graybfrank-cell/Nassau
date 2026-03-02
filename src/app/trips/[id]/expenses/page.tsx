@@ -7,6 +7,21 @@ import { getTrip, getExpenses, addExpense, deleteExpense } from "@/lib/store";
 import { Trip, Expense, Member } from "@/lib/types";
 import { ArrowLeft, Plus, Trash2, DollarSign, AlertCircle } from "lucide-react";
 
+const CATEGORIES = [
+  { emoji: "⛳", label: "Green Fees" },
+  { emoji: "🍔", label: "Food & Drinks" },
+  { emoji: "🏨", label: "Lodging" },
+  { emoji: "⛽", label: "Gas/Transport" },
+  { emoji: "🎰", label: "Skins/Bets" },
+  { emoji: "🍺", label: "Bar Tab" },
+  { emoji: "🛒", label: "Supplies" },
+  { emoji: "📦", label: "Other" },
+] as const;
+
+const QUICK_AMOUNTS = [10, 20, 25, 50, 75, 100, 150, 200];
+
+type SplitMode = "equal" | "custom" | "self";
+
 function calculateSettlements(
   expenses: Expense[],
   members: Member[]
@@ -60,9 +75,11 @@ export default function ExpensesPage() {
   const [trip, setTrip] = useState<Trip | null>(null);
   const [expenses, setExpenses] = useState<Expense[]>([]);
   const [showForm, setShowForm] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [description, setDescription] = useState("");
   const [amount, setAmount] = useState("");
   const [paidBy, setPaidBy] = useState("");
+  const [splitMode, setSplitMode] = useState<SplitMode>("equal");
   const [splitAmong, setSplitAmong] = useState<string[]>([]);
   const [error, setError] = useState<string | null>(null);
 
@@ -81,6 +98,61 @@ export default function ExpensesPage() {
 
   function getMemberName(memberId: string): string {
     return trip?.members.find((m) => m.id === memberId)?.name || "Unknown";
+  }
+
+  function resetForm() {
+    setSelectedCategory(null);
+    setDescription("");
+    setAmount("");
+    setPaidBy("");
+    setSplitMode("equal");
+    setSplitAmong([]);
+    setShowForm(false);
+  }
+
+  function openForm() {
+    setSelectedCategory(null);
+    setDescription("");
+    setAmount("");
+    setPaidBy("");
+    setSplitMode("equal");
+    setSplitAmong(trip?.members.map((m) => m.id) || []);
+    setShowForm(true);
+  }
+
+  function handleCategorySelect(label: string) {
+    if (selectedCategory === label) {
+      setSelectedCategory(null);
+      setDescription("");
+    } else {
+      setSelectedCategory(label);
+      if (label !== "Other") {
+        setDescription(label);
+      } else {
+        setDescription("");
+      }
+    }
+  }
+
+  function handleSplitModeChange(mode: SplitMode) {
+    setSplitMode(mode);
+    if (!trip) return;
+    if (mode === "equal") {
+      setSplitAmong(trip.members.map((m) => m.id));
+    } else if (mode === "self") {
+      setSplitAmong(paidBy ? [paidBy] : []);
+    } else {
+      // custom — keep current selection or start empty
+      setSplitAmong([]);
+    }
+  }
+
+  function handlePaidByChange(memberId: string) {
+    setPaidBy(memberId);
+    // If self mode, update splitAmong to match payer
+    if (splitMode === "self" && memberId) {
+      setSplitAmong([memberId]);
+    }
   }
 
   function handleSplitToggle(memberId: string) {
@@ -113,11 +185,7 @@ export default function ExpensesPage() {
         paidBy,
         splitAmong,
       });
-      setDescription("");
-      setAmount("");
-      setPaidBy("");
-      setSplitAmong([]);
-      setShowForm(false);
+      resetForm();
       await refresh();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to add expense");
@@ -144,6 +212,9 @@ export default function ExpensesPage() {
 
   const totalExpenses = expenses.reduce((sum, e) => sum + e.amount, 0);
   const settlements = calculateSettlements(expenses, trip.members);
+
+  const isFormValid =
+    description.trim() && amount && paidBy && splitAmong.length > 0;
 
   return (
     <div className="min-h-[calc(100vh-64px)] bg-zinc-50 px-6 py-10">
@@ -173,7 +244,7 @@ export default function ExpensesPage() {
             </p>
           </div>
           <button
-            onClick={() => setShowForm(!showForm)}
+            onClick={() => (showForm ? resetForm() : openForm())}
             className="inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-emerald-700"
           >
             <Plus className="h-4 w-4" />
@@ -202,96 +273,217 @@ export default function ExpensesPage() {
             <h2 className="text-lg font-semibold text-zinc-900">
               New Expense
             </h2>
-            <div className="mt-4 grid gap-4 sm:grid-cols-2">
-              <div>
-                <label className="block text-sm font-medium text-zinc-700">
-                  Description *
-                </label>
-                <input
-                  type="text"
-                  required
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
-                  placeholder="Greens fees at TPC"
-                  className="mt-1 block w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-zinc-700">
-                  Amount ($) *
-                </label>
-                <input
-                  type="number"
-                  required
-                  min="0.01"
-                  step="0.01"
-                  value={amount}
-                  onChange={(e) => setAmount(e.target.value)}
-                  placeholder="120.00"
-                  className="mt-1 block w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
-                />
-              </div>
-              <div className="sm:col-span-2">
-                <label className="block text-sm font-medium text-zinc-700">
-                  Paid By *
-                </label>
-                <select
-                  required
-                  value={paidBy}
-                  onChange={(e) => setPaidBy(e.target.value)}
-                  className="mt-1 block w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm text-zinc-900 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
-                >
-                  <option value="">Select who paid</option>
-                  {trip.members.map((m) => (
-                    <option key={m.id} value={m.id}>
-                      {m.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div className="sm:col-span-2">
-                <div className="flex items-center justify-between">
-                  <label className="block text-sm font-medium text-zinc-700">
-                    Split Among *
-                  </label>
+
+            {/* Category Selector */}
+            <div className="mt-4">
+              <label className="block text-sm font-medium text-zinc-700">
+                Category
+              </label>
+              <div className="mt-2 flex flex-wrap gap-2">
+                {CATEGORIES.map((cat) => (
                   <button
+                    key={cat.label}
                     type="button"
-                    onClick={handleSelectAll}
-                    className="text-xs font-medium text-emerald-600 hover:text-emerald-700"
+                    onClick={() => handleCategorySelect(cat.label)}
+                    className={`rounded-full px-3.5 py-1.5 text-sm font-medium transition-colors ${
+                      selectedCategory === cat.label
+                        ? "bg-emerald-100 text-emerald-700 ring-2 ring-emerald-500/30"
+                        : "bg-zinc-100 text-zinc-600 hover:bg-zinc-200"
+                    }`}
                   >
-                    {splitAmong.length === trip.members.length
-                      ? "Deselect All"
-                      : "Select All"}
+                    {cat.emoji} {cat.label}
                   </button>
-                </div>
-                <div className="mt-2 flex flex-wrap gap-2">
-                  {trip.members.map((m) => (
-                    <button
-                      key={m.id}
-                      type="button"
-                      onClick={() => handleSplitToggle(m.id)}
-                      className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${
-                        splitAmong.includes(m.id)
-                          ? "bg-emerald-100 text-emerald-700"
-                          : "bg-zinc-100 text-zinc-500 hover:bg-zinc-200"
-                      }`}
-                    >
-                      {m.name}
-                    </button>
-                  ))}
-                </div>
+                ))}
               </div>
             </div>
+
+            {/* Description — always shown, auto-filled by category */}
+            <div className="mt-4">
+              <label className="block text-sm font-medium text-zinc-700">
+                {selectedCategory === "Other" ? "Custom Title *" : "Title *"}
+              </label>
+              <input
+                type="text"
+                required
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                placeholder={
+                  selectedCategory === "Other"
+                    ? "e.g. Cooler of beer"
+                    : selectedCategory
+                      ? `e.g. ${selectedCategory} at...`
+                      : "Pick a category or type a title"
+                }
+                className="mt-1 block w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+              />
+            </div>
+
+            {/* Amount + Quick Amount Buttons */}
+            <div className="mt-4">
+              <label className="block text-sm font-medium text-zinc-700">
+                Amount ($) *
+              </label>
+              <input
+                type="number"
+                required
+                min="0.01"
+                step="0.01"
+                value={amount}
+                onChange={(e) => setAmount(e.target.value)}
+                placeholder="0.00"
+                className="mt-1 block w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+              />
+              <div className="mt-2 flex flex-wrap gap-1.5">
+                {QUICK_AMOUNTS.map((qa) => (
+                  <button
+                    key={qa}
+                    type="button"
+                    onClick={() => setAmount(String(qa))}
+                    className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${
+                      amount === String(qa)
+                        ? "bg-emerald-100 text-emerald-700"
+                        : "bg-zinc-100 text-zinc-500 hover:bg-zinc-200"
+                    }`}
+                  >
+                    ${qa}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Paid By */}
+            <div className="mt-4">
+              <label className="block text-sm font-medium text-zinc-700">
+                Paid By *
+              </label>
+              <select
+                required
+                value={paidBy}
+                onChange={(e) => handlePaidByChange(e.target.value)}
+                className="mt-1 block w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm text-zinc-900 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+              >
+                <option value="">Select who paid</option>
+                {trip.members.map((m) => (
+                  <option key={m.id} value={m.id}>
+                    {m.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* Split Options */}
+            <div className="mt-4">
+              <label className="block text-sm font-medium text-zinc-700">
+                Split
+              </label>
+              <div className="mt-2 flex flex-wrap gap-2">
+                <button
+                  type="button"
+                  onClick={() => handleSplitModeChange("equal")}
+                  className={`rounded-full px-3.5 py-1.5 text-sm font-medium transition-colors ${
+                    splitMode === "equal"
+                      ? "bg-emerald-100 text-emerald-700 ring-2 ring-emerald-500/30"
+                      : "bg-zinc-100 text-zinc-600 hover:bg-zinc-200"
+                  }`}
+                >
+                  Split equally
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleSplitModeChange("custom")}
+                  className={`rounded-full px-3.5 py-1.5 text-sm font-medium transition-colors ${
+                    splitMode === "custom"
+                      ? "bg-emerald-100 text-emerald-700 ring-2 ring-emerald-500/30"
+                      : "bg-zinc-100 text-zinc-600 hover:bg-zinc-200"
+                  }`}
+                >
+                  Split with...
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleSplitModeChange("self")}
+                  className={`rounded-full px-3.5 py-1.5 text-sm font-medium transition-colors ${
+                    splitMode === "self"
+                      ? "bg-emerald-100 text-emerald-700 ring-2 ring-emerald-500/30"
+                      : "bg-zinc-100 text-zinc-600 hover:bg-zinc-200"
+                  }`}
+                >
+                  I paid for myself
+                </button>
+              </div>
+
+              {/* Split summary */}
+              {splitMode === "equal" && (
+                <p className="mt-2 text-xs text-zinc-400">
+                  Divided evenly among all {trip.members.length} member
+                  {trip.members.length !== 1 ? "s" : ""}
+                  {amount
+                    ? ` — $${(parseFloat(amount) / trip.members.length).toFixed(2)} each`
+                    : ""}
+                </p>
+              )}
+
+              {splitMode === "self" && (
+                <p className="mt-2 text-xs text-zinc-400">
+                  No split — just tracking this expense
+                </p>
+              )}
+
+              {/* Custom member picker */}
+              {splitMode === "custom" && (
+                <div className="mt-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs text-zinc-500">
+                      Select members to split with
+                    </span>
+                    <button
+                      type="button"
+                      onClick={handleSelectAll}
+                      className="text-xs font-medium text-emerald-600 hover:text-emerald-700"
+                    >
+                      {splitAmong.length === trip.members.length
+                        ? "Deselect All"
+                        : "Select All"}
+                    </button>
+                  </div>
+                  <div className="mt-2 flex flex-wrap gap-2">
+                    {trip.members.map((m) => (
+                      <button
+                        key={m.id}
+                        type="button"
+                        onClick={() => handleSplitToggle(m.id)}
+                        className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${
+                          splitAmong.includes(m.id)
+                            ? "bg-emerald-100 text-emerald-700"
+                            : "bg-zinc-100 text-zinc-500 hover:bg-zinc-200"
+                        }`}
+                      >
+                        {m.name}
+                      </button>
+                    ))}
+                  </div>
+                  {splitAmong.length > 0 && amount && (
+                    <p className="mt-2 text-xs text-zinc-400">
+                      ${(parseFloat(amount) / splitAmong.length).toFixed(2)} each
+                      {" "}({splitAmong.length} member
+                      {splitAmong.length !== 1 ? "s" : ""})
+                    </p>
+                  )}
+                </div>
+              )}
+            </div>
+
             <div className="mt-6 flex gap-3">
               <button
                 type="submit"
-                className="rounded-lg bg-emerald-600 px-5 py-2 text-sm font-semibold text-white transition-colors hover:bg-emerald-700"
+                disabled={!isFormValid}
+                className="rounded-lg bg-emerald-600 px-5 py-2 text-sm font-semibold text-white transition-colors hover:bg-emerald-700 disabled:opacity-40 disabled:cursor-not-allowed"
               >
                 Add Expense
               </button>
               <button
                 type="button"
-                onClick={() => setShowForm(false)}
+                onClick={resetForm}
                 className="rounded-lg border border-zinc-300 px-5 py-2 text-sm font-medium text-zinc-600 transition-colors hover:bg-zinc-50"
               >
                 Cancel

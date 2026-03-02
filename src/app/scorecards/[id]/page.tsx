@@ -7,6 +7,15 @@ import { getScorecard, updateScorecard } from "@/lib/store";
 import { Scorecard, ScorecardPlayer } from "@/lib/types";
 import { ArrowLeft, Save, Pencil, AlertCircle } from "lucide-react";
 
+function scoreColor(score: number | null, par: number): string {
+  if (score === null || !par) return "";
+  if (score <= par - 2) return "bg-amber-100 text-amber-800"; // eagle or better
+  if (score === par - 1) return "bg-green-100 text-green-700"; // birdie
+  if (score === par) return "text-zinc-900"; // par
+  if (score === par + 1) return "bg-red-50 text-red-600"; // bogey
+  return "bg-red-100 text-red-700"; // double bogey+
+}
+
 export default function ScorecardDetailPage() {
   const params = useParams();
   const id = params.id as string;
@@ -89,11 +98,24 @@ export default function ScorecardDetailPage() {
     ? `/trips/${scorecard.tripId}/scorecards`
     : "/scorecards";
 
+  const yardages = scorecard.yardages || [];
+  const hcps = scorecard.handicaps || [];
+  const hasYardages = yardages.length === 18 && yardages.some((y) => y > 0);
+  const hasHcps = hcps.length === 18 && hcps.some((h) => h > 0);
+
   const frontPars = pars.slice(0, 9);
   const backPars = pars.slice(9, 18);
   const frontParTotal = frontPars.reduce((a, b) => a + b, 0);
   const backParTotal = backPars.reduce((a, b) => a + b, 0);
   const totalPar = frontParTotal + backParTotal;
+
+  const frontYardages = yardages.slice(0, 9);
+  const backYardages = yardages.slice(9, 18);
+  const frontYardTotal = frontYardages.reduce((a, b) => a + b, 0);
+  const backYardTotal = backYardages.reduce((a, b) => a + b, 0);
+
+  const frontHcps = hcps.slice(0, 9);
+  const backHcps = hcps.slice(9, 18);
 
   return (
     <div className="min-h-[calc(100vh-64px)] bg-zinc-50 px-4 py-10">
@@ -127,9 +149,14 @@ export default function ScorecardDetailPage() {
           <h1 className="text-2xl font-bold tracking-tight text-zinc-900">
             {scorecard.courseName || "Scorecard"}
           </h1>
-          {scorecard.date && (
-            <p className="mt-1 text-sm text-zinc-400">{scorecard.date}</p>
-          )}
+          <div className="mt-1 flex items-center gap-3">
+            {scorecard.teeName && (
+              <span className="text-sm text-emerald-600">{scorecard.teeName} tees</span>
+            )}
+            {scorecard.date && (
+              <span className="text-sm text-zinc-400">{scorecard.date}</span>
+            )}
+          </div>
         </div>
 
         {/* Front 9 */}
@@ -156,6 +183,38 @@ export default function ScorecardDetailPage() {
                 </tr>
               </thead>
               <tbody>
+                {/* Yardage row */}
+                {hasYardages && (
+                  <tr className="border-b border-zinc-100 bg-blue-50/40">
+                    <td className="sticky left-0 bg-blue-50/40 px-3 py-1 text-xs font-medium text-zinc-500">
+                      Yards
+                    </td>
+                    {frontYardages.map((yds, i) => (
+                      <td key={i} className="px-1 py-1 text-center text-xs text-zinc-400">
+                        {yds}
+                      </td>
+                    ))}
+                    <td className="bg-blue-50/60 px-2 py-1 text-center text-xs font-semibold text-zinc-500">
+                      {frontYardTotal}
+                    </td>
+                  </tr>
+                )}
+                {/* Handicap row */}
+                {hasHcps && (
+                  <tr className="border-b border-zinc-100 bg-purple-50/30">
+                    <td className="sticky left-0 bg-purple-50/30 px-3 py-1 text-xs font-medium text-zinc-500">
+                      HCP
+                    </td>
+                    {frontHcps.map((hcp, i) => (
+                      <td key={i} className="px-1 py-1 text-center text-xs text-zinc-400">
+                        {hcp}
+                      </td>
+                    ))}
+                    <td className="bg-purple-50/40 px-2 py-1 text-center text-xs text-zinc-400">
+                      &nbsp;
+                    </td>
+                  </tr>
+                )}
                 {/* Par row */}
                 <tr className="border-b border-zinc-100">
                   <td className="sticky left-0 bg-white px-3 py-1.5 text-xs font-medium text-zinc-500">
@@ -238,14 +297,7 @@ export default function ScorecardDetailPage() {
                       </td>
                       {frontScores.map((score, hIdx) => {
                         const par = pars[hIdx];
-                        let cellColor = "";
-                        if (score !== null && par) {
-                          if (score <= par - 2) cellColor = "bg-yellow-100 text-yellow-800";
-                          else if (score === par - 1) cellColor = "bg-red-100 text-red-700";
-                          else if (score === par) cellColor = "text-zinc-900";
-                          else if (score === par + 1) cellColor = "bg-blue-100 text-blue-700";
-                          else if (score >= par + 2) cellColor = "bg-blue-200 text-blue-800";
-                        }
+                        const cellColor = scoreColor(score, par);
                         return (
                           <td key={hIdx} className="px-1 py-1 text-center">
                             <input
@@ -262,7 +314,7 @@ export default function ScorecardDetailPage() {
                         );
                       })}
                       <td className="bg-zinc-50 px-2 py-1.5 text-center text-sm font-bold text-zinc-900">
-                        {frontTotal || "–"}
+                        {frontTotal || "\u2013"}
                       </td>
                     </tr>
                   );
@@ -296,6 +348,38 @@ export default function ScorecardDetailPage() {
                 </tr>
               </thead>
               <tbody>
+                {/* Yardage row */}
+                {hasYardages && (
+                  <tr className="border-b border-zinc-100 bg-blue-50/40">
+                    <td className="sticky left-0 bg-blue-50/40 px-3 py-1 text-xs font-medium text-zinc-500">
+                      Yards
+                    </td>
+                    {backYardages.map((yds, i) => (
+                      <td key={i} className="px-1 py-1 text-center text-xs text-zinc-400">
+                        {yds}
+                      </td>
+                    ))}
+                    <td className="bg-blue-50/60 px-2 py-1 text-center text-xs font-semibold text-zinc-500">
+                      {backYardTotal}
+                    </td>
+                  </tr>
+                )}
+                {/* Handicap row */}
+                {hasHcps && (
+                  <tr className="border-b border-zinc-100 bg-purple-50/30">
+                    <td className="sticky left-0 bg-purple-50/30 px-3 py-1 text-xs font-medium text-zinc-500">
+                      HCP
+                    </td>
+                    {backHcps.map((hcp, i) => (
+                      <td key={i} className="px-1 py-1 text-center text-xs text-zinc-400">
+                        {hcp}
+                      </td>
+                    ))}
+                    <td className="bg-purple-50/40 px-2 py-1 text-center text-xs text-zinc-400">
+                      &nbsp;
+                    </td>
+                  </tr>
+                )}
                 {/* Par row */}
                 <tr className="border-b border-zinc-100">
                   <td className="sticky left-0 bg-white px-3 py-1.5 text-xs font-medium text-zinc-500">
@@ -348,14 +432,7 @@ export default function ScorecardDetailPage() {
                       </td>
                       {backScores.map((score, hIdx) => {
                         const par = pars[hIdx + 9];
-                        let cellColor = "";
-                        if (score !== null && par) {
-                          if (score <= par - 2) cellColor = "bg-yellow-100 text-yellow-800";
-                          else if (score === par - 1) cellColor = "bg-red-100 text-red-700";
-                          else if (score === par) cellColor = "text-zinc-900";
-                          else if (score === par + 1) cellColor = "bg-blue-100 text-blue-700";
-                          else if (score >= par + 2) cellColor = "bg-blue-200 text-blue-800";
-                        }
+                        const cellColor = scoreColor(score, par);
                         return (
                           <td key={hIdx} className="px-1 py-1 text-center">
                             <input
@@ -376,7 +453,7 @@ export default function ScorecardDetailPage() {
                         );
                       })}
                       <td className="bg-zinc-50 px-2 py-1.5 text-center text-sm font-bold text-zinc-900">
-                        {backTotal || "–"}
+                        {backTotal || "\u2013"}
                       </td>
                     </tr>
                   );
@@ -389,6 +466,11 @@ export default function ScorecardDetailPage() {
         {/* Totals */}
         <div className="mt-6 rounded-xl border border-zinc-200 bg-white p-5 shadow-sm">
           <h2 className="text-sm font-semibold text-zinc-600">Totals</h2>
+          {hasYardages && (
+            <p className="mt-1 text-xs text-zinc-400">
+              Total yardage: {frontYardTotal + backYardTotal}
+            </p>
+          )}
           <div className="mt-3 overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
@@ -436,30 +518,30 @@ export default function ScorecardDetailPage() {
                         {player.name}
                       </td>
                       <td className="px-3 py-2 text-center text-zinc-600">
-                        {front || "–"}
+                        {front || "\u2013"}
                       </td>
                       <td className="px-3 py-2 text-center text-zinc-600">
-                        {back || "–"}
+                        {back || "\u2013"}
                       </td>
                       <td className="px-3 py-2 text-center font-bold text-zinc-900">
-                        {gross || "–"}
+                        {gross || "\u2013"}
                       </td>
                       <td className="px-3 py-2 text-center text-zinc-400">
                         {player.handicap}
                       </td>
                       <td className="px-3 py-2 text-center font-bold text-emerald-700">
-                        {gross ? net : "–"}
+                        {gross ? net : "\u2013"}
                       </td>
                       <td
                         className={`px-3 py-2 text-center font-semibold ${
                           vsPar > 0
-                            ? "text-blue-600"
+                            ? "text-red-600"
                             : vsPar < 0
-                              ? "text-red-600"
+                              ? "text-green-600"
                               : "text-zinc-600"
                         }`}
                       >
-                        {gross ? vsParStr : "–"}
+                        {gross ? vsParStr : "\u2013"}
                       </td>
                     </tr>
                   );
