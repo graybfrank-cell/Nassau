@@ -17,10 +17,17 @@ export default function ScorecardsPage() {
   const [scorecards, setScorecards] = useState<Scorecard[]>([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
-  const [courseName, setCourseName] = useState("");
   const [date, setDate] = useState("");
   const [playerNames, setPlayerNames] = useState("");
   const [error, setError] = useState<string | null>(null);
+
+  // Course search state
+  const [courseName, setCourseName] = useState("");
+  const [courseApiId, setCourseApiId] = useState<number | null>(null);
+  const [teeName, setTeeName] = useState("");
+  const [pars, setPars] = useState<number[]>(DEFAULT_PARS);
+  const [yardages, setYardages] = useState<number[]>([]);
+  const [handicaps, setHandicaps] = useState<number[]>([]);
 
   useEffect(() => {
     const supabase = createClient();
@@ -37,6 +44,22 @@ export default function ScorecardsPage() {
 
   async function refresh() {
     if (userId) setScorecards(await getScorecards({ userId }));
+  }
+
+  function handleCourseSelect(data: {
+    courseName: string;
+    courseApiId: number | null;
+    teeName: string;
+    pars: number[];
+    yardages: number[];
+    handicaps: number[];
+  }) {
+    setCourseName(data.courseName);
+    setCourseApiId(data.courseApiId);
+    setTeeName(data.teeName);
+    setPars(data.pars);
+    setYardages(data.yardages);
+    setHandicaps(data.handicaps);
   }
 
   async function handleCreate(e: React.FormEvent) {
@@ -59,12 +82,21 @@ export default function ScorecardsPage() {
         userId,
         tripId: null,
         courseName: courseName.trim(),
+        courseApiId,
+        teeName,
         date,
-        pars: DEFAULT_PARS,
+        pars,
+        yardages,
+        handicaps,
         players,
       });
 
       setCourseName("");
+      setCourseApiId(null);
+      setTeeName("");
+      setPars(DEFAULT_PARS);
+      setYardages([]);
+      setHandicaps([]);
       setDate("");
       setPlayerNames("");
       setShowForm(false);
@@ -225,6 +257,9 @@ export default function ScorecardsPage() {
                     <h3 className="font-semibold text-zinc-900">
                       {sc.courseName || "Untitled Round"}
                     </h3>
+                    {sc.teeName && (
+                      <p className="text-xs text-emerald-600">{sc.teeName} tees</p>
+                    )}
                     {sc.date && (
                       <p className="mt-1 text-sm text-zinc-400">{sc.date}</p>
                     )}

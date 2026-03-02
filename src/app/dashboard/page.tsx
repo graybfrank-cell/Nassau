@@ -5,12 +5,14 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { getTrips, createTrip, deleteTrip } from "@/lib/store";
-import { Trip } from "@/lib/types";
-import { Plus, MapPin, Users, Calendar, Trash2, ClipboardList, AlertCircle } from "lucide-react";
+import { getGameRounds } from "@/lib/game-store";
+import { Trip, GameRound } from "@/lib/types";
+import { Plus, MapPin, Users, Calendar, Trash2, AlertCircle, Trophy } from "lucide-react";
 
 export default function DashboardPage() {
   const router = useRouter();
   const [trips, setTrips] = useState<Trip[]>([]);
+  const [recentRounds, setRecentRounds] = useState<GameRound[]>([]);
   const [showForm, setShowForm] = useState(false);
   const [name, setName] = useState("");
   const [destination, setDestination] = useState("");
@@ -31,7 +33,9 @@ export default function DashboardPage() {
           return;
         }
 
-        setTrips(await getTrips());
+        const [t, r] = await Promise.all([getTrips(), getGameRounds()]);
+        setTrips(t);
+        setRecentRounds(r.slice(0, 3));
       } else {
         router.push("/login");
       }
@@ -40,7 +44,9 @@ export default function DashboardPage() {
   }, [router]);
 
   async function refresh() {
-    setTrips(await getTrips());
+    const [t, r] = await Promise.all([getTrips(), getGameRounds()]);
+    setTrips(t);
+    setRecentRounds(r.slice(0, 3));
   }
 
   async function handleCreate(e: React.FormEvent) {
@@ -69,7 +75,7 @@ export default function DashboardPage() {
     setError(null);
     try {
       await deleteTrip(tripId);
-      await refresh();
+      setTrips(await getTrips());
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to delete trip");
     }
@@ -106,19 +112,19 @@ export default function DashboardPage() {
           </div>
           <div className="flex items-center gap-3">
             <Link
-              href="/scorecards"
+              href="/rounds/new"
               className="inline-flex items-center gap-2 rounded-lg border border-zinc-200 bg-white px-4 py-2.5 text-sm font-semibold text-zinc-700 transition-colors hover:bg-zinc-50"
             >
-              <ClipboardList className="h-4 w-4" />
-              Scorecards
+              <Trophy className="h-4 w-4" />
+              Quick Round
             </Link>
-            <button
-              onClick={() => setShowForm(!showForm)}
+            <Link
+              href="/trips/new"
               className="inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-emerald-700"
             >
               <Plus className="h-4 w-4" />
               New Trip
-            </button>
+            </Link>
           </div>
         </div>
 
@@ -198,6 +204,52 @@ export default function DashboardPage() {
           </form>
         )}
 
+        {/* Recent Rounds */}
+        {recentRounds.length > 0 && (
+          <div className="mt-8">
+            <div className="flex items-center justify-between">
+              <h2 className="text-lg font-semibold text-zinc-900">
+                Recent Rounds
+              </h2>
+              <Link
+                href="/rounds"
+                className="text-sm font-medium text-emerald-600 hover:text-emerald-700"
+              >
+                View All &rarr;
+              </Link>
+            </div>
+            <div className="mt-3 grid gap-3 sm:grid-cols-3">
+              {recentRounds.map((round) => {
+                const bestScore = round.scorecards
+                  .filter((sc) => sc.total && sc.total > 0)
+                  .sort((a, b) => (a.total || 999) - (b.total || 999))[0];
+                return (
+                  <Link
+                    key={round.id}
+                    href={`/rounds/${round.id}`}
+                    className="rounded-lg border border-zinc-200 bg-white p-4 shadow-sm transition-shadow hover:shadow-md"
+                  >
+                    <p className="text-sm font-semibold text-zinc-900">
+                      {round.courseName}
+                    </p>
+                    <p className="mt-1 text-xs text-zinc-400">
+                      {new Date(round.teeTime).toLocaleDateString("en-US", {
+                        month: "short",
+                        day: "numeric",
+                      })}
+                    </p>
+                    {bestScore && (
+                      <p className="mt-1 text-xs text-emerald-600">
+                        Low: {bestScore.total}
+                      </p>
+                    )}
+                  </Link>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
         {/* Trip List */}
         {trips.length === 0 ? (
           <div className="mt-16 text-center">
@@ -235,7 +287,7 @@ export default function DashboardPage() {
                     <div className="mt-1 flex items-center gap-1.5 text-sm text-zinc-500">
                       <Calendar className="h-3.5 w-3.5" />
                       {trip.startDate && trip.endDate
-                        ? `${trip.startDate} — ${trip.endDate}`
+                        ? `${trip.startDate} \u2014 ${trip.endDate}`
                         : trip.startDate || trip.endDate}
                     </div>
                   )}
