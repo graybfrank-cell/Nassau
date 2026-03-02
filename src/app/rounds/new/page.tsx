@@ -133,15 +133,9 @@ export default function NewRoundPage() {
             </label>
             <div className="mt-2">
               <CourseSearch
-                onSelect={(course) => {
-                  setCourseName(course.name);
-                  setCourseId(course.id);
-                  setCourseLocation(course.location);
-                  setCourseLat(course.lat);
-                  setCourseLng(course.lng);
-                }}
+                value={courseName}
+                onChange={setCourseName}
                 placeholder="Search for a course..."
-                allowFreeText
               />
             </div>
             {!courseId && courseName && (
