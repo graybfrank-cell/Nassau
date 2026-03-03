@@ -102,7 +102,7 @@ export async function addItineraryItem(
 export async function updateItineraryItem(
   tripId: string,
   itemId: string,
-  updates: Partial<{ booking_status: string; phone: string; website: string; email: string }>
+  updates: Partial<{ booking_status: string; phone: string; website: string; email: string; sort_order: number }>
 ): Promise<ScheduleItem> {
   const res = await fetch(`/api/trips/${tripId}/itinerary/${itemId}`, {
     method: "PATCH",
@@ -111,6 +111,18 @@ export async function updateItineraryItem(
   });
   await assertOk(res);
   return mapItineraryItem(await res.json());
+}
+
+export async function reorderItineraryItems(
+  tripId: string,
+  itemIds: string[]
+): Promise<void> {
+  const res = await fetch(`/api/trips/${tripId}/itinerary/reorder`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ itemIds }),
+  });
+  await assertOk(res);
 }
 
 export async function removeItineraryItem(
@@ -355,6 +367,7 @@ function mapItineraryItem(row: any): ScheduleItem {
     phone: row.phone || "",
     website: row.website || "",
     email: row.email || "",
+    sortOrder: row.sort_order ?? 0,
   };
 }
 

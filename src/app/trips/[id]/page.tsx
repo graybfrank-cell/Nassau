@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
@@ -12,6 +12,7 @@ import {
   addItineraryItem,
   removeItineraryItem,
   updateItineraryItem,
+  reorderItineraryItems,
   getExpenses,
   getRounds,
   getSkinsGames,
@@ -115,6 +116,10 @@ export default function TripDetailPage() {
   const [inviteEmails, setInviteEmails] = useState("");
   const [inviteSending, setInviteSending] = useState(false);
   const [inviteSuccess, setInviteSuccess] = useState<string | null>(null);
+
+  // Drag-and-drop reorder
+  const dragItemRef = useRef<string | null>(null);
+  const [dragOverId, setDragOverId] = useState<string | null>(null);
 
   useEffect(() => {
     setLoading(true);
@@ -286,6 +291,42 @@ export default function TripDetailPage() {
     }
   }
 
+  async function handleDrop(targetId: string, dateGroup: string) {
+    if (!trip || !dragItemRef.current || dragItemRef.current === targetId) {
+      setDragOverId(null);
+      return;
+    }
+    const eventsInDate = trip.schedule
+      .filter((e) => e.date === dateGroup)
+      .sort((a, b) => a.sortOrder - b.sortOrder);
+    const ids = eventsInDate.map((e) => e.id);
+    const fromIdx = ids.indexOf(dragItemRef.current);
+    const toIdx = ids.indexOf(targetId);
+    if (fromIdx === -1 || toIdx === -1) {
+      setDragOverId(null);
+      return;
+    }
+    ids.splice(fromIdx, 1);
+    ids.splice(toIdx, 0, dragItemRef.current);
+    // Optimistic update
+    setTrip((prev) => {
+      if (!prev) return prev;
+      const updated = prev.schedule.map((item) => {
+        const newIdx = ids.indexOf(item.id);
+        if (newIdx !== -1) return { ...item, sortOrder: newIdx };
+        return item;
+      });
+      return { ...prev, schedule: updated };
+    });
+    setDragOverId(null);
+    dragItemRef.current = null;
+    try {
+      await reorderItineraryItems(tripId, ids);
+    } catch {
+      await refresh();
+    }
+  }
+
   async function handleSaveName() {
     if (!trip || !nameDraft.trim() || nameDraft.trim() === trip.name) {
       setEditingName(false);
@@ -382,7 +423,9 @@ export default function TripDetailPage() {
   // Group schedule by date
   const sortedSchedule = [...trip.schedule].sort((a, b) => {
     if (a.date !== b.date) return a.date.localeCompare(b.date);
-    return timeToMinutes(a.time) - timeToMinutes(b.time);
+    const timeDiff = timeToMinutes(a.time) - timeToMinutes(b.time);
+    if (timeDiff !== 0) return timeDiff;
+    return a.sortOrder - b.sortOrder;
   });
   const scheduleDates = Array.from(new Set(sortedSchedule.map((s) => s.date))).sort();
 
@@ -1201,7 +1244,12 @@ export default function TripDetailPage() {
                         return (
                           <div
                             key={event.id}
-                            className="group flex items-center gap-3 rounded-lg px-3 py-2 hover:bg-zinc-50"
+                            draggable
+                            onDragStart={() => { dragItemRef.current = event.id; }}
+                            onDragOver={(e) => { e.preventDefault(); setDragOverId(event.id); }}
+                            onDragEnd={() => { dragItemRef.current = null; setDragOverId(null); }}
+                            onDrop={() => handleDrop(event.id, date)}
+                            className={`group flex items-center gap-3 rounded-lg px-3 py-2 hover:bg-zinc-50 cursor-grab active:cursor-grabbing transition-colors ${dragOverId === event.id ? "bg-emerald-50 ring-1 ring-emerald-300" : ""}`}
                           >
                             <span
                               className={`shrink-0 rounded-full px-2 py-0.5 text-xs font-medium ${

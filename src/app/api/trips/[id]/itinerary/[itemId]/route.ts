@@ -30,6 +30,7 @@ export async function PATCH(
   if (body.phone !== undefined) data.phone = body.phone;
   if (body.website !== undefined) data.website = body.website;
   if (body.email !== undefined) data.email = body.email;
+  if (body.sort_order !== undefined) data.sort_order = body.sort_order;
 
   const updated = await prisma.itineraryItems.update({
     where: { id: itemId },

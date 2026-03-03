@@ -30,6 +30,7 @@ export interface ScheduleItem {
   phone: string;
   website: string;
   email: string;
+  sortOrder: number;
 }
 
 export interface Trip {
