@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import crypto from "crypto";
 import { prisma } from "@/lib/prisma";
 import { getUser, unauthorized } from "@/lib/auth";
 import { Resend } from "resend";
@@ -6,6 +7,16 @@ import { Resend } from "resend";
 const resend = process.env.RESEND_API_KEY
   ? new Resend(process.env.RESEND_API_KEY)
   : null;
+
+function generateShareCode(): string {
+  const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+  const bytes = crypto.randomBytes(8);
+  let code = "";
+  for (let i = 0; i < 8; i++) {
+    code += chars[bytes[i] % chars.length];
+  }
+  return code;
+}
 
 export async function GET() {
   const user = await getUser();
@@ -67,6 +78,7 @@ export async function POST(req: NextRequest) {
     const round = await prisma.gameRounds.create({
       data: {
         commissioner_id: user.id,
+        share_code: generateShareCode(),
         course_name: body.courseName,
         course_id: body.courseId || null,
         course_location: body.courseLocation || null,

@@ -60,5 +60,26 @@ export async function ensureDbColumns(): Promise<void> {
     // Ignore — constraint may already exist
   }
 
+  // Regenerate UUID-format share_codes on game_rounds to short alphanumeric codes
+  try {
+    const uuidPattern =
+      "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$";
+    const rows: { id: string }[] = await prisma.$queryRawUnsafe(
+      `SELECT id FROM game_rounds WHERE share_code ~ '${uuidPattern}'`
+    );
+    for (const row of rows) {
+      const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+      let code = "";
+      for (let i = 0; i < 8; i++) {
+        code += chars[Math.floor(Math.random() * chars.length)];
+      }
+      await prisma.$executeRawUnsafe(
+        `UPDATE game_rounds SET share_code = '${code}' WHERE id = '${row.id}'`
+      );
+    }
+  } catch {
+    // Table may not exist yet
+  }
+
   migrated = true;
 }
