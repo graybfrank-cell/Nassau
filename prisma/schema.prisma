@@ -230,7 +230,7 @@ model GameRounds {
   course_lng      Float?
   tee_time        DateTime @db.Timestamptz()
   status          String   @default("upcoming") // "upcoming", "in_progress", "completed"
-  share_code      String   @unique @default(uuid())
+  share_code      String   @unique @default(cuid())
   notes           String?
   created_at      DateTime @default(now()) @db.Timestamptz()
   updated_at      DateTime @updatedAt @db.Timestamptz()
