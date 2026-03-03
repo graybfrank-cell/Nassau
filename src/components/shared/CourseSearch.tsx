@@ -83,7 +83,7 @@ export default function CourseSearch({
       onChange(val);
       return;
     }
-    clearTimeout(debounceRef.current);
+    if (debounceRef.current) clearTimeout(debounceRef.current);
     debounceRef.current = setTimeout(() => search(val), 300);
   }
 
