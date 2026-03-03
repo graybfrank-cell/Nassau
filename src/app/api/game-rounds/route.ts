@@ -45,9 +45,12 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Deduplicate players by email to avoid unique constraint violations
+    // Deduplicate players by email and exclude the commissioner's own email
+    // to avoid unique constraint violations (commissioner is auto-added)
     const rawPlayers: { name: string; email?: string }[] = body.players || [];
+    const commEmail = user.email?.toLowerCase();
     const seenEmails = new Set<string>();
+    if (commEmail) seenEmails.add(commEmail);
     const dedupedPlayers = rawPlayers.filter((p) => {
       if (!p.email) return true;
       const lower = p.email.toLowerCase();
