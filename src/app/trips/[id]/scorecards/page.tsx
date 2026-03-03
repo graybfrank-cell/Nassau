@@ -49,22 +49,6 @@ export default function TripScorecardsPage() {
     setScorecards(await getScorecards({ tripId }));
   }
 
-  function handleCourseSelect(data: {
-    courseName: string;
-    courseApiId: number | null;
-    teeName: string;
-    pars: number[];
-    yardages: number[];
-    handicaps: number[];
-  }) {
-    setCourseName(data.courseName);
-    setCourseApiId(data.courseApiId);
-    setTeeName(data.teeName);
-    setPars(data.pars);
-    setYardages(data.yardages);
-    setHandicaps(data.handicaps);
-  }
-
   async function handleCreate(e: React.FormEvent) {
     e.preventDefault();
     if (!trip) return;
@@ -195,6 +179,9 @@ export default function TripScorecardsPage() {
                   <CourseSearch
                     value={courseName}
                     onChange={setCourseName}
+                    onCourseSelect={(course) => {
+                      setCourseApiId(parseInt(course.id) || null);
+                    }}
                     placeholder="Search for a course…"
                   />
                 </div>

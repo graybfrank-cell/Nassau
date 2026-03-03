@@ -51,7 +51,12 @@ interface RawCourse {
   addr?: string;
   address?: string;
   holes?: number;
-  location?: { city?: string; state?: string; country?: string };
+  lat?: number;
+  lng?: number;
+  latitude?: number;
+  longitude?: number;
+  coordinates?: { lat?: number; lng?: number };
+  location?: { city?: string; state?: string; country?: string; lat?: number; lng?: number };
 }
 
 function normalizeCourses(data: unknown): Array<{
@@ -59,6 +64,8 @@ function normalizeCourses(data: unknown): Array<{
   name: string;
   location: string;
   holes: number | null;
+  lat: number | null;
+  lng: number | null;
 }> {
   // Handle various response shapes
   const raw: RawCourse[] = Array.isArray(data)
@@ -74,6 +81,8 @@ function normalizeCourses(data: unknown): Array<{
     name: c.name || c.club_name || c.course_name || "Unknown",
     location: formatLocation(c),
     holes: c.holes ?? null,
+    lat: c.lat ?? c.latitude ?? c.coordinates?.lat ?? c.location?.lat ?? null,
+    lng: c.lng ?? c.longitude ?? c.coordinates?.lng ?? c.location?.lng ?? null,
   }));
 }
 

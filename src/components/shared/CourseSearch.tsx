@@ -3,26 +3,30 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import { Search, MapPin, Keyboard } from "lucide-react";
 
-interface Course {
+export interface CourseInfo {
   id: string;
   name: string;
   location: string;
   holes: number | null;
+  lat?: number;
+  lng?: number;
 }
 
 interface CourseSearchProps {
   value: string;
   onChange: (value: string) => void;
+  onCourseSelect?: (course: CourseInfo) => void;
   placeholder?: string;
 }
 
 export default function CourseSearch({
   value,
   onChange,
+  onCourseSelect,
   placeholder = "Search for a course…",
 }: CourseSearchProps) {
   const [query, setQuery] = useState(value);
-  const [results, setResults] = useState<Course[]>([]);
+  const [results, setResults] = useState<CourseInfo[]>([]);
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
   const [apiDown, setApiDown] = useState(false);
@@ -83,12 +87,10 @@ export default function CourseSearch({
     debounceRef.current = setTimeout(() => search(val), 300);
   }
 
-  function selectCourse(course: Course) {
-    const display = course.location
-      ? `${course.name} — ${course.location}`
-      : course.name;
+  function selectCourse(course: CourseInfo) {
     setQuery(course.name);
     onChange(course.name);
+    onCourseSelect?.(course);
     setOpen(false);
     setResults([]);
   }

@@ -135,6 +135,12 @@ export default function NewRoundPage() {
               <CourseSearch
                 value={courseName}
                 onChange={setCourseName}
+                onCourseSelect={(course) => {
+                  setCourseId(course.id);
+                  setCourseLocation(course.location || undefined);
+                  setCourseLat(course.lat);
+                  setCourseLng(course.lng);
+                }}
                 placeholder="Search for a course..."
               />
             </div>

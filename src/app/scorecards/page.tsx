@@ -46,22 +46,6 @@ export default function ScorecardsPage() {
     if (userId) setScorecards(await getScorecards({ userId }));
   }
 
-  function handleCourseSelect(data: {
-    courseName: string;
-    courseApiId: number | null;
-    teeName: string;
-    pars: number[];
-    yardages: number[];
-    handicaps: number[];
-  }) {
-    setCourseName(data.courseName);
-    setCourseApiId(data.courseApiId);
-    setTeeName(data.teeName);
-    setPars(data.pars);
-    setYardages(data.yardages);
-    setHandicaps(data.handicaps);
-  }
-
   async function handleCreate(e: React.FormEvent) {
     e.preventDefault();
     if (!userId || !playerNames.trim()) return;
@@ -178,6 +162,9 @@ export default function ScorecardsPage() {
                   <CourseSearch
                     value={courseName}
                     onChange={setCourseName}
+                    onCourseSelect={(course) => {
+                      setCourseApiId(parseInt(course.id) || null);
+                    }}
                     placeholder="Search for a course…"
                   />
                 </div>
