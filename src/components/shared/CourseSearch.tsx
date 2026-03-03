@@ -32,7 +32,7 @@ export default function CourseSearch({
   const [apiDown, setApiDown] = useState(false);
   const [manualMode, setManualMode] = useState(false);
   const wrapperRef = useRef<HTMLDivElement>(null);
-  const debounceRef = useRef<ReturnType<typeof setTimeout>>();
+  const debounceRef = useRef<ReturnType<typeof setTimeout>>(null);
 
   // Close dropdown on outside click
   useEffect(() => {
