@@ -99,6 +99,32 @@ export async function addItineraryItem(
   return mapItineraryItem(row);
 }
 
+export async function updateItineraryItem(
+  tripId: string,
+  itemId: string,
+  updates: Partial<{ booking_status: string; phone: string; website: string; email: string; sort_order: number; time: string; date: string }>
+): Promise<ScheduleItem> {
+  const res = await fetch(`/api/trips/${tripId}/itinerary/${itemId}`, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(updates),
+  });
+  await assertOk(res);
+  return mapItineraryItem(await res.json());
+}
+
+export async function reorderItineraryItems(
+  tripId: string,
+  itemIds: string[]
+): Promise<void> {
+  const res = await fetch(`/api/trips/${tripId}/itinerary/reorder`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ itemIds }),
+  });
+  await assertOk(res);
+}
+
 export async function removeItineraryItem(
   tripId: string,
   itemId: string
@@ -112,7 +138,7 @@ export async function removeItineraryItem(
 // --- Expenses ---
 
 export async function getExpenses(tripId: string): Promise<Expense[]> {
-  const res = await fetch(`/api/expenses?tripId=${tripId}`);
+  const res = await fetch(`/api/trips/${tripId}/expenses`);
   if (!res.ok) return [];
   const rows = await res.json();
   return rows.map(mapExpense);
@@ -128,11 +154,10 @@ export async function addExpense(data: {
   const perPerson = data.splitAmong.length > 0
     ? data.amount / data.splitAmong.length
     : 0;
-  const res = await fetch("/api/expenses", {
+  const res = await fetch(`/api/trips/${data.tripId}/expenses`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
-      tripId: data.tripId,
       description: data.description,
       amount: data.amount,
       paidBy: data.paidBy,
@@ -155,7 +180,7 @@ export async function deleteExpense(expenseId: string): Promise<void> {
 // --- Rounds / Pairings ---
 
 export async function getRounds(tripId: string): Promise<Round[]> {
-  const res = await fetch(`/api/rounds?tripId=${tripId}`);
+  const res = await fetch(`/api/trips/${tripId}/rounds`);
   if (!res.ok) return [];
   const rows = await res.json();
   return rows.map(mapRound);
@@ -168,8 +193,9 @@ export async function createRound(data: {
   date?: string;
   groupSize?: number;
   groups: string[][];
+  itineraryItemId?: string;
 }): Promise<Round> {
-  const res = await fetch("/api/rounds", {
+  const res = await fetch(`/api/trips/${data.tripId}/rounds`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(data),
@@ -199,7 +225,7 @@ export async function deleteRound(roundId: string): Promise<void> {
 // --- Skins Games ---
 
 export async function getSkinsGames(tripId: string): Promise<SkinsGame[]> {
-  const res = await fetch(`/api/skins?tripId=${tripId}`);
+  const res = await fetch(`/api/trips/${tripId}/skins`);
   if (!res.ok) return [];
   const rows = await res.json();
   return rows.map(mapSkinsGame);
@@ -211,16 +237,17 @@ export async function createSkinsGame(data: {
   stake: number;
   players: string[];
   holes: { number: number; scores: Record<string, number> }[];
+  itineraryItemId?: string;
 }): Promise<SkinsGame> {
-  const res = await fetch("/api/skins", {
+  const res = await fetch(`/api/trips/${data.tripId}/skins`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
-      tripId: data.tripId,
       name: data.name,
       buyIn: data.stake,
       players: data.players,
       holes: data.holes,
+      itineraryItemId: data.itineraryItemId,
     }),
   });
   await assertOk(res);
@@ -258,10 +285,15 @@ export async function getScorecards(params: {
   userId?: string;
   tripId?: string;
 }): Promise<Scorecard[]> {
-  const query = new URLSearchParams();
-  if (params.userId) query.set("userId", params.userId);
-  if (params.tripId) query.set("tripId", params.tripId);
-  const res = await fetch(`/api/scorecards?${query}`);
+  let url: string;
+  if (params.tripId) {
+    url = `/api/trips/${params.tripId}/scorecards`;
+  } else {
+    const query = new URLSearchParams();
+    if (params.userId) query.set("userId", params.userId);
+    url = `/api/scorecards?${query}`;
+  }
+  const res = await fetch(url);
   if (!res.ok) return [];
   const rows = await res.json();
   return rows.map(mapScorecard);
@@ -276,7 +308,10 @@ export async function getScorecard(id: string): Promise<Scorecard | null> {
 export async function createScorecard(
   scorecard: Omit<Scorecard, "id" | "createdAt">
 ): Promise<Scorecard> {
-  const res = await fetch("/api/scorecards", {
+  const url = scorecard.tripId
+    ? `/api/trips/${scorecard.tripId}/scorecards`
+    : "/api/scorecards";
+  const res = await fetch(url, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(scorecard),
@@ -309,8 +344,12 @@ export async function deleteScorecard(id: string): Promise<void> {
 function mapMember(row: any): Member {
   return {
     id: row.id,
+    userId: row.user_id || undefined,
     name: row.name || "",
     handicap: Number(row.handicap) || 0,
+    email: row.email || undefined,
+    role: row.role || undefined,
+    rsvpStatus: row.rsvp_status || undefined,
   };
 }
 
@@ -323,6 +362,12 @@ function mapItineraryItem(row: any): ScheduleItem {
     title: row.title || "",
     description: row.description || "",
     type: row.type || "other",
+    cost: Number(row.cost) || 0,
+    bookingStatus: row.booking_status || "",
+    phone: row.phone || "",
+    website: row.website || "",
+    email: row.email || "",
+    sortOrder: row.sort_order ?? 0,
   };
 }
 
@@ -394,6 +439,7 @@ function mapRound(row: any): Round {
     courseName: row.course_name || "",
     date: row.date || "",
     groups: row.groups || [],
+    itineraryItemId: row.itinerary_item_id || undefined,
     createdAt: row.created_at,
   };
 }
@@ -407,6 +453,7 @@ function mapSkinsGame(row: any): SkinsGame {
     players: row.players || [],
     stake: Number(row.buy_in ?? row.stake) || 5,
     holes: row.holes || [],
+    itineraryItemId: row.itinerary_item_id || undefined,
     createdAt: row.created_at,
   };
 }
@@ -418,9 +465,14 @@ function mapScorecard(row: any): Scorecard {
     userId: row.user_id,
     tripId: row.trip_id || null,
     courseName: row.course_name || "",
+    courseApiId: row.course_api_id || null,
+    teeName: row.tee_name || "",
     date: row.date || "",
     pars: row.pars || [],
+    yardages: row.yardages || [],
+    handicaps: row.handicaps || [],
     players: row.players || [],
+    itineraryItemId: row.itinerary_item_id || undefined,
     createdAt: row.created_at,
   };
 }
