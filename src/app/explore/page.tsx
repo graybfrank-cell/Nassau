@@ -387,9 +387,10 @@ function ImageWithFallback({
     <img
       src={src}
       alt={alt}
-      className={`${className} object-cover`}
+      className={`${className} object-cover pointer-events-none`}
       onError={() => setFailed(true)}
       loading="lazy"
+      draggable={false}
     />
   );
 }
@@ -750,7 +751,7 @@ function TripModal({
           )}
 
           {/* Top Courses */}
-          {trip.topCourses.length > 0 && (
+          {trip.topCourses?.length > 0 && (
             <div className="mb-5">
               <h3
                 className="text-sm font-bold mb-2"
@@ -811,11 +812,13 @@ function TripModal({
                 </div>
               </div>
             </div>
+            {trip.costPerDay && (
             <div className="mt-2 flex gap-4 text-xs text-gray-500" style={{ fontFamily: "'DM Sans', sans-serif" }}>
               <span>Budget: ${trip.costPerDay.budget}/day</span>
               <span>Mid: ${trip.costPerDay.mid}/day</span>
               <span>Premium: ${trip.costPerDay.premium}/day</span>
             </div>
+            )}
           </div>
 
           {/* CTA */}

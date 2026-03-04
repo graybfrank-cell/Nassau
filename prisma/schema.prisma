@@ -230,7 +230,7 @@ model GameRounds {
   course_lng      Float?
   tee_time        DateTime @db.Timestamptz()
   status          String   @default("upcoming") // "upcoming", "in_progress", "completed"
-  share_code      String   @unique @default(uuid())
+  share_code      String   @unique @default(cuid())
   notes           String?
   created_at      DateTime @default(now()) @db.Timestamptz()
   updated_at      DateTime @updatedAt @db.Timestamptz()
@@ -239,6 +239,7 @@ model GameRounds {
   players      GamePlayers[]
   scorecards   GameScorecards[]
   skins_game   GameSkinsGames?
+  nassau_bet   GameNassauBets?
   expenses     GameExpenses[]
   settlements  GameSettlements[]
 
@@ -299,6 +300,20 @@ model GameSkinsGames {
   round GameRounds @relation(fields: [round_id], references: [id], onDelete: Cascade)
 
   @@map("game_skins_games")
+}
+
+// ─── game_nassau_bets ────────────────────────────────────
+model GameNassauBets {
+  id         String   @id @default(cuid())
+  round_id   String   @unique @db.Uuid
+  bet_amount Decimal  @db.Decimal(10, 2)
+  status     String   @default("active") // "active", "completed"
+  results    Json?
+  created_at DateTime @default(now()) @db.Timestamptz()
+
+  round GameRounds @relation(fields: [round_id], references: [id], onDelete: Cascade)
+
+  @@map("game_nassau_bets")
 }
 
 // ─── game_expenses ───────────────────────────────────────────

@@ -39,6 +39,20 @@ export function generateRoundSummary(round: GameRound): string {
     }
   }
 
+  if (round.nassauBet?.results?.payouts) {
+    const payouts = round.nassauBet.results.payouts;
+    const entries = Object.entries(payouts)
+      .sort(([, a], [, b]) => b - a)
+      .map(([playerId, amount]) => {
+        const player = round.players.find((p) => p.id === playerId);
+        const sign = amount > 0 ? "+" : "";
+        return `${player?.name} ${sign}$${amount}`;
+      });
+    if (entries.length > 0) {
+      text += `\u{1F3C6} Nassau: ${entries.join(", ")}\n`;
+    }
+  }
+
   const unsettled = round.settlements?.filter((s) => !s.settled) || [];
   if (unsettled.length > 0) {
     text += `💰 ${unsettled.length} settlement${unsettled.length > 1 ? "s" : ""} pending\n`;

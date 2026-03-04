@@ -60,5 +60,42 @@ export async function ensureDbColumns(): Promise<void> {
     // Ignore — constraint may already exist
   }
 
+  // game_nassau_bets table
+  try {
+    await prisma.$executeRawUnsafe(`
+      CREATE TABLE IF NOT EXISTS game_nassau_bets (
+        id TEXT PRIMARY KEY,
+        round_id UUID NOT NULL UNIQUE REFERENCES game_rounds(id) ON DELETE CASCADE,
+        bet_amount DECIMAL(10,2) NOT NULL,
+        status TEXT NOT NULL DEFAULT 'active',
+        results JSONB,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+      )
+    `);
+  } catch {
+    // Table may already exist
+  }
+
+  // Regenerate UUID-format share_codes on game_rounds to short alphanumeric codes
+  try {
+    const uuidPattern =
+      "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$";
+    const rows: { id: string }[] = await prisma.$queryRawUnsafe(
+      `SELECT id FROM game_rounds WHERE share_code ~ '${uuidPattern}'`
+    );
+    for (const row of rows) {
+      const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+      let code = "";
+      for (let i = 0; i < 8; i++) {
+        code += chars[Math.floor(Math.random() * chars.length)];
+      }
+      await prisma.$executeRawUnsafe(
+        `UPDATE game_rounds SET share_code = '${code}' WHERE id = '${row.id}'`
+      );
+    }
+  } catch {
+    // Table may not exist yet
+  }
+
   migrated = true;
 }
