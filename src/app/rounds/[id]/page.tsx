@@ -14,6 +14,10 @@ import {
   deleteGameExpense,
   markSettlement,
   recalculateSettlements,
+  createGameSkins,
+  deleteGameSkins,
+  createGameNassauBet,
+  deleteGameNassauBet,
 } from "@/lib/game-store";
 import { GameRound } from "@/lib/types";
 import { generateRoundSummary } from "@/lib/round-summary";
@@ -41,6 +45,7 @@ import {
   DollarSign,
   ClipboardList,
   CheckCircle2,
+  Trash2,
 } from "lucide-react";
 
 function formatFullDate(dateStr: string): string {
@@ -105,6 +110,12 @@ export default function RoundDashboardPage() {
   const [localScorecards, setLocalScorecards] = useState<
     Map<string, number[]>
   >(new Map());
+
+  // Game toggle forms
+  const [showAddSkins, setShowAddSkins] = useState(false);
+  const [skinsBuyIn, setSkinsBuyIn] = useState("20");
+  const [showAddNassau, setShowAddNassau] = useState(false);
+  const [nassauBetAmount, setNassauBetAmount] = useState("10");
 
   const refresh = useCallback(async () => {
     const r = await getGameRound(roundId);
@@ -401,6 +412,58 @@ export default function RoundDashboardPage() {
     }
   }
 
+  async function handleAddSkinsGame() {
+    setError(null);
+    try {
+      await createGameSkins(roundId, { buyIn: parseFloat(skinsBuyIn) || 20 });
+      setShowAddSkins(false);
+      await refresh();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to add skins game");
+    }
+  }
+
+  async function handleRemoveSkinsGame() {
+    setError(null);
+    try {
+      await deleteGameSkins(roundId);
+      await refresh();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to remove skins game");
+    }
+  }
+
+  async function handleAddNassauBet() {
+    setError(null);
+    try {
+      await createGameNassauBet(roundId, { betAmount: parseFloat(nassauBetAmount) || 10 });
+      setShowAddNassau(false);
+      await refresh();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to add Nassau bet");
+    }
+  }
+
+  async function handleRemoveNassauBet() {
+    setError(null);
+    try {
+      await deleteGameNassauBet(roundId);
+      await refresh();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to remove Nassau bet");
+    }
+  }
+
+  async function handleStartingHoleChange(hole: number) {
+    setError(null);
+    try {
+      await updateGameRound(roundId, { startingHole: hole });
+      await refresh();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to update starting hole");
+    }
+  }
+
   async function handleCopyInviteLink() {
     const link = `${window.location.origin}/round/${round!.shareCode}`;
     await navigator.clipboard.writeText(link);
@@ -460,7 +523,32 @@ export default function RoundDashboardPage() {
                     {round.notes}
                   </div>
                 )}
+                {round.startingHole === 10 && (
+                  <span className="inline-flex items-center rounded-full bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-700">
+                    Starting Hole 10
+                  </span>
+                )}
               </div>
+              {isCommissioner && (
+                <div className="mt-3">
+                  <label className="block text-xs font-medium text-zinc-500 mb-1">Starting Hole</label>
+                  <div className="flex gap-1.5">
+                    {[1, 10].map((hole) => (
+                      <button
+                        key={hole}
+                        onClick={() => handleStartingHoleChange(hole)}
+                        className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${
+                          round.startingHole === hole
+                            ? "bg-emerald-100 text-emerald-700"
+                            : "bg-zinc-100 text-zinc-500 hover:bg-zinc-200"
+                        }`}
+                      >
+                        Hole {hole}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
 
             <div className="flex items-center gap-2">
@@ -625,21 +713,34 @@ export default function RoundDashboardPage() {
               onScoreChange={handleScoreChange}
               onSave={handleSaveScorecard}
               canEditAll={isCommissioner}
+              startingHole={round.startingHole}
             />
           )}
         </div>
 
         {/* Skins Game */}
-        {round.skinsGame && (
-          <div className="mt-6 rounded-xl border border-zinc-200 bg-white p-6 shadow-sm">
-            <div className="flex items-center gap-2 mb-4">
+        <div className="mt-6 rounded-xl border border-zinc-200 bg-white p-6 shadow-sm">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-2">
               <Trophy className="h-5 w-5 text-zinc-400" />
               <h2 className="text-lg font-semibold text-zinc-900">
-                Skins Game (${round.skinsGame.buyIn} buy-in)
+                Skins Game
+                {round.skinsGame && ` ($${round.skinsGame.buyIn} buy-in)`}
               </h2>
             </div>
+            {isCommissioner && round.skinsGame && (
+              <button
+                onClick={handleRemoveSkinsGame}
+                className="inline-flex items-center gap-1 text-xs text-red-500 hover:text-red-600"
+              >
+                <Trash2 className="h-3 w-3" />
+                Remove
+              </button>
+            )}
+          </div>
 
-            {confirmedPlayers.length < 2 ? (
+          {round.skinsGame ? (
+            confirmedPlayers.length < 2 ? (
               <p className="text-sm text-zinc-400">
                 Need at least 2 confirmed players for skins.
               </p>
@@ -648,23 +749,90 @@ export default function RoundDashboardPage() {
                 players={skinsPlayers}
                 scorecards={skinsScorecards}
                 buyIn={round.skinsGame.buyIn}
+                startingHole={round.startingHole}
               />
-            )}
-          </div>
-        )}
+            )
+          ) : isCommissioner ? (
+            showAddSkins ? (
+              <div className="rounded-lg border border-zinc-200 bg-zinc-50 p-4">
+                <label className="block text-xs font-medium text-zinc-600">Buy-in</label>
+                <div className="mt-1.5 flex items-center gap-2">
+                  {[5, 10, 20, 50].map((amount) => (
+                    <button
+                      key={amount}
+                      onClick={() => setSkinsBuyIn(String(amount))}
+                      className={`rounded-full px-3 py-1.5 text-xs font-medium transition-colors ${
+                        skinsBuyIn === String(amount)
+                          ? "bg-emerald-100 text-emerald-700"
+                          : "bg-zinc-100 text-zinc-500 hover:bg-zinc-200"
+                      }`}
+                    >
+                      ${amount}
+                    </button>
+                  ))}
+                  <div className="relative">
+                    <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-xs text-zinc-400">$</span>
+                    <input
+                      type="number"
+                      min="1"
+                      value={skinsBuyIn}
+                      onChange={(e) => setSkinsBuyIn(e.target.value)}
+                      className="w-20 rounded-lg border border-zinc-300 py-1.5 pl-6 pr-2 text-xs text-zinc-900 focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500/20"
+                    />
+                  </div>
+                </div>
+                <div className="mt-3 flex gap-2">
+                  <button
+                    onClick={handleAddSkinsGame}
+                    className="rounded-md bg-emerald-600 px-4 py-1.5 text-xs font-medium text-white hover:bg-emerald-700"
+                  >
+                    Create Skins Game
+                  </button>
+                  <button
+                    onClick={() => setShowAddSkins(false)}
+                    className="rounded-md border border-zinc-300 px-4 py-1.5 text-xs font-medium text-zinc-600 hover:bg-zinc-50"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <button
+                onClick={() => setShowAddSkins(true)}
+                className="inline-flex items-center gap-1.5 rounded-lg border border-dashed border-zinc-300 px-4 py-3 text-sm font-medium text-zinc-500 transition-colors hover:border-emerald-400 hover:text-emerald-600 w-full justify-center"
+              >
+                <Plus className="h-4 w-4" />
+                Add Skins Game
+              </button>
+            )
+          ) : (
+            <p className="text-sm text-zinc-400">No skins game for this round.</p>
+          )}
+        </div>
 
         {/* Nassau Bet */}
-        {round.nassauBet && (
-          <div className="mt-6 rounded-xl border border-zinc-200 bg-white p-6 shadow-sm">
-            <div className="flex items-center gap-2 mb-4">
+        <div className="mt-6 rounded-xl border border-zinc-200 bg-white p-6 shadow-sm">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-2">
               <Trophy className="h-5 w-5 text-zinc-400" />
               <h2 className="text-lg font-semibold text-zinc-900">
-                Nassau Bet (${round.nassauBet.betAmount}/bet &middot; $
-                {round.nassauBet.betAmount * 3} total at risk)
+                Nassau Bet
+                {round.nassauBet && ` ($${round.nassauBet.betAmount}/bet)`}
               </h2>
             </div>
+            {isCommissioner && round.nassauBet && (
+              <button
+                onClick={handleRemoveNassauBet}
+                className="inline-flex items-center gap-1 text-xs text-red-500 hover:text-red-600"
+              >
+                <Trash2 className="h-3 w-3" />
+                Remove
+              </button>
+            )}
+          </div>
 
-            {confirmedPlayers.length < 2 ? (
+          {round.nassauBet ? (
+            confirmedPlayers.length < 2 ? (
               <p className="text-sm text-zinc-400">
                 Need at least 2 confirmed players for Nassau bet.
               </p>
@@ -679,10 +847,70 @@ export default function RoundDashboardPage() {
                   holes: localScorecards.get(p.id) || Array(18).fill(0),
                 }))}
                 betAmount={round.nassauBet.betAmount}
+                startingHole={round.startingHole}
               />
-            )}
-          </div>
-        )}
+            )
+          ) : isCommissioner ? (
+            showAddNassau ? (
+              <div className="rounded-lg border border-zinc-200 bg-zinc-50 p-4">
+                <label className="block text-xs font-medium text-zinc-600">Per-bet amount</label>
+                <div className="mt-1.5 flex items-center gap-2">
+                  {[5, 10, 20, 50].map((amount) => (
+                    <button
+                      key={amount}
+                      onClick={() => setNassauBetAmount(String(amount))}
+                      className={`rounded-full px-3 py-1.5 text-xs font-medium transition-colors ${
+                        nassauBetAmount === String(amount)
+                          ? "bg-emerald-100 text-emerald-700"
+                          : "bg-zinc-100 text-zinc-500 hover:bg-zinc-200"
+                      }`}
+                    >
+                      ${amount}
+                    </button>
+                  ))}
+                  <div className="relative">
+                    <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-xs text-zinc-400">$</span>
+                    <input
+                      type="number"
+                      min="1"
+                      value={nassauBetAmount}
+                      onChange={(e) => setNassauBetAmount(e.target.value)}
+                      className="w-20 rounded-lg border border-zinc-300 py-1.5 pl-6 pr-2 text-xs text-zinc-900 focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500/20"
+                    />
+                  </div>
+                </div>
+                <p className="mt-2 text-xs text-zinc-400">
+                  3 bets: front 9, back 9, total 18 &middot; Total at risk: $
+                  {(parseFloat(nassauBetAmount) || 0) * 3} per player
+                </p>
+                <div className="mt-3 flex gap-2">
+                  <button
+                    onClick={handleAddNassauBet}
+                    className="rounded-md bg-emerald-600 px-4 py-1.5 text-xs font-medium text-white hover:bg-emerald-700"
+                  >
+                    Create Nassau Bet
+                  </button>
+                  <button
+                    onClick={() => setShowAddNassau(false)}
+                    className="rounded-md border border-zinc-300 px-4 py-1.5 text-xs font-medium text-zinc-600 hover:bg-zinc-50"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <button
+                onClick={() => setShowAddNassau(true)}
+                className="inline-flex items-center gap-1.5 rounded-lg border border-dashed border-zinc-300 px-4 py-3 text-sm font-medium text-zinc-500 transition-colors hover:border-emerald-400 hover:text-emerald-600 w-full justify-center"
+              >
+                <Plus className="h-4 w-4" />
+                Add Nassau Bet
+              </button>
+            )
+          ) : (
+            <p className="text-sm text-zinc-400">No Nassau bet for this round.</p>
+          )}
+        </div>
 
         {/* Expenses */}
         <div className="mt-6 rounded-xl border border-zinc-200 bg-white p-6 shadow-sm">

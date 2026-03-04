@@ -6,13 +6,32 @@ interface NassauBetCalculatorProps {
   players: { id: string; name: string }[];
   scorecards: { playerId: string; holes: number[] }[];
   betAmount: number;
+  startingHole?: number;
+}
+
+// Get front/back 9 indices based on starting hole
+function getNassauIndices(startingHole: number): { front: number[]; back: number[] } {
+  if (startingHole === 10) {
+    // Front 9 = holes 10-18 (first 9 played), Back 9 = holes 1-9 (last 9 played)
+    return {
+      front: Array.from({ length: 9 }, (_, i) => i + 9),
+      back: Array.from({ length: 9 }, (_, i) => i),
+    };
+  }
+  return {
+    front: Array.from({ length: 9 }, (_, i) => i),
+    back: Array.from({ length: 9 }, (_, i) => i + 9),
+  };
 }
 
 export function calculateNassauBet(
   scorecards: { playerId: string; holes: number[] }[],
   playerIds: string[],
-  betAmount: number
+  betAmount: number,
+  startingHole: number = 1
 ): NassauBetResults {
+  const { front: frontIndices, back: backIndices } = getNassauIndices(startingHole);
+
   const frontScores: Record<string, number> = {};
   const backScores: Record<string, number> = {};
   const overallScores: Record<string, number> = {};
@@ -26,30 +45,30 @@ export function calculateNassauBet(
   );
 
   if (activeScorecards.length >= 2) {
-    // Check front 9 completeness — every player needs at least holes 1-9 filled
+    // Check front 9 completeness
     const frontReady = activeScorecards.every((sc) =>
-      sc.holes.slice(0, 9).every((h) => h > 0)
+      frontIndices.every((idx) => sc.holes[idx] > 0)
     );
     // Check back 9 completeness
     const backReady = activeScorecards.every((sc) =>
-      sc.holes.slice(9, 18).every((h) => h > 0)
+      backIndices.every((idx) => sc.holes[idx] > 0)
     );
 
     if (frontReady) {
       frontComplete = true;
       for (const sc of activeScorecards) {
-        frontScores[sc.playerId] = sc.holes
-          .slice(0, 9)
-          .reduce((a, b) => a + (b || 0), 0);
+        frontScores[sc.playerId] = frontIndices.reduce(
+          (a, idx) => a + (sc.holes[idx] || 0), 0
+        );
       }
     }
 
     if (backReady) {
       backComplete = true;
       for (const sc of activeScorecards) {
-        backScores[sc.playerId] = sc.holes
-          .slice(9, 18)
-          .reduce((a, b) => a + (b || 0), 0);
+        backScores[sc.playerId] = backIndices.reduce(
+          (a, idx) => a + (sc.holes[idx] || 0), 0
+        );
       }
     }
   }
@@ -186,15 +205,20 @@ export default function NassauBetCalculator({
   players,
   scorecards,
   betAmount,
+  startingHole = 1,
 }: NassauBetCalculatorProps) {
   const playerIds = players.map((p) => p.id);
-  const results = calculateNassauBet(scorecards, playerIds, betAmount);
+  const results = calculateNassauBet(scorecards, playerIds, betAmount, startingHole);
 
   const frontComplete = Object.keys(results.frontNine.scores).length >= 2;
   const backComplete = Object.keys(results.backNine.scores).length >= 2;
   const overallComplete = Object.keys(results.overall.scores).length >= 2;
 
   const totalAtRisk = betAmount * 3;
+
+  // Labels adjust based on starting hole
+  const frontLabel = startingHole === 10 ? "Front 9 (Holes 10\u201318)" : "Front 9";
+  const backLabel = startingHole === 10 ? "Back 9 (Holes 1\u20139)" : "Back 9";
 
   return (
     <div>
@@ -206,7 +230,7 @@ export default function NassauBetCalculator({
 
       <div className="space-y-1 divide-y divide-zinc-100">
         <SegmentSection
-          label="Front 9"
+          label={frontLabel}
           winnerId={results.frontNine.winnerId}
           scores={results.frontNine.scores}
           players={players}
@@ -214,7 +238,7 @@ export default function NassauBetCalculator({
           waitingLabel="front 9"
         />
         <SegmentSection
-          label="Back 9"
+          label={backLabel}
           winnerId={results.backNine.winnerId}
           scores={results.backNine.scores}
           players={players}

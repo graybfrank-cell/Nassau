@@ -108,7 +108,8 @@ export async function POST(
       const results = calculateNassauBet(
         nassauScorecards,
         confirmedPlayerIds,
-        Number(nassauBet.bet_amount)
+        Number(nassauBet.bet_amount),
+        round.starting_hole
       );
       await prisma.gameNassauBets.update({
         where: { round_id: roundId },
