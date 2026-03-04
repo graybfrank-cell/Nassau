@@ -58,7 +58,13 @@ export default async function RootLayout({
                   href="/dashboard"
                   className="text-sm font-medium text-zinc-300 transition-colors hover:text-white"
                 >
-                  My Trips
+                  Trips
+                </Link>
+                <Link
+                  href="/rounds"
+                  className="text-sm font-medium text-zinc-300 transition-colors hover:text-white"
+                >
+                  Rounds
                 </Link>
                 <span className="hidden text-xs text-zinc-500 sm:inline">
                   {user.email}

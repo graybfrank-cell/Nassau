@@ -30,6 +30,8 @@ export async function POST(
       type: body.type || "other",
       title: body.title || "",
       description: body.description || "",
+      cost: body.cost ?? 0,
+      booking_status: body.booking_status || "",
       sort_order: sortOrder,
     },
   });
