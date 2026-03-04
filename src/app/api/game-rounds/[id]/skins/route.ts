@@ -30,7 +30,8 @@ export async function GET(
   const results = calculateSkinsResults(
     round.scorecards,
     confirmedPlayerIds,
-    Number(round.skins_game.buy_in)
+    Number(round.skins_game.buy_in),
+    round.starting_hole
   );
 
   return NextResponse.json({
@@ -70,16 +71,44 @@ export async function POST(
   return NextResponse.json(skinsGame);
 }
 
+export async function DELETE(
+  _req: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const user = await getUser();
+  if (!user) return unauthorized();
+
+  const { id: roundId } = await params;
+
+  const round = await prisma.gameRounds.findUnique({ where: { id: roundId } });
+  if (!round) {
+    return NextResponse.json({ error: "Not found" }, { status: 404 });
+  }
+  if (round.commissioner_id !== user.id) return forbidden();
+
+  await prisma.gameSkinsGames.deleteMany({ where: { round_id: roundId } });
+  return NextResponse.json({ ok: true });
+}
+
 interface ScorecardRow {
   player_id: string;
   holes: unknown;
 }
 
+function getHoleOrder(startingHole: number): number[] {
+  if (startingHole === 10) {
+    return [...Array.from({ length: 9 }, (_, i) => i + 9), ...Array.from({ length: 9 }, (_, i) => i)];
+  }
+  return Array.from({ length: 18 }, (_, i) => i);
+}
+
 function calculateSkinsResults(
   scorecards: ScorecardRow[],
   playerIds: string[],
-  buyIn: number
+  buyIn: number,
+  startingHole: number = 1
 ) {
+  const holeOrder = getHoleOrder(startingHole);
   const holes: { hole: number; winnerId: string | null; carryover: boolean }[] = [];
   const payouts: Record<string, number> = {};
   playerIds.forEach((id) => { payouts[id] = 0; });
@@ -87,18 +116,19 @@ function calculateSkinsResults(
   let carryover = 0;
 
   for (let i = 0; i < 18; i++) {
+    const idx = holeOrder[i];
     const scores: { playerId: string; score: number }[] = [];
 
     for (const sc of scorecards) {
       if (!playerIds.includes(sc.player_id)) continue;
       const h = sc.holes as number[];
-      if (h && h[i] && h[i] > 0) {
-        scores.push({ playerId: sc.player_id, score: h[i] });
+      if (h && h[idx] && h[idx] > 0) {
+        scores.push({ playerId: sc.player_id, score: h[idx] });
       }
     }
 
     if (scores.length === 0) {
-      holes.push({ hole: i + 1, winnerId: null, carryover: false });
+      holes.push({ hole: idx + 1, winnerId: null, carryover: false });
       continue;
     }
 
@@ -108,12 +138,12 @@ function calculateSkinsResults(
     if (winners.length === 1) {
       const winnerId = winners[0].playerId;
       const skinsValue = 1 + carryover;
-      holes.push({ hole: i + 1, winnerId, carryover: false });
+      holes.push({ hole: idx + 1, winnerId, carryover: false });
       payouts[winnerId] = (payouts[winnerId] || 0) + skinsValue * buyIn;
       carryover = 0;
     } else {
       carryover += 1;
-      holes.push({ hole: i + 1, winnerId: null, carryover: true });
+      holes.push({ hole: idx + 1, winnerId: null, carryover: true });
     }
   }
 

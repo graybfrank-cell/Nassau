@@ -4,20 +4,32 @@ interface SkinsCalculatorProps {
   players: { id: string; name: string }[];
   scorecards: { playerId: string; holes: number[] }[];
   buyIn: number;
+  startingHole?: number;
 }
 
 interface SkinResult {
-  hole: number;
+  hole: number;       // display hole number (1-18)
+  holeIndex: number;  // actual array index (0-17)
   winnerId: string | null;
   skinsValue: number;
   carryover: boolean;
 }
 
+// Get hole order: if startingHole=10, play 10-18 then 1-9
+function getHoleOrder(startingHole: number): number[] {
+  if (startingHole === 10) {
+    return [...Array.from({ length: 9 }, (_, i) => i + 9), ...Array.from({ length: 9 }, (_, i) => i)];
+  }
+  return Array.from({ length: 18 }, (_, i) => i);
+}
+
 function calculateSkins(
   scorecards: { playerId: string; holes: number[] }[],
   playerIds: string[],
-  buyIn: number
+  buyIn: number,
+  startingHole: number = 1
 ) {
+  const holeOrder = getHoleOrder(startingHole);
   const holeResults: SkinResult[] = [];
   const totals: Record<string, { skins: number; winnings: number }> = {};
   playerIds.forEach((id) => {
@@ -27,17 +39,18 @@ function calculateSkins(
   let carryover = 0;
 
   for (let i = 0; i < 18; i++) {
+    const idx = holeOrder[i];
     const scores: { playerId: string; score: number }[] = [];
 
     for (const sc of scorecards) {
       if (!playerIds.includes(sc.playerId)) continue;
-      if (sc.holes[i] && sc.holes[i] > 0) {
-        scores.push({ playerId: sc.playerId, score: sc.holes[i] });
+      if (sc.holes[idx] && sc.holes[idx] > 0) {
+        scores.push({ playerId: sc.playerId, score: sc.holes[idx] });
       }
     }
 
     if (scores.length === 0) {
-      holeResults.push({ hole: i + 1, winnerId: null, skinsValue: 0, carryover: false });
+      holeResults.push({ hole: idx + 1, holeIndex: idx, winnerId: null, skinsValue: 0, carryover: false });
       continue;
     }
 
@@ -47,13 +60,13 @@ function calculateSkins(
     if (winners.length === 1) {
       const winnerId = winners[0].playerId;
       const skinsValue = 1 + carryover;
-      holeResults.push({ hole: i + 1, winnerId, skinsValue, carryover: false });
+      holeResults.push({ hole: idx + 1, holeIndex: idx, winnerId, skinsValue, carryover: false });
       totals[winnerId].skins += skinsValue;
       totals[winnerId].winnings += skinsValue * buyIn;
       carryover = 0;
     } else {
       carryover += 1;
-      holeResults.push({ hole: i + 1, winnerId: null, skinsValue: 0, carryover: true });
+      holeResults.push({ hole: idx + 1, holeIndex: idx, winnerId: null, skinsValue: 0, carryover: true });
     }
   }
 
@@ -64,9 +77,10 @@ export default function SkinsCalculator({
   players,
   scorecards,
   buyIn,
+  startingHole = 1,
 }: SkinsCalculatorProps) {
   const playerIds = players.map((p) => p.id);
-  const { holeResults, totals } = calculateSkins(scorecards, playerIds, buyIn);
+  const { holeResults, totals } = calculateSkins(scorecards, playerIds, buyIn, startingHole);
   const totalSkinsWon = Object.values(totals).reduce((s, t) => s + t.skins, 0);
   const pot = players.length * buyIn;
 
@@ -115,7 +129,7 @@ export default function SkinsCalculator({
                 </td>
                 {players.map((p) => {
                   const sc = scorecards.find((s) => s.playerId === p.id);
-                  const score = sc?.holes[i] || 0;
+                  const score = sc?.holes[result.holeIndex] || 0;
                   const isWinner = result.winnerId === p.id;
                   return (
                     <td

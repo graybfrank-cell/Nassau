@@ -40,6 +40,7 @@ export async function createGameRound(data: {
   courseLng?: number;
   teeTime: string;
   notes?: string;
+  startingHole?: number;
   skinsGame?: { buyIn: number };
   nassauBet?: { betAmount: number };
   players?: { name: string; email?: string }[];
@@ -60,6 +61,7 @@ export async function updateGameRound(
     teeTime: string;
     status: string;
     notes: string;
+    startingHole: number;
   }>
 ): Promise<GameRound> {
   const res = await fetch(`/api/game-rounds/${id}`, {
@@ -172,6 +174,35 @@ export async function getGameSkins(
   return mapGameSkinsGame(await res.json());
 }
 
+export async function deleteGameSkins(roundId: string): Promise<void> {
+  const res = await fetch(`/api/game-rounds/${roundId}/skins`, {
+    method: "DELETE",
+  });
+  await assertOk(res);
+}
+
+// --- Nassau Bet ---
+
+export async function createGameNassauBet(
+  roundId: string,
+  data: { betAmount: number }
+): Promise<GameNassauBet> {
+  const res = await fetch(`/api/game-rounds/${roundId}/nassau-bet`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ betAmount: data.betAmount }),
+  });
+  await assertOk(res);
+  return mapGameNassauBet(await res.json());
+}
+
+export async function deleteGameNassauBet(roundId: string): Promise<void> {
+  const res = await fetch(`/api/game-rounds/${roundId}/nassau-bet`, {
+    method: "DELETE",
+  });
+  await assertOk(res);
+}
+
 // --- Expenses ---
 
 export async function addGameExpense(
@@ -275,6 +306,7 @@ function mapGameRound(row: any): GameRound {
     status: row.status || "upcoming",
     shareCode: row.share_code,
     notes: row.notes || undefined,
+    startingHole: row.starting_hole ?? 1,
     players: (row.players || []).map(mapGamePlayer),
     scorecards: (row.scorecards || []).map(mapGameScorecard),
     skinsGame: row.skins_game ? mapGameSkinsGame(row.skins_game) : null,
