@@ -31,6 +31,9 @@ export default function NewRoundPage() {
   const [date, setDate] = useState(getNextSaturday());
   const [time, setTime] = useState("08:00");
 
+  // Starting Hole
+  const [startingHole, setStartingHole] = useState(1);
+
   // Skins
   const [skinsEnabled, setSkinsEnabled] = useState(false);
   const [buyIn, setBuyIn] = useState("20");
@@ -91,6 +94,7 @@ export default function NewRoundPage() {
         courseLng,
         teeTime,
         notes: notes.trim() || undefined,
+        startingHole,
         skinsGame: skinsEnabled
           ? { buyIn: parseFloat(buyIn) || 20 }
           : undefined,
@@ -186,6 +190,32 @@ export default function NewRoundPage() {
                   className="mt-1 block w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm text-zinc-900 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
                 />
               </div>
+            </div>
+          </div>
+
+          {/* Starting Hole */}
+          <div className="rounded-xl border border-zinc-200 bg-white p-5 shadow-sm">
+            <label className="block text-sm font-semibold text-zinc-900">
+              Starting Hole
+            </label>
+            <p className="mt-0.5 text-xs text-zinc-400">
+              For shotgun starts or back-9 rounds
+            </p>
+            <div className="mt-2 flex gap-2">
+              {[1, 10].map((hole) => (
+                <button
+                  key={hole}
+                  type="button"
+                  onClick={() => setStartingHole(hole)}
+                  className={`rounded-full px-4 py-1.5 text-xs font-medium transition-colors ${
+                    startingHole === hole
+                      ? "bg-emerald-100 text-emerald-700"
+                      : "bg-zinc-100 text-zinc-500 hover:bg-zinc-200"
+                  }`}
+                >
+                  Hole {hole}
+                </button>
+              ))}
             </div>
           </div>
 
