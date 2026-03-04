@@ -25,6 +25,7 @@ export async function PATCH(
   if (body.title !== undefined) data.title = body.title;
   if (body.description !== undefined) data.description = body.description;
   if (body.time !== undefined) data.time = body.time;
+  if (body.date !== undefined) data.date = body.date;
   if (body.type !== undefined) data.type = body.type;
   if (body.cost !== undefined) data.cost = body.cost;
   if (body.phone !== undefined) data.phone = body.phone;
