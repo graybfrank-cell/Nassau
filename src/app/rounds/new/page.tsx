@@ -35,6 +35,10 @@ export default function NewRoundPage() {
   const [skinsEnabled, setSkinsEnabled] = useState(false);
   const [buyIn, setBuyIn] = useState("20");
 
+  // Nassau Bet
+  const [nassauEnabled, setNassauEnabled] = useState(false);
+  const [nassauBetAmount, setNassauBetAmount] = useState("10");
+
   // Notes
   const [notes, setNotes] = useState("");
 
@@ -89,6 +93,9 @@ export default function NewRoundPage() {
         notes: notes.trim() || undefined,
         skinsGame: skinsEnabled
           ? { buyIn: parseFloat(buyIn) || 20 }
+          : undefined,
+        nassauBet: nassauEnabled
+          ? { betAmount: parseFloat(nassauBetAmount) || 10 }
           : undefined,
         players,
       });
@@ -237,6 +244,69 @@ export default function NewRoundPage() {
                     />
                   </div>
                 </div>
+              </div>
+            )}
+          </div>
+
+          {/* Nassau Bet */}
+          <div className="rounded-xl border border-zinc-200 bg-white p-5 shadow-sm">
+            <div className="flex items-center justify-between">
+              <label className="text-sm font-semibold text-zinc-900">
+                Nassau Bet
+              </label>
+              <button
+                type="button"
+                onClick={() => setNassauEnabled(!nassauEnabled)}
+                className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ${
+                  nassauEnabled ? "bg-emerald-600" : "bg-zinc-200"
+                }`}
+              >
+                <span
+                  className={`pointer-events-none inline-block h-5 w-5 rounded-full bg-white shadow transition-transform duration-200 ${
+                    nassauEnabled ? "translate-x-5" : "translate-x-0"
+                  }`}
+                />
+              </button>
+            </div>
+
+            {nassauEnabled && (
+              <div className="mt-3">
+                <label className="block text-xs font-medium text-zinc-600">
+                  Per-bet amount
+                </label>
+                <div className="mt-1.5 flex items-center gap-2">
+                  {STAKE_PILLS.map((amount) => (
+                    <button
+                      key={amount}
+                      type="button"
+                      onClick={() => setNassauBetAmount(String(amount))}
+                      className={`rounded-full px-3 py-1.5 text-xs font-medium transition-colors ${
+                        nassauBetAmount === String(amount)
+                          ? "bg-emerald-100 text-emerald-700"
+                          : "bg-zinc-100 text-zinc-500 hover:bg-zinc-200"
+                      }`}
+                    >
+                      ${amount}
+                    </button>
+                  ))}
+                  <div className="relative">
+                    <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-xs text-zinc-400">
+                      $
+                    </span>
+                    <input
+                      type="number"
+                      min="1"
+                      step="1"
+                      value={nassauBetAmount}
+                      onChange={(e) => setNassauBetAmount(e.target.value)}
+                      className="w-20 rounded-lg border border-zinc-300 py-1.5 pl-6 pr-2 text-xs text-zinc-900 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+                    />
+                  </div>
+                </div>
+                <p className="mt-2 text-xs text-zinc-400">
+                  3 bets: front 9, back 9, total 18 &middot; Total at risk: $
+                  {(parseFloat(nassauBetAmount) || 0) * 3} per player
+                </p>
               </div>
             )}
           </div>

@@ -19,6 +19,7 @@ import { GameRound } from "@/lib/types";
 import { generateRoundSummary } from "@/lib/round-summary";
 import ScorecardGrid from "@/components/shared/ScorecardGrid";
 import SkinsCalculator from "@/components/shared/SkinsCalculator";
+import NassauBetCalculator from "@/components/shared/NassauBetCalculator";
 import ExpenseList from "@/components/shared/ExpenseList";
 import SettlementList from "@/components/shared/SettlementList";
 import ScorecardScanner from "@/components/shared/ScorecardScanner";
@@ -647,6 +648,37 @@ export default function RoundDashboardPage() {
                 players={skinsPlayers}
                 scorecards={skinsScorecards}
                 buyIn={round.skinsGame.buyIn}
+              />
+            )}
+          </div>
+        )}
+
+        {/* Nassau Bet */}
+        {round.nassauBet && (
+          <div className="mt-6 rounded-xl border border-zinc-200 bg-white p-6 shadow-sm">
+            <div className="flex items-center gap-2 mb-4">
+              <Trophy className="h-5 w-5 text-zinc-400" />
+              <h2 className="text-lg font-semibold text-zinc-900">
+                Nassau Bet (${round.nassauBet.betAmount}/bet &middot; $
+                {round.nassauBet.betAmount * 3} total at risk)
+              </h2>
+            </div>
+
+            {confirmedPlayers.length < 2 ? (
+              <p className="text-sm text-zinc-400">
+                Need at least 2 confirmed players for Nassau bet.
+              </p>
+            ) : (
+              <NassauBetCalculator
+                players={confirmedPlayers.map((p) => ({
+                  id: p.id,
+                  name: p.name,
+                }))}
+                scorecards={confirmedPlayers.map((p) => ({
+                  playerId: p.id,
+                  holes: localScorecards.get(p.id) || Array(18).fill(0),
+                }))}
+                betAmount={round.nassauBet.betAmount}
               />
             )}
           </div>

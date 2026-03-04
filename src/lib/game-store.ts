@@ -3,6 +3,7 @@ import {
   GamePlayer,
   GameScorecard,
   GameSkinsGame,
+  GameNassauBet,
   GameExpense,
   GameSettlement,
 } from "./types";
@@ -40,6 +41,7 @@ export async function createGameRound(data: {
   teeTime: string;
   notes?: string;
   skinsGame?: { buyIn: number };
+  nassauBet?: { betAmount: number };
   players?: { name: string; email?: string }[];
 }): Promise<GameRound> {
   const res = await fetch("/api/game-rounds", {
@@ -276,6 +278,7 @@ function mapGameRound(row: any): GameRound {
     players: (row.players || []).map(mapGamePlayer),
     scorecards: (row.scorecards || []).map(mapGameScorecard),
     skinsGame: row.skins_game ? mapGameSkinsGame(row.skins_game) : null,
+    nassauBet: row.nassau_bet ? mapGameNassauBet(row.nassau_bet) : null,
     expenses: (row.expenses || []).map(mapGameExpense),
     settlements: (row.settlements || []).map(mapGameSettlement),
     createdAt: row.created_at,
@@ -317,6 +320,18 @@ function mapGameSkinsGame(row: any): GameSkinsGame {
     id: row.id,
     roundId: row.round_id,
     buyIn: Number(row.buy_in) || 20,
+    status: row.status || "active",
+    results: row.results || undefined,
+    createdAt: row.created_at,
+  };
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function mapGameNassauBet(row: any): GameNassauBet {
+  return {
+    id: row.id,
+    roundId: row.round_id,
+    betAmount: Number(row.bet_amount) || 10,
     status: row.status || "active",
     results: row.results || undefined,
     createdAt: row.created_at,

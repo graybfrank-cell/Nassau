@@ -60,6 +60,22 @@ export async function ensureDbColumns(): Promise<void> {
     // Ignore — constraint may already exist
   }
 
+  // game_nassau_bets table
+  try {
+    await prisma.$executeRawUnsafe(`
+      CREATE TABLE IF NOT EXISTS game_nassau_bets (
+        id TEXT PRIMARY KEY,
+        round_id UUID NOT NULL UNIQUE REFERENCES game_rounds(id) ON DELETE CASCADE,
+        bet_amount DECIMAL(10,2) NOT NULL,
+        status TEXT NOT NULL DEFAULT 'active',
+        results JSONB,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+      )
+    `);
+  } catch {
+    // Table may already exist
+  }
+
   // Regenerate UUID-format share_codes on game_rounds to short alphanumeric codes
   try {
     const uuidPattern =
