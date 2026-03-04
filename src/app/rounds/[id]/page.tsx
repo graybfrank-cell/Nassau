@@ -138,8 +138,14 @@ export default function RoundDashboardPage() {
         return;
       }
       setUserId(user.id);
-      await refresh();
+      try {
+        await refresh();
+      } catch {
+        // API error (403, 404, network) — round will stay null, showing fallback
+      }
       setLoading(false);
+    }).catch(() => {
+      router.push("/login");
     });
   }, [router, refresh]);
 
@@ -158,6 +164,9 @@ export default function RoundDashboardPage() {
           <h2 className="text-lg font-semibold text-zinc-900">
             Round not found
           </h2>
+          <p className="mt-2 text-sm text-zinc-500">
+            This round doesn&apos;t exist or you don&apos;t have access.
+          </p>
           <Link
             href="/rounds"
             className="mt-4 inline-block text-sm font-medium text-emerald-600"
