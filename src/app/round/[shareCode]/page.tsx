@@ -17,6 +17,7 @@ interface RoundInvite {
   commissioner_name: string;
   players: { id: string; name: string; status: string; role: string }[];
   skins_buy_in: number | null;
+  nassau_bet_amount: number | null;
 }
 
 function formatDateTime(dateStr: string): string {
@@ -50,39 +51,42 @@ export default function RoundInvitePage() {
 
   useEffect(() => {
     async function load() {
-      // Get round info (public)
-      const res = await fetch(`/api/game-rounds/invite/${shareCode}`);
-      if (!res.ok) {
-        setLoading(false);
-        return;
-      }
-      const info: RoundInvite = await res.json();
-      setRoundInfo(info);
-
-      // Check auth
-      const supabase = createClient();
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-      if (user) {
-        setUserId(user.id);
-        // Try to join (handles already-a-player case)
-        try {
-          const joinRes = await fetch(
-            `/api/game-rounds/invite/${shareCode}/join`,
-            { method: "POST" }
-          );
-          if (joinRes.ok) {
-            const data = await joinRes.json();
-            // Check if we were already a player by checking the info
-            setIsPlayer(true);
-            // Redirect to round dashboard
-            router.push(`/rounds/${data.roundId}`);
-            return;
-          }
-        } catch {
-          // Not a big deal — they can try the join button
+      try {
+        // Get round info (public)
+        const res = await fetch(`/api/game-rounds/invite/${shareCode}`);
+        if (!res.ok) {
+          setError(res.status === 404 ? null : "Unable to load round details");
+          setLoading(false);
+          return;
         }
+        const info: RoundInvite = await res.json();
+        setRoundInfo(info);
+
+        // Check auth
+        const supabase = createClient();
+        const {
+          data: { user },
+        } = await supabase.auth.getUser();
+        if (user) {
+          setUserId(user.id);
+          // Try to join (handles already-a-player case)
+          try {
+            const joinRes = await fetch(
+              `/api/game-rounds/invite/${shareCode}/join`,
+              { method: "POST" }
+            );
+            if (joinRes.ok) {
+              const data = await joinRes.json();
+              setIsPlayer(true);
+              router.push(`/rounds/${data.roundId}`);
+              return;
+            }
+          } catch {
+            // Not a big deal — they can try the join button
+          }
+        }
+      } catch {
+        setError("Unable to load round details. Please try again.");
       }
 
       setLoading(false);
@@ -133,7 +137,7 @@ export default function RoundInvitePage() {
             Round not found
           </h2>
           <p className="mt-2 text-sm text-zinc-500">
-            This invite link may have expired.
+            {error || "This invite link may have expired or is invalid."}
           </p>
           <Link
             href="/"
@@ -189,6 +193,13 @@ export default function RoundInvitePage() {
               <div className="flex items-center justify-center gap-1.5 text-sm text-zinc-500">
                 <Trophy className="h-4 w-4" />
                 ${roundInfo.skins_buy_in} Skins Game
+              </div>
+            )}
+
+            {roundInfo.nassau_bet_amount && (
+              <div className="flex items-center justify-center gap-1.5 text-sm text-zinc-500">
+                <Trophy className="h-4 w-4" />
+                ${roundInfo.nassau_bet_amount}/bet Nassau
               </div>
             )}
 
