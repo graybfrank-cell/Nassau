@@ -224,18 +224,18 @@ const destinations: KBDestination[] = (knowledgeBase as unknown as { destination
 
 const TRIPS_DATA: TripData[] = destinations.map((d) => {
   // Get first available itinerary
-  const itinKeys = Object.keys(d.sample_itineraries);
+  const itinKeys = Object.keys(d.sample_itineraries || {});
   const itineraryKey = itinKeys[0] || null;
   const itinerary = itineraryKey ? (d.sample_itineraries as Record<string, KBItinerary>)[itineraryKey] : null;
 
   // Calculate cost from itinerary estimated_cost_pp, or fallback to avg_cost * nights
   const nights = itinerary?.duration_nights ?? 3;
-  const cost = itinerary?.estimated_cost_pp ?? d.avg_cost_per_person_per_day.mid * nights;
+  const cost = itinerary?.estimated_cost_pp ?? (d.avg_cost_per_person_per_day?.mid ?? 100) * nights;
 
   // Count tee_time items across itinerary days for course count
   const courseCount = itinerary?.days
     ? itinerary.days.reduce((sum, day) => sum + (day.items || []).filter(i => i.type === "tee_time").length, 0)
-    : d.top_courses.length;
+    : (d.top_courses || []).length;
 
   const isFeatured = FEATURED_IDS.has(d.id);
   const height = isFeatured ? "tall" as const : cardHeight(d.price_tier);
@@ -245,26 +245,26 @@ const TRIPS_DATA: TripData[] = destinations.map((d) => {
     dest: d.destination,
     region: d.region,
     tagline: buildTagline(d.why_go),
-    vibe: mapVibes(d.vibe),
+    vibe: mapVibes(d.vibe || []),
     tier: TIER_MAP[d.price_tier] || "$$",
     cost,
     title: buildTitle(d.destination, d.vibe),
     courses: courseCount,
     nights,
-    best: formatBestMonths(d.best_months),
+    best: formatBestMonths(d.best_months || []),
     featured: isFeatured,
     height,
-    whyGo: d.why_go,
-    topCourses: d.top_courses,
-    hiddenGems: d.hidden_gems,
-    lodging: d.lodging_options,
-    dining: d.dining,
-    nonGolf: d.non_golf_activities,
-    insiderTips: d.insider_tips,
+    whyGo: d.why_go || "",
+    topCourses: d.top_courses || [],
+    hiddenGems: d.hidden_gems || [],
+    lodging: d.lodging_options || [],
+    dining: d.dining || [],
+    nonGolf: d.non_golf_activities || [],
+    insiderTips: d.insider_tips || [],
     itinerary,
     itineraryKey,
     groupSize: d.group_size_sweet_spot,
-    costPerDay: d.avg_cost_per_person_per_day,
+    costPerDay: d.avg_cost_per_person_per_day || { budget: 0, mid: 0, premium: 0 },
   };
 });
 
@@ -419,7 +419,7 @@ function TripCard({
       : trip.height === "medium"
         ? "h-72"
         : "h-56";
-  const accentColor = ACCENT_COLORS[trip.vibe[0]] || "#0C2E1E";
+  const accentColor = ACCENT_COLORS[trip.vibe?.[0]] || "#0C2E1E";
 
   return (
     <div
@@ -501,7 +501,7 @@ function TripCard({
 
           {/* Vibe tags */}
           <div className="flex flex-wrap gap-1.5">
-            {trip.vibe.map((v) => (
+            {(trip.vibe || []).map((v) => (
               <span
                 key={v}
                 className="text-xs px-2 py-0.5 rounded-full font-medium"
@@ -567,8 +567,8 @@ function TripModal({
       const itineraryItems: any[] = [];
       if (itinerary) {
         let sortOrder = 0;
-        for (const day of itinerary.days) {
-          for (const item of day.items) {
+        for (const day of itinerary.days || []) {
+          for (const item of day.items || []) {
             itineraryItems.push({
               day_number: day.day,
               date: "",
@@ -592,10 +592,10 @@ function TripModal({
           destination: trip.dest,
           startDate: "",
           endDate: "",
-          vibe: trip.vibe.join(", "),
+          vibe: (trip.vibe || []).join(", "),
           budgetTier: trip.tier,
           groupSizeTarget: trip.groupSize,
-          notes: `Created from Nassau Explore — ${trip.dest}. ${trip.whyGo.slice(0, 200)}`,
+          notes: `Created from Nassau Explore — ${trip.dest}. ${(trip.whyGo || "").slice(0, 200)}`,
           itineraryItems,
         }),
       });
@@ -699,7 +699,7 @@ function TripModal({
 
           {/* Vibes */}
           <div className="flex flex-wrap gap-2 mb-5">
-            {trip.vibe.map((v) => (
+            {(trip.vibe || []).map((v) => (
               <span
                 key={v}
                 className="text-sm px-3 py-1 rounded-full font-medium"
@@ -724,7 +724,7 @@ function TripModal({
                 Sample Itinerary &middot; {trip.itinerary.duration_nights} nights &middot; {trip.itinerary.ideal_group_size} players
               </h3>
               <div className="space-y-3">
-                {trip.itinerary.days.map((day) => (
+                {(trip.itinerary.days || []).map((day) => (
                   <div key={day.day} className="bg-gray-50 rounded-xl p-3">
                     <div
                       className="text-xs font-semibold mb-2"
@@ -733,7 +733,7 @@ function TripModal({
                       Day {day.day}: {day.title}
                     </div>
                     <div className="space-y-1.5">
-                      {day.items.map((item, idx) => (
+                      {(day.items || []).map((item, idx) => (
                         <div key={idx} className="flex items-start gap-2 text-xs" style={{ fontFamily: "'DM Sans', sans-serif" }}>
                           <span className="shrink-0 w-14 text-gray-400">{item.time}</span>
                           <span className="shrink-0">{TYPE_EMOJI[item.type] || "\uD83D\uDCCC"}</span>
@@ -751,7 +751,7 @@ function TripModal({
           )}
 
           {/* Top Courses */}
-          {trip.topCourses?.length > 0 && (
+          {(trip.topCourses?.length ?? 0) > 0 && (
             <div className="mb-5">
               <h3
                 className="text-sm font-bold mb-2"
