@@ -7,7 +7,7 @@ import { createClient } from "@/lib/supabase/client";
 import { getScorecards, createScorecard, deleteScorecard } from "@/lib/store";
 import { Scorecard } from "@/lib/types";
 import { Plus, ClipboardList, Trash2, ArrowLeft, AlertCircle } from "lucide-react";
-import CourseSearch from "@/components/CourseSearch";
+import CourseSearch from "@/components/shared/CourseSearch";
 
 const DEFAULT_PARS = [4, 4, 4, 3, 5, 4, 3, 4, 5, 4, 4, 3, 5, 4, 4, 3, 4, 5];
 
@@ -44,22 +44,6 @@ export default function ScorecardsPage() {
 
   async function refresh() {
     if (userId) setScorecards(await getScorecards({ userId }));
-  }
-
-  function handleCourseSelect(data: {
-    courseName: string;
-    courseApiId: number | null;
-    teeName: string;
-    pars: number[];
-    yardages: number[];
-    handicaps: number[];
-  }) {
-    setCourseName(data.courseName);
-    setCourseApiId(data.courseApiId);
-    setTeeName(data.teeName);
-    setPars(data.pars);
-    setYardages(data.yardages);
-    setHandicaps(data.handicaps);
   }
 
   async function handleCreate(e: React.FormEvent) {
@@ -170,8 +154,20 @@ export default function ScorecardsPage() {
               Start a Scorecard
             </h2>
             <div className="mt-4 grid gap-4 sm:grid-cols-2">
-              <div className="sm:col-span-2">
-                <CourseSearch onSelect={handleCourseSelect} />
+              <div>
+                <label className="block text-sm font-medium text-zinc-700">
+                  Course Name
+                </label>
+                <div className="mt-1">
+                  <CourseSearch
+                    value={courseName}
+                    onChange={setCourseName}
+                    onCourseSelect={(course) => {
+                      setCourseApiId(parseInt(course.id) || null);
+                    }}
+                    placeholder="Search for a course…"
+                  />
+                </div>
               </div>
               <div>
                 <label className="block text-sm font-medium text-zinc-700">
