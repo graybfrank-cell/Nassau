@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
@@ -12,7 +12,6 @@ import {
   addItineraryItem,
   removeItineraryItem,
   updateItineraryItem,
-  reorderItineraryItems,
   getExpenses,
   getRounds,
   getSkinsGames,
@@ -117,9 +116,9 @@ export default function TripDetailPage() {
   const [inviteSending, setInviteSending] = useState(false);
   const [inviteSuccess, setInviteSuccess] = useState<string | null>(null);
 
-  // Drag-and-drop reorder
-  const dragItemRef = useRef<string | null>(null);
-  const [dragOverId, setDragOverId] = useState<string | null>(null);
+  // Inline editing state for time/date
+  const [editingTimeId, setEditingTimeId] = useState<string | null>(null);
+  const [editingDateId, setEditingDateId] = useState<string | null>(null);
 
   useEffect(() => {
     setLoading(true);
@@ -291,39 +290,25 @@ export default function TripDetailPage() {
     }
   }
 
-  async function handleDrop(targetId: string, dateGroup: string) {
-    if (!trip || !dragItemRef.current || dragItemRef.current === targetId) {
-      setDragOverId(null);
-      return;
-    }
-    const eventsInDate = trip.schedule
-      .filter((e) => e.date === dateGroup)
-      .sort((a, b) => a.sortOrder - b.sortOrder);
-    const ids = eventsInDate.map((e) => e.id);
-    const fromIdx = ids.indexOf(dragItemRef.current);
-    const toIdx = ids.indexOf(targetId);
-    if (fromIdx === -1 || toIdx === -1) {
-      setDragOverId(null);
-      return;
-    }
-    ids.splice(fromIdx, 1);
-    ids.splice(toIdx, 0, dragItemRef.current);
-    // Optimistic update
-    setTrip((prev) => {
-      if (!prev) return prev;
-      const updated = prev.schedule.map((item) => {
-        const newIdx = ids.indexOf(item.id);
-        if (newIdx !== -1) return { ...item, sortOrder: newIdx };
-        return item;
-      });
-      return { ...prev, schedule: updated };
-    });
-    setDragOverId(null);
-    dragItemRef.current = null;
+  async function handleUpdateTime(eventId: string, newTime: string) {
+    if (!trip) return;
+    setEditingTimeId(null);
     try {
-      await reorderItineraryItems(tripId, ids);
-    } catch {
+      await updateItineraryItem(tripId, eventId, { time: newTime });
       await refresh();
+    } catch {
+      // silent — reverts on next refresh
+    }
+  }
+
+  async function handleUpdateDate(eventId: string, newDate: string) {
+    if (!trip) return;
+    setEditingDateId(null);
+    try {
+      await updateItineraryItem(tripId, eventId, { date: newDate });
+      await refresh();
+    } catch {
+      // silent — reverts on next refresh
     }
   }
 
@@ -1244,12 +1229,7 @@ export default function TripDetailPage() {
                         return (
                           <div
                             key={event.id}
-                            draggable
-                            onDragStart={() => { dragItemRef.current = event.id; }}
-                            onDragOver={(e) => { e.preventDefault(); setDragOverId(event.id); }}
-                            onDragEnd={() => { dragItemRef.current = null; setDragOverId(null); }}
-                            onDrop={() => handleDrop(event.id, date)}
-                            className={`group flex items-center gap-3 rounded-lg px-3 py-2 hover:bg-zinc-50 cursor-grab active:cursor-grabbing transition-colors ${dragOverId === event.id ? "bg-emerald-50 ring-1 ring-emerald-300" : ""}`}
+                            className="group flex items-center gap-3 rounded-lg px-3 py-2 hover:bg-zinc-50 transition-colors"
                           >
                             <span
                               className={`shrink-0 rounded-full px-2 py-0.5 text-xs font-medium ${
@@ -1258,10 +1238,63 @@ export default function TripDetailPage() {
                             >
                               {typeConfig?.label || event.type}
                             </span>
-                            {event.time && (
-                              <span className="shrink-0 text-xs font-medium text-zinc-500">
-                                {formatTime(event.time)}
-                              </span>
+                            {/* Inline date editing */}
+                            {editingDateId === event.id ? (
+                              <input
+                                type="date"
+                                defaultValue={event.date}
+                                autoFocus
+                                className="shrink-0 rounded-md border border-emerald-300 px-1.5 py-0.5 text-xs text-zinc-700 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+                                onBlur={(e) => {
+                                  const v = e.target.value;
+                                  if (v && v !== event.date) {
+                                    handleUpdateDate(event.id, v);
+                                  } else {
+                                    setEditingDateId(null);
+                                  }
+                                }}
+                                onKeyDown={(e) => {
+                                  if (e.key === "Enter") (e.target as HTMLInputElement).blur();
+                                  if (e.key === "Escape") setEditingDateId(null);
+                                }}
+                              />
+                            ) : (
+                              <button
+                                onClick={() => isCaptain && setEditingDateId(event.id)}
+                                className={`shrink-0 text-xs font-medium text-zinc-400 ${isCaptain ? "hover:text-emerald-600 hover:underline cursor-pointer" : ""}`}
+                                title={isCaptain ? "Tap to change date" : undefined}
+                              >
+                                {event.date ? formatDate(event.date) : "No date"}
+                              </button>
+                            )}
+                            {/* Inline time editing */}
+                            {editingTimeId === event.id ? (
+                              <input
+                                type="time"
+                                defaultValue={event.time || ""}
+                                autoFocus
+                                className="shrink-0 rounded-md border border-emerald-300 px-1.5 py-0.5 text-xs text-zinc-700 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+                                onBlur={(e) => {
+                                  const v = e.target.value;
+                                  if (v !== event.time) {
+                                    handleUpdateTime(event.id, v);
+                                  } else {
+                                    setEditingTimeId(null);
+                                  }
+                                }}
+                                onKeyDown={(e) => {
+                                  if (e.key === "Enter") (e.target as HTMLInputElement).blur();
+                                  if (e.key === "Escape") setEditingTimeId(null);
+                                }}
+                              />
+                            ) : (
+                              <button
+                                onClick={() => isCaptain && setEditingTimeId(event.id)}
+                                className={`shrink-0 text-xs font-medium text-zinc-500 ${isCaptain ? "hover:text-emerald-600 hover:underline cursor-pointer" : ""}`}
+                                title={isCaptain ? "Tap to change time" : undefined}
+                              >
+                                {event.time ? formatTime(event.time) : "No time"}
+                              </button>
                             )}
                             <span className="flex-1 text-sm font-medium text-zinc-900">
                               {event.title}
