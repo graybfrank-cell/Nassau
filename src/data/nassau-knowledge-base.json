@@ -1,0 +1,1299 @@
+{
+  "destinations": [
+    {
+      "id": "scottsdale-az",
+      "name": "Scottsdale, AZ",
+      "state": "AZ",
+      "region": "Southwest",
+      "description": "A premier desert golf destination with world-class resorts and over 200 courses set against stunning Sonoran Desert landscapes.",
+      "courses": [
+        "TPC Scottsdale",
+        "Troon North Golf Club",
+        "Grayhawk Golf Club",
+        "We-Ko-Pa Golf Club"
+      ],
+      "bestTimeToVisit": "October - April",
+      "averageGreenFee": 175,
+      "nearestAirport": "PHX",
+      "highlights": [
+        "Desert golf scenery",
+        "Luxury resorts",
+        "Vibrant nightlife",
+        "Spa experiences"
+      ]
+    },
+    {
+      "id": "myrtle-beach-sc",
+      "name": "Myrtle Beach, SC",
+      "state": "SC",
+      "region": "Southeast",
+      "description": "The golf capital of the world with over 80 courses along the Grand Strand, offering exceptional value and variety.",
+      "courses": [
+        "Caledonia Golf & Fish Club",
+        "Tidewater Golf Club",
+        "TPC Myrtle Beach",
+        "Barefoot Resort"
+      ],
+      "bestTimeToVisit": "March - May, September - November",
+      "averageGreenFee": 85,
+      "nearestAirport": "MYR",
+      "highlights": [
+        "Affordable packages",
+        "Course variety",
+        "Beach access",
+        "Group-friendly"
+      ]
+    },
+    {
+      "id": "pinehurst-nc",
+      "name": "Pinehurst, NC",
+      "state": "NC",
+      "region": "Southeast",
+      "description": "Home to the legendary Pinehurst Resort with its iconic No. 2 course, a cradle of American golf.",
+      "courses": [
+        "Pinehurst No. 2",
+        "Pinehurst No. 4",
+        "Pine Needles Lodge",
+        "Mid Pines Inn"
+      ],
+      "bestTimeToVisit": "April - June, September - November",
+      "averageGreenFee": 200,
+      "nearestAirport": "RDU",
+      "highlights": [
+        "Historic courses",
+        "Donald Ross designs",
+        "Resort village",
+        "Golf history"
+      ]
+    },
+    {
+      "id": "pebble-beach-ca",
+      "name": "Pebble Beach, CA",
+      "state": "CA",
+      "region": "West",
+      "description": "One of the most iconic golf destinations in the world, with breathtaking Pacific Ocean views along the Monterey Peninsula.",
+      "courses": [
+        "Pebble Beach Golf Links",
+        "Spyglass Hill",
+        "The Links at Spanish Bay",
+        "Poppy Hills"
+      ],
+      "bestTimeToVisit": "April - October",
+      "averageGreenFee": 575,
+      "nearestAirport": "MRY",
+      "highlights": [
+        "Bucket-list courses",
+        "Ocean views",
+        "17-Mile Drive",
+        "World-class dining"
+      ]
+    },
+    {
+      "id": "kiawah-island-sc",
+      "name": "Kiawah Island, SC",
+      "state": "SC",
+      "region": "Southeast",
+      "description": "A barrier island resort featuring the renowned Ocean Course, host of the 2021 PGA Championship.",
+      "courses": [
+        "The Ocean Course",
+        "Osprey Point",
+        "Turtle Point",
+        "Cougar Point"
+      ],
+      "bestTimeToVisit": "March - May, September - November",
+      "averageGreenFee": 250,
+      "nearestAirport": "CHS",
+      "highlights": [
+        "Ocean Course links",
+        "Beach resort",
+        "Nature trails",
+        "Lowcountry cuisine"
+      ]
+    },
+    {
+      "id": "hilton-head-sc",
+      "name": "Hilton Head, SC",
+      "state": "SC",
+      "region": "Southeast",
+      "description": "A charming island destination with over 20 championship courses surrounded by live oaks and coastal beauty.",
+      "courses": [
+        "Harbour Town Golf Links",
+        "Atlantic Dunes",
+        "Robert Trent Jones Course",
+        "Palmetto Dunes"
+      ],
+      "bestTimeToVisit": "March - May, September - November",
+      "averageGreenFee": 150,
+      "nearestAirport": "SAV",
+      "highlights": [
+        "Harbour Town lighthouse",
+        "Island atmosphere",
+        "Family-friendly",
+        "Bike trails"
+      ]
+    },
+    {
+      "id": "bandon-dunes-or",
+      "name": "Bandon Dunes, OR",
+      "state": "OR",
+      "region": "Pacific Northwest",
+      "description": "A remote links-style golf resort on the Oregon coast, widely considered the best public golf resort in America.",
+      "courses": [
+        "Bandon Dunes",
+        "Pacific Dunes",
+        "Bandon Trails",
+        "Old Macdonald",
+        "Sheep Ranch"
+      ],
+      "bestTimeToVisit": "June - September",
+      "averageGreenFee": 345,
+      "nearestAirport": "OTH",
+      "highlights": [
+        "True links golf",
+        "Walking-only courses",
+        "Remote setting",
+        "Golf purist paradise"
+      ]
+    },
+    {
+      "id": "st-andrews-fl",
+      "name": "St. Augustine, FL",
+      "state": "FL",
+      "region": "Southeast",
+      "description": "Florida's historic coast offers great golf alongside America's oldest city, with courses nestled among coastal marshes.",
+      "courses": [
+        "TPC Sawgrass",
+        "World Golf Village",
+        "Ponte Vedra Inn & Club",
+        "Palencia Club"
+      ],
+      "bestTimeToVisit": "October - April",
+      "averageGreenFee": 200,
+      "nearestAirport": "JAX",
+      "highlights": [
+        "TPC Sawgrass Island Green",
+        "Historic district",
+        "Beach access",
+        "World Golf Hall of Fame"
+      ]
+    },
+    {
+      "id": "palm-springs-ca",
+      "name": "Palm Springs, CA",
+      "state": "CA",
+      "region": "West",
+      "description": "A desert golf oasis with over 100 courses, mid-century modern architecture, and year-round sunshine.",
+      "courses": [
+        "PGA West",
+        "Indian Wells Golf Resort",
+        "La Quinta Resort",
+        "Desert Willow"
+      ],
+      "bestTimeToVisit": "November - April",
+      "averageGreenFee": 150,
+      "nearestAirport": "PSP",
+      "highlights": [
+        "Desert mountain backdrop",
+        "Luxury resorts",
+        "Mid-century style",
+        "Spa culture"
+      ]
+    },
+    {
+      "id": "orlando-fl",
+      "name": "Orlando, FL",
+      "state": "FL",
+      "region": "Southeast",
+      "description": "Beyond the theme parks, Orlando offers outstanding golf with numerous resort courses and year-round play.",
+      "courses": [
+        "Arnold Palmer's Bay Hill",
+        "Grand Cypress",
+        "Reunion Resort",
+        "ChampionsGate"
+      ],
+      "bestTimeToVisit": "October - April",
+      "averageGreenFee": 130,
+      "nearestAirport": "MCO",
+      "highlights": [
+        "Year-round play",
+        "Resort courses",
+        "Entertainment options",
+        "Theme park access"
+      ]
+    },
+    {
+      "id": "streamsong-fl",
+      "name": "Streamsong, FL",
+      "state": "FL",
+      "region": "Southeast",
+      "description": "A unique inland Florida resort built on reclaimed phosphate land, featuring dramatic elevation changes rare for the state.",
+      "courses": [
+        "Streamsong Red",
+        "Streamsong Blue",
+        "Streamsong Black",
+        "The Chain"
+      ],
+      "bestTimeToVisit": "October - April",
+      "averageGreenFee": 275,
+      "nearestAirport": "TPA",
+      "highlights": [
+        "Unique terrain",
+        "Three championship courses",
+        "Modern lodge",
+        "Remote retreat"
+      ]
+    },
+    {
+      "id": "kohler-wi",
+      "name": "Kohler, WI",
+      "state": "WI",
+      "region": "Midwest",
+      "description": "Home to Whistling Straits and Blackwolf Run, site of multiple major championships including the 2021 Ryder Cup.",
+      "courses": [
+        "Whistling Straits - Straits",
+        "Whistling Straits - Irish",
+        "Blackwolf Run - River",
+        "Blackwolf Run - Meadow Valleys"
+      ],
+      "bestTimeToVisit": "June - September",
+      "averageGreenFee": 300,
+      "nearestAirport": "MKE",
+      "highlights": [
+        "Major championship venue",
+        "Links-style lakefront",
+        "Luxury resort",
+        "Spa amenities"
+      ]
+    },
+    {
+      "id": "las-vegas-nv",
+      "name": "Las Vegas, NV",
+      "state": "NV",
+      "region": "West",
+      "description": "A golf and entertainment mecca with stunning desert courses and endless nightlife options for the perfect buddies trip.",
+      "courses": [
+        "Shadow Creek",
+        "Cascata",
+        "TPC Las Vegas",
+        "Wynn Golf Club"
+      ],
+      "bestTimeToVisit": "October - April",
+      "averageGreenFee": 200,
+      "nearestAirport": "LAS",
+      "highlights": [
+        "Entertainment capital",
+        "Desert scenery",
+        "Nightlife",
+        "World-class dining"
+      ]
+    },
+    {
+      "id": "monterey-ca",
+      "name": "Monterey, CA",
+      "state": "CA",
+      "region": "West",
+      "description": "The Monterey Peninsula offers stunning coastal golf beyond Pebble Beach, with rugged Pacific views and marine wildlife.",
+      "courses": [
+        "Pacific Grove Golf Links",
+        "Bayonet & Black Horse",
+        "Corral de Tierra",
+        "Quail Lodge"
+      ],
+      "bestTimeToVisit": "April - October",
+      "averageGreenFee": 125,
+      "nearestAirport": "MRY",
+      "highlights": [
+        "Coastal scenery",
+        "Marine wildlife",
+        "Cannery Row",
+        "Wine country nearby"
+      ]
+    },
+    {
+      "id": "charleston-sc",
+      "name": "Charleston, SC",
+      "state": "SC",
+      "region": "Southeast",
+      "description": "Southern charm meets championship golf with courses set among moss-draped oaks and historic plantations.",
+      "courses": [
+        "Kiawah Island courses",
+        "Wild Dunes Resort",
+        "Patriots Point Links",
+        "RiverTowne Country Club"
+      ],
+      "bestTimeToVisit": "March - May, September - November",
+      "averageGreenFee": 130,
+      "nearestAirport": "CHS",
+      "highlights": [
+        "Southern cuisine",
+        "Historic downtown",
+        "Plantation courses",
+        "Coastal marshes"
+      ]
+    },
+    {
+      "id": "austin-tx",
+      "name": "Austin, TX",
+      "state": "TX",
+      "region": "Southwest",
+      "description": "Texas Hill Country golf with rolling terrain, live music, and a vibrant food scene.",
+      "courses": [
+        "Barton Creek Resort",
+        "Wolfdancer Golf Club",
+        "Falconhead Golf Club",
+        "Avery Ranch Golf Club"
+      ],
+      "bestTimeToVisit": "March - May, October - November",
+      "averageGreenFee": 100,
+      "nearestAirport": "AUS",
+      "highlights": [
+        "Hill Country views",
+        "Live music scene",
+        "Craft breweries",
+        "BBQ culture"
+      ]
+    },
+    {
+      "id": "san-antonio-tx",
+      "name": "San Antonio, TX",
+      "state": "TX",
+      "region": "Southwest",
+      "description": "An underrated golf destination with excellent value courses and a rich cultural heritage.",
+      "courses": [
+        "TPC San Antonio",
+        "La Cantera Resort",
+        "The Quarry Golf Club",
+        "Briggs Ranch"
+      ],
+      "bestTimeToVisit": "March - May, October - November",
+      "averageGreenFee": 90,
+      "nearestAirport": "SAT",
+      "highlights": [
+        "River Walk",
+        "Value pricing",
+        "Year-round play",
+        "Tex-Mex cuisine"
+      ]
+    },
+    {
+      "id": "sea-island-ga",
+      "name": "Sea Island, GA",
+      "state": "GA",
+      "region": "Southeast",
+      "description": "An exclusive Georgia coast resort with championship courses and Southern hospitality at its finest.",
+      "courses": [
+        "Seaside Course",
+        "Plantation Course",
+        "Retreat Course"
+      ],
+      "bestTimeToVisit": "March - May, October - November",
+      "averageGreenFee": 275,
+      "nearestAirport": "JAX",
+      "highlights": [
+        "Exclusive resort",
+        "Southern hospitality",
+        "Beach access",
+        "RSM Classic host"
+      ]
+    },
+    {
+      "id": "naples-fl",
+      "name": "Naples, FL",
+      "state": "FL",
+      "region": "Southeast",
+      "description": "Southwest Florida's golf paradise with more courses per capita than almost anywhere in the country.",
+      "courses": [
+        "Tiburón Golf Club",
+        "Lely Resort",
+        "Naples Grande Golf Club",
+        "The Ritz-Carlton Golf Resort"
+      ],
+      "bestTimeToVisit": "November - April",
+      "averageGreenFee": 175,
+      "nearestAirport": "RSW",
+      "highlights": [
+        "Golf density",
+        "Luxury resorts",
+        "White sand beaches",
+        "Fine dining"
+      ]
+    },
+    {
+      "id": "sand-valley-wi",
+      "name": "Sand Valley, WI",
+      "state": "WI",
+      "region": "Midwest",
+      "description": "A stunning golf resort carved from Wisconsin's ancient sand dunes, from the creators of Bandon Dunes.",
+      "courses": [
+        "Sand Valley",
+        "Mammoth Dunes",
+        "The Sandbox",
+        "The Lido"
+      ],
+      "bestTimeToVisit": "May - September",
+      "averageGreenFee": 250,
+      "nearestAirport": "MSN",
+      "highlights": [
+        "Sand dune terrain",
+        "Walking-only",
+        "The Lido restoration",
+        "Remote escape"
+      ]
+    },
+    {
+      "id": "phoenix-az",
+      "name": "Phoenix, AZ",
+      "state": "AZ",
+      "region": "Southwest",
+      "description": "The Valley of the Sun offers incredible desert golf with dramatic mountain backdrops and year-round sun.",
+      "courses": [
+        "Quintero Golf Club",
+        "Ak-Chin Southern Dunes",
+        "Papago Golf Course",
+        "The Wigwam"
+      ],
+      "bestTimeToVisit": "October - April",
+      "averageGreenFee": 125,
+      "nearestAirport": "PHX",
+      "highlights": [
+        "Mountain views",
+        "Desert wildlife",
+        "Year-round play",
+        "Affordable options"
+      ]
+    },
+    {
+      "id": "tucson-az",
+      "name": "Tucson, AZ",
+      "state": "AZ",
+      "region": "Southwest",
+      "description": "Sonoran Desert golf with saguaro cactus-lined fairways and mountain views at great value.",
+      "courses": [
+        "Ventana Canyon",
+        "Omni Tucson National",
+        "Arizona National",
+        "Sewailo Golf Club"
+      ],
+      "bestTimeToVisit": "October - April",
+      "averageGreenFee": 100,
+      "nearestAirport": "TUS",
+      "highlights": [
+        "Saguaro scenery",
+        "Great value",
+        "Mountain backdrops",
+        "Mild winters"
+      ]
+    },
+    {
+      "id": "san-diego-ca",
+      "name": "San Diego, CA",
+      "state": "CA",
+      "region": "West",
+      "description": "Year-round golf paradise with coastal courses and perfect weather near the Mexican border.",
+      "courses": [
+        "Torrey Pines Golf Course",
+        "Maderas Golf Club",
+        "Aviara Golf Club",
+        "Barona Creek"
+      ],
+      "bestTimeToVisit": "Year-round",
+      "averageGreenFee": 175,
+      "nearestAirport": "SAN",
+      "highlights": [
+        "Torrey Pines oceanside",
+        "Perfect weather",
+        "Craft beer scene",
+        "Beach culture"
+      ]
+    },
+    {
+      "id": "savannah-ga",
+      "name": "Savannah, GA",
+      "state": "GA",
+      "region": "Southeast",
+      "description": "Golf amid Spanish moss and Lowcountry charm with courses on nearby barrier islands.",
+      "courses": [
+        "The Club at Savannah Harbor",
+        "Palmetto Hall",
+        "Old South Golf Links",
+        "Crosswinds Golf Club"
+      ],
+      "bestTimeToVisit": "March - May, October - November",
+      "averageGreenFee": 100,
+      "nearestAirport": "SAV",
+      "highlights": [
+        "Historic squares",
+        "Lowcountry cuisine",
+        "River Street",
+        "Southern charm"
+      ]
+    },
+    {
+      "id": "park-city-ut",
+      "name": "Park City, UT",
+      "state": "UT",
+      "region": "Mountain",
+      "description": "Mountain golf at elevation with cool summer temperatures and stunning Wasatch Range views.",
+      "courses": [
+        "Canyons Golf Course",
+        "Park City Golf Club",
+        "Soldier Hollow",
+        "Wasatch Mountain State Park"
+      ],
+      "bestTimeToVisit": "June - September",
+      "averageGreenFee": 90,
+      "nearestAirport": "SLC",
+      "highlights": [
+        "Mountain scenery",
+        "Cool summers",
+        "Ski town vibe",
+        "Outdoor activities"
+      ]
+    },
+    {
+      "id": "lake-tahoe-ca",
+      "name": "Lake Tahoe, CA",
+      "state": "CA",
+      "region": "West",
+      "description": "Alpine golf at 6,000+ feet with crystal-clear lake views and crisp mountain air.",
+      "courses": [
+        "Edgewood Tahoe",
+        "Old Greenwood",
+        "Gray's Crossing",
+        "Coyote Moon"
+      ],
+      "bestTimeToVisit": "June - September",
+      "averageGreenFee": 175,
+      "nearestAirport": "RNO",
+      "highlights": [
+        "Lake views",
+        "Celebrity tournament",
+        "Mountain air",
+        "Casino nightlife"
+      ]
+    },
+    {
+      "id": "branson-mo",
+      "name": "Branson, MO",
+      "state": "MO",
+      "region": "Midwest",
+      "description": "Ozark Mountain golf with exceptional value, scenic courses, and family entertainment.",
+      "courses": [
+        "Big Cedar Lodge courses",
+        "Branson Hills",
+        "Holiday Hills",
+        "Thousand Hills"
+      ],
+      "bestTimeToVisit": "April - October",
+      "averageGreenFee": 75,
+      "nearestAirport": "SGF",
+      "highlights": [
+        "Great value",
+        "Ozark scenery",
+        "Entertainment shows",
+        "Bass Pro amenities"
+      ]
+    },
+    {
+      "id": "biloxi-ms",
+      "name": "Biloxi, MS",
+      "state": "MS",
+      "region": "Southeast",
+      "description": "Gulf Coast golf with casino resorts, fresh seafood, and affordable championship courses.",
+      "courses": [
+        "Fallen Oak",
+        "Grand Bear",
+        "Shell Landing",
+        "The Oaks Golf Club"
+      ],
+      "bestTimeToVisit": "March - May, October - November",
+      "averageGreenFee": 80,
+      "nearestAirport": "GPT",
+      "highlights": [
+        "Casino resorts",
+        "Gulf seafood",
+        "Affordable golf",
+        "Fallen Oak gem"
+      ]
+    },
+    {
+      "id": "mesquite-nv",
+      "name": "Mesquite, NV",
+      "state": "NV",
+      "region": "West",
+      "description": "A hidden gem near Las Vegas with dramatic desert canyon courses and small-town charm.",
+      "courses": [
+        "Wolf Creek Golf Club",
+        "CasaBlanca Golf Club",
+        "Conestoga Golf Club",
+        "Falcon Ridge"
+      ],
+      "bestTimeToVisit": "October - April",
+      "averageGreenFee": 100,
+      "nearestAirport": "LAS",
+      "highlights": [
+        "Wolf Creek scenery",
+        "Affordable",
+        "Small-town feel",
+        "Near Las Vegas"
+      ]
+    },
+    {
+      "id": "barnesley-gardens-ga",
+      "name": "Barnsley Resort, GA",
+      "state": "GA",
+      "region": "Southeast",
+      "description": "A historic estate turned golf resort in the North Georgia mountains with a Jim Fazio-designed course.",
+      "courses": [
+        "The General at Barnsley Resort"
+      ],
+      "bestTimeToVisit": "April - October",
+      "averageGreenFee": 125,
+      "nearestAirport": "ATL",
+      "highlights": [
+        "Historic ruins",
+        "Mountain setting",
+        "Sporting clays",
+        "Southern cuisine"
+      ]
+    },
+    {
+      "id": "harbour-town-sc",
+      "name": "Amelia Island, FL",
+      "state": "FL",
+      "region": "Southeast",
+      "description": "A quiet barrier island retreat with championship courses and old Florida charm.",
+      "courses": [
+        "Amelia Island Plantation",
+        "Omni Amelia Island",
+        "Fernandina Beach Golf Club",
+        "The Amelia"
+      ],
+      "bestTimeToVisit": "March - May, October - November",
+      "averageGreenFee": 130,
+      "nearestAirport": "JAX",
+      "highlights": [
+        "Barrier island",
+        "Quiet atmosphere",
+        "Historic Fernandina",
+        "Oceanfront golf"
+      ]
+    },
+    {
+      "id": "gulf-shores-al",
+      "name": "Gulf Shores, AL",
+      "state": "AL",
+      "region": "Southeast",
+      "description": "Alabama's Gulf Coast offers excellent golf value with beautiful coastal courses and white sand beaches.",
+      "courses": [
+        "Kiva Dunes",
+        "Craft Farms",
+        "Peninsula Golf & Racquet Club",
+        "The Club at Colony Creek"
+      ],
+      "bestTimeToVisit": "March - May, October - November",
+      "averageGreenFee": 75,
+      "nearestAirport": "PNS",
+      "highlights": [
+        "Beach golf",
+        "Great value",
+        "Seafood",
+        "Family-friendly"
+      ]
+    },
+    {
+      "id": "troon-az",
+      "name": "Sedona, AZ",
+      "state": "AZ",
+      "region": "Southwest",
+      "description": "Red rock golf with some of the most visually stunning courses in the country.",
+      "courses": [
+        "Seven Canyons",
+        "Sedona Golf Resort",
+        "Oak Creek Country Club",
+        "Poco Diablo Resort"
+      ],
+      "bestTimeToVisit": "March - May, September - November",
+      "averageGreenFee": 125,
+      "nearestAirport": "PHX",
+      "highlights": [
+        "Red rock views",
+        "Spiritual setting",
+        "Hiking trails",
+        "Art galleries"
+      ]
+    },
+    {
+      "id": "harbour-links-mi",
+      "name": "Harbor Springs, MI",
+      "state": "MI",
+      "region": "Midwest",
+      "description": "Northern Michigan's gem with courses overlooking Little Traverse Bay and forested rolling terrain.",
+      "courses": [
+        "Bay Harbor Golf Club",
+        "Boyne Highlands",
+        "Crooked Tree Golf Club",
+        "Chestnut Valley"
+      ],
+      "bestTimeToVisit": "June - September",
+      "averageGreenFee": 125,
+      "nearestAirport": "TVC",
+      "highlights": [
+        "Bay views",
+        "Northern Michigan charm",
+        "Boyne Resort",
+        "Fall colors"
+      ]
+    },
+    {
+      "id": "gaylord-mi",
+      "name": "Gaylord, MI",
+      "state": "MI",
+      "region": "Midwest",
+      "description": "Michigan's golf mecca with over 15 courses in one area, set among northern hardwood forests.",
+      "courses": [
+        "Treetops Resort",
+        "Otsego Club",
+        "Gaylord Golf Mecca courses",
+        "Michaywe Pines"
+      ],
+      "bestTimeToVisit": "June - September",
+      "averageGreenFee": 80,
+      "nearestAirport": "TVC",
+      "highlights": [
+        "Course density",
+        "Forest setting",
+        "Treetops Threetops",
+        "Great value"
+      ]
+    },
+    {
+      "id": "white-sulphur-springs-wv",
+      "name": "White Sulphur Springs, WV",
+      "state": "WV",
+      "region": "Southeast",
+      "description": "The legendary Greenbrier resort with historic courses in the Allegheny Mountains of West Virginia.",
+      "courses": [
+        "The Old White TPC",
+        "The Greenbrier Course",
+        "The Meadows Course"
+      ],
+      "bestTimeToVisit": "May - October",
+      "averageGreenFee": 250,
+      "nearestAirport": "LWB",
+      "highlights": [
+        "Historic Greenbrier",
+        "Mountain setting",
+        "Luxury resort",
+        "A Military History"
+      ]
+    },
+    {
+      "id": "palm-beach-fl",
+      "name": "Palm Beach, FL",
+      "state": "FL",
+      "region": "Southeast",
+      "description": "Upscale South Florida golf with tropical courses and easy access to vibrant coastal culture.",
+      "courses": [
+        "PGA National Resort",
+        "BallenIsles Country Club",
+        "Breakers West",
+        "Trump International"
+      ],
+      "bestTimeToVisit": "November - April",
+      "averageGreenFee": 200,
+      "nearestAirport": "PBI",
+      "highlights": [
+        "PGA National",
+        "Tropical setting",
+        "Upscale dining",
+        "Beach proximity"
+      ]
+    },
+    {
+      "id": "miami-fl",
+      "name": "Miami, FL",
+      "state": "FL",
+      "region": "Southeast",
+      "description": "Tropical golf with a cosmopolitan flair, featuring courses amid palm-lined fairways and water features.",
+      "courses": [
+        "Doral Golf Resort (Blue Monster)",
+        "Crandon Golf at Key Biscayne",
+        "Trump National Doral",
+        "Biltmore Golf Course"
+      ],
+      "bestTimeToVisit": "November - April",
+      "averageGreenFee": 175,
+      "nearestAirport": "MIA",
+      "highlights": [
+        "Blue Monster",
+        "Art Deco culture",
+        "International cuisine",
+        "Nightlife"
+      ]
+    },
+    {
+      "id": "cabo-san-lucas-mx",
+      "name": "Cabo San Lucas, Mexico",
+      "state": "BCS",
+      "region": "International",
+      "description": "World-class golf on the tip of Baja California with desert-meets-ocean landscapes by top designers.",
+      "courses": [
+        "Cabo del Sol",
+        "Diamante",
+        "Quivira Golf Club",
+        "Palmilla Golf Club"
+      ],
+      "bestTimeToVisit": "November - May",
+      "averageGreenFee": 300,
+      "nearestAirport": "SJD",
+      "highlights": [
+        "Ocean cliffs",
+        "All-inclusive resorts",
+        "Deep-sea fishing",
+        "Vibrant nightlife"
+      ]
+    },
+    {
+      "id": "ireland",
+      "name": "Southwest Ireland",
+      "state": "IE",
+      "region": "International",
+      "description": "Legendary links golf along the Wild Atlantic Way with courses carved into dramatic coastal dunes.",
+      "courses": [
+        "Ballybunion Golf Club",
+        "Lahinch Golf Club",
+        "Tralee Golf Club",
+        "Waterville Golf Links"
+      ],
+      "bestTimeToVisit": "May - September",
+      "averageGreenFee": 225,
+      "nearestAirport": "SNN",
+      "highlights": [
+        "True links golf",
+        "Pub culture",
+        "Wild Atlantic Way",
+        "Historic courses"
+      ]
+    },
+    {
+      "id": "scotland",
+      "name": "St Andrews, Scotland",
+      "state": "SCT",
+      "region": "International",
+      "description": "The birthplace of golf featuring the Old Course and a collection of legendary links courses.",
+      "courses": [
+        "The Old Course",
+        "Carnoustie",
+        "Kingsbarns",
+        "Castle Course"
+      ],
+      "bestTimeToVisit": "May - September",
+      "averageGreenFee": 300,
+      "nearestAirport": "EDI",
+      "highlights": [
+        "Home of golf",
+        "The Old Course",
+        "Scottish hospitality",
+        "Whisky trail"
+      ]
+    },
+    {
+      "id": "reynolds-plantation-ga",
+      "name": "Greensboro, GA",
+      "state": "GA",
+      "region": "Southeast",
+      "description": "Lakeside golf at Reynolds Lake Oconee with multiple championship courses on the shores of Lake Oconee.",
+      "courses": [
+        "Great Waters",
+        "The Oconee",
+        "The National",
+        "Reynolds Landing"
+      ],
+      "bestTimeToVisit": "April - October",
+      "averageGreenFee": 200,
+      "nearestAirport": "ATL",
+      "highlights": [
+        "Lakefront golf",
+        "Multiple courses",
+        "Ritz-Carlton",
+        "Water sports"
+      ]
+    },
+    {
+      "id": "destination-kohler-wi",
+      "name": "Wisconsin Dells, WI",
+      "state": "WI",
+      "region": "Midwest",
+      "description": "Beyond the waterparks, the Dells area offers surprisingly good golf amid scenic river bluffs and forests.",
+      "courses": [
+        "Wild Rock Golf Club",
+        "Trappers Turn",
+        "Christmas Mountain Village",
+        "Cold Water Canyon"
+      ],
+      "bestTimeToVisit": "May - September",
+      "averageGreenFee": 80,
+      "nearestAirport": "MSN",
+      "highlights": [
+        "River bluffs",
+        "Family activities",
+        "Waterparks",
+        "Fall colors"
+      ]
+    },
+    {
+      "id": "lake-of-the-ozarks-mo",
+      "name": "Lake of the Ozarks, MO",
+      "state": "MO",
+      "region": "Midwest",
+      "description": "Central Missouri's playground with lakeside golf and water recreation at the Lake of the Ozarks.",
+      "courses": [
+        "The Lodge of Four Seasons",
+        "Old Kinderhook",
+        "Porto Cima",
+        "Bear Creek Valley"
+      ],
+      "bestTimeToVisit": "April - October",
+      "averageGreenFee": 75,
+      "nearestAirport": "SGF",
+      "highlights": [
+        "Lake activities",
+        "Affordable",
+        "Boat access",
+        "Ozark scenery"
+      ]
+    },
+    {
+      "id": "destin-fl",
+      "name": "Destin, FL",
+      "state": "FL",
+      "region": "Southeast",
+      "description": "Emerald Coast golf with courses set among coastal dunes and the stunning white sand beaches of Northwest Florida.",
+      "courses": [
+        "Regatta Bay",
+        "Kelly Plantation",
+        "Burnt Pine Golf Club",
+        "Sandestin Resort"
+      ],
+      "bestTimeToVisit": "March - May, September - November",
+      "averageGreenFee": 100,
+      "nearestAirport": "VPS",
+      "highlights": [
+        "Emerald waters",
+        "White sand beaches",
+        "Seafood",
+        "Family-friendly"
+      ]
+    },
+    {
+      "id": "columbia-sc",
+      "name": "Aiken, SC",
+      "state": "SC",
+      "region": "Southeast",
+      "description": "A charming equestrian and golf town with sandy soil courses and a rich sporting tradition.",
+      "courses": [
+        "Palmetto Golf Club",
+        "The Reserve Club at Woodside",
+        "Houndslake Country Club",
+        "Cedar Creek"
+      ],
+      "bestTimeToVisit": "March - May, October - November",
+      "averageGreenFee": 70,
+      "nearestAirport": "AGS",
+      "highlights": [
+        "Equestrian heritage",
+        "Affordable golf",
+        "Historic Palmetto",
+        "Small-town charm"
+      ]
+    },
+    {
+      "id": "big-sky-mt",
+      "name": "Big Sky, MT",
+      "state": "MT",
+      "region": "Mountain",
+      "description": "Montana mountain golf with sweeping views of the Spanish Peaks and Gallatin Range.",
+      "courses": [
+        "The Reserve at Moonlight Basin",
+        "Big Sky Resort Golf Course",
+        "Spanish Peaks Mountain Club"
+      ],
+      "bestTimeToVisit": "June - September",
+      "averageGreenFee": 150,
+      "nearestAirport": "BZN",
+      "highlights": [
+        "Mountain panoramas",
+        "Yellowstone nearby",
+        "Fly fishing",
+        "Wildlife viewing"
+      ]
+    },
+    {
+      "id": "maui-hi",
+      "name": "Maui, HI",
+      "state": "HI",
+      "region": "West",
+      "description": "Tropical paradise golf with ocean views, lush volcanic terrain, and world-class resort experiences.",
+      "courses": [
+        "Kapalua Plantation Course",
+        "Wailea Golf Club",
+        "Ka'anapali Golf Resort",
+        "The Dunes at Maui Lani"
+      ],
+      "bestTimeToVisit": "Year-round",
+      "averageGreenFee": 250,
+      "nearestAirport": "OGG",
+      "highlights": [
+        "Ocean views",
+        "Volcanic terrain",
+        "Whale watching",
+        "Aloha spirit"
+      ]
+    },
+    {
+      "id": "spring-city-tn",
+      "name": "Crossville, TN",
+      "state": "TN",
+      "region": "Southeast",
+      "description": "The Golf Capital of Tennessee, perched on the Cumberland Plateau with 10 courses in a small area.",
+      "courses": [
+        "Bear Trace at Cumberland Mountain",
+        "Heatherhurst",
+        "Stonehenge Golf Club",
+        "Dorchester Golf Club"
+      ],
+      "bestTimeToVisit": "April - October",
+      "averageGreenFee": 50,
+      "nearestAirport": "TYS",
+      "highlights": [
+        "Incredible value",
+        "Course density",
+        "Mountain plateau",
+        "Cool summers"
+      ]
+    },
+    {
+      "id": "jackson-hole-wy",
+      "name": "Jackson Hole, WY",
+      "state": "WY",
+      "region": "Mountain",
+      "description": "Spectacular Teton Mountain golf with dramatic elevation changes and wildlife encounters on the course.",
+      "courses": [
+        "Jackson Hole Golf & Tennis",
+        "Teton Pines",
+        "3 Creek Ranch",
+        "Snake River Sporting Club"
+      ],
+      "bestTimeToVisit": "June - September",
+      "averageGreenFee": 200,
+      "nearestAirport": "JAC",
+      "highlights": [
+        "Teton views",
+        "Wildlife on course",
+        "National parks",
+        "Western culture"
+      ]
+    },
+    {
+      "id": "coeur-dalene-id",
+      "name": "Coeur d'Alene, ID",
+      "state": "ID",
+      "region": "Pacific Northwest",
+      "description": "Home to the famous floating green, Coeur d'Alene offers stunning lakeside golf in the Idaho panhandle.",
+      "courses": [
+        "Coeur d'Alene Resort Golf Course",
+        "Circling Raven Golf Club",
+        "The Idaho Club",
+        "Gozzer Ranch"
+      ],
+      "bestTimeToVisit": "June - September",
+      "averageGreenFee": 200,
+      "nearestAirport": "SFF",
+      "highlights": [
+        "Floating green",
+        "Lake views",
+        "Mountain scenery",
+        "Resort amenities"
+      ]
+    },
+    {
+      "id": "bend-or",
+      "name": "Bend, OR",
+      "state": "OR",
+      "region": "Pacific Northwest",
+      "description": "High-desert golf in Central Oregon with Cascade Mountain views, volcanic terrain, and crisp mountain air.",
+      "courses": [
+        "Pronghorn Resort",
+        "Tetherow Golf Club",
+        "Crosswater Club",
+        "Brasada Canyons"
+      ],
+      "bestTimeToVisit": "June - September",
+      "averageGreenFee": 150,
+      "nearestAirport": "RDM",
+      "highlights": [
+        "Cascade views",
+        "Craft beer capital",
+        "Volcanic terrain",
+        "Outdoor adventure"
+      ]
+    },
+    {
+      "id": "french-lick-in",
+      "name": "French Lick, IN",
+      "state": "IN",
+      "region": "Midwest",
+      "description": "A historic resort destination in the Indiana hills featuring Pete Dye and Donald Ross designs with dramatic ridge-top golf.",
+      "courses": [
+        "Pete Dye Course at French Lick",
+        "Donald Ross Course",
+        "Sultan's Run Golf Club"
+      ],
+      "bestTimeToVisit": "May - October",
+      "averageGreenFee": 175,
+      "nearestAirport": "SDF",
+      "highlights": [
+        "Pete Dye masterpiece",
+        "Historic resort",
+        "Ridge-top views",
+        "Casino entertainment"
+      ]
+    },
+    {
+      "id": "traverse-city-mi",
+      "name": "Traverse City, MI",
+      "state": "MI",
+      "region": "Midwest",
+      "description": "Northern Michigan's crown jewel with cherry orchards, Grand Traverse Bay views, and world-class resort golf.",
+      "courses": [
+        "Arcadia Bluffs",
+        "The Bear at Grand Traverse Resort",
+        "A-Ga-Ming Golf Resort",
+        "Manitou Passage"
+      ],
+      "bestTimeToVisit": "June - September",
+      "averageGreenFee": 125,
+      "nearestAirport": "TVC",
+      "highlights": [
+        "Arcadia Bluffs cliffs",
+        "Wine country",
+        "Cherry orchards",
+        "Bay views"
+      ]
+    },
+    {
+      "id": "santa-fe-nm",
+      "name": "Santa Fe, NM",
+      "state": "NM",
+      "region": "Southwest",
+      "description": "High-desert golf at 7,000 feet with rich art culture, adobe architecture, and stunning Sangre de Cristo Mountain views.",
+      "courses": [
+        "Black Mesa Golf Club",
+        "Towa Golf Resort",
+        "Marty Sanchez Links de Santa Fe",
+        "Cochiti Golf Club"
+      ],
+      "bestTimeToVisit": "April - October",
+      "averageGreenFee": 75,
+      "nearestAirport": "SAF",
+      "highlights": [
+        "High-altitude golf",
+        "Art galleries",
+        "Adobe architecture",
+        "Southwestern cuisine"
+      ]
+    },
+    {
+      "id": "williamsburg-va",
+      "name": "Williamsburg, VA",
+      "state": "VA",
+      "region": "Southeast",
+      "description": "Colonial history meets championship golf with courses woven through Virginia's tidewater forests and historic landmarks.",
+      "courses": [
+        "Kingsmill Resort",
+        "Colonial Williamsburg Golden Horseshoe",
+        "Williamsburg National",
+        "Ford's Colony"
+      ],
+      "bestTimeToVisit": "April - June, September - November",
+      "averageGreenFee": 100,
+      "nearestAirport": "PHF",
+      "highlights": [
+        "Colonial history",
+        "Kingsmill Resort",
+        "Busch Gardens nearby",
+        "Fall foliage"
+      ]
+    },
+    {
+      "id": "pawleys-island-sc",
+      "name": "Pawleys Island, SC",
+      "state": "SC",
+      "region": "Southeast",
+      "description": "A laid-back Lowcountry golf haven south of Myrtle Beach with acclaimed courses among live oaks and salt marshes.",
+      "courses": [
+        "Caledonia Golf & Fish Club",
+        "True Blue Golf Club",
+        "Pawleys Plantation",
+        "Litchfield Country Club"
+      ],
+      "bestTimeToVisit": "March - May, September - November",
+      "averageGreenFee": 110,
+      "nearestAirport": "MYR",
+      "highlights": [
+        "Caledonia plantation setting",
+        "Lowcountry charm",
+        "Less crowded",
+        "Fresh seafood"
+      ]
+    },
+    {
+      "id": "reynolds-lake-oconee-ga",
+      "name": "Reynolds Lake Oconee, GA",
+      "state": "GA",
+      "region": "Southeast",
+      "description": "A premier lakeside golf community east of Atlanta with six championship courses on the shores of Lake Oconee.",
+      "courses": [
+        "Great Waters",
+        "The Oconee",
+        "The National",
+        "Reynolds Landing",
+        "The Creek Club",
+        "The Preserve"
+      ],
+      "bestTimeToVisit": "April - October",
+      "averageGreenFee": 200,
+      "nearestAirport": "ATL",
+      "highlights": [
+        "Six courses",
+        "Lakefront setting",
+        "Ritz-Carlton Lodge",
+        "Water recreation"
+      ]
+    },
+    {
+      "id": "robert-trent-jones-trail-al",
+      "name": "Robert Trent Jones Trail, AL",
+      "state": "AL",
+      "region": "Southeast",
+      "description": "A 468-hole collection spanning 11 sites across Alabama, designed by Robert Trent Jones Sr. as one of the greatest public golf experiences in the world.",
+      "courses": [
+        "Ross Bridge",
+        "Capitol Hill",
+        "Grand National",
+        "Oxmoor Valley",
+        "Magnolia Grove"
+      ],
+      "bestTimeToVisit": "March - May, September - November",
+      "averageGreenFee": 65,
+      "nearestAirport": "BHM",
+      "highlights": [
+        "468 holes statewide",
+        "Incredible value",
+        "RTJ Sr. designs",
+        "Southern hospitality"
+      ]
+    }
+  ]
+}
