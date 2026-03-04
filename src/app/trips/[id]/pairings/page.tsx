@@ -6,6 +6,7 @@ import Link from "next/link";
 import { getTrip, getRounds, createRound, updateRound, deleteRound } from "@/lib/store";
 import { Trip, Round } from "@/lib/types";
 import { ArrowLeft, Plus, Shuffle, Trash2, Users, AlertCircle } from "lucide-react";
+import CourseSearch from "@/components/shared/CourseSearch";
 
 function shuffle<T>(array: T[]): T[] {
   const arr = [...array];
@@ -188,13 +189,13 @@ export default function PairingsPage() {
                 <label className="block text-sm font-medium text-zinc-700">
                   Course
                 </label>
-                <input
-                  type="text"
-                  value={courseName}
-                  onChange={(e) => setCourseName(e.target.value)}
-                  placeholder="TPC Scottsdale"
-                  className="mt-1 block w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
-                />
+                <div className="mt-1">
+                  <CourseSearch
+                    value={courseName}
+                    onChange={setCourseName}
+                    placeholder="Search for a course…"
+                  />
+                </div>
               </div>
               <div>
                 <label className="block text-sm font-medium text-zinc-700">
