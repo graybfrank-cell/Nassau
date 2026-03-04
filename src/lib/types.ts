@@ -136,6 +136,7 @@ export interface GameRound {
   players: GamePlayer[];
   scorecards: GameScorecard[];
   skinsGame?: GameSkinsGame | null;
+  nassauBet?: GameNassauBet | null;
   expenses: GameExpense[];
   settlements: GameSettlement[];
   createdAt: string;
@@ -174,6 +175,22 @@ export interface GameSkinsGame {
     payouts: Record<string, number>;
   };
   createdAt: string;
+}
+
+export interface GameNassauBet {
+  id: string;
+  roundId: string;
+  betAmount: number;
+  status: "active" | "completed";
+  results?: NassauBetResults;
+  createdAt: string;
+}
+
+export interface NassauBetResults {
+  frontNine: { winnerId: string | null; scores: Record<string, number> };
+  backNine: { winnerId: string | null; scores: Record<string, number> };
+  overall: { winnerId: string | null; scores: Record<string, number> };
+  payouts: Record<string, number>;
 }
 
 export interface GameExpense {

@@ -30,6 +30,7 @@ export async function GET() {
       players: true,
       scorecards: true,
       skins_game: true,
+      nassau_bet: true,
       expenses: true,
       settlements: true,
     },
@@ -112,11 +113,21 @@ export async function POST(req: NextRequest) {
               },
             }
           : {}),
+        ...(body.nassauBet
+          ? {
+              nassau_bet: {
+                create: {
+                  bet_amount: body.nassauBet.betAmount || 10,
+                },
+              },
+            }
+          : {}),
       },
       include: {
         players: true,
         scorecards: true,
         skins_game: true,
+        nassau_bet: true,
         expenses: true,
         settlements: true,
       },

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getUser, unauthorized, forbidden } from "@/lib/auth";
+import { calculateNassauBet } from "@/components/shared/NassauBetCalculator";
 
 export async function POST(
   _req: NextRequest,
@@ -17,6 +18,7 @@ export async function POST(
       players: true,
       scorecards: true,
       skins_game: true,
+      nassau_bet: true,
       expenses: true,
       settlements: true,
     },
@@ -85,7 +87,32 @@ export async function POST(
     }
   }
 
-  // 3. Preserve settled settlements
+  // 3. Calculate nassau bet payouts
+  if (round.nassau_bet) {
+    const betAmount = Number(round.nassau_bet.bet_amount);
+    const nassauScorecards = round.scorecards
+      .filter((sc) => confirmedPlayerIds.includes(sc.player_id))
+      .map((sc) => ({
+        playerId: sc.player_id,
+        holes: sc.holes as number[],
+      }));
+    const nassauResults = calculateNassauBet(
+      nassauScorecards,
+      confirmedPlayerIds,
+      betAmount
+    );
+    for (const [playerId, net] of Object.entries(nassauResults.payouts)) {
+      balances[playerId] = (balances[playerId] || 0) + net;
+    }
+
+    // Store results on the nassau_bet record
+    await prisma.gameNassauBets.update({
+      where: { round_id: roundId },
+      data: { results: nassauResults as object },
+    });
+  }
+
+  // 4. Preserve settled settlements
   const settledMap = new Map<string, boolean>();
   for (const s of round.settlements) {
     if (s.settled) {
@@ -93,12 +120,12 @@ export async function POST(
     }
   }
 
-  // 4. Delete unsettled settlements
+  // 5. Delete unsettled settlements
   await prisma.gameSettlements.deleteMany({
     where: { round_id: roundId, settled: false },
   });
 
-  // 5. Compute net settlements (minimize transactions)
+  // 6. Compute net settlements (minimize transactions)
   const debtors = Object.entries(balances)
     .filter(([, b]) => b < -0.01)
     .map(([id, b]) => ({ id, amount: -b }))
@@ -134,7 +161,7 @@ export async function POST(
     if (creditors[j].amount < 0.01) j++;
   }
 
-  // 6. Create new settlement records
+  // 7. Create new settlement records
   if (newSettlements.length > 0) {
     await prisma.gameSettlements.createMany({
       data: newSettlements.map((s) => ({

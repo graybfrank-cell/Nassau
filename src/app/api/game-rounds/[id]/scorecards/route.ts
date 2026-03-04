@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getUser, unauthorized, forbidden } from "@/lib/auth";
+import { calculateNassauBet } from "@/components/shared/NassauBetCalculator";
 
 export async function GET(
   _req: NextRequest,
@@ -79,6 +80,34 @@ export async function POST(
     await prisma.gameRounds.update({
       where: { id: roundId },
       data: { status: "in_progress" },
+    });
+  }
+
+  // Recalculate nassau bet results if one exists
+  const nassauBet = await prisma.gameNassauBets.findUnique({
+    where: { round_id: roundId },
+  });
+  if (nassauBet) {
+    const allScorecards = await prisma.gameScorecards.findMany({
+      where: { round_id: roundId },
+    });
+    const confirmedPlayerIds = round.players
+      .filter((p) => p.status === "confirmed" || p.role === "COMMISSIONER")
+      .map((p) => p.id);
+    const nassauScorecards = allScorecards
+      .filter((sc) => confirmedPlayerIds.includes(sc.player_id))
+      .map((sc) => ({
+        playerId: sc.player_id,
+        holes: sc.holes as number[],
+      }));
+    const results = calculateNassauBet(
+      nassauScorecards,
+      confirmedPlayerIds,
+      Number(nassauBet.bet_amount)
+    );
+    await prisma.gameNassauBets.update({
+      where: { round_id: roundId },
+      data: { results: results as object },
     });
   }
 
