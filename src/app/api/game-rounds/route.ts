@@ -87,6 +87,7 @@ export async function POST(req: NextRequest) {
         course_lng: body.courseLng ?? null,
         tee_time: teeTime,
         notes: body.notes || null,
+        starting_hole: body.startingHole === 10 ? 10 : 1,
         players: {
           create: [
             {

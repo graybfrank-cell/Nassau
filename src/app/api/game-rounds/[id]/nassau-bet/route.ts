@@ -65,3 +65,22 @@ export async function POST(
 
   return NextResponse.json(nassauBet, { status: 201 });
 }
+
+export async function DELETE(
+  _req: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const user = await getUser();
+  if (!user) return unauthorized();
+
+  const { id: roundId } = await params;
+
+  const round = await prisma.gameRounds.findUnique({ where: { id: roundId } });
+  if (!round) {
+    return NextResponse.json({ error: "Not found" }, { status: 404 });
+  }
+  if (round.commissioner_id !== user.id) return forbidden();
+
+  await prisma.gameNassauBets.deleteMany({ where: { round_id: roundId } });
+  return NextResponse.json({ ok: true });
+}

@@ -52,15 +52,19 @@ export async function POST(
   // 2. Calculate skins payouts
   if (round.skins_game) {
     const buyIn = Number(round.skins_game.buy_in);
+    const holeOrder = round.starting_hole === 10
+      ? [...Array.from({ length: 9 }, (_, i) => i + 9), ...Array.from({ length: 9 }, (_, i) => i)]
+      : Array.from({ length: 18 }, (_, i) => i);
     let carryover = 0;
 
     for (let i = 0; i < 18; i++) {
+      const idx = holeOrder[i];
       const scores: { playerId: string; score: number }[] = [];
       for (const sc of round.scorecards) {
         if (!confirmedPlayerIds.includes(sc.player_id)) continue;
         const holes = sc.holes as number[];
-        if (holes && holes[i] && holes[i] > 0) {
-          scores.push({ playerId: sc.player_id, score: holes[i] });
+        if (holes && holes[idx] && holes[idx] > 0) {
+          scores.push({ playerId: sc.player_id, score: holes[idx] });
         }
       }
 
@@ -99,7 +103,8 @@ export async function POST(
     const nassauResults = calculateNassauBet(
       nassauScorecards,
       confirmedPlayerIds,
-      betAmount
+      betAmount,
+      round.starting_hole
     );
     for (const [playerId, net] of Object.entries(nassauResults.payouts)) {
       balances[playerId] = (balances[playerId] || 0) + net;

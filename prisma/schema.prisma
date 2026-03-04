@@ -232,6 +232,7 @@ model GameRounds {
   status          String   @default("upcoming") // "upcoming", "in_progress", "completed"
   share_code      String   @unique @default(cuid())
   notes           String?
+  starting_hole   Int      @default(1)
   created_at      DateTime @default(now()) @db.Timestamptz()
   updated_at      DateTime @updatedAt @db.Timestamptz()
 

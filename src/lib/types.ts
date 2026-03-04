@@ -133,6 +133,7 @@ export interface GameRound {
   status: "upcoming" | "in_progress" | "completed";
   shareCode: string;
   notes?: string;
+  startingHole: number;
   players: GamePlayer[];
   scorecards: GameScorecard[];
   skinsGame?: GameSkinsGame | null;

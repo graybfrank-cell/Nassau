@@ -60,6 +60,7 @@ export async function PATCH(
       ...(body.teeTime !== undefined && { tee_time: new Date(body.teeTime) }),
       ...(body.status !== undefined && { status: body.status }),
       ...(body.notes !== undefined && { notes: body.notes }),
+      ...(body.startingHole !== undefined && { starting_hole: body.startingHole === 10 ? 10 : 1 }),
     },
     include: {
       players: { orderBy: { joined_at: "asc" } },
