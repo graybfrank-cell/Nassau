@@ -23,6 +23,12 @@ import {
   Send,
   Plus,
   RefreshCw,
+  FileText,
+  UserPlus,
+  Users,
+  Link2,
+  Gift,
+  Pencil,
 } from "lucide-react";
 
 const ADMIN_EMAIL = "graybfrank@gmail.com";
@@ -33,6 +39,7 @@ type Tab =
   | "scout"
   | "partnerships"
   | "newsletter"
+  | "seo"
   | "analytics"
   | "settings";
 
@@ -42,6 +49,7 @@ const TABS: { id: Tab; label: string; icon: typeof LayoutGrid }[] = [
   { id: "scout", label: "Scout", icon: Search },
   { id: "partnerships", label: "Partnerships", icon: Handshake },
   { id: "newsletter", label: "Newsletter", icon: Mail },
+  { id: "seo", label: "SEO", icon: FileText },
   { id: "analytics", label: "Analytics", icon: BarChart3 },
   { id: "settings", label: "Settings", icon: Settings },
 ];
@@ -314,6 +322,12 @@ export default function MarketingDashboard() {
             agentRunning={agentRunning}
           />
         )}
+        {tab === "seo" && (
+          <SEOTab
+            onRunSEOWriter={(keyword: string) => runAgent("seo-writer", { keyword })}
+            agentRunning={agentRunning}
+          />
+        )}
         {tab === "analytics" && (
           <AnalyticsTab
             content={content}
@@ -322,7 +336,14 @@ export default function MarketingDashboard() {
             agentRunning={agentRunning}
           />
         )}
-        {tab === "settings" && <SettingsTab />}
+        {tab === "settings" && (
+          <SettingsTab
+            onRunOnboarding={() => runAgent("onboarding")}
+            onRunReactivation={() => runAgent("reactivation")}
+            onRunReferralTracker={() => runAgent("referral-tracker")}
+            agentRunning={agentRunning}
+          />
+        )}
       </div>
 
       {/* Content Detail Modal */}
@@ -1205,7 +1226,7 @@ function AnalyticsTab({
 
       {/* Latest analysis */}
       {latestAnalysis?.performance_summary && (
-        <div className="rounded-lg border border-zinc-200 bg-white p-4">
+        <div className="rounded-lg border border-zinc-200 bg-white p-4 mb-6">
           <h3 className="mb-3 text-sm font-semibold text-zinc-700">
             Latest Analysis
           </h3>
@@ -1214,18 +1235,430 @@ function AnalyticsTab({
           </pre>
         </div>
       )}
+
+      {/* Referral Section */}
+      <ReferralAnalyticsSection />
     </div>
   );
 }
 
-function SettingsTab() {
+function ReferralAnalyticsSection() {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [stats, setStats] = useState<any>(null);
+
+  useEffect(() => {
+    // Fetch referral performance data from marketing_performance
+    const supabase = createClient();
+    supabase
+      .from("marketing_performance")
+      .select("*")
+      .eq("platform", "referral")
+      .order("metric_date", { ascending: false })
+      .limit(1)
+      .single()
+      .then(({ data }) => {
+        if (data) setStats(data);
+      });
+  }, []);
+
+  // Fetch leaderboard
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [leaderboard, setLeaderboard] = useState<any[]>([]);
+  useEffect(() => {
+    const supabase = createClient();
+    supabase
+      .from("referral_codes")
+      .select("user_id, code, clicks")
+      .order("clicks", { ascending: false })
+      .limit(10)
+      .then(({ data }) => {
+        if (data) setLeaderboard(data);
+      });
+  }, []);
+
+  return (
+    <div className="rounded-lg border border-zinc-200 bg-white p-4">
+      <h3 className="mb-3 text-sm font-semibold text-zinc-700 flex items-center gap-2">
+        <Link2 className="h-4 w-4 text-purple-600" />
+        Referrals
+      </h3>
+      <div className="grid grid-cols-4 gap-3 mb-4">
+        <div className="rounded-lg bg-zinc-50 p-3">
+          <div className="text-2xl font-bold text-zinc-900">{stats?.likes || 0}</div>
+          <div className="text-xs text-zinc-500">Total referrals</div>
+        </div>
+        <div className="rounded-lg bg-zinc-50 p-3">
+          <div className="text-2xl font-bold text-zinc-900">{stats?.shares || 0}</div>
+          <div className="text-xs text-zinc-500">This week</div>
+        </div>
+        <div className="rounded-lg bg-zinc-50 p-3">
+          <div className="text-2xl font-bold text-emerald-600">{stats?.comments || 0}</div>
+          <div className="text-xs text-zinc-500">Active referrals</div>
+        </div>
+        <div className="rounded-lg bg-zinc-50 p-3">
+          <div className="text-2xl font-bold text-zinc-900">
+            {stats && stats.impressions > 0
+              ? (stats.likes / stats.impressions).toFixed(2)
+              : "0.00"}
+          </div>
+          <div className="text-xs text-zinc-500">Viral coefficient</div>
+        </div>
+      </div>
+      {leaderboard.length > 0 && (
+        <div>
+          <h4 className="text-xs font-semibold text-zinc-500 mb-2">Top Referrers</h4>
+          <div className="space-y-1">
+            {leaderboard.map((r, i) => (
+              <div key={r.code} className="flex items-center justify-between rounded bg-zinc-50 px-3 py-2 text-xs">
+                <span className="text-zinc-400 font-mono w-6">{i + 1}.</span>
+                <span className="text-zinc-600 font-mono flex-1">{r.code}</span>
+                <span className="text-zinc-700 font-medium">{r.clicks || 0} clicks</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+      <div className="mt-3 flex items-center gap-2 text-xs text-zinc-400">
+        <Gift className="h-3.5 w-3.5" />
+        Reward status: <span className="font-medium text-zinc-600">Off (pre-launch)</span>
+      </div>
+    </div>
+  );
+}
+
+function SEOTab({
+  onRunSEOWriter,
+  agentRunning,
+}: {
+  onRunSEOWriter: (keyword: string) => void;
+  agentRunning: string | null;
+}) {
+  const [keyword, setKeyword] = useState("");
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [posts, setPosts] = useState<any[]>([]);
+  const [postsLoading, setPostsLoading] = useState(true);
+
+  useEffect(() => {
+    fetch("/api/admin/marketing/seo-writer")
+      .then((r) => r.json())
+      .then((d) => setPosts(d.posts || []))
+      .catch(() => {})
+      .finally(() => setPostsLoading(false));
+  }, [agentRunning]);
+
+  async function updatePostStatus(id: string, status: string) {
+    const res = await fetch("/api/admin/marketing/seo-writer", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id, status }),
+    });
+    if (res.ok) {
+      const { post } = await res.json();
+      setPosts((prev) => prev.map((p) => (p.id === id ? post : p)));
+    }
+  }
+
+  const drafts = posts.filter((p) => p.status === "draft");
+  const inReview = posts.filter((p) => p.status === "review");
+  const published = posts.filter((p) => p.status === "published");
+
+  return (
+    <div>
+      <div className="flex items-center justify-between mb-6">
+        <h2 className="text-lg font-semibold text-zinc-900">SEO Blog Posts</h2>
+        <div className="flex items-center gap-2">
+          <input
+            type="text"
+            value={keyword}
+            onChange={(e) => setKeyword(e.target.value)}
+            placeholder="Target keyword..."
+            className="rounded-lg border border-zinc-300 px-3 py-2 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+          />
+          <button
+            onClick={() => {
+              onRunSEOWriter(keyword || "");
+              setKeyword("");
+            }}
+            disabled={agentRunning === "seo-writer"}
+            className="inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-700 disabled:opacity-50"
+          >
+            {agentRunning === "seo-writer" ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              <Pencil className="h-4 w-4" />
+            )}
+            Generate Post
+          </button>
+        </div>
+      </div>
+
+      {postsLoading ? (
+        <div className="flex justify-center py-12">
+          <Loader2 className="h-6 w-6 animate-spin text-zinc-400" />
+        </div>
+      ) : (
+        <div className="grid grid-cols-3 gap-6">
+          {/* Draft column */}
+          <div>
+            <h3 className="mb-3 text-sm font-semibold text-zinc-500 uppercase tracking-wider">
+              Draft ({drafts.length})
+            </h3>
+            <div className="space-y-3">
+              {drafts.map((post) => (
+                <SEOPostCard key={post.id} post={post} onStatusChange={updatePostStatus} />
+              ))}
+            </div>
+          </div>
+          {/* Review column */}
+          <div>
+            <h3 className="mb-3 text-sm font-semibold text-amber-600 uppercase tracking-wider">
+              Review ({inReview.length})
+            </h3>
+            <div className="space-y-3">
+              {inReview.map((post) => (
+                <SEOPostCard key={post.id} post={post} onStatusChange={updatePostStatus} />
+              ))}
+            </div>
+          </div>
+          {/* Published column */}
+          <div>
+            <h3 className="mb-3 text-sm font-semibold text-emerald-600 uppercase tracking-wider">
+              Published ({published.length})
+            </h3>
+            <div className="space-y-3">
+              {published.map((post) => (
+                <SEOPostCard key={post.id} post={post} onStatusChange={updatePostStatus} />
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function SEOPostCard({
+  post,
+  onStatusChange,
+}: {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  post: any;
+  onStatusChange: (id: string, status: string) => void;
+}) {
+  return (
+    <div className="rounded-lg border border-zinc-200 bg-white p-4">
+      <h4 className="text-sm font-semibold text-zinc-900 line-clamp-2">{post.title}</h4>
+      <div className="mt-1 text-xs text-emerald-600">{post.target_keyword}</div>
+      <div className="mt-2 flex items-center gap-2 text-xs text-zinc-400">
+        <span>{post.word_count} words</span>
+        {post.page_views > 0 && (
+          <>
+            <span>&bull;</span>
+            <span>{post.page_views} views</span>
+          </>
+        )}
+        {post.published_at && (
+          <>
+            <span>&bull;</span>
+            <span>{new Date(post.published_at).toLocaleDateString()}</span>
+          </>
+        )}
+      </div>
+      <div className="mt-3 flex gap-2">
+        {post.status === "draft" && (
+          <button
+            onClick={() => onStatusChange(post.id, "review")}
+            className="rounded bg-amber-100 px-2 py-1 text-xs font-medium text-amber-700 hover:bg-amber-200"
+          >
+            Send to Review
+          </button>
+        )}
+        {post.status === "review" && (
+          <button
+            onClick={() => onStatusChange(post.id, "published")}
+            className="rounded bg-emerald-100 px-2 py-1 text-xs font-medium text-emerald-700 hover:bg-emerald-200"
+          >
+            Mark Published
+          </button>
+        )}
+        {post.status === "published" && post.slug && (
+          <a
+            href={`/blog/${post.slug}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1 rounded bg-zinc-100 px-2 py-1 text-xs font-medium text-zinc-600 hover:bg-zinc-200"
+          >
+            <ExternalLink className="h-3 w-3" />
+            View
+          </a>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function SettingsTab({
+  onRunOnboarding,
+  onRunReactivation,
+  onRunReferralTracker,
+  agentRunning,
+}: {
+  onRunOnboarding: () => void;
+  onRunReactivation: () => void;
+  onRunReferralTracker: () => void;
+  agentRunning: string | null;
+}) {
   const [bufferKey, setBufferKey] = useState("");
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [onboardingStats, setOnboardingStats] = useState<any>(null);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [reactivationStats, setReactivationStats] = useState<any>(null);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [referralStats, setReferralStats] = useState<any>(null);
+
+  useEffect(() => {
+    fetch("/api/admin/marketing/onboarding")
+      .then((r) => r.json())
+      .then(setOnboardingStats)
+      .catch(() => {});
+    fetch("/api/admin/marketing/reactivation")
+      .then((r) => r.json())
+      .then(setReactivationStats)
+      .catch(() => {});
+  }, [agentRunning]);
 
   return (
     <div className="max-w-2xl">
       <h2 className="mb-4 text-lg font-semibold text-zinc-900">Settings</h2>
 
       <div className="space-y-6">
+        {/* Onboarding Card */}
+        <div className="rounded-lg border border-zinc-200 bg-white p-4">
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="text-sm font-semibold text-zinc-700 flex items-center gap-2">
+              <UserPlus className="h-4 w-4 text-emerald-600" />
+              Onboarding
+            </h3>
+            <button
+              onClick={onRunOnboarding}
+              disabled={agentRunning === "onboarding"}
+              className="inline-flex items-center gap-1.5 rounded-lg bg-emerald-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-emerald-700 disabled:opacity-50"
+            >
+              {agentRunning === "onboarding" ? (
+                <Loader2 className="h-3.5 w-3.5 animate-spin" />
+              ) : (
+                <Play className="h-3.5 w-3.5" />
+              )}
+              Run
+            </button>
+          </div>
+          {onboardingStats && (
+            <div className="grid grid-cols-2 gap-3">
+              <div className="rounded-lg bg-zinc-50 p-3">
+                <div className="text-2xl font-bold text-zinc-900">{onboardingStats.total_in_sequence || 0}</div>
+                <div className="text-xs text-zinc-500">Users in sequence</div>
+              </div>
+              <div className="rounded-lg bg-zinc-50 p-3">
+                <div className="text-2xl font-bold text-emerald-600">{onboardingStats.completion_rate || 0}%</div>
+                <div className="text-xs text-zinc-500">Completion rate</div>
+              </div>
+              <div className="rounded-lg bg-zinc-50 p-3 col-span-2">
+                <div className="flex justify-between text-xs text-zinc-600">
+                  <span>Day 0: {onboardingStats.day0_sent || 0}</span>
+                  <span>Day 3: {onboardingStats.day3_sent || 0}</span>
+                  <span>Day 7: {onboardingStats.day7_sent || 0}</span>
+                  <span className="text-emerald-600 font-medium">Completed: {onboardingStats.completed || 0}</span>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Reactivation Card */}
+        <div className="rounded-lg border border-zinc-200 bg-white p-4">
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="text-sm font-semibold text-zinc-700 flex items-center gap-2">
+              <RefreshCw className="h-4 w-4 text-amber-600" />
+              Reactivation
+            </h3>
+            <button
+              onClick={onRunReactivation}
+              disabled={agentRunning === "reactivation"}
+              className="inline-flex items-center gap-1.5 rounded-lg bg-emerald-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-emerald-700 disabled:opacity-50"
+            >
+              {agentRunning === "reactivation" ? (
+                <Loader2 className="h-3.5 w-3.5 animate-spin" />
+              ) : (
+                <Play className="h-3.5 w-3.5" />
+              )}
+              Run
+            </button>
+          </div>
+          {reactivationStats && (
+            <div className="space-y-3">
+              <div className="grid grid-cols-2 gap-3">
+                <div className="rounded-lg bg-zinc-50 p-3">
+                  <div className="text-2xl font-bold text-zinc-900">{reactivationStats.dormant_users || 0}</div>
+                  <div className="text-xs text-zinc-500">Dormant users</div>
+                </div>
+                <div className="rounded-lg bg-zinc-50 p-3">
+                  <div className="text-2xl font-bold text-zinc-900">{reactivationStats.emails_this_month || 0}</div>
+                  <div className="text-xs text-zinc-500">Emails this month</div>
+                </div>
+                <div className="rounded-lg bg-zinc-50 p-3">
+                  <div className="text-2xl font-bold text-emerald-600">{reactivationStats.reactivation_rate || 0}%</div>
+                  <div className="text-xs text-zinc-500">Reactivation rate</div>
+                </div>
+                <div className="rounded-lg bg-zinc-50 p-3">
+                  <div className="text-2xl font-bold text-red-600">{reactivationStats.churned_users || 0}</div>
+                  <div className="text-xs text-zinc-500">Churned</div>
+                </div>
+              </div>
+              {reactivationStats.recent_emails?.length > 0 && (
+                <div>
+                  <h4 className="text-xs font-semibold text-zinc-500 mb-2">Recent Emails</h4>
+                  <div className="space-y-1">
+                    {reactivationStats.recent_emails.slice(0, 5).map((e: { id: string; email: string; email_subject: string; opened: boolean; clicked: boolean; email_sent_at: string }) => (
+                      <div key={e.id} className="flex items-center justify-between rounded bg-zinc-50 px-3 py-2 text-xs">
+                        <span className="text-zinc-700 truncate max-w-[180px]">{e.email}</span>
+                        <span className="text-zinc-500 truncate max-w-[150px]">{e.email_subject}</span>
+                        <div className="flex gap-1.5">
+                          {e.opened && <span className="text-emerald-600">opened</span>}
+                          {e.clicked && <span className="text-blue-600">clicked</span>}
+                          {!e.opened && !e.clicked && <span className="text-zinc-400">sent</span>}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+
+        {/* Referral Tracker Card */}
+        <div className="rounded-lg border border-zinc-200 bg-white p-4">
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="text-sm font-semibold text-zinc-700 flex items-center gap-2">
+              <Gift className="h-4 w-4 text-purple-600" />
+              Referral Tracker
+            </h3>
+            <button
+              onClick={onRunReferralTracker}
+              disabled={agentRunning === "referral-tracker"}
+              className="inline-flex items-center gap-1.5 rounded-lg bg-emerald-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-emerald-700 disabled:opacity-50"
+            >
+              {agentRunning === "referral-tracker" ? (
+                <Loader2 className="h-3.5 w-3.5 animate-spin" />
+              ) : (
+                <Play className="h-3.5 w-3.5" />
+              )}
+              Run
+            </button>
+          </div>
+          <p className="text-xs text-zinc-500">Processes referral stats daily. Reward status: <span className="font-medium text-zinc-700">Off (pre-launch)</span></p>
+        </div>
+
         <div className="rounded-lg border border-zinc-200 bg-white p-4">
           <h3 className="mb-3 text-sm font-semibold text-zinc-700">
             API Keys
@@ -1277,6 +1710,22 @@ function SettingsTab() {
             <div className="flex justify-between">
               <span>Newsletter</span>
               <span className="text-xs text-zinc-400">Sat 10 AM CT (15:00 UTC)</span>
+            </div>
+            <div className="flex justify-between border-t border-zinc-100 pt-2 mt-2">
+              <span>Onboarding</span>
+              <span className="text-xs text-zinc-400">Daily 8 AM CT (13:00 UTC)</span>
+            </div>
+            <div className="flex justify-between">
+              <span>Reactivation</span>
+              <span className="text-xs text-zinc-400">Mon 9 AM CT (14:00 UTC)</span>
+            </div>
+            <div className="flex justify-between">
+              <span>SEO Writer</span>
+              <span className="text-xs text-zinc-400">Wed 11 AM CT (16:00 UTC)</span>
+            </div>
+            <div className="flex justify-between">
+              <span>Referral Tracker</span>
+              <span className="text-xs text-zinc-400">Daily 6 AM CT (11:00 UTC)</span>
             </div>
           </div>
         </div>
