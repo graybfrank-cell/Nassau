@@ -1364,8 +1364,19 @@ function SEOTab({
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-6">
-        <h2 className="text-lg font-semibold text-zinc-900">SEO Blog Posts</h2>
+      <div className="flex items-center justify-between mb-4">
+        <div>
+          <h2 className="text-lg font-semibold text-zinc-900">SEO Blog Posts</h2>
+          <a
+            href="/blog"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1 text-xs text-emerald-600 hover:text-emerald-700 mt-1"
+          >
+            <ExternalLink className="h-3 w-3" />
+            View live blog at nassau.golf/blog
+          </a>
+        </div>
         <div className="flex items-center gap-2">
           <input
             type="text"
@@ -1446,24 +1457,29 @@ function SEOPostCard({
   onStatusChange: (id: string, status: string) => void;
 }) {
   return (
-    <div className="rounded-lg border border-zinc-200 bg-white p-4">
-      <h4 className="text-sm font-semibold text-zinc-900 line-clamp-2">{post.title}</h4>
-      <div className="mt-1 text-xs text-emerald-600">{post.target_keyword}</div>
-      <div className="mt-2 flex items-center gap-2 text-xs text-zinc-400">
-        <span>{post.word_count} words</span>
-        {post.page_views > 0 && (
-          <>
-            <span>&bull;</span>
-            <span>{post.page_views} views</span>
-          </>
-        )}
-        {post.published_at && (
-          <>
-            <span>&bull;</span>
-            <span>{new Date(post.published_at).toLocaleDateString()}</span>
-          </>
-        )}
-      </div>
+    <div className="rounded-lg border border-zinc-200 bg-white p-4 hover:shadow-sm transition-shadow">
+      <a
+        href={`/admin/marketing/seo/${post.id}`}
+        className="block"
+      >
+        <h4 className="text-sm font-semibold text-zinc-900 line-clamp-2 hover:text-emerald-700 transition-colors">{post.title}</h4>
+        <div className="mt-1 text-xs text-emerald-600">{post.target_keyword}</div>
+        <div className="mt-2 flex items-center gap-2 text-xs text-zinc-400">
+          <span>{post.word_count} words</span>
+          {post.page_views > 0 && (
+            <>
+              <span>&bull;</span>
+              <span>{post.page_views} views</span>
+            </>
+          )}
+          {post.published_at && (
+            <>
+              <span>&bull;</span>
+              <span>{new Date(post.published_at).toLocaleDateString()}</span>
+            </>
+          )}
+        </div>
+      </a>
       <div className="mt-3 flex gap-2">
         {post.status === "draft" && (
           <button
