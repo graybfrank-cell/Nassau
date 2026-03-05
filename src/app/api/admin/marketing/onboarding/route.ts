@@ -162,7 +162,8 @@ async function sendOnboardingEmail(
 ) {
   try {
     await resend.emails.send({
-      from: "Nassau <hey@nassau.golf>",
+      from: "Grayson at Nassau <grayson@nassau.golf>",
+      replyTo: "grayson@nassau.golf",
       to,
       subject: content.subject,
       html: renderBaseEmail({
