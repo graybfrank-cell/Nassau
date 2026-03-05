@@ -22,11 +22,8 @@ function sanitizeContent(content: string): string {
 }
 
 function resolveInternalLink(href: string): string {
-  // Rewrite /explore/[slug] to /explore?destination=[slug]
-  const exploreMatch = href.match(/^\/explore\/([a-z0-9-]+)$/);
-  if (exploreMatch) {
-    return `/explore?destination=${exploreMatch[1]}`;
-  }
+  if (href.startsWith("/explore")) return "/explore";
+  if (href.startsWith("/trips/new")) return "/trips/new";
   return href;
 }
 

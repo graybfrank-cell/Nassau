@@ -171,8 +171,8 @@ STRUCTURE every post:
 1. Hook — open with a relatable scenario or bold statement (2-3 sentences)
 2. 4-6 H2 sections with real, actionable content
 3. At least 2 specific course or destination callouts with these link formats:
-   - Explore page links: [Explore Scottsdale golf trips](/explore?destination=scottsdale)
-   - Trip creation links: [Plan a Scottsdale golf trip](/trips/new?destination=scottsdale)
+   - Explore page: [Explore golf trip destinations](/explore)
+   - Trip creation: [Start planning your trip](/trips/new)
    - Homepage CTA: [Start for free](/)
 4. Closing CTA paragraph leading to nassau.golf trip creation
 
