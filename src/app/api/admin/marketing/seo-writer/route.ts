@@ -99,18 +99,6 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Failed to save post" }, { status: 500 });
     }
 
-    // Notify admin via email
-    try {
-      await resend.emails.send({
-        from: "Nassau <hey@nassau.golf>",
-        to: "graybfrank@gmail.com",
-        subject: `[SEO] New draft: ${post.title}`,
-        text: `A new blog post has been generated:\n\nTitle: ${post.title}\nKeyword: ${keyword}\nWord count: ${wordCount}\n\nReview it in the Marketing Command Center > SEO tab.`,
-      });
-    } catch (emailError) {
-      console.error("[seo-writer] Notification email failed:", emailError);
-    }
-
     return NextResponse.json({
       success: true,
       post: saved,
