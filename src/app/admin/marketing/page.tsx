@@ -36,6 +36,12 @@ import {
   Users,
   TrendingUp,
   Play,
+  Send,
+  Gift,
+  Link,
+  Trophy,
+  Pencil,
+  Save,
 } from "lucide-react";
 
 // ─── Types ──────────────────────────────────────────────────
@@ -1035,28 +1041,768 @@ function SettingsTab() {
         </div>
       </div>
 
-      {/* Quick-action cards */}
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-        <div className="rounded-lg border border-zinc-200 bg-white p-5">
-          <Zap className="mb-2 h-6 w-6 text-amber-500" />
-          <h4 className="text-sm font-medium text-zinc-900">Onboarding Emails</h4>
-          <p className="mt-1 text-xs text-zinc-500">
-            Automated welcome sequence for new users.
-          </p>
+      {/* Growth Campaigns */}
+      <GrowthCampaigns />
+    </div>
+  );
+}
+
+// ─── Growth Campaigns ────────────────────────────────────────
+
+type GrowthTab = "onboarding" | "reactivation" | "referral";
+
+interface EmailTemplate {
+  id: string;
+  category: string;
+  day?: number;
+  milestone?: number;
+  subject: string;
+  body: string;
+  updated_at?: string;
+}
+
+function GrowthCampaigns() {
+  const [activeTab, setActiveTab] = useState<GrowthTab>("onboarding");
+
+  const tabs: { key: GrowthTab; label: string; icon: React.ReactNode }[] = [
+    { key: "onboarding", label: "Onboarding", icon: <Zap className="h-3.5 w-3.5" /> },
+    { key: "reactivation", label: "Reactivation", icon: <RefreshCw className="h-3.5 w-3.5" /> },
+    { key: "referral", label: "Referral", icon: <Gift className="h-3.5 w-3.5" /> },
+  ];
+
+  return (
+    <div className="rounded-lg border border-zinc-200 bg-white">
+      <div className="border-b border-zinc-200 px-5 pt-4">
+        <h3 className="mb-3 flex items-center gap-2 text-sm font-semibold text-zinc-900">
+          <TrendingUp className="h-4 w-4 text-zinc-400" />
+          Growth Campaigns
+        </h3>
+        <nav className="-mb-px flex gap-3">
+          {tabs.map((tab) => (
+            <button
+              key={tab.key}
+              onClick={() => setActiveTab(tab.key)}
+              className={`flex items-center gap-1.5 border-b-2 px-1 pb-2 text-xs font-medium transition-colors ${
+                activeTab === tab.key
+                  ? "border-emerald-600 text-emerald-600"
+                  : "border-transparent text-zinc-500 hover:border-zinc-300 hover:text-zinc-700"
+              }`}
+            >
+              {tab.icon}
+              {tab.label}
+            </button>
+          ))}
+        </nav>
+      </div>
+      <div className="p-5">
+        {activeTab === "onboarding" && <OnboardingCampaign />}
+        {activeTab === "reactivation" && <ReactivationCampaign />}
+        {activeTab === "referral" && <ReferralCampaign />}
+      </div>
+    </div>
+  );
+}
+
+// ─── Template Edit Modal ─────────────────────────────────────
+
+function TemplateEditModal({
+  template,
+  onClose,
+  onSave,
+}: {
+  template: EmailTemplate;
+  onClose: () => void;
+  onSave: (id: string, subject: string, body: string) => Promise<void>;
+}) {
+  const [subject, setSubject] = useState(template.subject);
+  const [body, setBody] = useState(template.body);
+  const [saving, setSaving] = useState(false);
+
+  async function handleSave() {
+    setSaving(true);
+    await onSave(template.id, subject, body);
+    setSaving(false);
+    onClose();
+  }
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+      <div className="mx-4 w-full max-w-lg rounded-lg bg-white shadow-xl">
+        <div className="flex items-center justify-between border-b border-zinc-200 px-5 py-4">
+          <h3 className="text-sm font-semibold text-zinc-900">Edit Template</h3>
+          <button onClick={onClose} className="text-zinc-400 hover:text-zinc-600">
+            <X className="h-4 w-4" />
+          </button>
         </div>
-        <div className="rounded-lg border border-zinc-200 bg-white p-5">
-          <RefreshCw className="mb-2 h-6 w-6 text-blue-500" />
-          <h4 className="text-sm font-medium text-zinc-900">Reactivation</h4>
-          <p className="mt-1 text-xs text-zinc-500">
-            Win-back campaigns for inactive users.
-          </p>
+        <div className="space-y-4 p-5">
+          <div>
+            <label className="mb-1 block text-xs font-medium text-zinc-600">Subject Line</label>
+            <input
+              type="text"
+              value={subject}
+              onChange={(e) => setSubject(e.target.value)}
+              className="w-full rounded-md border border-zinc-300 px-3 py-2 text-sm text-zinc-900 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+            />
+          </div>
+          <div>
+            <label className="mb-1 block text-xs font-medium text-zinc-600">Email Body</label>
+            <textarea
+              value={body}
+              onChange={(e) => setBody(e.target.value)}
+              rows={12}
+              className="w-full rounded-md border border-zinc-300 px-3 py-2 text-sm text-zinc-900 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+            />
+          </div>
         </div>
-        <div className="rounded-lg border border-zinc-200 bg-white p-5">
-          <Users className="mb-2 h-6 w-6 text-emerald-500" />
-          <h4 className="text-sm font-medium text-zinc-900">Referral Program</h4>
-          <p className="mt-1 text-xs text-zinc-500">
-            Invite-a-friend referral tracking and rewards.
-          </p>
+        <div className="flex justify-end gap-2 border-t border-zinc-200 px-5 py-4">
+          <button
+            onClick={onClose}
+            className="rounded-md border border-zinc-300 px-4 py-2 text-xs font-medium text-zinc-700 hover:bg-zinc-50"
+          >
+            Cancel
+          </button>
+          <button
+            onClick={handleSave}
+            disabled={saving}
+            className="flex items-center gap-1.5 rounded-md bg-emerald-600 px-4 py-2 text-xs font-medium text-white hover:bg-emerald-700 disabled:opacity-50"
+          >
+            {saving ? <Loader2 className="h-3 w-3 animate-spin" /> : <Save className="h-3 w-3" />}
+            Save
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─── Template Card ───────────────────────────────────────────
+
+function TemplateCard({
+  template,
+  label,
+  onSave,
+  onSendTest,
+  sendingTest,
+  testSent,
+}: {
+  template: EmailTemplate;
+  label: string;
+  onSave: (id: string, subject: string, body: string) => Promise<void>;
+  onSendTest: (id: string) => void;
+  sendingTest: boolean;
+  testSent: boolean;
+}) {
+  const [editing, setEditing] = useState(false);
+  const [inlineSubject, setInlineSubject] = useState(template.subject);
+  const [savingSubject, setSavingSubject] = useState(false);
+
+  async function saveSubject() {
+    if (inlineSubject !== template.subject) {
+      setSavingSubject(true);
+      await onSave(template.id, inlineSubject, template.body);
+      setSavingSubject(false);
+    }
+  }
+
+  return (
+    <>
+      <div className="rounded-lg border border-zinc-200 p-4">
+        <div className="mb-2 flex items-center justify-between">
+          <span className="text-xs font-semibold uppercase tracking-wider text-zinc-500">
+            {label}
+          </span>
+        </div>
+        <div className="mb-2 flex items-center gap-2">
+          <span className="text-xs text-zinc-500">Subject:</span>
+          <input
+            type="text"
+            value={inlineSubject}
+            onChange={(e) => setInlineSubject(e.target.value)}
+            onBlur={saveSubject}
+            onKeyDown={(e) => e.key === "Enter" && saveSubject()}
+            className="flex-1 rounded border border-transparent px-1.5 py-0.5 text-xs text-zinc-900 hover:border-zinc-300 focus:border-emerald-500 focus:outline-none"
+          />
+          {savingSubject && <Loader2 className="h-3 w-3 animate-spin text-zinc-400" />}
+        </div>
+        <p className="mb-3 text-xs text-zinc-500 line-clamp-2">
+          {template.body ? template.body.slice(0, 100) + (template.body.length > 100 ? "..." : "") : "No body content"}
+        </p>
+        <div className="flex gap-2">
+          <button
+            onClick={() => setEditing(true)}
+            className="flex items-center gap-1 rounded-md border border-zinc-300 px-2.5 py-1.5 text-xs font-medium text-zinc-700 hover:bg-zinc-50"
+          >
+            <Pencil className="h-3 w-3" />
+            Edit Template
+          </button>
+          <button
+            onClick={() => onSendTest(template.id)}
+            disabled={sendingTest}
+            className={`flex items-center gap-1 rounded-md px-2.5 py-1.5 text-xs font-medium transition-colors ${
+              testSent
+                ? "bg-green-50 text-green-700"
+                : "border border-zinc-300 text-zinc-700 hover:bg-zinc-50"
+            } disabled:opacity-50`}
+          >
+            {sendingTest ? (
+              <Loader2 className="h-3 w-3 animate-spin" />
+            ) : testSent ? (
+              <CheckCircle2 className="h-3 w-3" />
+            ) : (
+              <Send className="h-3 w-3" />
+            )}
+            {testSent ? "Sent" : "Send Test"}
+          </button>
+        </div>
+      </div>
+      {editing && (
+        <TemplateEditModal
+          template={{ ...template, subject: inlineSubject }}
+          onClose={() => setEditing(false)}
+          onSave={async (id, subject, body) => {
+            await onSave(id, subject, body);
+            setInlineSubject(subject);
+          }}
+        />
+      )}
+    </>
+  );
+}
+
+// ─── Onboarding Campaign ─────────────────────────────────────
+
+function OnboardingCampaign() {
+  const [stats, setStats] = useState<{
+    totalInSequence: number;
+    day0Sent: number;
+    day3Sent: number;
+    day7Sent: number;
+    completionRate: number;
+  } | null>(null);
+  const [templates, setTemplates] = useState<EmailTemplate[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [sendingTest, setSendingTest] = useState<string | null>(null);
+  const [testSent, setTestSent] = useState<Set<string>>(new Set());
+
+  useEffect(() => {
+    async function load() {
+      try {
+        const res = await fetch("/api/admin/marketing/onboarding");
+        const data = await res.json();
+        setStats(data.stats || null);
+        setTemplates(data.templates || []);
+      } catch {
+        // silent
+      } finally {
+        setLoading(false);
+      }
+    }
+    load();
+  }, []);
+
+  async function saveTemplate(id: string, subject: string, body: string) {
+    const res = await fetch("/api/admin/marketing/onboarding", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id, subject, body }),
+    });
+    if (res.ok) {
+      setTemplates((prev) =>
+        prev.map((t) => (t.id === id ? { ...t, subject, body } : t))
+      );
+    }
+  }
+
+  async function handleSendTest(templateId: string) {
+    setSendingTest(templateId);
+    try {
+      await fetch("/api/admin/marketing/onboarding", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "send_test", templateId }),
+      });
+      setTestSent((prev) => new Set(prev).add(templateId));
+      setTimeout(() => {
+        setTestSent((prev) => {
+          const next = new Set(prev);
+          next.delete(templateId);
+          return next;
+        });
+      }, 3000);
+    } catch {
+      // silent
+    } finally {
+      setSendingTest(null);
+    }
+  }
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-10">
+        <Loader2 className="h-5 w-5 animate-spin text-zinc-400" />
+      </div>
+    );
+  }
+
+  const dayLabels = ["Day 0 — Welcome", "Day 3 — Follow-up", "Day 7 — Value Prop"];
+
+  // Build display templates — use real data or placeholders
+  const displayTemplates: EmailTemplate[] =
+    templates.length > 0
+      ? templates
+      : [0, 3, 7].map((day, i) => ({
+          id: `placeholder-${day}`,
+          category: "onboarding",
+          day,
+          subject: day === 0 ? "Welcome to Nassau!" : day === 3 ? "Planning your first trip?" : "Your group is waiting",
+          body: day === 0
+            ? "Hey! Welcome to Nassau — the easiest way to plan golf trips with your crew..."
+            : day === 3
+              ? "Quick check-in — have you had a chance to set up your first trip?..."
+              : "Your buddies are already on Nassau. Here's what you're missing...",
+        }));
+
+  return (
+    <div className="space-y-5">
+      {/* Stats row */}
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-5">
+        {[
+          { label: "Total in Sequence", value: stats?.totalInSequence ?? 0 },
+          { label: "Day 0 Sent", value: stats?.day0Sent ?? 0 },
+          { label: "Day 3 Sent", value: stats?.day3Sent ?? 0 },
+          { label: "Day 7 Sent", value: stats?.day7Sent ?? 0 },
+          { label: "Completion Rate", value: `${stats?.completionRate ?? 0}%` },
+        ].map((s) => (
+          <div key={s.label} className="rounded-md border border-zinc-100 bg-zinc-50 p-3 text-center">
+            <p className="text-[10px] font-medium uppercase tracking-wider text-zinc-500">{s.label}</p>
+            <p className="mt-1 text-lg font-bold text-zinc-900">
+              {typeof s.value === "number" ? s.value.toLocaleString() : s.value}
+            </p>
+          </div>
+        ))}
+      </div>
+
+      {/* Email templates */}
+      <div>
+        <h4 className="mb-3 text-xs font-semibold uppercase tracking-wider text-zinc-500">
+          Email Templates
+        </h4>
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+          {displayTemplates.map((t, i) => (
+            <TemplateCard
+              key={t.id}
+              template={t}
+              label={dayLabels[i] || `Day ${t.day}`}
+              onSave={saveTemplate}
+              onSendTest={handleSendTest}
+              sendingTest={sendingTest === t.id}
+              testSent={testSent.has(t.id)}
+            />
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─── Reactivation Campaign ───────────────────────────────────
+
+function ReactivationCampaign() {
+  const [stats, setStats] = useState<{
+    dormantUsers: number;
+    emailsSentThisMonth: number;
+    reactivationRate: number;
+    churnedUsers: number;
+  } | null>(null);
+  const [template, setTemplate] = useState<EmailTemplate | null>(null);
+  const [threshold, setThreshold] = useState(30);
+  const [loading, setLoading] = useState(true);
+  const [sendingTest, setSendingTest] = useState(false);
+  const [testSent, setTestSent] = useState(false);
+  const [savingThreshold, setSavingThreshold] = useState(false);
+  const [thresholdSaved, setThresholdSaved] = useState(false);
+
+  useEffect(() => {
+    async function load() {
+      try {
+        const res = await fetch("/api/admin/marketing/reactivation");
+        const data = await res.json();
+        setStats(data.stats || null);
+        setTemplate(data.template || null);
+        if (data.threshold) setThreshold(data.threshold);
+      } catch {
+        // silent
+      } finally {
+        setLoading(false);
+      }
+    }
+    load();
+  }, []);
+
+  async function saveTemplate(id: string, subject: string, body: string) {
+    const res = await fetch("/api/admin/marketing/reactivation", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id, subject, body }),
+    });
+    if (res.ok) {
+      setTemplate((prev) => (prev ? { ...prev, subject, body } : prev));
+    }
+  }
+
+  async function handleSendTest() {
+    setSendingTest(true);
+    try {
+      await fetch("/api/admin/marketing/reactivation", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "send_test" }),
+      });
+      setTestSent(true);
+      setTimeout(() => setTestSent(false), 3000);
+    } catch {
+      // silent
+    } finally {
+      setSendingTest(false);
+    }
+  }
+
+  async function saveThreshold() {
+    setSavingThreshold(true);
+    try {
+      await fetch("/api/admin/marketing/reactivation", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ threshold }),
+      });
+      setThresholdSaved(true);
+      setTimeout(() => setThresholdSaved(false), 2000);
+    } catch {
+      // silent
+    } finally {
+      setSavingThreshold(false);
+    }
+  }
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-10">
+        <Loader2 className="h-5 w-5 animate-spin text-zinc-400" />
+      </div>
+    );
+  }
+
+  const displayTemplate: EmailTemplate = template || {
+    id: "placeholder-reactivation",
+    category: "reactivation",
+    subject: "We miss you on Nassau",
+    body: "Hey — it's been a while since your last trip on Nassau. Your crew is still out there playing...",
+  };
+
+  return (
+    <div className="space-y-5">
+      {/* Stats row */}
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+        {[
+          { label: "Dormant Users", value: stats?.dormantUsers ?? 0 },
+          { label: "Emails Sent (Month)", value: stats?.emailsSentThisMonth ?? 0 },
+          { label: "Reactivation Rate", value: `${stats?.reactivationRate ?? 0}%` },
+          { label: "Churned Users", value: stats?.churnedUsers ?? 0 },
+        ].map((s) => (
+          <div key={s.label} className="rounded-md border border-zinc-100 bg-zinc-50 p-3 text-center">
+            <p className="text-[10px] font-medium uppercase tracking-wider text-zinc-500">{s.label}</p>
+            <p className="mt-1 text-lg font-bold text-zinc-900">
+              {typeof s.value === "number" ? s.value.toLocaleString() : s.value}
+            </p>
+          </div>
+        ))}
+      </div>
+
+      {/* Email template */}
+      <div>
+        <h4 className="mb-3 text-xs font-semibold uppercase tracking-wider text-zinc-500">
+          Reactivation Email
+        </h4>
+        <TemplateCard
+          template={displayTemplate}
+          label="Win-Back Email"
+          onSave={saveTemplate}
+          onSendTest={handleSendTest}
+          sendingTest={sendingTest}
+          testSent={testSent}
+        />
+      </div>
+
+      {/* Dormancy threshold */}
+      <div className="rounded-lg border border-zinc-200 p-4">
+        <h4 className="mb-2 text-xs font-semibold uppercase tracking-wider text-zinc-500">
+          Dormancy Threshold
+        </h4>
+        <div className="flex items-center gap-3">
+          <span className="text-sm text-zinc-600">Mark as dormant after</span>
+          <input
+            type="number"
+            value={threshold}
+            onChange={(e) => setThreshold(parseInt(e.target.value, 10) || 0)}
+            min={7}
+            max={365}
+            className="w-20 rounded-md border border-zinc-300 px-2 py-1.5 text-center text-sm text-zinc-900 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+          />
+          <span className="text-sm text-zinc-600">days of inactivity</span>
+          <button
+            onClick={saveThreshold}
+            disabled={savingThreshold}
+            className={`flex items-center gap-1 rounded-md px-3 py-1.5 text-xs font-medium transition-colors ${
+              thresholdSaved
+                ? "bg-green-50 text-green-700"
+                : "bg-emerald-600 text-white hover:bg-emerald-700"
+            } disabled:opacity-50`}
+          >
+            {savingThreshold ? (
+              <Loader2 className="h-3 w-3 animate-spin" />
+            ) : thresholdSaved ? (
+              <CheckCircle2 className="h-3 w-3" />
+            ) : (
+              <Save className="h-3 w-3" />
+            )}
+            {thresholdSaved ? "Saved" : "Save"}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─── Referral Campaign ───────────────────────────────────────
+
+function ReferralCampaign() {
+  const [stats, setStats] = useState<{
+    totalReferrals: number;
+    thisMonth: number;
+    topReferrer: string;
+    viralCoefficient: string;
+  } | null>(null);
+  const [templates, setTemplates] = useState<EmailTemplate[]>([]);
+  const [rewardTiersEnabled, setRewardTiersEnabled] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [sendingTest, setSendingTest] = useState<string | null>(null);
+  const [testSent, setTestSent] = useState<Set<string>>(new Set());
+  const [togglingRewards, setTogglingRewards] = useState(false);
+
+  useEffect(() => {
+    async function load() {
+      try {
+        const res = await fetch("/api/admin/marketing/referral");
+        const data = await res.json();
+        setStats(data.stats || null);
+        setTemplates(data.templates || []);
+        setRewardTiersEnabled(data.rewardTiersEnabled || false);
+      } catch {
+        // silent
+      } finally {
+        setLoading(false);
+      }
+    }
+    load();
+  }, []);
+
+  async function saveTemplate(id: string, subject: string, body: string) {
+    const res = await fetch("/api/admin/marketing/referral", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id, subject, body }),
+    });
+    if (res.ok) {
+      setTemplates((prev) =>
+        prev.map((t) => (t.id === id ? { ...t, subject, body } : t))
+      );
+    }
+  }
+
+  async function handleSendTest(templateId: string) {
+    setSendingTest(templateId);
+    try {
+      await fetch("/api/admin/marketing/referral", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "send_test", templateId }),
+      });
+      setTestSent((prev) => new Set(prev).add(templateId));
+      setTimeout(() => {
+        setTestSent((prev) => {
+          const next = new Set(prev);
+          next.delete(templateId);
+          return next;
+        });
+      }, 3000);
+    } catch {
+      // silent
+    } finally {
+      setSendingTest(null);
+    }
+  }
+
+  async function toggleRewardTiers() {
+    setTogglingRewards(true);
+    const newVal = !rewardTiersEnabled;
+    try {
+      await fetch("/api/admin/marketing/referral", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ rewardTiersEnabled: newVal }),
+      });
+      setRewardTiersEnabled(newVal);
+    } catch {
+      // silent
+    } finally {
+      setTogglingRewards(false);
+    }
+  }
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-10">
+        <Loader2 className="h-5 w-5 animate-spin text-zinc-400" />
+      </div>
+    );
+  }
+
+  const milestones = [1, 3, 5, 10];
+  const milestoneLabels: Record<number, string> = {
+    1: "1st Referral",
+    3: "3 Referrals",
+    5: "5 Referrals",
+    10: "10 Referrals",
+  };
+
+  const displayTemplates: EmailTemplate[] =
+    templates.length > 0
+      ? templates
+      : milestones.map((m) => ({
+          id: `placeholder-ref-${m}`,
+          category: "referral",
+          milestone: m,
+          subject:
+            m === 1
+              ? "Your first referral just signed up!"
+              : m === 3
+                ? "3 friends on Nassau — you're on a roll"
+                : m === 5
+                  ? "5 referrals! You're a Nassau ambassador"
+                  : "10 referrals — legendary status unlocked",
+          body:
+            m === 1
+              ? "Congrats! Someone you referred just joined Nassau. Keep spreading the word..."
+              : m === 3
+                ? "Three of your friends are now on Nassau. You're building a crew..."
+                : m === 5
+                  ? "Five referrals! You're officially a Nassau ambassador. Here's what's next..."
+                  : "You've hit 10 referrals — that's legendary. We've got something special for you...",
+        }));
+
+  const rewardTiers = [
+    { referrals: 1, reward: "Early access to new features" },
+    { referrals: 3, reward: "Nassau Pro (1 month free)" },
+    { referrals: 5, reward: "Exclusive Nassau gear" },
+    { referrals: 10, reward: "Free trip coordination for a year" },
+  ];
+
+  return (
+    <div className="space-y-5">
+      {/* Stats row */}
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+        {[
+          { label: "Total Referrals", value: stats?.totalReferrals ?? 0 },
+          { label: "This Month", value: stats?.thisMonth ?? 0 },
+          { label: "Top Referrer", value: stats?.topReferrer ?? "—" },
+          { label: "Viral Coefficient", value: stats?.viralCoefficient ?? "0.00" },
+        ].map((s) => (
+          <div key={s.label} className="rounded-md border border-zinc-100 bg-zinc-50 p-3 text-center">
+            <p className="text-[10px] font-medium uppercase tracking-wider text-zinc-500">{s.label}</p>
+            <p className="mt-1 text-lg font-bold text-zinc-900">
+              {typeof s.value === "number" ? s.value.toLocaleString() : s.value}
+            </p>
+          </div>
+        ))}
+      </div>
+
+      {/* Milestone templates */}
+      <div>
+        <h4 className="mb-3 text-xs font-semibold uppercase tracking-wider text-zinc-500">
+          Milestone Messages
+        </h4>
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+          {displayTemplates.map((t, i) => (
+            <TemplateCard
+              key={t.id}
+              template={t}
+              label={milestoneLabels[milestones[i]] || `${milestones[i]} Referrals`}
+              onSave={saveTemplate}
+              onSendTest={handleSendTest}
+              sendingTest={sendingTest === t.id}
+              testSent={testSent.has(t.id)}
+            />
+          ))}
+        </div>
+      </div>
+
+      {/* Referral link format */}
+      <div className="rounded-lg border border-zinc-200 p-4">
+        <h4 className="mb-2 text-xs font-semibold uppercase tracking-wider text-zinc-500">
+          Referral Link Format
+        </h4>
+        <div className="flex items-center gap-2 rounded-md bg-zinc-50 px-3 py-2">
+          <Link className="h-4 w-4 text-zinc-400" />
+          <code className="text-sm text-zinc-700">nassau.golf/r/<span className="text-emerald-600">[CODE]</span></code>
+        </div>
+        <p className="mt-1.5 text-[10px] text-zinc-400">
+          Each user gets a unique referral code. Links redirect to the signup page with attribution.
+        </p>
+      </div>
+
+      {/* Reward tiers */}
+      <div className="rounded-lg border border-zinc-200 p-4">
+        <div className="mb-3 flex items-center justify-between">
+          <h4 className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-zinc-500">
+            <Trophy className="h-3.5 w-3.5" />
+            Reward Tiers
+          </h4>
+          <button
+            onClick={toggleRewardTiers}
+            disabled={togglingRewards}
+            className={`flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium transition-colors ${
+              rewardTiersEnabled
+                ? "bg-emerald-100 text-emerald-700"
+                : "bg-zinc-100 text-zinc-500"
+            }`}
+          >
+            {togglingRewards ? (
+              <Loader2 className="h-3 w-3 animate-spin" />
+            ) : rewardTiersEnabled ? (
+              <CheckCircle2 className="h-3 w-3" />
+            ) : (
+              <Clock className="h-3 w-3" />
+            )}
+            {rewardTiersEnabled ? "Active" : "Inactive — enable post-launch"}
+          </button>
+        </div>
+        <div className={`space-y-2 ${!rewardTiersEnabled ? "opacity-50" : ""}`}>
+          {rewardTiers.map((tier) => (
+            <div
+              key={tier.referrals}
+              className="flex items-center justify-between rounded-md border border-zinc-100 px-3 py-2"
+            >
+              <div className="flex items-center gap-2">
+                <span className="flex h-6 w-6 items-center justify-center rounded-full bg-emerald-100 text-xs font-bold text-emerald-700">
+                  {tier.referrals}
+                </span>
+                <span className="text-xs text-zinc-700">
+                  {tier.referrals} referral{tier.referrals > 1 ? "s" : ""}
+                </span>
+              </div>
+              <span className="text-xs text-zinc-500">{tier.reward}</span>
+            </div>
+          ))}
         </div>
       </div>
     </div>
