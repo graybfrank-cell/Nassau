@@ -307,6 +307,8 @@ function CalendarTab() {
   const [plans, setPlans] = useState<WeeklyPlan[]>([]);
   const [loading, setLoading] = useState(true);
   const [expandedPlan, setExpandedPlan] = useState<string | null>(null);
+  const [expandedSlot, setExpandedSlot] = useState<string | null>(null);
+  const [editingSlot, setEditingSlot] = useState<string | null>(null);
 
   useEffect(() => {
     async function load() {
@@ -394,40 +396,173 @@ function CalendarTab() {
                     </h4>
                     {day.slots && day.slots.length > 0 ? (
                       <div className="mt-2 space-y-2">
-                        {day.slots.map((slot, slotIdx) => (
-                          <div
-                            key={slotIdx}
-                            className="rounded-md border border-zinc-100 bg-zinc-50 p-3"
-                          >
-                            <div className="flex items-start justify-between">
-                              <div className="flex-1">
-                                <p className="text-sm font-medium text-zinc-800">
-                                  {slot.hook || slot.topic || "Content slot"}
-                                </p>
-                                <div className="mt-1 flex flex-wrap gap-1.5">
-                                  {slot.platform && (
-                                    <span className="rounded bg-emerald-100 px-1.5 py-0.5 text-[10px] font-medium text-emerald-700">
-                                      {slot.platform}
-                                    </span>
-                                  )}
-                                  {slot.content_type && (
-                                    <span className="rounded bg-blue-100 px-1.5 py-0.5 text-[10px] font-medium text-blue-700">
-                                      {slot.content_type}
-                                    </span>
-                                  )}
-                                  {slot.time && (
-                                    <span className="rounded bg-zinc-200 px-1.5 py-0.5 text-[10px] font-medium text-zinc-600">
-                                      {slot.time}
-                                    </span>
-                                  )}
+                        {day.slots.map((slot, slotIdx) => {
+                          const slotKey = `${wp.id}-${dayIdx}-${slotIdx}`;
+                          const isSlotExpanded = expandedSlot === slotKey;
+                          const editKey = slotKey;
+                          const isEditing = editingSlot === editKey;
+
+                          return (
+                            <div
+                              key={slotIdx}
+                              className="rounded-md border border-zinc-100 bg-zinc-50 overflow-hidden"
+                            >
+                              <button
+                                onClick={() => setExpandedSlot(isSlotExpanded ? null : slotKey)}
+                                className="flex w-full items-start justify-between p-3 text-left hover:bg-zinc-100 transition-colors"
+                              >
+                                <div className="flex-1">
+                                  <p className="text-sm font-medium text-zinc-800">
+                                    {slot.hook || slot.topic || "Content slot"}
+                                  </p>
+                                  <div className="mt-1 flex flex-wrap gap-1.5">
+                                    {slot.platform && (
+                                      <span className="rounded bg-emerald-100 px-1.5 py-0.5 text-[10px] font-medium text-emerald-700">
+                                        {slot.platform}
+                                      </span>
+                                    )}
+                                    {slot.content_type && (
+                                      <span className="rounded bg-blue-100 px-1.5 py-0.5 text-[10px] font-medium text-blue-700">
+                                        {slot.content_type}
+                                      </span>
+                                    )}
+                                    {slot.time && (
+                                      <span className="rounded bg-zinc-200 px-1.5 py-0.5 text-[10px] font-medium text-zinc-600">
+                                        {slot.time}
+                                      </span>
+                                    )}
+                                  </div>
                                 </div>
-                                {slot.notes && (
-                                  <p className="mt-1 text-xs text-zinc-500">{slot.notes}</p>
-                                )}
-                              </div>
+                                <ChevronDown className={`h-4 w-4 text-zinc-400 transition-transform mt-0.5 ${isSlotExpanded ? "rotate-180" : ""}`} />
+                              </button>
+
+                              {isSlotExpanded && (
+                                <div className="border-t border-zinc-200 p-3 bg-white space-y-3">
+                                  {/* Hook / Copy */}
+                                  <div>
+                                    <label className="block text-[10px] font-semibold text-zinc-500 uppercase tracking-wide mb-1">Hook / Copy</label>
+                                    {isEditing ? (
+                                      <textarea
+                                        className="w-full rounded border border-zinc-300 p-2 text-sm text-zinc-800 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                                        rows={3}
+                                        defaultValue={slot.hook || slot.topic || ""}
+                                        onChange={(e) => {
+                                          slot.hook = e.target.value;
+                                        }}
+                                      />
+                                    ) : (
+                                      <p className="text-sm text-zinc-700">{slot.hook || slot.topic || "No hook set"}</p>
+                                    )}
+                                  </div>
+
+                                  {/* Notes / Strategy */}
+                                  {(slot.notes || isEditing) && (
+                                    <div>
+                                      <label className="block text-[10px] font-semibold text-zinc-500 uppercase tracking-wide mb-1">Strategy Notes</label>
+                                      {isEditing ? (
+                                        <textarea
+                                          className="w-full rounded border border-zinc-300 p-2 text-sm text-zinc-600 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                                          rows={4}
+                                          defaultValue={slot.notes || ""}
+                                          onChange={(e) => {
+                                            slot.notes = e.target.value;
+                                          }}
+                                        />
+                                      ) : (
+                                        <p className="text-sm text-zinc-600">{slot.notes}</p>
+                                      )}
+                                    </div>
+                                  )}
+
+                                  {/* Additional fields when expanded */}
+                                  <div className="grid grid-cols-3 gap-2 text-xs">
+                                    <div>
+                                      <span className="text-zinc-400">Platform</span>
+                                      <p className="font-medium text-zinc-700">{slot.platform || "—"}</p>
+                                    </div>
+                                    <div>
+                                      <span className="text-zinc-400">Type</span>
+                                      <p className="font-medium text-zinc-700">{slot.content_type || "—"}</p>
+                                    </div>
+                                    <div>
+                                      <span className="text-zinc-400">Time</span>
+                                      <p className="font-medium text-zinc-700">{slot.time || "—"}</p>
+                                    </div>
+                                  </div>
+
+                                  {/* Action buttons */}
+                                  <div className="flex items-center gap-2 pt-1 border-t border-zinc-100">
+                                    {isEditing ? (
+                                      <>
+                                        <button
+                                          onClick={async () => {
+                                            // Save the edited plan back to DB
+                                            try {
+                                              const updatedPlan = typeof wp.plan === "string" ? JSON.parse(wp.plan) : wp.plan;
+                                              await fetch("/api/admin/marketing/calendar", {
+                                                method: "PATCH",
+                                                headers: { "Content-Type": "application/json" },
+                                                body: JSON.stringify({ id: wp.id, plan: updatedPlan }),
+                                              });
+                                            } catch {
+                                              // silent
+                                            }
+                                            setEditingSlot(null);
+                                          }}
+                                          className="flex items-center gap-1 rounded bg-emerald-600 px-2.5 py-1 text-[11px] font-medium text-white hover:bg-emerald-700"
+                                        >
+                                          <Save className="h-3 w-3" />
+                                          Save
+                                        </button>
+                                        <button
+                                          onClick={() => setEditingSlot(null)}
+                                          className="rounded border border-zinc-200 px-2.5 py-1 text-[11px] text-zinc-600 hover:bg-zinc-50"
+                                        >
+                                          Cancel
+                                        </button>
+                                      </>
+                                    ) : (
+                                      <>
+                                        <button
+                                          onClick={() => setEditingSlot(editKey)}
+                                          className="flex items-center gap-1 rounded border border-zinc-200 px-2.5 py-1 text-[11px] text-zinc-600 hover:bg-zinc-50"
+                                        >
+                                          <Pencil className="h-3 w-3" />
+                                          Edit
+                                        </button>
+                                        <button
+                                          onClick={async () => {
+                                            try {
+                                              await fetch("/api/admin/marketing/pipeline", {
+                                                method: "POST",
+                                                headers: { "Content-Type": "application/json" },
+                                                body: JSON.stringify({
+                                                  title: slot.hook || slot.topic || "Untitled",
+                                                  type: slot.content_type || "post",
+                                                  platform: slot.platform || "instagram",
+                                                  status: "idea",
+                                                  notes: slot.notes || "",
+                                                  source_agent: "strategist",
+                                                }),
+                                              });
+                                              alert("Moved to Pipeline!");
+                                            } catch {
+                                              alert("Failed to move to pipeline");
+                                            }
+                                          }}
+                                          className="flex items-center gap-1 rounded border border-emerald-200 px-2.5 py-1 text-[11px] text-emerald-700 hover:bg-emerald-50"
+                                        >
+                                          <ArrowRight className="h-3 w-3" />
+                                          Send to Pipeline
+                                        </button>
+                                      </>
+                                    )}
+                                  </div>
+                                </div>
+                              )}
                             </div>
-                          </div>
-                        ))}
+                          );
+                        })}
                       </div>
                     ) : (
                       <p className="mt-2 text-xs text-zinc-400">No slots scheduled</p>
