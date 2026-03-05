@@ -7,6 +7,7 @@ import {
   ArrowRight,
 } from "lucide-react";
 import AuthRedirect from "./auth-redirect";
+import { createServiceClient } from "@/lib/supabase/admin";
 
 const features = [
   {
@@ -35,7 +36,67 @@ const features = [
   },
 ];
 
-export default function Home() {
+async function RecentArticles() {
+  const supabase = createServiceClient();
+  const { data: posts } = await supabase
+    .from("seo_blog_posts")
+    .select("id, title, slug, meta_description, featured_image_url, reading_time_minutes, word_count, tags, published_at")
+    .eq("status", "published")
+    .order("published_at", { ascending: false })
+    .limit(3);
+
+  if (!posts || posts.length === 0) {
+    return (
+      <p className="text-center text-zinc-400 py-8">
+        Articles coming soon.
+      </p>
+    );
+  }
+
+  return (
+    <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      {posts.map((post) => (
+        <Link
+          key={post.id}
+          href={`/blog/${post.slug}`}
+          className="group overflow-hidden rounded-xl border border-zinc-200 transition-shadow hover:shadow-md"
+        >
+          {post.featured_image_url ? (
+            <div className="aspect-video overflow-hidden bg-zinc-100">
+              <img
+                src={post.featured_image_url}
+                alt={post.title}
+                className="h-full w-full object-cover transition-transform group-hover:scale-105"
+              />
+            </div>
+          ) : (
+            <div className="flex aspect-video items-center justify-center bg-gradient-to-br from-emerald-800 to-slate-900">
+              <span className="text-4xl font-extrabold text-emerald-500/20">N</span>
+            </div>
+          )}
+          <div className="p-5">
+            {post.tags?.[0] && (
+              <span className="rounded-full bg-emerald-100 px-2.5 py-0.5 text-xs font-medium text-emerald-700">
+                {post.tags[0]}
+              </span>
+            )}
+            <h3 className="mt-2 font-semibold text-zinc-900 group-hover:text-emerald-700 transition-colors line-clamp-2">
+              {post.title}
+            </h3>
+            <p className="mt-1 text-sm text-zinc-500 line-clamp-2">
+              {post.meta_description}
+            </p>
+            <div className="mt-3 text-xs text-zinc-400">
+              {post.reading_time_minutes || Math.ceil((post.word_count || 0) / 200)} min read
+            </div>
+          </div>
+        </Link>
+      ))}
+    </div>
+  );
+}
+
+export default async function Home() {
   return (
     <div className="min-h-[calc(100vh-64px)]">
       <AuthRedirect />
@@ -60,12 +121,12 @@ export default function Home() {
               Get Started
               <ArrowRight className="h-4 w-4" />
             </Link>
-            <a
-              href="#features"
+            <Link
+              href="/blog"
               className="rounded-lg border border-emerald-500/30 px-6 py-3 text-sm font-semibold text-emerald-300 transition-colors hover:bg-emerald-500/10"
             >
-              Learn More
-            </a>
+              Read Articles
+            </Link>
           </div>
         </div>
       </section>
@@ -143,8 +204,31 @@ export default function Home() {
         </div>
       </section>
 
-      {/* CTA */}
+      {/* Golf Trip Intel — recent articles */}
       <section className="bg-white px-6 py-20">
+        <div className="mx-auto max-w-5xl">
+          <div className="flex items-center justify-between mb-8">
+            <div>
+              <h2 className="text-2xl font-bold tracking-tight text-zinc-900">
+                Golf Trip Intel
+              </h2>
+              <p className="mt-1 text-zinc-500">
+                Guides and tips from the Nassau crew.
+              </p>
+            </div>
+            <Link
+              href="/blog"
+              className="text-sm font-medium text-emerald-600 hover:text-emerald-700"
+            >
+              Read all articles &rarr;
+            </Link>
+          </div>
+          <RecentArticles />
+        </div>
+      </section>
+
+      {/* CTA */}
+      <section className="bg-zinc-50 px-6 py-20">
         <div className="mx-auto max-w-2xl text-center">
           <h2 className="text-2xl font-bold tracking-tight text-zinc-900">
             Ready to plan your next trip?
@@ -163,10 +247,34 @@ export default function Home() {
       </section>
 
       {/* Footer */}
-      <footer className="border-t border-zinc-200 bg-white px-6 py-8">
-        <p className="text-center text-sm text-zinc-400">
-          Nassau — The Golf Trip Companion
-        </p>
+      <footer className="border-t border-zinc-200 bg-white px-6 py-12">
+        <div className="mx-auto max-w-5xl grid grid-cols-1 gap-8 sm:grid-cols-3">
+          <div>
+            <span className="text-lg font-extrabold text-emerald-600">Nassau</span>
+            <p className="mt-2 text-sm text-zinc-400">
+              The Golf Trip Companion
+            </p>
+          </div>
+          <div>
+            <h4 className="text-xs font-semibold text-zinc-500 uppercase tracking-wider">Product</h4>
+            <div className="mt-3 space-y-2">
+              <Link href="/explore" className="block text-sm text-zinc-600 hover:text-zinc-900">Explore Destinations</Link>
+              <Link href="/login" className="block text-sm text-zinc-600 hover:text-zinc-900">Sign In</Link>
+            </div>
+          </div>
+          <div>
+            <h4 className="text-xs font-semibold text-zinc-500 uppercase tracking-wider">Resources</h4>
+            <div className="mt-3 space-y-2">
+              <Link href="/blog" className="block text-sm text-zinc-600 hover:text-zinc-900">Articles</Link>
+              <Link href="/blog" className="block text-sm text-zinc-600 hover:text-zinc-900">Golf Trip Guides</Link>
+            </div>
+          </div>
+        </div>
+        <div className="mx-auto max-w-5xl mt-8 pt-6 border-t border-zinc-100">
+          <p className="text-center text-xs text-zinc-400">
+            &copy; {new Date().getFullYear()} Nassau Golf. All rights reserved.
+          </p>
+        </div>
       </footer>
     </div>
   );
