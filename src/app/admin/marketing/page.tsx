@@ -603,12 +603,12 @@ function CalendarTab() {
                                                 if (c.linkedin?.post) parts.push("\n\n💼 LINKEDIN:\n" + c.linkedin.post);
                                                 slot.notes = (slot.notes || "") + "\n\n--- GENERATED CONTENT ---\n" + parts.join("");
                                                 setExpandedSlot(slotKey);
-                                                alert("Content generated! Check Strategy Notes for all platform drafts.");
+                                                setEditingSlot(editKey);
                                               } else {
-                                                alert("Generation failed: " + (data.error || "Unknown error"));
+                                                console.error("Generation failed:", data.error);
                                               }
                                             } catch {
-                                              alert("Failed to generate content");
+                                              console.error("Failed to generate content");
                                             } finally {
                                               if (btn) btn.textContent = "Generate Content";
                                             }
@@ -633,9 +633,9 @@ function CalendarTab() {
                                                   source_agent: "strategist",
                                                 }),
                                               });
-                                              alert("Moved to Pipeline!");
+                                              console.log("Moved to Pipeline");
                                             } catch {
-                                              alert("Failed to move to pipeline");
+                                              console.error("Failed to move to pipeline");
                                             }
                                           }}
                                           className="flex items-center gap-1 rounded border border-emerald-200 px-2.5 py-1 text-[11px] text-emerald-700 hover:bg-emerald-50"
