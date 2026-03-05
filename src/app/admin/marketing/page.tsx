@@ -89,7 +89,7 @@ interface ResearchResult {
 
 type FilterType = "all" | "no_contact" | "has_email" | "needs_review" | "contacted" | "replied";
 type SortField = "destination" | "tier" | "status" | "updated";
-type TabKey = "pipeline" | "calendar" | "scout" | "partnerships" | "newsletter" | "seo" | "analytics" | "settings";
+type TabKey = "pipeline" | "calendar" | "scout" | "partnerships" | "newsletter" | "seo" | "analytics" | "visual" | "settings";
 
 // ─── Main Page ──────────────────────────────────────────────
 
@@ -104,6 +104,7 @@ export default function MarketingCommandCenter() {
     { key: "newsletter", label: "Newsletter", icon: <Newspaper className="h-4 w-4" /> },
     { key: "seo", label: "SEO", icon: <PenTool className="h-4 w-4" /> },
     { key: "analytics", label: "Analytics", icon: <BarChart3 className="h-4 w-4" /> },
+    { key: "visual", label: "Visual Studio", icon: <Sparkles className="h-4 w-4" /> },
     { key: "settings", label: "Settings", icon: <Settings className="h-4 w-4" /> },
   ];
 
@@ -147,6 +148,7 @@ export default function MarketingCommandCenter() {
           {activeTab === "newsletter" && <NewsletterTab />}
           {activeTab === "seo" && <SEOTab />}
           {activeTab === "analytics" && <AnalyticsTab />}
+          {activeTab === "visual" && <VisualStudioTab />}
           {activeTab === "settings" && <SettingsTab />}
         </div>
       </div>
@@ -1209,6 +1211,21 @@ function SEOTab() {
           ))}
         </div>
       )}
+    </div>
+  );
+}
+
+// ─── Visual Studio Tab ───────────────────────────────────────
+
+function VisualStudioTab() {
+  return (
+    <div className="rounded-lg border border-zinc-200 bg-white overflow-hidden">
+      <iframe
+        src="/admin/visual-generator"
+        className="w-full border-0"
+        style={{ height: "calc(100vh - 200px)", minHeight: 700 }}
+        title="Nassau Visual Content Generator"
+      />
     </div>
   );
 }
