@@ -260,32 +260,18 @@ export default function NassauVisualGenerator() {
     if (!aiPrompt.trim()) return;
     setGenerating(true);
     try {
-      const response = await fetch("https://api.anthropic.com/v1/messages", {
+      const response = await fetch("/api/admin/marketing/visual-generate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          model: "claude-sonnet-4-20250514",
-          max_tokens: 1000,
-          system: `You generate social media visual content configs for Nassau (nassau.golf), a golf trip planning app. 
-Voice: trip captain's inner monologue, dry humor, insider golf language.
-Respond with ONLY a JSON object, no markdown:
-{
-  "template": "stat_card | quote_card | carousel_cover | budget_breakdown | course_spotlight | meme_format | tip_card | recap_card",
-  "headline": "The main text (in Nassau's voice)",
-  "subtext": "Supporting text",
-  "stat": "Key number if applicable",
-  "cta": "CTA text or empty string",
-  "items": ["Budget line 1: $X", "Line 2: $Y"] // only for budget_breakdown
-}`,
-          messages: [{ role: "user", content: aiPrompt }],
-        }),
+        body: JSON.stringify({ prompt: aiPrompt }),
       });
       const data = await response.json();
-      const text = data.content?.[0]?.text || "";
-      const clean = text.replace(/```json|```/g, "").trim();
-      const parsed = JSON.parse(clean);
-      setConfig(prev => ({ ...prev, ...parsed }));
-      setGeneratedContent(parsed);
+      if (data.success && data.config) {
+        setConfig(prev => ({ ...prev, ...data.config }));
+        setGeneratedContent(data.config);
+      } else {
+        console.error("AI generation failed:", data.error);
+      }
     } catch (err) {
       console.error("AI generation failed:", err);
     } finally {
@@ -294,20 +280,65 @@ Respond with ONLY a JSON object, no markdown:
   }
 
   async function handleExportSVG() {
-    // Convert preview to downloadable image
     const previewEl = document.getElementById("nassau-preview");
     if (!previewEl) return;
     
-    // Use html2canvas approach via canvas
+    const target = previewEl.querySelector("div > div") as HTMLElement;
+    if (!target) return;
+
+    // Load html2canvas from CDN via script tag
     try {
-      const { default: html2canvas } = await import("https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.esm.js");
-      const canvas = await html2canvas(previewEl.firstChild, { scale: 3, useCORS: true });
+      const script = document.createElement("script");
+      script.src = "https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js";
+      
+      await new Promise<void>((resolve, reject) => {
+        script.onload = () => resolve();
+        script.onerror = () => reject(new Error("Failed to load html2canvas"));
+        document.head.appendChild(script);
+      });
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const canvas = await (window as any).html2canvas(target, { scale: 3, useCORS: true, backgroundColor: null });
       const link = document.createElement("a");
       link.download = `nassau-${config.template}-${config.platform}.png`;
       link.href = canvas.toDataURL("image/png");
       link.click();
     } catch {
-      alert("Export: Right-click the preview and 'Save Image' or take a screenshot. Full export coming soon.");
+      // Fallback: open in new tab for manual save
+      const dataUrl = await captureToCanvas(target);
+      if (dataUrl) {
+        const w = window.open();
+        if (w) {
+          w.document.write(`<img src="${dataUrl}" style="max-width:100%"/><p>Right-click → Save Image As</p>`);
+        }
+      }
+    }
+  }
+
+  async function captureToCanvas(el: HTMLElement): Promise<string | null> {
+    try {
+      const rect = el.getBoundingClientRect();
+      const canvas = document.createElement("canvas");
+      canvas.width = rect.width * 3;
+      canvas.height = rect.height * 3;
+      const ctx = canvas.getContext("2d");
+      if (!ctx) return null;
+      
+      const svgData = `<svg xmlns="http://www.w3.org/2000/svg" width="${rect.width}" height="${rect.height}">
+        <foreignObject width="100%" height="100%">
+          <div xmlns="http://www.w3.org/1999/xhtml">${el.outerHTML}</div>
+        </foreignObject>
+      </svg>`;
+      
+      const img = new Image();
+      img.src = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svgData);
+      
+      await new Promise<void>((resolve) => { img.onload = () => resolve(); });
+      ctx.scale(3, 3);
+      ctx.drawImage(img, 0, 0);
+      return canvas.toDataURL("image/png");
+    } catch {
+      return null;
     }
   }
 
