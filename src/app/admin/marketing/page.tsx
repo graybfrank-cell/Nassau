@@ -42,7 +42,8 @@ import {
   Trophy,
   Pencil,
   Save,
-, ChevronDown } from "lucide-react";
+  ChevronDown,
+} from "lucide-react";
 
 // ─── Types ──────────────────────────────────────────────────
 
