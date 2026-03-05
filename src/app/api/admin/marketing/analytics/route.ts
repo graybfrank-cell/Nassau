@@ -10,7 +10,7 @@ export async function GET() {
     const { data, error } = await supabaseAdmin
       .from("marketing_performance")
       .select("*")
-      .order("date", { ascending: false })
+      .order("metric_date", { ascending: false })
       .limit(90);
 
     if (error) {
