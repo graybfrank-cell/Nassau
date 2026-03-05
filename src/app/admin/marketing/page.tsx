@@ -44,6 +44,7 @@ import {
   Save,
   ChevronDown,
   ArrowRight,
+  Sparkles,
 } from "lucide-react";
 
 // ─── Types ──────────────────────────────────────────────────
