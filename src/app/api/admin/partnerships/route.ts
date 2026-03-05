@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
+import { supabaseAdmin } from "@/lib/supabase/admin";
 import { getUser, unauthorized } from "@/lib/auth";
 
 export async function GET(request: NextRequest) {
@@ -12,79 +12,93 @@ export async function GET(request: NextRequest) {
   const search = url.searchParams.get("search") || "";
   const filter = url.searchParams.get("filter") || "all";
   const sortBy = url.searchParams.get("sortBy") || "destination";
-  const sortDir = (url.searchParams.get("sortDir") || "asc") as "asc" | "desc";
-
-  const where: Record<string, unknown> = {};
-
-  if (search) {
-    where.OR = [
-      { course_name: { contains: search, mode: "insensitive" } },
-      { destination: { contains: search, mode: "insensitive" } },
-    ];
-  }
-
-  switch (filter) {
-    case "no_contact":
-      where.marketing_contact_email = null;
-      where.booking_email = null;
-      break;
-    case "has_email":
-      where.OR = [
-        { marketing_contact_email: { not: null } },
-        { booking_email: { not: null } },
-      ];
-      break;
-    case "needs_review":
-      where.needs_review = true;
-      break;
-    case "contacted":
-      where.outreach_status = "contacted";
-      break;
-    case "replied":
-      where.outreach_status = "replied";
-      break;
-  }
-
-  const orderBy: Record<string, string> = {};
-  if (sortBy === "destination") orderBy.destination = sortDir;
-  else if (sortBy === "tier") orderBy.tier = sortDir;
-  else if (sortBy === "status") orderBy.outreach_status = sortDir;
-  else if (sortBy === "updated") orderBy.updated_at = sortDir;
-  else orderBy.destination = sortDir;
+  const sortDir = url.searchParams.get("sortDir") === "desc";
 
   try {
-    const [partnerships, total] = await Promise.all([
-      prisma.marketingPartnerships.findMany({
-        where,
-        orderBy,
-        skip: (page - 1) * limit,
-        take: limit,
-      }),
-      prisma.marketingPartnerships.count({ where }),
-    ]);
+    // Build the main query
+    let query = supabaseAdmin.from("marketing_partnerships").select("*", { count: "exact" });
 
-    // Get stats
-    const [totalCourses, hasEmail, contacted, replied, active] = await Promise.all([
-      prisma.marketingPartnerships.count(),
-      prisma.marketingPartnerships.count({
-        where: {
-          OR: [
-            { marketing_contact_email: { not: null } },
-            { booking_email: { not: null } },
-          ],
-        },
-      }),
-      prisma.marketingPartnerships.count({ where: { outreach_status: "contacted" } }),
-      prisma.marketingPartnerships.count({ where: { outreach_status: "replied" } }),
-      prisma.marketingPartnerships.count({ where: { outreach_status: "active" } }),
+    // Search filter
+    if (search) {
+      query = query.or(
+        `course_name.ilike.%${search}%,destination.ilike.%${search}%`
+      );
+    }
+
+    // Status/contact filters — use outreach_status column
+    switch (filter) {
+      case "no_contact":
+        query = query.is("marketing_contact_email", null).is("booking_email", null);
+        break;
+      case "has_email":
+        query = query.or(
+          "marketing_contact_email.not.is.null,booking_email.not.is.null"
+        );
+        break;
+      case "needs_review":
+        query = query.eq("needs_review", true);
+        break;
+      case "contacted":
+        query = query.eq("outreach_status", "contacted");
+        break;
+      case "replied":
+        query = query.eq("outreach_status", "replied");
+        break;
+    }
+
+    // Sorting — map frontend field names to actual column names
+    let orderColumn = "destination";
+    if (sortBy === "tier") orderColumn = "tier";
+    else if (sortBy === "status") orderColumn = "outreach_status";
+    else if (sortBy === "updated") orderColumn = "updated_at";
+    query = query.order(orderColumn, { ascending: !sortDir });
+
+    // Pagination
+    const from = (page - 1) * limit;
+    const to = from + limit - 1;
+    query = query.range(from, to);
+
+    const { data: partnerships, count, error } = await query;
+
+    if (error) {
+      return NextResponse.json({ error: error.message }, { status: 500 });
+    }
+
+    const total = count || 0;
+
+    // Get stats — run in parallel
+    const [totalRes, emailRes, contactedRes, repliedRes, activeRes] = await Promise.all([
+      supabaseAdmin.from("marketing_partnerships").select("*", { count: "exact", head: true }),
+      supabaseAdmin
+        .from("marketing_partnerships")
+        .select("*", { count: "exact", head: true })
+        .or("marketing_contact_email.not.is.null,booking_email.not.is.null"),
+      supabaseAdmin
+        .from("marketing_partnerships")
+        .select("*", { count: "exact", head: true })
+        .eq("outreach_status", "contacted"),
+      supabaseAdmin
+        .from("marketing_partnerships")
+        .select("*", { count: "exact", head: true })
+        .eq("outreach_status", "replied"),
+      supabaseAdmin
+        .from("marketing_partnerships")
+        .select("*", { count: "exact", head: true })
+        .eq("outreach_status", "active"),
     ]);
 
     return NextResponse.json({
-      partnerships,
+      partnerships: partnerships || [],
       total,
       page,
       totalPages: Math.ceil(total / limit),
-      stats: { totalCourses, hasEmail, contacted, replied, active },
+      stats: {
+        totalCourses: totalRes.count || 0,
+        hasEmail: emailRes.count || 0,
+        contacted: contactedRes.count || 0,
+        replied: repliedRes.count || 0,
+        active: activeRes.count || 0,
+      },
     });
   } catch (err) {
     return NextResponse.json(
