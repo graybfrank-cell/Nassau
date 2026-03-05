@@ -18,6 +18,23 @@ import {
   Handshake,
   FileText,
   Settings,
+  Columns3,
+  CalendarDays,
+  Radar,
+  Newspaper,
+  PenTool,
+  AlertCircle,
+  CheckCircle2,
+  Clock,
+  Eye,
+  MessageSquare,
+  ThumbsUp,
+  Trash2,
+  ExternalLink,
+  Key,
+  Zap,
+  Users,
+  TrendingUp,
 } from "lucide-react";
 
 // ─── Types ──────────────────────────────────────────────────
@@ -62,17 +79,21 @@ interface ResearchResult {
 
 type FilterType = "all" | "no_contact" | "has_email" | "needs_review" | "contacted" | "replied";
 type SortField = "destination" | "tier" | "status" | "updated";
-type TabKey = "overview" | "partnerships" | "content" | "settings";
+type TabKey = "pipeline" | "calendar" | "scout" | "partnerships" | "newsletter" | "seo" | "analytics" | "settings";
 
 // ─── Main Page ──────────────────────────────────────────────
 
 export default function MarketingCommandCenter() {
-  const [activeTab, setActiveTab] = useState<TabKey>("partnerships");
+  const [activeTab, setActiveTab] = useState<TabKey>("pipeline");
 
   const tabs: { key: TabKey; label: string; icon: React.ReactNode }[] = [
-    { key: "overview", label: "Overview", icon: <BarChart3 className="h-4 w-4" /> },
+    { key: "pipeline", label: "Pipeline", icon: <Columns3 className="h-4 w-4" /> },
+    { key: "calendar", label: "Calendar", icon: <CalendarDays className="h-4 w-4" /> },
+    { key: "scout", label: "Scout", icon: <Radar className="h-4 w-4" /> },
     { key: "partnerships", label: "Partnerships", icon: <Handshake className="h-4 w-4" /> },
-    { key: "content", label: "Content", icon: <FileText className="h-4 w-4" /> },
+    { key: "newsletter", label: "Newsletter", icon: <Newspaper className="h-4 w-4" /> },
+    { key: "seo", label: "SEO", icon: <PenTool className="h-4 w-4" /> },
+    { key: "analytics", label: "Analytics", icon: <BarChart3 className="h-4 w-4" /> },
     { key: "settings", label: "Settings", icon: <Settings className="h-4 w-4" /> },
   ];
 
@@ -88,12 +109,12 @@ export default function MarketingCommandCenter() {
 
       {/* Tabs */}
       <div className="border-b border-zinc-200 bg-white px-6">
-        <nav className="-mb-px flex gap-6">
+        <nav className="-mb-px flex gap-4 overflow-x-auto">
           {tabs.map((tab) => (
             <button
               key={tab.key}
               onClick={() => setActiveTab(tab.key)}
-              className={`flex items-center gap-2 border-b-2 px-1 py-3 text-sm font-medium transition-colors ${
+              className={`flex shrink-0 items-center gap-2 border-b-2 px-1 py-3 text-sm font-medium transition-colors ${
                 activeTab === tab.key
                   ? "border-emerald-600 text-emerald-600"
                   : "border-transparent text-zinc-500 hover:border-zinc-300 hover:text-zinc-700"
@@ -109,9 +130,13 @@ export default function MarketingCommandCenter() {
       {/* Tab Content */}
       <div className="p-6">
         <div className="mx-auto max-w-7xl">
-          {activeTab === "overview" && <OverviewTab />}
+          {activeTab === "pipeline" && <PipelineTab />}
+          {activeTab === "calendar" && <CalendarTab />}
+          {activeTab === "scout" && <ScoutTab />}
           {activeTab === "partnerships" && <PartnershipsTab />}
-          {activeTab === "content" && <ContentTab />}
+          {activeTab === "newsletter" && <NewsletterTab />}
+          {activeTab === "seo" && <SEOTab />}
+          {activeTab === "analytics" && <AnalyticsTab />}
           {activeTab === "settings" && <SettingsTab />}
         </div>
       </div>
@@ -119,38 +144,844 @@ export default function MarketingCommandCenter() {
   );
 }
 
-// ─── Overview Tab ───────────────────────────────────────────
+// ─── Pipeline Tab (Kanban) ──────────────────────────────────
 
-function OverviewTab() {
+const PIPELINE_STAGES = ["idea", "draft", "review", "approved", "scheduled", "published"] as const;
+const STAGE_LABELS: Record<string, string> = {
+  idea: "Idea",
+  draft: "Draft",
+  review: "Review",
+  approved: "Approved",
+  scheduled: "Scheduled",
+  published: "Published",
+};
+const STAGE_COLORS: Record<string, string> = {
+  idea: "border-zinc-300 bg-zinc-50",
+  draft: "border-blue-300 bg-blue-50",
+  review: "border-yellow-300 bg-yellow-50",
+  approved: "border-emerald-300 bg-emerald-50",
+  scheduled: "border-purple-300 bg-purple-50",
+  published: "border-green-300 bg-green-50",
+};
+
+interface ContentItem {
+  id: string;
+  title?: string;
+  type?: string;
+  status?: string;
+  topic?: string;
+  platform?: string;
+  scheduled_date?: string;
+  created_at?: string;
+  updated_at?: string;
+  [key: string]: unknown;
+}
+
+function PipelineTab() {
+  const [columns, setColumns] = useState<Record<string, ContentItem[]>>({});
+  const [loading, setLoading] = useState(true);
+  const [total, setTotal] = useState(0);
+
+  useEffect(() => {
+    async function load() {
+      try {
+        const res = await fetch("/api/admin/marketing/pipeline");
+        const data = await res.json();
+        setColumns(data.columns || {});
+        setTotal(data.total || 0);
+      } catch {
+        // silent
+      } finally {
+        setLoading(false);
+      }
+    }
+    load();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-20">
+        <Loader2 className="h-6 w-6 animate-spin text-zinc-400" />
+      </div>
+    );
+  }
+
   return (
-    <div className="rounded-lg border border-zinc-200 bg-white p-8 text-center text-zinc-500">
-      <BarChart3 className="mx-auto mb-3 h-10 w-10 text-zinc-300" />
-      <p className="font-medium text-zinc-700">Marketing Overview</p>
-      <p className="mt-1 text-sm">Dashboard analytics and metrics coming soon.</p>
+    <>
+      <div className="mb-4 flex items-center justify-between">
+        <p className="text-sm text-zinc-500">{total} content items</p>
+      </div>
+      <div className="grid grid-cols-6 gap-3 overflow-x-auto">
+        {PIPELINE_STAGES.map((stage) => (
+          <div key={stage} className={`rounded-lg border-2 p-3 ${STAGE_COLORS[stage]}`}>
+            <div className="mb-3 flex items-center justify-between">
+              <h3 className="text-xs font-semibold uppercase tracking-wider text-zinc-700">
+                {STAGE_LABELS[stage]}
+              </h3>
+              <span className="rounded-full bg-white px-2 py-0.5 text-xs font-medium text-zinc-600 shadow-sm">
+                {(columns[stage] || []).length}
+              </span>
+            </div>
+            <div className="space-y-2">
+              {(columns[stage] || []).length === 0 ? (
+                <p className="py-4 text-center text-xs text-zinc-400">Empty</p>
+              ) : (
+                (columns[stage] || []).map((item) => (
+                  <div
+                    key={item.id}
+                    className="rounded-md border border-zinc-200 bg-white p-2.5 shadow-sm"
+                  >
+                    <p className="text-xs font-medium text-zinc-900 line-clamp-2">
+                      {item.title || item.topic || "Untitled"}
+                    </p>
+                    <div className="mt-1.5 flex items-center gap-1.5">
+                      {item.type && (
+                        <span className="rounded bg-zinc-100 px-1.5 py-0.5 text-[10px] text-zinc-500">
+                          {item.type}
+                        </span>
+                      )}
+                      {item.platform && (
+                        <span className="rounded bg-zinc-100 px-1.5 py-0.5 text-[10px] text-zinc-500">
+                          {item.platform}
+                        </span>
+                      )}
+                    </div>
+                    {item.scheduled_date && (
+                      <p className="mt-1 text-[10px] text-zinc-400">
+                        <Clock className="mr-0.5 inline h-3 w-3" />
+                        {new Date(item.scheduled_date).toLocaleDateString()}
+                      </p>
+                    )}
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
+        ))}
+      </div>
+    </>
+  );
+}
+
+// ─── Calendar Tab (Weekly View) ─────────────────────────────
+
+interface WeeklyPlan {
+  id: string;
+  week_start?: string;
+  week_end?: string;
+  theme?: string;
+  status?: string;
+  content_items?: unknown[];
+  notes?: string;
+  created_at?: string;
+  [key: string]: unknown;
+}
+
+function CalendarTab() {
+  const [plans, setPlans] = useState<WeeklyPlan[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function load() {
+      try {
+        const res = await fetch("/api/admin/marketing/calendar");
+        const data = await res.json();
+        setPlans(data.plans || []);
+      } catch {
+        // silent
+      } finally {
+        setLoading(false);
+      }
+    }
+    load();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-20">
+        <Loader2 className="h-6 w-6 animate-spin text-zinc-400" />
+      </div>
+    );
+  }
+
+  if (plans.length === 0) {
+    return (
+      <div className="rounded-lg border border-zinc-200 bg-white p-8 text-center text-zinc-500">
+        <CalendarDays className="mx-auto mb-3 h-10 w-10 text-zinc-300" />
+        <p className="font-medium text-zinc-700">No Weekly Plans</p>
+        <p className="mt-1 text-sm">Weekly marketing plans will appear here once created.</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-4">
+      {plans.map((plan) => (
+        <div
+          key={plan.id}
+          className="rounded-lg border border-zinc-200 bg-white p-5"
+        >
+          <div className="flex items-start justify-between">
+            <div>
+              <h3 className="font-medium text-zinc-900">
+                {plan.week_start
+                  ? `Week of ${new Date(plan.week_start).toLocaleDateString("en-US", { month: "short", day: "numeric" })}`
+                  : "Week"}
+                {plan.week_end &&
+                  ` – ${new Date(plan.week_end).toLocaleDateString("en-US", { month: "short", day: "numeric" })}`}
+              </h3>
+              {plan.theme && (
+                <p className="mt-1 text-sm text-zinc-500">Theme: {plan.theme}</p>
+              )}
+            </div>
+            {plan.status && (
+              <span
+                className={`rounded-full px-2 py-0.5 text-xs font-medium ${
+                  plan.status === "active"
+                    ? "bg-green-100 text-green-700"
+                    : plan.status === "draft"
+                      ? "bg-zinc-100 text-zinc-600"
+                      : "bg-blue-100 text-blue-700"
+                }`}
+              >
+                {plan.status}
+              </span>
+            )}
+          </div>
+          {plan.notes && (
+            <p className="mt-2 text-sm text-zinc-600">{plan.notes}</p>
+          )}
+          {Array.isArray(plan.content_items) && plan.content_items.length > 0 && (
+            <div className="mt-3 border-t border-zinc-100 pt-3">
+              <p className="mb-1 text-xs font-medium text-zinc-500">
+                {plan.content_items.length} content items scheduled
+              </p>
+            </div>
+          )}
+        </div>
+      ))}
     </div>
   );
 }
 
-// ─── Content Tab ────────────────────────────────────────────
+// ─── Scout Tab (Alerts) ─────────────────────────────────────
 
-function ContentTab() {
+interface ScoutAlert {
+  id: string;
+  title?: string;
+  description?: string;
+  source?: string;
+  source_url?: string;
+  type?: string;
+  status?: string;
+  relevance_score?: number;
+  created_at?: string;
+  [key: string]: unknown;
+}
+
+function ScoutTab() {
+  const [alerts, setAlerts] = useState<ScoutAlert[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [filter, setFilter] = useState<"all" | "new" | "engaged" | "dismissed">("all");
+
+  useEffect(() => {
+    async function load() {
+      try {
+        const res = await fetch("/api/admin/marketing/scout");
+        const data = await res.json();
+        setAlerts(data.alerts || []);
+      } catch {
+        // silent
+      } finally {
+        setLoading(false);
+      }
+    }
+    load();
+  }, []);
+
+  async function handleAction(id: string, action: "create" | "engage" | "dismiss") {
+    try {
+      await fetch("/api/admin/marketing/scout", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id, action }),
+      });
+      setAlerts((prev) =>
+        prev.map((a) =>
+          a.id === id
+            ? {
+                ...a,
+                status:
+                  action === "dismiss"
+                    ? "dismissed"
+                    : action === "engage"
+                      ? "engaged"
+                      : "content_created",
+              }
+            : a
+        )
+      );
+    } catch {
+      // silent
+    }
+  }
+
+  const filtered = alerts.filter((a) => {
+    if (filter === "all") return true;
+    if (filter === "new") return !a.status || a.status === "new";
+    return a.status === filter;
+  });
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-20">
+        <Loader2 className="h-6 w-6 animate-spin text-zinc-400" />
+      </div>
+    );
+  }
+
+  return (
+    <>
+      {/* Filter chips */}
+      <div className="mb-4 flex gap-2">
+        {(["all", "new", "engaged", "dismissed"] as const).map((f) => (
+          <button
+            key={f}
+            onClick={() => setFilter(f)}
+            className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${
+              filter === f
+                ? "bg-emerald-600 text-white"
+                : "bg-zinc-100 text-zinc-600 hover:bg-zinc-200"
+            }`}
+          >
+            {f.charAt(0).toUpperCase() + f.slice(1)}
+          </button>
+        ))}
+      </div>
+
+      {filtered.length === 0 ? (
+        <div className="rounded-lg border border-zinc-200 bg-white p-8 text-center text-zinc-500">
+          <Radar className="mx-auto mb-3 h-10 w-10 text-zinc-300" />
+          <p className="font-medium text-zinc-700">No Alerts</p>
+          <p className="mt-1 text-sm">Scout alerts will appear here as they are detected.</p>
+        </div>
+      ) : (
+        <div className="space-y-3">
+          {filtered.map((alert) => (
+            <div
+              key={alert.id}
+              className="rounded-lg border border-zinc-200 bg-white p-4"
+            >
+              <div className="flex items-start justify-between">
+                <div className="flex-1">
+                  <div className="flex items-center gap-2">
+                    <h3 className="text-sm font-medium text-zinc-900">
+                      {alert.title || "Untitled Alert"}
+                    </h3>
+                    {alert.type && (
+                      <span className="rounded bg-zinc-100 px-1.5 py-0.5 text-[10px] font-medium text-zinc-500">
+                        {alert.type}
+                      </span>
+                    )}
+                    {alert.status && alert.status !== "new" && (
+                      <span
+                        className={`rounded-full px-2 py-0.5 text-[10px] font-medium ${
+                          alert.status === "dismissed"
+                            ? "bg-zinc-100 text-zinc-500"
+                            : alert.status === "engaged"
+                              ? "bg-blue-100 text-blue-700"
+                              : "bg-green-100 text-green-700"
+                        }`}
+                      >
+                        {alert.status}
+                      </span>
+                    )}
+                  </div>
+                  {alert.description && (
+                    <p className="mt-1 text-xs text-zinc-600 line-clamp-2">
+                      {alert.description}
+                    </p>
+                  )}
+                  <div className="mt-2 flex items-center gap-3 text-[10px] text-zinc-400">
+                    {alert.source && <span>Source: {alert.source}</span>}
+                    {alert.created_at && (
+                      <span>{new Date(alert.created_at).toLocaleDateString()}</span>
+                    )}
+                    {alert.relevance_score != null && (
+                      <span>Relevance: {alert.relevance_score}%</span>
+                    )}
+                  </div>
+                </div>
+                <div className="ml-4 flex items-center gap-1.5">
+                  {alert.source_url && (
+                    <a
+                      href={alert.source_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="rounded-lg border border-zinc-200 p-1.5 text-zinc-400 hover:text-zinc-600"
+                    >
+                      <ExternalLink className="h-3.5 w-3.5" />
+                    </a>
+                  )}
+                  <button
+                    onClick={() => handleAction(alert.id, "create")}
+                    className="rounded-lg border border-zinc-200 p-1.5 text-zinc-400 hover:bg-emerald-50 hover:text-emerald-600"
+                    title="Create Content"
+                  >
+                    <FileText className="h-3.5 w-3.5" />
+                  </button>
+                  <button
+                    onClick={() => handleAction(alert.id, "engage")}
+                    className="rounded-lg border border-zinc-200 p-1.5 text-zinc-400 hover:bg-blue-50 hover:text-blue-600"
+                    title="Engage"
+                  >
+                    <MessageSquare className="h-3.5 w-3.5" />
+                  </button>
+                  <button
+                    onClick={() => handleAction(alert.id, "dismiss")}
+                    className="rounded-lg border border-zinc-200 p-1.5 text-zinc-400 hover:bg-red-50 hover:text-red-600"
+                    title="Dismiss"
+                  >
+                    <Trash2 className="h-3.5 w-3.5" />
+                  </button>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </>
+  );
+}
+
+// ─── Newsletter Tab ─────────────────────────────────────────
+
+interface Subscriber {
+  id: string;
+  email?: string;
+  name?: string;
+  status?: string;
+  created_at?: string;
+  sections?: unknown[];
+  talking_points?: string[];
+  [key: string]: unknown;
+}
+
+function NewsletterTab() {
+  const [subscriberCount, setSubscriberCount] = useState(0);
+  const [subscribers, setSubscribers] = useState<Subscriber[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function load() {
+      try {
+        const res = await fetch("/api/admin/marketing/newsletter");
+        const data = await res.json();
+        setSubscriberCount(data.subscriberCount || 0);
+        setSubscribers(data.subscribers || []);
+      } catch {
+        // silent
+      } finally {
+        setLoading(false);
+      }
+    }
+    load();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-20">
+        <Loader2 className="h-6 w-6 animate-spin text-zinc-400" />
+      </div>
+    );
+  }
+
+  return (
+    <>
+      {/* Stats */}
+      <div className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-3">
+        <div className="rounded-lg border border-zinc-200 bg-white p-4">
+          <p className="text-xs font-medium text-zinc-500">Total Subscribers</p>
+          <p className="mt-1 text-2xl font-bold text-zinc-900">
+            {subscriberCount.toLocaleString()}
+          </p>
+        </div>
+        <div className="rounded-lg border border-zinc-200 bg-white p-4">
+          <p className="text-xs font-medium text-zinc-500">Active</p>
+          <p className="mt-1 text-2xl font-bold text-zinc-900">
+            {subscribers.filter((s) => s.status === "active" || !s.status).length}
+          </p>
+        </div>
+        <div className="rounded-lg border border-zinc-200 bg-white p-4">
+          <p className="text-xs font-medium text-zinc-500">Recent (7d)</p>
+          <p className="mt-1 text-2xl font-bold text-zinc-900">
+            {
+              subscribers.filter((s) => {
+                if (!s.created_at) return false;
+                const d = new Date(s.created_at);
+                return Date.now() - d.getTime() < 7 * 86400000;
+              }).length
+            }
+          </p>
+        </div>
+      </div>
+
+      {/* Subscriber list */}
+      {subscribers.length === 0 ? (
+        <div className="rounded-lg border border-zinc-200 bg-white p-8 text-center text-zinc-500">
+          <Newspaper className="mx-auto mb-3 h-10 w-10 text-zinc-300" />
+          <p className="font-medium text-zinc-700">No Subscribers Yet</p>
+          <p className="mt-1 text-sm">Newsletter subscribers will appear here.</p>
+        </div>
+      ) : (
+        <div className="rounded-lg border border-zinc-200 bg-white overflow-hidden">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="border-b border-zinc-200 bg-zinc-50">
+                <th className="px-4 py-3 text-left font-medium text-zinc-600">Email</th>
+                <th className="px-4 py-3 text-left font-medium text-zinc-600">Name</th>
+                <th className="px-4 py-3 text-left font-medium text-zinc-600">Status</th>
+                <th className="px-4 py-3 text-left font-medium text-zinc-600">Subscribed</th>
+              </tr>
+            </thead>
+            <tbody>
+              {subscribers.map((sub) => (
+                <tr key={sub.id} className="border-b border-zinc-100">
+                  <td className="px-4 py-3 text-zinc-900">{sub.email || "—"}</td>
+                  <td className="px-4 py-3 text-zinc-600">{sub.name || "—"}</td>
+                  <td className="px-4 py-3">
+                    <span
+                      className={`rounded-full px-2 py-0.5 text-xs font-medium ${
+                        sub.status === "active" || !sub.status
+                          ? "bg-green-100 text-green-700"
+                          : "bg-zinc-100 text-zinc-500"
+                      }`}
+                    >
+                      {sub.status || "active"}
+                    </span>
+                  </td>
+                  <td className="px-4 py-3 text-xs text-zinc-500">
+                    {sub.created_at
+                      ? new Date(sub.created_at).toLocaleDateString()
+                      : "—"}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </>
+  );
+}
+
+// ─── SEO Tab ────────────────────────────────────────────────
+
+function SEOTab() {
   return (
     <div className="rounded-lg border border-zinc-200 bg-white p-8 text-center text-zinc-500">
-      <FileText className="mx-auto mb-3 h-10 w-10 text-zinc-300" />
-      <p className="font-medium text-zinc-700">Content Management</p>
-      <p className="mt-1 text-sm">Blog posts and marketing content coming soon.</p>
+      <PenTool className="mx-auto mb-3 h-10 w-10 text-zinc-300" />
+      <p className="font-medium text-zinc-700">SEO Blog Pipeline</p>
+      <p className="mt-1 text-sm">Blog post SEO pipeline and content optimization tools.</p>
     </div>
+  );
+}
+
+// ─── Analytics Tab ──────────────────────────────────────────
+
+interface AnalyticsMetrics {
+  totalViews: number;
+  uniqueVisitors: number;
+  signups: number;
+  conversionRate: number;
+  topReferrers: string[];
+  topPages: string[];
+}
+
+interface PerformanceEntry {
+  id?: string;
+  date?: string;
+  total_views?: number;
+  views?: number;
+  unique_visitors?: number;
+  visitors?: number;
+  signups?: number;
+  conversion_rate?: number;
+  [key: string]: unknown;
+}
+
+function AnalyticsTab() {
+  const [metrics, setMetrics] = useState<AnalyticsMetrics>({
+    totalViews: 0,
+    uniqueVisitors: 0,
+    signups: 0,
+    conversionRate: 0,
+    topReferrers: [],
+    topPages: [],
+  });
+  const [history, setHistory] = useState<PerformanceEntry[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function load() {
+      try {
+        const res = await fetch("/api/admin/marketing/analytics");
+        const data = await res.json();
+        if (data.metrics) setMetrics(data.metrics);
+        setHistory(data.history || []);
+      } catch {
+        // silent
+      } finally {
+        setLoading(false);
+      }
+    }
+    load();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-20">
+        <Loader2 className="h-6 w-6 animate-spin text-zinc-400" />
+      </div>
+    );
+  }
+
+  return (
+    <>
+      {/* Metric Cards */}
+      <div className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
+        {[
+          { label: "Total Views", value: metrics.totalViews, icon: <Eye className="h-5 w-5 text-blue-500" /> },
+          { label: "Unique Visitors", value: metrics.uniqueVisitors, icon: <Users className="h-5 w-5 text-emerald-500" /> },
+          { label: "Signups", value: metrics.signups, icon: <ThumbsUp className="h-5 w-5 text-purple-500" /> },
+          {
+            label: "Conversion Rate",
+            value: `${(metrics.conversionRate * 100).toFixed(1)}%`,
+            icon: <TrendingUp className="h-5 w-5 text-amber-500" />,
+          },
+        ].map((m) => (
+          <div key={m.label} className="rounded-lg border border-zinc-200 bg-white p-4">
+            <div className="flex items-center gap-2">
+              {m.icon}
+              <p className="text-xs font-medium text-zinc-500">{m.label}</p>
+            </div>
+            <p className="mt-2 text-2xl font-bold text-zinc-900">
+              {typeof m.value === "number" ? m.value.toLocaleString() : m.value}
+            </p>
+          </div>
+        ))}
+      </div>
+
+      {/* History table */}
+      {history.length > 0 && (
+        <div className="rounded-lg border border-zinc-200 bg-white overflow-hidden">
+          <div className="border-b border-zinc-200 px-4 py-3">
+            <h3 className="text-sm font-medium text-zinc-700">Performance History</h3>
+          </div>
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b border-zinc-200 bg-zinc-50">
+                  <th className="px-4 py-2 text-left font-medium text-zinc-600">Date</th>
+                  <th className="px-4 py-2 text-right font-medium text-zinc-600">Views</th>
+                  <th className="px-4 py-2 text-right font-medium text-zinc-600">Visitors</th>
+                  <th className="px-4 py-2 text-right font-medium text-zinc-600">Signups</th>
+                </tr>
+              </thead>
+              <tbody>
+                {history.slice(0, 14).map((entry, i) => (
+                  <tr key={entry.id || i} className="border-b border-zinc-100">
+                    <td className="px-4 py-2 text-zinc-700">
+                      {entry.date
+                        ? new Date(entry.date).toLocaleDateString()
+                        : "—"}
+                    </td>
+                    <td className="px-4 py-2 text-right text-zinc-600">
+                      {(entry.total_views || entry.views || 0).toLocaleString()}
+                    </td>
+                    <td className="px-4 py-2 text-right text-zinc-600">
+                      {(entry.unique_visitors || entry.visitors || 0).toLocaleString()}
+                    </td>
+                    <td className="px-4 py-2 text-right text-zinc-600">
+                      {(entry.signups || 0).toLocaleString()}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+
+      {/* Breakdowns */}
+      <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2">
+        {metrics.topReferrers.length > 0 && (
+          <div className="rounded-lg border border-zinc-200 bg-white p-4">
+            <h3 className="mb-2 text-sm font-medium text-zinc-700">Top Referrers</h3>
+            <ul className="space-y-1">
+              {metrics.topReferrers.map((r, i) => (
+                <li key={i} className="text-xs text-zinc-600">{r}</li>
+              ))}
+            </ul>
+          </div>
+        )}
+        {metrics.topPages.length > 0 && (
+          <div className="rounded-lg border border-zinc-200 bg-white p-4">
+            <h3 className="mb-2 text-sm font-medium text-zinc-700">Top Pages</h3>
+            <ul className="space-y-1">
+              {metrics.topPages.map((p, i) => (
+                <li key={i} className="text-xs text-zinc-600">{p}</li>
+              ))}
+            </ul>
+          </div>
+        )}
+      </div>
+
+      {history.length === 0 && metrics.totalViews === 0 && (
+        <div className="rounded-lg border border-zinc-200 bg-white p-8 text-center text-zinc-500">
+          <BarChart3 className="mx-auto mb-3 h-10 w-10 text-zinc-300" />
+          <p className="font-medium text-zinc-700">No Analytics Data</p>
+          <p className="mt-1 text-sm">Performance data will appear here as it is collected.</p>
+        </div>
+      )}
+    </>
   );
 }
 
 // ─── Settings Tab ───────────────────────────────────────────
 
+interface MarketingSettings {
+  anthropicKeyConfigured: boolean;
+  supabaseConfigured: boolean;
+  serviceRoleConfigured: boolean;
+  senderEmail: string;
+  schedules: Record<string, string>;
+}
+
 function SettingsTab() {
+  const [settings, setSettings] = useState<MarketingSettings | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function load() {
+      try {
+        const res = await fetch("/api/admin/marketing/settings");
+        const data = await res.json();
+        setSettings(data.settings || null);
+      } catch {
+        // silent
+      } finally {
+        setLoading(false);
+      }
+    }
+    load();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-20">
+        <Loader2 className="h-6 w-6 animate-spin text-zinc-400" />
+      </div>
+    );
+  }
+
+  if (!settings) {
+    return (
+      <div className="rounded-lg border border-zinc-200 bg-white p-8 text-center text-zinc-500">
+        <Settings className="mx-auto mb-3 h-10 w-10 text-zinc-300" />
+        <p className="font-medium text-zinc-700">Settings Unavailable</p>
+        <p className="mt-1 text-sm">Could not load settings.</p>
+      </div>
+    );
+  }
+
   return (
-    <div className="rounded-lg border border-zinc-200 bg-white p-8 text-center text-zinc-500">
-      <Settings className="mx-auto mb-3 h-10 w-10 text-zinc-300" />
-      <p className="font-medium text-zinc-700">Marketing Settings</p>
-      <p className="mt-1 text-sm">Configuration and preferences coming soon.</p>
+    <div className="space-y-6">
+      {/* Schedule Overview */}
+      <div className="rounded-lg border border-zinc-200 bg-white p-5">
+        <h3 className="mb-3 flex items-center gap-2 text-sm font-semibold text-zinc-900">
+          <Clock className="h-4 w-4 text-zinc-400" />
+          Agent Schedules
+        </h3>
+        <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+          {Object.entries(settings.schedules).map(([agent, schedule]) => (
+            <div key={agent} className="flex items-center justify-between rounded-md border border-zinc-100 p-3">
+              <span className="text-sm text-zinc-700 capitalize">
+                {agent.replace(/([A-Z])/g, " $1").trim()}
+              </span>
+              <span className="text-xs text-zinc-500">{schedule}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* API Key Status */}
+      <div className="rounded-lg border border-zinc-200 bg-white p-5">
+        <h3 className="mb-3 flex items-center gap-2 text-sm font-semibold text-zinc-900">
+          <Key className="h-4 w-4 text-zinc-400" />
+          API Key Status
+        </h3>
+        <div className="space-y-2">
+          {[
+            { label: "Anthropic API Key", ok: settings.anthropicKeyConfigured },
+            { label: "Supabase Connection", ok: settings.supabaseConfigured },
+            { label: "Service Role Key", ok: settings.serviceRoleConfigured },
+          ].map((item) => (
+            <div key={item.label} className="flex items-center gap-2">
+              {item.ok ? (
+                <CheckCircle2 className="h-4 w-4 text-green-500" />
+              ) : (
+                <AlertCircle className="h-4 w-4 text-red-500" />
+              )}
+              <span className="text-sm text-zinc-700">{item.label}</span>
+              <span
+                className={`ml-auto text-xs font-medium ${
+                  item.ok ? "text-green-600" : "text-red-600"
+                }`}
+              >
+                {item.ok ? "Configured" : "Missing"}
+              </span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Sender info */}
+      <div className="rounded-lg border border-zinc-200 bg-white p-5">
+        <h3 className="mb-3 flex items-center gap-2 text-sm font-semibold text-zinc-900">
+          <Mail className="h-4 w-4 text-zinc-400" />
+          Outreach Configuration
+        </h3>
+        <div className="flex items-center gap-2">
+          <span className="text-sm text-zinc-500">Sender Email:</span>
+          <span className="text-sm font-medium text-zinc-900">{settings.senderEmail}</span>
+        </div>
+      </div>
+
+      {/* Quick-action cards */}
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+        <div className="rounded-lg border border-zinc-200 bg-white p-5">
+          <Zap className="mb-2 h-6 w-6 text-amber-500" />
+          <h4 className="text-sm font-medium text-zinc-900">Onboarding Emails</h4>
+          <p className="mt-1 text-xs text-zinc-500">
+            Automated welcome sequence for new users.
+          </p>
+        </div>
+        <div className="rounded-lg border border-zinc-200 bg-white p-5">
+          <RefreshCw className="mb-2 h-6 w-6 text-blue-500" />
+          <h4 className="text-sm font-medium text-zinc-900">Reactivation</h4>
+          <p className="mt-1 text-xs text-zinc-500">
+            Win-back campaigns for inactive users.
+          </p>
+        </div>
+        <div className="rounded-lg border border-zinc-200 bg-white p-5">
+          <Users className="mb-2 h-6 w-6 text-emerald-500" />
+          <h4 className="text-sm font-medium text-zinc-900">Referral Program</h4>
+          <p className="mt-1 text-xs text-zinc-500">
+            Invite-a-friend referral tracking and rewards.
+          </p>
+        </div>
+      </div>
     </div>
   );
 }
