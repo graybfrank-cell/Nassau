@@ -13,6 +13,7 @@ export async function GET() {
     senderEmail: "grayson@nassau.golf",
     schedules: {
       scoutAgent: "Every 6 hours",
+      strategistAgent: "Monday 6 AM CT",
       contentAgent: "Daily at 9am ET",
       newsletterAgent: "Weekly on Monday",
       partnershipsAgent: "On demand",
