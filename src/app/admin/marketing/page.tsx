@@ -1262,6 +1262,7 @@ function AnalyticsTab() {
     topReferrers: [],
     topPages: [],
   });
+  const [extStats, setExtStats] = useState<Record<string, number>>({});
   const [history, setHistory] = useState<PerformanceEntry[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -1271,6 +1272,7 @@ function AnalyticsTab() {
         const res = await fetch("/api/admin/marketing/analytics");
         const data = await res.json();
         if (data.metrics) setMetrics(data.metrics);
+        if (data.extendedStats) setExtStats(data.extendedStats);
         setHistory(data.history || []);
       } catch {
         // silent
@@ -1314,6 +1316,31 @@ function AnalyticsTab() {
           </div>
         ))}
       </div>
+
+      {/* Marketing Stats */}
+      {Object.keys(extStats).length > 0 && (
+        <div className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
+          <div className="rounded-lg border border-zinc-200 bg-white p-4">
+            <p className="text-xs font-medium text-zinc-500">Recent Signups (7d)</p>
+            <p className="mt-2 text-2xl font-bold text-zinc-900">{extStats.recentSignups || 0}</p>
+          </div>
+          <div className="rounded-lg border border-zinc-200 bg-white p-4">
+            <p className="text-xs font-medium text-zinc-500">Content Pipeline</p>
+            <p className="mt-2 text-2xl font-bold text-zinc-900">{extStats.totalContent || 0}</p>
+            <p className="text-[10px] text-zinc-400">{extStats.publishedContent || 0} published</p>
+          </div>
+          <div className="rounded-lg border border-zinc-200 bg-white p-4">
+            <p className="text-xs font-medium text-zinc-500">Scout Alerts</p>
+            <p className="mt-2 text-2xl font-bold text-zinc-900">{extStats.totalAlerts || 0}</p>
+            <p className="text-[10px] text-zinc-400">{extStats.engagedAlerts || 0} engaged</p>
+          </div>
+          <div className="rounded-lg border border-zinc-200 bg-white p-4">
+            <p className="text-xs font-medium text-zinc-500">Blog Posts</p>
+            <p className="mt-2 text-2xl font-bold text-zinc-900">{extStats.blogPosts || 0}</p>
+            <p className="text-[10px] text-zinc-400">{extStats.totalBlogViews || 0} views</p>
+          </div>
+        </div>
+      )}
 
       {/* History table */}
       {history.length > 0 && (
