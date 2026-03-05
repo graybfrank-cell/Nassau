@@ -7,3 +7,7 @@ export const supabaseAdmin = createClient(supabaseUrl, supabaseServiceRoleKey, {
   auth: { persistSession: false },
 });
 export { supabaseAdmin as createServiceClient } from "@/lib/supabase/admin";
+
+export function createServiceClient() {
+  return supabaseAdmin;
+}
