@@ -478,16 +478,59 @@ function CalendarTab() {
                                   {/* Additional fields when expanded */}
                                   <div className="grid grid-cols-3 gap-2 text-xs">
                                     <div>
-                                      <span className="text-zinc-400">Platform</span>
-                                      <p className="font-medium text-zinc-700">{slot.platform || "—"}</p>
+                                      <label className="text-zinc-400 block mb-0.5">Platform</label>
+                                      {isEditing ? (
+                                        <select
+                                          className="w-full rounded border border-zinc-300 px-2 py-1 text-sm text-zinc-800 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                                          defaultValue={slot.platform || ""}
+                                          onChange={(e) => { slot.platform = e.target.value; }}
+                                        >
+                                          <option value="instagram">Instagram</option>
+                                          <option value="twitter">Twitter/X</option>
+                                          <option value="tiktok">TikTok</option>
+                                          <option value="linkedin">LinkedIn</option>
+                                          <option value="youtube">YouTube</option>
+                                          <option value="email">Email</option>
+                                        </select>
+                                      ) : (
+                                        <p className="font-medium text-zinc-700">{slot.platform || "—"}</p>
+                                      )}
                                     </div>
                                     <div>
-                                      <span className="text-zinc-400">Type</span>
-                                      <p className="font-medium text-zinc-700">{slot.content_type || "—"}</p>
+                                      <label className="text-zinc-400 block mb-0.5">Type</label>
+                                      {isEditing ? (
+                                        <select
+                                          className="w-full rounded border border-zinc-300 px-2 py-1 text-sm text-zinc-800 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                                          defaultValue={slot.content_type || ""}
+                                          onChange={(e) => { slot.content_type = e.target.value; }}
+                                        >
+                                          <option value="carousel">Carousel</option>
+                                          <option value="reel">Reel</option>
+                                          <option value="single_image">Single Image</option>
+                                          <option value="tweet">Tweet</option>
+                                          <option value="thread">Thread</option>
+                                          <option value="short">Short</option>
+                                          <option value="post">Post</option>
+                                          <option value="newsletter">Newsletter</option>
+                                          <option value="story">Story</option>
+                                        </select>
+                                      ) : (
+                                        <p className="font-medium text-zinc-700">{slot.content_type || "—"}</p>
+                                      )}
                                     </div>
                                     <div>
-                                      <span className="text-zinc-400">Time</span>
-                                      <p className="font-medium text-zinc-700">{slot.time || "—"}</p>
+                                      <label className="text-zinc-400 block mb-0.5">Time</label>
+                                      {isEditing ? (
+                                        <input
+                                          type="text"
+                                          className="w-full rounded border border-zinc-300 px-2 py-1 text-sm text-zinc-800 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                                          defaultValue={slot.time || ""}
+                                          placeholder="e.g., 8:00 AM CT"
+                                          onChange={(e) => { slot.time = e.target.value; }}
+                                        />
+                                      ) : (
+                                        <p className="font-medium text-zinc-700">{slot.time || "—"}</p>
+                                      )}
                                     </div>
                                   </div>
 
