@@ -15,6 +15,21 @@ function slugify(text: string): string {
     .replace(/\s+/g, "-");
 }
 
+function sanitizeContent(content: string): string {
+  return content
+    .replace(/<cite[^>]*>/g, "")
+    .replace(/<\/cite>/g, "");
+}
+
+function resolveInternalLink(href: string): string {
+  // Rewrite /explore/[slug] to /explore?destination=[slug]
+  const exploreMatch = href.match(/^\/explore\/([a-z0-9-]+)$/);
+  if (exploreMatch) {
+    return `/explore?destination=${exploreMatch[1]}`;
+  }
+  return href;
+}
+
 const components: Components = {
   h2: ({ children }) => {
     const text = typeof children === "string" ? children : String(children);
@@ -45,16 +60,19 @@ const components: Components = {
       <p className="text-lg leading-[1.8] text-zinc-700 mb-6">{children}</p>
     );
   },
-  a: ({ href, children }) => (
-    <a
-      href={href}
-      className="text-emerald-600 underline hover:text-emerald-700"
-      target={href?.startsWith("http") ? "_blank" : undefined}
-      rel={href?.startsWith("http") ? "noopener noreferrer" : undefined}
-    >
-      {children}
-    </a>
-  ),
+  a: ({ href, children }) => {
+    const resolved = href ? resolveInternalLink(href) : href;
+    return (
+      <a
+        href={resolved}
+        className="text-emerald-600 underline hover:text-emerald-700"
+        target={resolved?.startsWith("http") ? "_blank" : undefined}
+        rel={resolved?.startsWith("http") ? "noopener noreferrer" : undefined}
+      >
+        {children}
+      </a>
+    );
+  },
   img: ({ src, alt }) => (
     <figure className="my-8">
       <img
@@ -108,10 +126,12 @@ const components: Components = {
 };
 
 export default function BlogArticleContent({ markdown }: Props) {
+  const cleanContent = sanitizeContent(markdown);
+
   return (
     <article className="article-body">
       <ReactMarkdown remarkPlugins={[remarkGfm]} components={components}>
-        {markdown}
+        {cleanContent}
       </ReactMarkdown>
     </article>
   );
