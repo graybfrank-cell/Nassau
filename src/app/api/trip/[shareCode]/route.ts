@@ -53,6 +53,38 @@ export async function GET(
       return NextResponse.json({ error: "Trip not found" }, { status: 404 });
     }
 
+    // Fetch active or recent poll for this trip
+    let pollData = null;
+    try {
+      const poll = await prisma.datePolls.findFirst({
+        where: { trip_id: trip.id },
+        orderBy: { created_at: "desc" },
+        include: {
+          options: { orderBy: { sort_order: "asc" } },
+          votes: true,
+        },
+      });
+      if (poll) {
+        pollData = {
+          id: poll.id,
+          status: poll.status,
+          deadline: poll.deadline,
+          lockedOptionId: poll.locked_option_id,
+          options: poll.options.map((opt) => ({
+            id: opt.id,
+            startDate: opt.start_date,
+            endDate: opt.end_date,
+            label: opt.label,
+            votes: poll.votes
+              .filter((v) => v.option_id === opt.id)
+              .map((v) => ({ userId: v.user_id, vote: v.vote })),
+          })),
+        };
+      }
+    } catch {
+      // Poll fetch non-critical for share page
+    }
+
     // Return safe public data
     return NextResponse.json({
       id: trip.id,
@@ -70,6 +102,7 @@ export async function GET(
         handicap: Number(m.handicap),
         userId: m.user_id,
       })),
+      datePoll: pollData,
     });
   } catch (err) {
     console.error("GET /api/trip/[shareCode] error:", err);

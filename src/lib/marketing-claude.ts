@@ -1,23 +1,17 @@
 /**
  * Shared helper for calling the Anthropic Claude API from marketing agents.
+ * Uses the official SDK with server-side web search support.
  */
-
-interface ClaudeMessage {
-  role: "user" | "assistant";
-  content: string;
-}
-
-interface ClaudeTool {
-  type: string;
-  name: string;
-}
+import Anthropic from "@anthropic-ai/sdk";
 
 interface ClaudeCallOptions {
   system: string;
-  messages: ClaudeMessage[];
-  tools?: ClaudeTool[];
+  messages: Anthropic.MessageParam[];
+  tools?: Anthropic.Tool[];
   maxTokens?: number;
 }
+
+const client = new Anthropic();
 
 export async function callClaude({
   system,
@@ -25,73 +19,105 @@ export async function callClaude({
   tools,
   maxTokens = 4096,
 }: ClaudeCallOptions): Promise<string> {
-  const apiKey = process.env.ANTHROPIC_API_KEY;
-  if (!apiKey) {
-    throw new Error("Missing ANTHROPIC_API_KEY environment variable");
-  }
+  const hasTools = tools && tools.length > 0;
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const body: Record<string, any> = {
-    model: "claude-sonnet-4-20250514",
+  const params: Anthropic.MessageCreateParams = {
+    model: "claude-opus-4-6",
     max_tokens: maxTokens,
     system,
-    messages,
+    messages: [...messages],
   };
 
-  if (tools && tools.length > 0) {
-    body.tools = tools;
+  if (hasTools) {
+    params.tools = tools;
   }
 
-  console.log(
-    `[marketing-claude] Calling Claude API — system prompt: ${system.slice(0, 80)}...`
-  );
+  const MAX_ITERATIONS = 10;
+  let iteration = 0;
+  let currentMessages: Anthropic.MessageParam[] = [...messages];
 
-  const response = await fetch("https://api.anthropic.com/v1/messages", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "x-api-key": apiKey,
-      "anthropic-version": "2023-06-01",
-    },
-    body: JSON.stringify(body),
-  });
+  while (iteration < MAX_ITERATIONS) {
+    iteration++;
 
-  if (!response.ok) {
-    const errorText = await response.text();
-    console.error(`[marketing-claude] API error ${response.status}: ${errorText}`);
-    throw new Error(`Claude API error: ${response.status}`);
+    const response = await client.messages.create({
+      ...params,
+      messages: currentMessages,
+    });
+
+    console.log(
+      `[marketing-claude] Iteration ${iteration} — stop_reason: ${response.stop_reason}, blocks: ${response.content?.length}`
+    );
+
+    if (response.stop_reason === "end_turn" || !hasTools) {
+      const textBlocks = response.content.filter(
+        (b): b is Anthropic.TextBlock => b.type === "text"
+      );
+      return textBlocks.map((b) => b.text).join("\n") || "";
+    }
+
+    // Server-side tool hit iteration limit; re-send to continue
+    if (response.stop_reason === "pause_turn") {
+      currentMessages = [
+        ...messages,
+        { role: "assistant", content: response.content },
+      ];
+      continue;
+    }
+
+    const toolUseBlocks = response.content.filter(
+      (b): b is Anthropic.ToolUseBlock => b.type === "tool_use"
+    );
+
+    if (toolUseBlocks.length === 0) {
+      const textBlocks = response.content.filter(
+        (b): b is Anthropic.TextBlock => b.type === "text"
+      );
+      return textBlocks.map((b) => b.text).join("\n") || "";
+    }
+
+    currentMessages.push({ role: "assistant", content: response.content });
+
+    const toolResults: Anthropic.ToolResultBlockParam[] = toolUseBlocks.map(
+      (toolUseBlock) => ({
+        type: "tool_result" as const,
+        tool_use_id: toolUseBlock.id,
+        content: "Tool not available",
+      })
+    );
+
+    currentMessages.push({ role: "user", content: toolResults });
   }
 
-  const data = await response.json();
-  console.log(
-    `[marketing-claude] Response received — stop_reason: ${data.stop_reason}, content blocks: ${data.content?.length}`
+  console.error(
+    `[marketing-claude] Hit max iterations (${MAX_ITERATIONS}) without end_turn`
   );
-
-  // Extract text from content blocks
-  const textBlocks = data.content?.filter(
-    (block: { type: string }) => block.type === "text"
-  );
-  return textBlocks?.map((b: { text: string }) => b.text).join("\n") || "";
+  return "";
 }
 
-/**
- * Extract JSON from a Claude response that may contain markdown code blocks.
- */
 export function extractJSON(text: string): unknown {
-  // Try parsing directly first
+  if (!text || text.trim() === "") {
+    throw new Error("Empty response from Claude");
+  }
   try {
     return JSON.parse(text);
-  } catch {
-    // Try extracting from markdown code block
-    const jsonMatch = text.match(/```(?:json)?\s*([\s\S]*?)```/);
-    if (jsonMatch) {
+  } catch {}
+  const jsonMatch = text.match(/```(?:json)?\s*([\s\S]*?)```/);
+  if (jsonMatch) {
+    try {
       return JSON.parse(jsonMatch[1].trim());
-    }
-    // Try finding JSON array or object
-    const bracketMatch = text.match(/(\[[\s\S]*\]|\{[\s\S]*\})/);
-    if (bracketMatch) {
-      return JSON.parse(bracketMatch[1]);
-    }
-    throw new Error("Could not extract JSON from Claude response");
+    } catch {}
   }
+  const arrayMatch = text.match(/\[[\s\S]*\]/);
+  if (arrayMatch) {
+    try {
+      return JSON.parse(arrayMatch[0]);
+    } catch {}
+  }
+  const objectMatch = text.match(/\{[\s\S]*\}/);
+  if (objectMatch) {
+    try {
+      return JSON.parse(objectMatch[0]);
+    } catch {}
+  }
+  throw new Error("Could not extract JSON from Claude response");
 }
