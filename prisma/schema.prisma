@@ -25,23 +25,18 @@ model Profiles {
 
 // ─── trips ───────────────────────────────────────────────────
 model Trips {
-  id                String   @id @default(uuid()) @db.Uuid
-  created_by        String   @db.Uuid
-  name              String
-  destination       String   @default("")
-  start_date        String   @default("")
-  end_date          String   @default("")
-  arrival_time      String   @default("")
-  departure_time    String   @default("")
-  lodging           Json     @default("{}")
-  invite_code       String?  @unique
-  share_code        String?  @unique
-  vibe              String?
-  budget_tier       String?
-  group_size_target Int?
-  notes             String?
-  created_at        DateTime @default(now()) @db.Timestamptz()
-  updated_at        DateTime @default(now()) @db.Timestamptz()
+  id             String   @id @default(uuid()) @db.Uuid
+  created_by     String   @db.Uuid
+  name           String
+  destination    String   @default("")
+  start_date     String   @default("")
+  end_date       String   @default("")
+  arrival_time   String   @default("")
+  departure_time String   @default("")
+  lodging        Json     @default("{}")
+  invite_code    String?  @unique
+  created_at     DateTime @default(now()) @db.Timestamptz()
+  updated_at     DateTime @default(now()) @db.Timestamptz()
 
   creator        Profiles         @relation(fields: [created_by], references: [id], onDelete: Cascade)
   members        TripMembers[]
@@ -50,7 +45,6 @@ model Trips {
   rounds         Rounds[]
   skinsGames     SkinsGames[]
   scorecards     Scorecards[]
-  datePolls      DatePolls[]
 
   @@index([created_by])
   @@map("trips")
@@ -58,18 +52,15 @@ model Trips {
 
 // ─── trip_members ────────────────────────────────────────────
 model TripMembers {
-  id             String    @id @default(uuid()) @db.Uuid
-  trip_id        String    @db.Uuid
-  user_id        String?   @db.Uuid
-  email          String?
-  name           String    @default("")
-  handicap       Decimal   @default(0)
-  role           String    @default("MEMBER")
-  rsvp_status    String    @default("PENDING")
-  payment_status String    @default("UNPAID")
-  invited_at     DateTime? @db.Timestamptz()
-  rsvp_at        DateTime? @db.Timestamptz()
-  created_at     DateTime  @default(now()) @db.Timestamptz()
+  id             String   @id @default(uuid()) @db.Uuid
+  trip_id        String   @db.Uuid
+  user_id        String?  @db.Uuid
+  name           String   @default("")
+  handicap       Decimal  @default(0)
+  role           String   @default("MEMBER")
+  rsvp_status    String   @default("PENDING")
+  payment_status String   @default("UNPAID")
+  created_at     DateTime @default(now()) @db.Timestamptz()
 
   trip          Trips           @relation(fields: [trip_id], references: [id], onDelete: Cascade)
   user          Profiles?       @relation(fields: [user_id], references: [id], onDelete: SetNull)
@@ -92,14 +83,10 @@ model ItineraryItems {
   type        String   @default("other")
   title       String   @default("")
   description String   @default("")
-  cost           Decimal  @default(0)
-  booking_url    String   @default("")
-  booking_status String   @default("")
-  phone          String   @default("")
-  website        String   @default("")
-  email          String   @default("")
-  notes          String   @default("")
-  sort_order     Int      @default(0)
+  cost        Decimal  @default(0)
+  booking_url String   @default("")
+  notes       String   @default("")
+  sort_order  Int      @default(0)
   created_at  DateTime @default(now()) @db.Timestamptz()
 
   trip Trips @relation(fields: [trip_id], references: [id], onDelete: Cascade)
@@ -145,15 +132,14 @@ model ExpenseSplits {
 
 // ─── rounds ──────────────────────────────────────────────────
 model Rounds {
-  id                  String   @id @default(uuid()) @db.Uuid
-  trip_id             String   @db.Uuid
-  name                String   @default("")
-  course_name         String   @default("")
-  date                String   @default("")
-  group_size          Int      @default(4)
-  groups              Json     @default("[]")
-  itinerary_item_id   String?  @db.Uuid
-  created_at          DateTime @default(now()) @db.Timestamptz()
+  id          String   @id @default(uuid()) @db.Uuid
+  trip_id     String   @db.Uuid
+  name        String   @default("")
+  course_name String   @default("")
+  date        String   @default("")
+  group_size  Int      @default(4)
+  groups      Json     @default("[]")
+  created_at  DateTime @default(now()) @db.Timestamptz()
 
   trip Trips @relation(fields: [trip_id], references: [id], onDelete: Cascade)
 
@@ -163,15 +149,14 @@ model Rounds {
 
 // ─── skins_games ─────────────────────────────────────────────
 model SkinsGames {
-  id                  String   @id @default(uuid()) @db.Uuid
-  trip_id             String   @db.Uuid
-  name                String   @default("")
-  buy_in              Decimal  @default(5)
-  day_number          Int?
-  players             Json     @default("[]")
-  holes               Json     @default("[]")
-  itinerary_item_id   String?  @db.Uuid
-  created_at          DateTime @default(now()) @db.Timestamptz()
+  id         String   @id @default(uuid()) @db.Uuid
+  trip_id    String   @db.Uuid
+  name       String   @default("")
+  buy_in     Decimal  @default(5)
+  day_number Int?
+  players    Json     @default("[]")
+  holes      Json     @default("[]")
+  created_at DateTime @default(now()) @db.Timestamptz()
 
   trip Trips @relation(fields: [trip_id], references: [id], onDelete: Cascade)
 
@@ -181,19 +166,14 @@ model SkinsGames {
 
 // ─── scorecards ──────────────────────────────────────────────
 model Scorecards {
-  id                  String   @id @default(uuid()) @db.Uuid
-  user_id             String   @db.Uuid
-  trip_id             String?  @db.Uuid
-  course_name         String   @default("")
-  course_api_id       Int?
-  tee_name            String   @default("")
-  date                String   @default("")
-  pars                Json     @default("[]")
-  yardages            Json     @default("[]")
-  handicaps           Json     @default("[]")
-  players             Json     @default("[]")
-  itinerary_item_id   String?  @db.Uuid
-  created_at          DateTime @default(now()) @db.Timestamptz()
+  id          String   @id @default(uuid()) @db.Uuid
+  user_id     String   @db.Uuid
+  trip_id     String?  @db.Uuid
+  course_name String   @default("")
+  date        String   @default("")
+  pars        Json     @default("[]")
+  players     Json     @default("[]")
+  created_at  DateTime @default(now()) @db.Timestamptz()
 
   user Profiles @relation(fields: [user_id], references: [id], onDelete: Cascade)
   trip Trips?   @relation(fields: [trip_id], references: [id], onDelete: Cascade)
@@ -203,56 +183,25 @@ model Scorecards {
   @@map("scorecards")
 }
 
-// ─── date_polls ─────────────────────────────────────────────
-model DatePolls {
-  id               String    @id @default(cuid())
-  trip_id          String    @db.Uuid
-  created_by       String    @db.Uuid
-  status           String    @default("active") // "active", "closed", "locked"
-  deadline         DateTime  @db.Timestamptz()
-  created_at       DateTime  @default(now()) @db.Timestamptz()
-  closed_at        DateTime? @db.Timestamptz()
-  locked_option_id String?
+// ─── marketing_partnerships ─────────────────────────────────
+model MarketingPartnerships {
+  id                     String   @id @default(uuid()) @db.Uuid
+  course_name            String   @default("")
+  destination            String   @default("")
+  tier                   String   @default("")
+  course_type            String   @default("")
+  website_url            String?
+  marketing_contact_name String?
+  marketing_contact_email String?
+  booking_email          String?
+  outreach_status        String   @default("none")
+  confidence             String?
+  source_notes           String?
+  needs_review           Boolean  @default(false)
+  created_at             DateTime @default(now()) @db.Timestamptz()
+  updated_at             DateTime @default(now()) @db.Timestamptz()
 
-  trip    Trips              @relation(fields: [trip_id], references: [id], onDelete: Cascade)
-  options DatePollOptions[]
-  votes   DatePollVotes[]
-
-  @@index([trip_id])
-  @@map("date_polls")
-}
-
-// ─── date_poll_options ──────────────────────────────────────
-model DatePollOptions {
-  id         String   @id @default(cuid())
-  poll_id    String
-  start_date DateTime @db.Timestamptz()
-  end_date   DateTime @db.Timestamptz()
-  label      String?
-  sort_order Int      @default(0)
-
-  poll  DatePolls       @relation(fields: [poll_id], references: [id], onDelete: Cascade)
-  votes DatePollVotes[]
-
-  @@index([poll_id])
-  @@map("date_poll_options")
-}
-
-// ─── date_poll_votes ────────────────────────────────────────
-model DatePollVotes {
-  id        String   @id @default(cuid())
-  poll_id   String
-  option_id String
-  user_id   String   @db.Uuid
-  vote      String   // "yes", "maybe", "no"
-  voted_at  DateTime @default(now()) @db.Timestamptz()
-
-  poll   DatePolls       @relation(fields: [poll_id], references: [id], onDelete: Cascade)
-  option DatePollOptions @relation(fields: [option_id], references: [id], onDelete: Cascade)
-
-  @@unique([poll_id, option_id, user_id])
-  @@index([poll_id])
-  @@map("date_poll_votes")
+  @@map("marketing_partnerships")
 }
 
 // ─── waitlist ────────────────────────────────────────────────
