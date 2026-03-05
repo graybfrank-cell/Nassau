@@ -183,6 +183,27 @@ model Scorecards {
   @@map("scorecards")
 }
 
+// ─── marketing_partnerships ─────────────────────────────────
+model MarketingPartnerships {
+  id                     String   @id @default(uuid()) @db.Uuid
+  course_name            String   @default("")
+  destination            String   @default("")
+  tier                   String   @default("")
+  course_type            String   @default("")
+  website_url            String?
+  marketing_contact_name String?
+  marketing_contact_email String?
+  booking_email          String?
+  outreach_status        String   @default("none")
+  confidence             String?
+  source_notes           String?
+  needs_review           Boolean  @default(false)
+  created_at             DateTime @default(now()) @db.Timestamptz()
+  updated_at             DateTime @default(now()) @db.Timestamptz()
+
+  @@map("marketing_partnerships")
+}
+
 // ─── waitlist ────────────────────────────────────────────────
 model Waitlists {
   id         String   @id @default(uuid()) @db.Uuid
