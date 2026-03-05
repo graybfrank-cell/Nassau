@@ -576,6 +576,49 @@ function CalendarTab() {
                                         </button>
                                         <button
                                           onClick={async () => {
+                                            const btn = document.activeElement as HTMLButtonElement;
+                                            if (btn) btn.textContent = "Generating...";
+                                            try {
+                                              const res = await fetch("/api/admin/marketing/social-agent", {
+                                                method: "POST",
+                                                headers: { "Content-Type": "application/json" },
+                                                body: JSON.stringify({
+                                                  hook: slot.hook || slot.topic || "",
+                                                  topic: slot.topic || "",
+                                                  platform: slot.platform || "instagram",
+                                                  content_type: slot.content_type || "post",
+                                                  pillar: slot.pillar || "",
+                                                  notes: slot.notes || "",
+                                                }),
+                                              });
+                                              const data = await res.json();
+                                              if (data.success && data.content) {
+                                                const c = data.content;
+                                                const parts: string[] = [];
+                                                if (c.instagram?.caption) parts.push("📸 INSTAGRAM:\n" + c.instagram.caption);
+                                                if (c.twitter?.tweet) parts.push("\n\n🐦 TWITTER:\n" + c.twitter.tweet);
+                                                if (c.twitter?.thread) parts.push("\n\n🧵 THREAD:\n" + c.twitter.thread.join("\n→ "));
+                                                if (c.tiktok?.script) parts.push("\n\n🎬 TIKTOK:\n" + c.tiktok.script);
+                                                if (c.linkedin?.post) parts.push("\n\n💼 LINKEDIN:\n" + c.linkedin.post);
+                                                slot.notes = (slot.notes || "") + "\n\n--- GENERATED CONTENT ---\n" + parts.join("");
+                                                setExpandedSlot(slotKey);
+                                                alert("Content generated! Check Strategy Notes for all platform drafts.");
+                                              } else {
+                                                alert("Generation failed: " + (data.error || "Unknown error"));
+                                              }
+                                            } catch {
+                                              alert("Failed to generate content");
+                                            } finally {
+                                              if (btn) btn.textContent = "Generate Content";
+                                            }
+                                          }}
+                                          className="flex items-center gap-1 rounded border border-purple-200 px-2.5 py-1 text-[11px] text-purple-700 hover:bg-purple-50"
+                                        >
+                                          <Sparkles className="h-3 w-3" />
+                                          Generate Content
+                                        </button>
+                                        <button
+                                          onClick={async () => {
                                             try {
                                               await fetch("/api/admin/marketing/pipeline", {
                                                 method: "POST",

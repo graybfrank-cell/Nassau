@@ -1,6 +1,83 @@
 import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase/admin";
 
+// ── Seasonal hooks calendar ──
+function getSeasonalHooks(): string {
+  const now = new Date();
+  const month = now.getMonth(); // 0-indexed
+  const day = now.getDate();
+
+  const hooks: string[] = [];
+
+  // Year-round recurring
+  hooks.push("- Weekend round planning (every Thursday/Friday people plan weekend golf)");
+
+  // Monthly/seasonal
+  if (month >= 1 && month <= 3) {
+    hooks.push("- Spring trip booking season (peak planning period for Apr-Jun trips)");
+    hooks.push("- Masters anticipation content (April Masters = biggest golf cultural moment)");
+    hooks.push("- Spring break golf trips");
+    hooks.push("- Early bird summer trip deals");
+  }
+  if (month === 3) {
+    hooks.push("- MASTERS WEEK (Apr 7-13) — highest golf engagement of the year");
+    hooks.push("- Tax refund season → 'put your refund toward the boys' trip'");
+  }
+  if (month >= 4 && month <= 6) {
+    hooks.push("- Peak golf season starting — weekend round frequency increases");
+    hooks.push("- Memorial Day golf trip planning");
+    hooks.push("- Father's Day golf content (gift guides, trip ideas)");
+    hooks.push("- US Open buzz");
+    hooks.push("- Summer buddy trip season");
+  }
+  if (month >= 6 && month <= 8) {
+    hooks.push("- Peak summer golf — highest round volume of the year");
+    hooks.push("- The Open Championship buzz");
+    hooks.push("- Labor Day trip planning");
+    hooks.push("- Fall golf trip early planning (Pinehurst, Kiawah, Bandon shoulder season)");
+  }
+  if (month >= 8 && month <= 10) {
+    hooks.push("- Fall golf — best weather in the South/Southwest");
+    hooks.push("- Ryder Cup / Presidents Cup years — massive engagement");
+    hooks.push("- Scottsdale/Arizona trip season starting");
+    hooks.push("- Holiday gift guide planning for golf gear/trips");
+  }
+  if (month >= 10 || month <= 1) {
+    hooks.push("- New Year's resolution golf trips");
+    hooks.push("- Winter golf escape planning (Scottsdale, Palm Springs, Florida)");
+    hooks.push("- Holiday golf gift guides");
+    hooks.push("- Year-end 'best rounds of the year' recaps");
+    hooks.push("- Early booking deals for spring/summer trips");
+  }
+
+  // Nassau-specific
+  if (month === 2 && day <= 15) {
+    hooks.push("- 🚀 NASSAU LAUNCH (April 1) — pre-launch content ramp-up");
+  }
+  if (month === 3 && day === 1) {
+    hooks.push("- 🚀 NASSAU LAUNCH DAY — all hands on content");
+  }
+
+  return hooks.join("\n");
+}
+
+// ── Competitor list ──
+const COMPETITORS = `
+COMPETITORS TO MONITOR (search for recent news, feature launches, user complaints):
+- 18Birdies: GPS rangefinder + scorecard app, recently added group features
+- Golflogix: GPS app with green maps, expanding into social features
+- GolfNow: Tee time booking, has group booking but poor coordination tools
+- Arccos: Smart sensors + AI caddie, premium price point
+- Hole19: European-focused GPS + scorecard, community features
+- TheGrint: Handicap tracking + tournament mode
+- Golf Genius: Tournament management, used by clubs (enterprise)
+- SwingU: GPS + instruction content
+- Partiful: Not golf-specific but their invite/RSVP mechanic is what we're competing with for trip coordination
+- Splitwise: Expense splitting (we compete for the "who owes what" use case on trips)
+
+Look for: feature launches we should respond to, user complaints we can solve, gaps they're not filling (especially group coordination, trip planning, betting/skins tracking)
+`;
+
 export async function POST() {
   const apiKey = process.env.ANTHROPIC_API_KEY;
   if (!apiKey) {
@@ -11,7 +88,7 @@ export async function POST() {
   }
 
   try {
-    // ── Step 1: Pull feedback data (engaged vs dismissed alerts) ──
+    // ── Step 1: Pull feedback data ──
     const { data: engagedAlerts } = await supabaseAdmin
       .from("marketing_scout_alerts")
       .select("summary, opportunity_type, source, suggested_content_topic")
@@ -26,23 +103,23 @@ export async function POST() {
       .order("created_at", { ascending: false })
       .limit(10);
 
-    // ── Step 2: Pull recent top-performing content for context ──
     const { data: topContent } = await supabaseAdmin
       .from("marketing_content")
       .select("title, type, status, impressions, likes, shares")
       .order("impressions", { ascending: false })
       .limit(5);
 
-    // ── Step 3: Build dynamic prompt with feedback ──
+    // ── Step 2: Build prompt with all context ──
     const feedbackContext = buildFeedbackContext(
       engagedAlerts || [],
       dismissedAlerts || [],
       topContent || []
     );
 
-    const prompt = buildScoutPrompt(feedbackContext);
+    const seasonalHooks = getSeasonalHooks();
+    const prompt = buildScoutPrompt(feedbackContext, seasonalHooks);
 
-    // ── Step 4: Call Claude with web search ──
+    // ── Step 3: Call Claude with web search ──
     const response = await fetch("https://api.anthropic.com/v1/messages", {
       method: "POST",
       headers: {
@@ -68,7 +145,6 @@ export async function POST() {
 
     const data = await response.json();
 
-    // ── Step 5: Extract JSON from response (handle tool_use blocks) ──
     const textContent = data.content
       .filter((block: { type: string }) => block.type === "text")
       .map((block: { text: string }) => block.text)
@@ -76,7 +152,6 @@ export async function POST() {
 
     const clean = textContent.replace(/```json|```/g, "").trim();
 
-    // Try to find JSON array in the response
     let alerts: Record<string, unknown>[];
     try {
       alerts = JSON.parse(clean);
@@ -99,7 +174,7 @@ export async function POST() {
       );
     }
 
-    // ── Step 6: Map to correct DB columns and insert ──
+    // ── Step 4: Map to correct DB columns and insert ──
     const now = new Date().toISOString();
     const rows = alerts.map((alert) => ({
       source: String(alert.source || "Scout Agent"),
@@ -112,7 +187,6 @@ export async function POST() {
       created_at: now,
     }));
 
-    // Filter out rows with empty summaries
     const validRows = rows.filter((r) => r.summary && r.summary.length > 5);
 
     if (validRows.length === 0) {
@@ -142,6 +216,7 @@ export async function POST() {
         dismissed: (dismissedAlerts || []).length,
         topContent: (topContent || []).length,
       },
+      seasonalHooksActive: seasonalHooks.split("\n").length,
     });
   } catch (err) {
     return NextResponse.json(
@@ -151,7 +226,7 @@ export async function POST() {
   }
 }
 
-// ── Helper: Build feedback context string ──
+// ── Feedback context builder ──
 function buildFeedbackContext(
   engaged: Record<string, unknown>[],
   dismissed: Record<string, unknown>[],
@@ -162,10 +237,7 @@ function buildFeedbackContext(
   if (engaged.length > 0) {
     sections.push(
       `## ALERTS THE TEAM ENGAGED WITH (find MORE like these):\n${engaged
-        .map(
-          (a, i) =>
-            `${i + 1}. [${a.opportunity_type}] ${a.summary}${a.suggested_content_topic ? ` → Content: "${a.suggested_content_topic}"` : ""}`
-        )
+        .map((a, i) => `${i + 1}. [${a.opportunity_type}] ${a.summary}${a.suggested_content_topic ? ` → "${a.suggested_content_topic}"` : ""}`)
         .join("\n")}`
     );
   }
@@ -173,10 +245,7 @@ function buildFeedbackContext(
   if (dismissed.length > 0) {
     sections.push(
       `## ALERTS THE TEAM DISMISSED (find FEWER like these):\n${dismissed
-        .map(
-          (a, i) =>
-            `${i + 1}. [${a.opportunity_type}] ${a.summary}`
-        )
+        .map((a, i) => `${i + 1}. [${a.opportunity_type}] ${a.summary}`)
         .join("\n")}`
     );
   }
@@ -184,58 +253,88 @@ function buildFeedbackContext(
   if (topContent.length > 0) {
     sections.push(
       `## TOP PERFORMING CONTENT (scout for similar opportunities):\n${topContent
-        .map(
-          (c, i) =>
-            `${i + 1}. "${c.title}" (${c.type}) — ${c.impressions || 0} impressions, ${c.likes || 0} likes, ${c.shares || 0} shares`
-        )
+        .map((c, i) => `${i + 1}. "${c.title}" (${c.type}) — ${c.impressions || 0} imp, ${c.likes || 0} likes, ${c.shares || 0} shares`)
         .join("\n")}`
     );
   }
 
   return sections.length > 0
-    ? `\n\n--- FEEDBACK FROM PAST PERFORMANCE ---\n${sections.join("\n\n")}\n--- END FEEDBACK ---\n\nUse this feedback to calibrate your recommendations. Find opportunities similar to what was engaged with, avoid topics similar to what was dismissed, and look for angles that could replicate top-performing content.\n`
+    ? `\n--- FEEDBACK FROM PAST PERFORMANCE ---\n${sections.join("\n\n")}\n--- END FEEDBACK ---\n`
     : "";
 }
 
-// ── Helper: Build the full Scout prompt ──
-function buildScoutPrompt(feedbackContext: string): string {
-  return `You are the Scout Agent for Nassau (nassau.golf), a golf trip planning and round tracking app. Your job is to scan the golf world for marketing opportunities — trending topics, upcoming events, viral moments, partnership leads, content ideas, and industry news that Nassau could capitalize on.
+// ── Scout prompt builder ──
+function buildScoutPrompt(feedbackContext: string, seasonalHooks: string): string {
+  return `You are the Scout Agent for Nassau (nassau.golf), a golf trip planning and round tracking app launching April 1, 2026.
 
-Search the web for:
-1. Trending golf topics on social media (Reddit r/golf, Twitter/X #golf, TikTok #GolfTok)
-2. Upcoming golf events or tournaments relevant to amateur golfers
-3. New golf courses opening or major renovations
-4. Golf influencer activity or viral golf content
-5. Seasonal opportunities (spring golf trip planning, holiday gift guides, etc.)
-6. Golf trip planning pain points being discussed in forums
-7. Competitor moves — other golf apps, trip planning tools, group coordination apps
-8. Golf travel trends — destination popularity shifts, new packages, deals
+NASSAU'S BRAND & AUDIENCE:
+- Voice: "Trip captain's inner monologue" — loves golf, loves his friends, can't believe nobody Venmo'd him back yet
+- Audience: Trip captains, 28-45, play 2-4x/month, plan 1-3 trips/year
+- Content pillars: (1) Trip planning pain points, (2) Golf betting/games culture, (3) Course reviews & hidden gems, (4) Trip budget breakdowns
+- Platforms: Instagram (primary), Twitter/X, TikTok, YouTube Shorts, LinkedIn
+- We use: trip, round, the boys, captain, skins, your crew, locked in, pressed
+- We never use: event, user, organizer, synergy, leverage, itinerary management platform
+
+Your job: scan the golf world for opportunities that fit THIS brand.
+
+## SEARCH CATEGORIES (search the web for ALL of these):
+
+### 1. Trending Golf Content
+- Reddit r/golf top posts this week (trip reports, course recs, complaints)
+- Twitter/X #golf #GolfTrip #GolfTok trending topics
+- TikTok golf creators — viral videos, new formats, trending sounds
+- Golf YouTube — popular recent videos about trips, courses, gear
+
+### 2. Golf News & Events
+- PGA Tour / LIV news relevant to amateur golfers
+- New course openings, major renovations, course closures
+- Tournament schedules that create content opportunities
+- Golf industry reports (spending trends, participation data)
+
+### 3. Competitor Intelligence
+${COMPETITORS}
+
+### 4. Seasonal Opportunities (active right now)
+${seasonalHooks}
+
+### 5. Community & Culture
+- Golf trip planning discussions (Reddit, forums, Facebook groups)
+- Golf betting/gambling culture content
+- "Golf trip of a lifetime" stories and viral trip content
+- Group coordination complaints (the pain we solve)
+- Golf memes and humor trends
+
+### 6. Golf Travel & Destinations
+- New golf travel packages or deals
+- Destination popularity shifts (what's hot, what's overrated)
+- Course ranking changes (Golf Digest, GOLF Magazine)
+- Budget breakdown content from other creators
+
+### 7. Golf Influencers & Creators
+- Rising golf creators on Instagram/TikTok/YouTube
+- Potential collaboration or content crossover opportunities
+- Influencers planning group trips (could use Nassau)
 ${feedbackContext}
 
-Return ONLY a JSON array of 5-8 alerts with no other text:
+Return ONLY a JSON array of 6-10 alerts:
 
 [
   {
-    "source": "Where you found this (e.g., Reddit r/golf, Golf Digest, X/Twitter trending)",
-    "url": "https://example.com/article-or-thread-link",
-    "summary": "2-3 sentence explanation of the opportunity and why it matters for Nassau's growth",
-    "opportunity_type": "content_idea | engage | trending | partnership | competitor | seasonal",
-    "suggested_response": "1-2 sentence suggested action Nassau should take (e.g., 'Reply to this thread with trip planning tips and soft CTA')",
-    "suggested_content_topic": "Specific content piece title this could become (e.g., 'Why Bandon Dunes Requires 18 Months of Planning')"
+    "source": "Where you found this (e.g., Reddit r/golf, Golf Digest, @creator on TikTok)",
+    "url": "https://direct-link-to-source",
+    "summary": "2-3 sentence explanation of the opportunity and why it matters for Nassau",
+    "opportunity_type": "content_idea | engage | trending | partnership | competitor | seasonal | influencer",
+    "suggested_response": "Specific action Nassau should take (e.g., 'Create carousel breaking down the costs mentioned in this thread')",
+    "suggested_content_topic": "Exact content piece title (e.g., 'The Real Cost of a Bandon Dunes Trip: $2,400 for 4 Days')"
   }
 ]
 
 Guidelines:
-- Every field is REQUIRED — especially "summary" and "suggested_content_topic"
-- Focus on opportunities actionable within the next 1-2 weeks
-- Prioritize things relevant to golf trip planning, group golf coordination, and amateur golfers
-- Be specific — reference actual posts, articles, threads, or trends you find via web search
-- Include direct URLs when possible
-- "opportunity_type" determines how the team acts on it:
-  - content_idea = create original content inspired by this
-  - engage = respond to or participate in this conversation
-  - trending = ride this trending wave with timely content
-  - partnership = potential course/brand partnership opportunity
-  - competitor = something a competitor is doing we should respond to
-  - seasonal = time-sensitive seasonal opportunity`;
+- Every field is REQUIRED
+- Be SPECIFIC — reference actual posts, articles, threads you found via web search
+- Include direct URLs
+- suggested_content_topic should be a real, publishable title in Nassau's voice
+- Prioritize opportunities actionable within 1-2 weeks
+- At least 1 competitor alert, 1 seasonal alert, and 1 community/engage alert per run
+- Don't repeat topics from previous engaged/dismissed alerts`;
 }
