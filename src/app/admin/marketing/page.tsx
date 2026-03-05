@@ -375,13 +375,13 @@ function CalendarTab() {
 
 interface ScoutAlert {
   id: string;
-  title?: string;
-  description?: string;
   source?: string;
-  source_url?: string;
-  type?: string;
+  url?: string;
+  summary?: string;
+  opportunity_type?: string;
+  suggested_response?: string;
+  suggested_content_topic?: string;
   status?: string;
-  relevance_score?: number;
   created_at?: string;
   [key: string]: unknown;
 }
@@ -449,21 +449,43 @@ function ScoutTab() {
 
   return (
     <>
-      {/* Filter chips */}
-      <div className="mb-4 flex gap-2">
-        {(["all", "new", "engaged", "dismissed"] as const).map((f) => (
-          <button
-            key={f}
-            onClick={() => setFilter(f)}
-            className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${
-              filter === f
-                ? "bg-emerald-600 text-white"
-                : "bg-zinc-100 text-zinc-600 hover:bg-zinc-200"
-            }`}
-          >
-            {f.charAt(0).toUpperCase() + f.slice(1)}
-          </button>
-        ))}
+      {/* Filter chips + Run Now */}
+      <div className="mb-4 flex items-center justify-between">
+        <div className="flex gap-2">
+          {(["all", "new", "engaged", "dismissed"] as const).map((f) => (
+            <button
+              key={f}
+              onClick={() => setFilter(f)}
+              className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${
+                filter === f
+                  ? "bg-emerald-600 text-white"
+                  : "bg-zinc-100 text-zinc-600 hover:bg-zinc-200"
+              }`}
+            >
+              {f.charAt(0).toUpperCase() + f.slice(1)}
+            </button>
+          ))}
+        </div>
+        <button
+          onClick={async () => {
+            setLoading(true);
+            try {
+              await fetch("/api/cron/scout", { method: "POST" });
+              const res = await fetch("/api/admin/marketing/scout");
+              const data = await res.json();
+              setAlerts(data.alerts || []);
+            } catch {
+              // silent
+            } finally {
+              setLoading(false);
+            }
+          }}
+          disabled={loading}
+          className="flex items-center gap-2 rounded-lg bg-emerald-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-emerald-700 disabled:opacity-50"
+        >
+          {loading ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Radar className="h-3.5 w-3.5" />}
+          {loading ? "Scanning..." : "Run Scout Now"}
+        </button>
       </div>
 
       {filtered.length === 0 ? (
@@ -483,11 +505,11 @@ function ScoutTab() {
                 <div className="flex-1">
                   <div className="flex items-center gap-2">
                     <h3 className="text-sm font-medium text-zinc-900">
-                      {alert.title || "Untitled Alert"}
+                      {alert.suggested_content_topic || alert.summary?.slice(0, 60) || "Scout Alert"}
                     </h3>
-                    {alert.type && (
+                    {alert.opportunity_type && (
                       <span className="rounded bg-zinc-100 px-1.5 py-0.5 text-[10px] font-medium text-zinc-500">
-                        {alert.type}
+                        {alert.opportunity_type}
                       </span>
                     )}
                     {alert.status && alert.status !== "new" && (
@@ -504,9 +526,14 @@ function ScoutTab() {
                       </span>
                     )}
                   </div>
-                  {alert.description && (
+                  {alert.summary && (
                     <p className="mt-1 text-xs text-zinc-600 line-clamp-2">
-                      {alert.description}
+                      {alert.summary}
+                    </p>
+                  )}
+                  {alert.suggested_response && (
+                    <p className="mt-1 text-xs text-emerald-600 line-clamp-1">
+                      Suggested: {alert.suggested_response}
                     </p>
                   )}
                   <div className="mt-2 flex items-center gap-3 text-[10px] text-zinc-400">
@@ -514,15 +541,12 @@ function ScoutTab() {
                     {alert.created_at && (
                       <span>{new Date(alert.created_at).toLocaleDateString()}</span>
                     )}
-                    {alert.relevance_score != null && (
-                      <span>Relevance: {alert.relevance_score}%</span>
-                    )}
                   </div>
                 </div>
                 <div className="ml-4 flex items-center gap-1.5">
-                  {alert.source_url && (
+                  {alert.url && (
                     <a
-                      href={alert.source_url}
+                      href={alert.url}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="rounded-lg border border-zinc-200 p-1.5 text-zinc-400 hover:text-zinc-600"
@@ -684,12 +708,188 @@ function NewsletterTab() {
 
 // ─── SEO Tab ────────────────────────────────────────────────
 
+interface SEOPost {
+  id: string;
+  title: string;
+  slug: string;
+  status: string;
+  target_keyword?: string;
+  meta_description?: string;
+  published_at?: string;
+  created_at?: string;
+  reading_time_minutes?: number;
+  page_views?: number;
+  tags?: string[];
+  featured_image_url?: string;
+}
+
 function SEOTab() {
+  const [posts, setPosts] = useState<SEOPost[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [generating, setGenerating] = useState(false);
+
+  async function loadPosts() {
+    try {
+      const res = await fetch("/api/admin/marketing/seo-writer");
+      if (res.ok) {
+        const data = await res.json();
+        setPosts(data.posts || []);
+      }
+    } catch {
+      // silent
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  useEffect(() => { loadPosts(); }, []);
+
+  async function handleGenerate() {
+    setGenerating(true);
+    try {
+      const res = await fetch("/api/admin/marketing/seo-writer", { method: "POST" });
+      if (res.ok) {
+        await loadPosts();
+      }
+    } catch {
+      // silent
+    } finally {
+      setGenerating(false);
+    }
+  }
+
+  async function handleStatusChange(id: string, newStatus: string) {
+    try {
+      await fetch("/api/admin/marketing/seo-writer", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id, status: newStatus }),
+      });
+      setPosts((prev) =>
+        prev.map((p) => (p.id === id ? { ...p, status: newStatus } : p))
+      );
+    } catch {
+      // silent
+    }
+  }
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-20">
+        <Loader2 className="h-6 w-6 animate-spin text-zinc-400" />
+      </div>
+    );
+  }
+
+  const drafts = posts.filter((p) => p.status === "draft");
+  const reviews = posts.filter((p) => p.status === "review");
+  const published = posts.filter((p) => p.status === "published");
+
+  const columns = [
+    { title: "Draft", items: drafts, color: "bg-zinc-100 text-zinc-700" },
+    { title: "Review", items: reviews, color: "bg-yellow-100 text-yellow-700" },
+    { title: "Published", items: published, color: "bg-green-100 text-green-700" },
+  ];
+
   return (
-    <div className="rounded-lg border border-zinc-200 bg-white p-8 text-center text-zinc-500">
-      <PenTool className="mx-auto mb-3 h-10 w-10 text-zinc-300" />
-      <p className="font-medium text-zinc-700">SEO Blog Pipeline</p>
-      <p className="mt-1 text-sm">Blog post SEO pipeline and content optimization tools.</p>
+    <div>
+      <div className="mb-4 flex items-center justify-between">
+        <h3 className="text-sm font-medium text-zinc-700">
+          {posts.length} blog post{posts.length !== 1 ? "s" : ""}
+        </h3>
+        <button
+          onClick={handleGenerate}
+          disabled={generating}
+          className="flex items-center gap-2 rounded-lg bg-emerald-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-emerald-700 disabled:opacity-50"
+        >
+          {generating ? (
+            <Loader2 className="h-3.5 w-3.5 animate-spin" />
+          ) : (
+            <PenTool className="h-3.5 w-3.5" />
+          )}
+          {generating ? "Generating..." : "Generate New Post"}
+        </button>
+      </div>
+
+      {posts.length === 0 ? (
+        <div className="rounded-lg border border-zinc-200 bg-white p-8 text-center text-zinc-500">
+          <PenTool className="mx-auto mb-3 h-10 w-10 text-zinc-300" />
+          <p className="font-medium text-zinc-700">No Blog Posts Yet</p>
+          <p className="mt-1 text-sm">Click &quot;Generate New Post&quot; to create your first SEO blog post.</p>
+        </div>
+      ) : (
+        <div className="grid grid-cols-3 gap-4">
+          {columns.map((col) => (
+            <div key={col.title}>
+              <div className="mb-2 flex items-center gap-2">
+                <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${col.color}`}>
+                  {col.title}
+                </span>
+                <span className="text-xs text-zinc-400">{col.items.length}</span>
+              </div>
+              <div className="space-y-2">
+                {col.items.map((post) => (
+                  <div
+                    key={post.id}
+                    className="rounded-lg border border-zinc-200 bg-white p-3"
+                  >
+                    <h4 className="text-sm font-medium text-zinc-900 line-clamp-2">
+                      {post.title}
+                    </h4>
+                    {post.target_keyword && (
+                      <p className="mt-1 text-[10px] text-emerald-600 font-medium">
+                        {post.target_keyword}
+                      </p>
+                    )}
+                    <div className="mt-2 flex items-center gap-2 text-[10px] text-zinc-400">
+                      {post.reading_time_minutes && (
+                        <span>{post.reading_time_minutes} min read</span>
+                      )}
+                      {post.page_views != null && post.page_views > 0 && (
+                        <span>{post.page_views} views</span>
+                      )}
+                      {post.created_at && (
+                        <span>{new Date(post.created_at).toLocaleDateString()}</span>
+                      )}
+                    </div>
+                    {post.slug && post.status === "published" && (
+                      <a
+                        href={`/blog/${post.slug}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="mt-2 inline-flex items-center gap-1 text-[10px] text-emerald-600 hover:underline"
+                      >
+                        View post <ExternalLink className="h-2.5 w-2.5" />
+                      </a>
+                    )}
+                    <div className="mt-2 flex gap-1">
+                      {post.status === "draft" && (
+                        <button
+                          onClick={() => handleStatusChange(post.id, "review")}
+                          className="rounded border border-zinc-200 px-2 py-0.5 text-[10px] text-zinc-600 hover:bg-yellow-50"
+                        >
+                          Move to Review
+                        </button>
+                      )}
+                      {post.status === "review" && (
+                        <button
+                          onClick={() => handleStatusChange(post.id, "published")}
+                          className="rounded border border-zinc-200 px-2 py-0.5 text-[10px] text-zinc-600 hover:bg-green-50"
+                        >
+                          Publish
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                ))}
+                {col.items.length === 0 && (
+                  <p className="py-4 text-center text-xs text-zinc-400">None</p>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
