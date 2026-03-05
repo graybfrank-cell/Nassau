@@ -311,6 +311,18 @@ function CalendarTab() {
   const [expandedPlan, setExpandedPlan] = useState<string | null>(null);
   const [expandedSlot, setExpandedSlot] = useState<string | null>(null);
   const [editingSlot, setEditingSlot] = useState<string | null>(null);
+  const [slotEdits, setSlotEdits] = useState<Record<string, Record<string, string>>>({});
+
+  const getSlotValue = (key: string, field: string, fallback: string) => {
+    return slotEdits[key]?.[field] ?? fallback;
+  };
+
+  const updateSlotEdit = (key: string, field: string, value: string) => {
+    setSlotEdits(prev => ({
+      ...prev,
+      [key]: { ...(prev[key] || {}), [field]: value },
+    }));
+  };
 
   useEffect(() => {
     async function load() {
@@ -447,13 +459,11 @@ function CalendarTab() {
                                       <textarea
                                         className="w-full rounded border border-zinc-300 p-2 text-sm text-zinc-800 focus:outline-none focus:ring-2 focus:ring-emerald-500"
                                         rows={3}
-                                        defaultValue={slot.hook || slot.topic || ""}
-                                        onChange={(e) => {
-                                          slot.hook = e.target.value;
-                                        }}
+                                        value={getSlotValue(editKey, "hook", slot.hook || slot.topic || "")}
+                                        onChange={(e) => updateSlotEdit(editKey, "hook", e.target.value)}
                                       />
                                     ) : (
-                                      <p className="text-sm text-zinc-700">{slot.hook || slot.topic || "No hook set"}</p>
+                                      <p className="text-sm text-zinc-700">{slotEdits[editKey]?.hook || slot.hook || slot.topic || "No hook set"}</p>
                                     )}
                                   </div>
 
@@ -465,13 +475,11 @@ function CalendarTab() {
                                         <textarea
                                           className="w-full rounded border border-zinc-300 p-2 text-sm text-zinc-600 focus:outline-none focus:ring-2 focus:ring-emerald-500"
                                           rows={4}
-                                          defaultValue={slot.notes || ""}
-                                          onChange={(e) => {
-                                            slot.notes = e.target.value;
-                                          }}
+                                          value={getSlotValue(editKey, "notes", slot.notes || "")}
+                                          onChange={(e) => updateSlotEdit(editKey, "notes", e.target.value)}
                                         />
                                       ) : (
-                                        <p className="text-sm text-zinc-600">{slot.notes}</p>
+                                        <p className="text-sm text-zinc-600">{slotEdits[editKey]?.notes || slot.notes}</p>
                                       )}
                                     </div>
                                   )}
@@ -483,8 +491,8 @@ function CalendarTab() {
                                       {isEditing ? (
                                         <select
                                           className="w-full rounded border border-zinc-300 px-2 py-1 text-sm text-zinc-800 focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                                          defaultValue={slot.platform || ""}
-                                          onChange={(e) => { slot.platform = e.target.value; }}
+                                          value={getSlotValue(editKey, "platform", slot.platform || "")}
+                                          onChange={(e) => updateSlotEdit(editKey, "platform", e.target.value)}
                                         >
                                           <option value="instagram">Instagram</option>
                                           <option value="twitter">Twitter/X</option>
@@ -502,8 +510,8 @@ function CalendarTab() {
                                       {isEditing ? (
                                         <select
                                           className="w-full rounded border border-zinc-300 px-2 py-1 text-sm text-zinc-800 focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                                          defaultValue={slot.content_type || ""}
-                                          onChange={(e) => { slot.content_type = e.target.value; }}
+                                          value={getSlotValue(editKey, "content_type", slot.content_type || "")}
+                                          onChange={(e) => updateSlotEdit(editKey, "content_type", e.target.value)}
                                         >
                                           <option value="carousel">Carousel</option>
                                           <option value="reel">Reel</option>
@@ -525,9 +533,9 @@ function CalendarTab() {
                                         <input
                                           type="text"
                                           className="w-full rounded border border-zinc-300 px-2 py-1 text-sm text-zinc-800 focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                                          defaultValue={slot.time || ""}
+                                          value={getSlotValue(editKey, "time", slot.time || "")}
                                           placeholder="e.g., 8:00 AM CT"
-                                          onChange={(e) => { slot.time = e.target.value; }}
+                                          onChange={(e) => updateSlotEdit(editKey, "time", e.target.value)}
                                         />
                                       ) : (
                                         <p className="font-medium text-zinc-700">{slot.time || "—"}</p>
@@ -541,18 +549,31 @@ function CalendarTab() {
                                       <>
                                         <button
                                           onClick={async () => {
-                                            // Save the edited plan back to DB
                                             try {
-                                              const updatedPlan = typeof wp.plan === "string" ? JSON.parse(wp.plan) : wp.plan;
+                                              const edits = slotEdits[editKey] || {};
+                                              const updatedPlan = JSON.parse(JSON.stringify(typeof wp.plan === "string" ? JSON.parse(wp.plan) : wp.plan));
+                                              const targetSlot = updatedPlan?.days?.[dayIdx]?.slots?.[slotIdx];
+                                              if (targetSlot) {
+                                                if (edits.hook !== undefined) targetSlot.hook = edits.hook;
+                                                if (edits.notes !== undefined) targetSlot.notes = edits.notes;
+                                                if (edits.platform !== undefined) targetSlot.platform = edits.platform;
+                                                if (edits.content_type !== undefined) targetSlot.content_type = edits.content_type;
+                                                if (edits.time !== undefined) targetSlot.time = edits.time;
+                                              }
                                               await fetch("/api/admin/marketing/calendar", {
                                                 method: "PATCH",
                                                 headers: { "Content-Type": "application/json" },
                                                 body: JSON.stringify({ id: wp.id, plan: updatedPlan }),
                                               });
-                                            } catch {
-                                              // silent
+                                              // Reload plans to reflect changes
+                                              const res = await fetch("/api/admin/marketing/calendar");
+                                              const data = await res.json();
+                                              setPlans(data.plans || []);
+                                            } catch (err) {
+                                              console.error("Save failed:", err);
                                             }
                                             setEditingSlot(null);
+                                            setSlotEdits(prev => { const n = {...prev}; delete n[editKey]; return n; });
                                           }}
                                           className="flex items-center gap-1 rounded bg-emerald-600 px-2.5 py-1 text-[11px] font-medium text-white hover:bg-emerald-700"
                                         >
@@ -560,7 +581,10 @@ function CalendarTab() {
                                           Save
                                         </button>
                                         <button
-                                          onClick={() => setEditingSlot(null)}
+                                          onClick={() => {
+                                            setEditingSlot(null);
+                                            setSlotEdits(prev => { const n = {...prev}; delete n[editKey]; return n; });
+                                          }}
                                           className="rounded border border-zinc-200 px-2.5 py-1 text-[11px] text-zinc-600 hover:bg-zinc-50"
                                         >
                                           Cancel
@@ -601,8 +625,8 @@ function CalendarTab() {
                                                 if (c.twitter?.thread) parts.push("\n\n🧵 THREAD:\n" + c.twitter.thread.join("\n→ "));
                                                 if (c.tiktok?.script) parts.push("\n\n🎬 TIKTOK:\n" + c.tiktok.script);
                                                 if (c.linkedin?.post) parts.push("\n\n💼 LINKEDIN:\n" + c.linkedin.post);
-                                                slot.notes = (slot.notes || "") + "\n\n--- GENERATED CONTENT ---\n" + parts.join("");
-                                                setExpandedSlot(slotKey);
+                                                const currentNotes = getSlotValue(editKey, "notes", slot.notes || "");
+                                                updateSlotEdit(editKey, "notes", currentNotes + "\n\n--- GENERATED CONTENT ---\n" + parts.join(""));
                                                 setEditingSlot(editKey);
                                               } else {
                                                 console.error("Generation failed:", data.error);
