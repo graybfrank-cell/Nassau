@@ -14,6 +14,10 @@ import {
   User,
   X,
   ArrowUpDown,
+  BarChart3,
+  Handshake,
+  FileText,
+  Settings,
 } from "lucide-react";
 
 // ─── Types ──────────────────────────────────────────────────
@@ -58,12 +62,110 @@ interface ResearchResult {
 
 type FilterType = "all" | "no_contact" | "has_email" | "needs_review" | "contacted" | "replied";
 type SortField = "destination" | "tier" | "status" | "updated";
+type TabKey = "overview" | "partnerships" | "content" | "settings";
 
-// ─── Component ──────────────────────────────────────────────
+// ─── Main Page ──────────────────────────────────────────────
 
-export default function AdminMarketingPage() {
+export default function MarketingCommandCenter() {
+  const [activeTab, setActiveTab] = useState<TabKey>("partnerships");
+
+  const tabs: { key: TabKey; label: string; icon: React.ReactNode }[] = [
+    { key: "overview", label: "Overview", icon: <BarChart3 className="h-4 w-4" /> },
+    { key: "partnerships", label: "Partnerships", icon: <Handshake className="h-4 w-4" /> },
+    { key: "content", label: "Content", icon: <FileText className="h-4 w-4" /> },
+    { key: "settings", label: "Settings", icon: <Settings className="h-4 w-4" /> },
+  ];
+
+  return (
+    <div className="min-h-screen bg-zinc-50">
+      {/* Header */}
+      <div className="border-b border-zinc-200 bg-white px-6 py-5">
+        <h1 className="text-2xl font-bold text-zinc-900">Marketing Command Center</h1>
+        <p className="mt-1 text-sm text-zinc-500">
+          Manage partnerships, outreach, and marketing content
+        </p>
+      </div>
+
+      {/* Tabs */}
+      <div className="border-b border-zinc-200 bg-white px-6">
+        <nav className="-mb-px flex gap-6">
+          {tabs.map((tab) => (
+            <button
+              key={tab.key}
+              onClick={() => setActiveTab(tab.key)}
+              className={`flex items-center gap-2 border-b-2 px-1 py-3 text-sm font-medium transition-colors ${
+                activeTab === tab.key
+                  ? "border-emerald-600 text-emerald-600"
+                  : "border-transparent text-zinc-500 hover:border-zinc-300 hover:text-zinc-700"
+              }`}
+            >
+              {tab.icon}
+              {tab.label}
+            </button>
+          ))}
+        </nav>
+      </div>
+
+      {/* Tab Content */}
+      <div className="p-6">
+        <div className="mx-auto max-w-7xl">
+          {activeTab === "overview" && <OverviewTab />}
+          {activeTab === "partnerships" && <PartnershipsTab />}
+          {activeTab === "content" && <ContentTab />}
+          {activeTab === "settings" && <SettingsTab />}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─── Overview Tab ───────────────────────────────────────────
+
+function OverviewTab() {
+  return (
+    <div className="rounded-lg border border-zinc-200 bg-white p-8 text-center text-zinc-500">
+      <BarChart3 className="mx-auto mb-3 h-10 w-10 text-zinc-300" />
+      <p className="font-medium text-zinc-700">Marketing Overview</p>
+      <p className="mt-1 text-sm">Dashboard analytics and metrics coming soon.</p>
+    </div>
+  );
+}
+
+// ─── Content Tab ────────────────────────────────────────────
+
+function ContentTab() {
+  return (
+    <div className="rounded-lg border border-zinc-200 bg-white p-8 text-center text-zinc-500">
+      <FileText className="mx-auto mb-3 h-10 w-10 text-zinc-300" />
+      <p className="font-medium text-zinc-700">Content Management</p>
+      <p className="mt-1 text-sm">Blog posts and marketing content coming soon.</p>
+    </div>
+  );
+}
+
+// ─── Settings Tab ───────────────────────────────────────────
+
+function SettingsTab() {
+  return (
+    <div className="rounded-lg border border-zinc-200 bg-white p-8 text-center text-zinc-500">
+      <Settings className="mx-auto mb-3 h-10 w-10 text-zinc-300" />
+      <p className="font-medium text-zinc-700">Marketing Settings</p>
+      <p className="mt-1 text-sm">Configuration and preferences coming soon.</p>
+    </div>
+  );
+}
+
+// ─── Partnerships Tab ───────────────────────────────────────
+
+function PartnershipsTab() {
   const [partnerships, setPartnerships] = useState<Partnership[]>([]);
-  const [stats, setStats] = useState<Stats>({ totalCourses: 0, hasEmail: 0, contacted: 0, replied: 0, active: 0 });
+  const [stats, setStats] = useState<Stats>({
+    totalCourses: 0,
+    hasEmail: 0,
+    contacted: 0,
+    replied: 0,
+    active: 0,
+  });
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
@@ -103,7 +205,7 @@ export default function AdminMarketingPage() {
       const data = await res.json();
       setPartnerships(data.partnerships || []);
       setTotalPages(data.totalPages || 1);
-      setStats(data.stats || stats);
+      if (data.stats) setStats(data.stats);
     } catch {
       // handle silently
     } finally {
@@ -201,7 +303,6 @@ export default function AdminMarketingPage() {
     setBatchRunning(true);
     batchAbortRef.current = false;
 
-    // Fetch all uncontacted courses (no email)
     try {
       const res = await fetch("/api/admin/partnerships?filter=no_contact&limit=9999&page=1");
       const data = await res.json();
@@ -230,7 +331,6 @@ export default function AdminMarketingPage() {
 
           if (result.success) {
             const isHigh = result.confidence === "high";
-            // Auto-save HIGH confidence, queue others for review
             await fetch(`/api/admin/partnerships/${course.id}/contact`, {
               method: "PATCH",
               headers: { "Content-Type": "application/json" },
@@ -401,410 +501,473 @@ export default function AdminMarketingPage() {
   // ─── Render ───────────────────────────────────────────────
 
   return (
-    <div className="min-h-screen bg-zinc-50 p-6">
-      <div className="mx-auto max-w-7xl">
-        {/* Header */}
-        <div className="mb-6">
-          <h1 className="text-2xl font-bold text-zinc-900">Marketing Partnerships</h1>
-          <p className="mt-1 text-sm text-zinc-500">
-            Manage golf course partnerships and contact research
-          </p>
+    <>
+      {/* Stats Bar */}
+      <div className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-5">
+        {[
+          { label: "Total Courses", value: stats.totalCourses },
+          { label: "Has Email", value: stats.hasEmail },
+          { label: "Contacted", value: stats.contacted },
+          { label: "Replied", value: stats.replied },
+          { label: "Active Partnerships", value: stats.active },
+        ].map((s) => (
+          <div key={s.label} className="rounded-lg border border-zinc-200 bg-white p-4">
+            <p className="text-xs font-medium text-zinc-500">{s.label}</p>
+            <p className="mt-1 text-2xl font-bold text-zinc-900">
+              {s.value.toLocaleString()}
+            </p>
+          </div>
+        ))}
+      </div>
+
+      {/* Controls Bar */}
+      <div className="mb-4 flex flex-wrap items-center gap-3">
+        {/* Search */}
+        <div className="relative flex-1 min-w-[200px]">
+          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-400" />
+          <input
+            type="text"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Search courses or destinations..."
+            className="w-full rounded-lg border border-zinc-300 py-2 pl-9 pr-3 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+          />
         </div>
 
-        {/* Stats Bar */}
-        <div className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-5">
-          {[
-            { label: "Total Courses", value: stats.totalCourses },
-            { label: "Has Email", value: stats.hasEmail },
-            { label: "Contacted", value: stats.contacted },
-            { label: "Replied", value: stats.replied },
-            { label: "Active Partnerships", value: stats.active },
-          ].map((s) => (
-            <div key={s.label} className="rounded-lg border border-zinc-200 bg-white p-4">
-              <p className="text-xs font-medium text-zinc-500">{s.label}</p>
-              <p className="mt-1 text-2xl font-bold text-zinc-900">
-                {s.value.toLocaleString()}
-              </p>
-            </div>
-          ))}
-        </div>
+        {/* Batch Research */}
+        <button
+          onClick={batchResearch}
+          disabled={batchRunning}
+          className="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-700 disabled:opacity-50"
+        >
+          {batchRunning ? "Stop" : "Research All Uncontacted"}
+        </button>
 
-        {/* Controls Bar */}
-        <div className="mb-4 flex flex-wrap items-center gap-3">
-          {/* Search */}
-          <div className="relative flex-1 min-w-[200px]">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-400" />
-            <input
-              type="text"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search courses or destinations..."
-              className="w-full rounded-lg border border-zinc-300 py-2 pl-9 pr-3 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+        {/* Bulk research selected */}
+        {selectedIds.size > 0 && (
+          <button
+            onClick={bulkResearchSelected}
+            disabled={batchRunning}
+            className="rounded-lg border border-emerald-600 px-4 py-2 text-sm font-medium text-emerald-600 hover:bg-emerald-50 disabled:opacity-50"
+          >
+            Research Selected ({selectedIds.size})
+          </button>
+        )}
+
+        {batchRunning && (
+          <button
+            onClick={() => {
+              batchAbortRef.current = true;
+            }}
+            className="rounded-lg border border-red-300 px-4 py-2 text-sm font-medium text-red-600 hover:bg-red-50"
+          >
+            Stop Batch
+          </button>
+        )}
+      </div>
+
+      {/* Batch progress bar */}
+      {batchRunning && batchProgress.total > 0 && (
+        <div className="mb-4 rounded-lg border border-zinc-200 bg-white p-3">
+          <div className="flex items-center justify-between text-sm text-zinc-600 mb-2">
+            <span>
+              Researching {batchProgress.current} of {batchProgress.total}...
+            </span>
+            <span>
+              {Math.round((batchProgress.current / batchProgress.total) * 100)}%
+            </span>
+          </div>
+          <div className="h-2 rounded-full bg-zinc-100">
+            <div
+              className="h-2 rounded-full bg-emerald-500 transition-all"
+              style={{
+                width: `${(batchProgress.current / batchProgress.total) * 100}%`,
+              }}
             />
           </div>
+        </div>
+      )}
 
-          {/* Batch Research */}
+      {/* Filter chips */}
+      <div className="mb-4 flex flex-wrap gap-2">
+        {filters.map((f) => (
           <button
-            onClick={batchResearch}
-            disabled={batchRunning}
-            className="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-700 disabled:opacity-50"
+            key={f.key}
+            onClick={() => setFilter(f.key)}
+            className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${
+              filter === f.key
+                ? "bg-emerald-600 text-white"
+                : "bg-zinc-100 text-zinc-600 hover:bg-zinc-200"
+            }`}
           >
-            {batchRunning ? "Stop" : "Research All Uncontacted"}
+            {f.label}
           </button>
+        ))}
+      </div>
 
-          {/* Bulk research selected */}
-          {selectedIds.size > 0 && (
-            <button
-              onClick={bulkResearchSelected}
-              disabled={batchRunning}
-              className="rounded-lg border border-emerald-600 px-4 py-2 text-sm font-medium text-emerald-600 hover:bg-emerald-50 disabled:opacity-50"
-            >
-              Research Selected ({selectedIds.size})
-            </button>
-          )}
-
-          {batchRunning && (
-            <button
-              onClick={() => {
-                batchAbortRef.current = true;
-              }}
-              className="rounded-lg border border-red-300 px-4 py-2 text-sm font-medium text-red-600 hover:bg-red-50"
-            >
-              Stop Batch
-            </button>
-          )}
+      {/* Table */}
+      <div className="rounded-lg border border-zinc-200 bg-white overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="border-b border-zinc-200 bg-zinc-50">
+                <th className="px-3 py-3 text-left">
+                  <input
+                    type="checkbox"
+                    checked={
+                      partnerships.length > 0 &&
+                      selectedIds.size === partnerships.length
+                    }
+                    onChange={toggleSelectAll}
+                    className="rounded border-zinc-300"
+                  />
+                </th>
+                <th
+                  className="cursor-pointer px-3 py-3 text-left font-medium text-zinc-600 hover:text-zinc-900"
+                  onClick={() => toggleSort("destination")}
+                >
+                  <span className="flex items-center gap-1">
+                    Course
+                    <ArrowUpDown className="h-3 w-3" />
+                  </span>
+                </th>
+                <th
+                  className="cursor-pointer px-3 py-3 text-left font-medium text-zinc-600 hover:text-zinc-900"
+                  onClick={() => toggleSort("tier")}
+                >
+                  <span className="flex items-center gap-1">
+                    Tier / Type
+                    <ArrowUpDown className="h-3 w-3" />
+                  </span>
+                </th>
+                <th className="px-3 py-3 text-left font-medium text-zinc-600">
+                  Contact
+                </th>
+                <th
+                  className="cursor-pointer px-3 py-3 text-left font-medium text-zinc-600 hover:text-zinc-900"
+                  onClick={() => toggleSort("status")}
+                >
+                  <span className="flex items-center gap-1">
+                    Status
+                    <ArrowUpDown className="h-3 w-3" />
+                  </span>
+                </th>
+                <th className="px-3 py-3 text-right font-medium text-zinc-600">
+                  Actions
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {loading ? (
+                <tr>
+                  <td
+                    colSpan={6}
+                    className="px-3 py-12 text-center text-zinc-400"
+                  >
+                    <Loader2 className="mx-auto h-6 w-6 animate-spin" />
+                  </td>
+                </tr>
+              ) : partnerships.length === 0 ? (
+                <tr>
+                  <td
+                    colSpan={6}
+                    className="px-3 py-12 text-center text-zinc-400"
+                  >
+                    No courses found
+                  </td>
+                </tr>
+              ) : (
+                partnerships.map((p) => (
+                  <CourseRow
+                    key={p.id}
+                    partnership={p}
+                    selected={selectedIds.has(p.id)}
+                    onToggleSelect={() => toggleSelect(p.id)}
+                    researchingId={researchingId}
+                    batchRunning={batchRunning}
+                    researchResult={
+                      researchResult?.courseId === p.id
+                        ? researchResult
+                        : null
+                    }
+                    editingFields={
+                      researchResult?.courseId === p.id
+                        ? editingFields
+                        : {}
+                    }
+                    savingId={savingId}
+                    onResearch={() => researchCourse(p)}
+                    onSave={() => saveContact(p.id)}
+                    onDismiss={() => {
+                      setResearchResult(null);
+                      setEditingFields({});
+                    }}
+                    onEditField={(fields) =>
+                      setEditingFields({ ...editingFields, ...fields })
+                    }
+                    contactEmail={contactEmail(p)}
+                    confidenceColor={confidenceColor}
+                    statusBadge={statusBadge}
+                  />
+                ))
+              )}
+            </tbody>
+          </table>
         </div>
 
-        {/* Batch progress bar */}
-        {batchRunning && batchProgress.total > 0 && (
-          <div className="mb-4 rounded-lg border border-zinc-200 bg-white p-3">
-            <div className="flex items-center justify-between text-sm text-zinc-600 mb-2">
-              <span>
-                Researching {batchProgress.current} of {batchProgress.total}...
-              </span>
-              <span>{Math.round((batchProgress.current / batchProgress.total) * 100)}%</span>
-            </div>
-            <div className="h-2 rounded-full bg-zinc-100">
-              <div
-                className="h-2 rounded-full bg-emerald-500 transition-all"
-                style={{ width: `${(batchProgress.current / batchProgress.total) * 100}%` }}
-              />
+        {/* Pagination */}
+        {!loading && totalPages > 1 && (
+          <div className="flex items-center justify-between border-t border-zinc-200 px-4 py-3">
+            <p className="text-xs text-zinc-500">
+              Page {page} of {totalPages}
+            </p>
+            <div className="flex gap-2">
+              <button
+                onClick={() => setPage(Math.max(1, page - 1))}
+                disabled={page === 1}
+                className="flex items-center gap-1 rounded-lg border border-zinc-300 px-3 py-1.5 text-xs font-medium text-zinc-700 hover:bg-zinc-50 disabled:opacity-50"
+              >
+                <ChevronLeft className="h-3 w-3" />
+                Prev
+              </button>
+              <button
+                onClick={() => setPage(Math.min(totalPages, page + 1))}
+                disabled={page === totalPages}
+                className="flex items-center gap-1 rounded-lg border border-zinc-300 px-3 py-1.5 text-xs font-medium text-zinc-700 hover:bg-zinc-50 disabled:opacity-50"
+              >
+                Next
+                <ChevronRight className="h-3 w-3" />
+              </button>
             </div>
           </div>
         )}
+      </div>
+    </>
+  );
+}
 
-        {/* Filter chips */}
-        <div className="mb-4 flex flex-wrap gap-2">
-          {filters.map((f) => (
-            <button
-              key={f.key}
-              onClick={() => setFilter(f.key)}
-              className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${
-                filter === f.key
-                  ? "bg-emerald-600 text-white"
-                  : "bg-zinc-100 text-zinc-600 hover:bg-zinc-200"
-              }`}
-            >
-              {f.label}
-            </button>
-          ))}
-        </div>
+// ─── Course Row ─────────────────────────────────────────────
 
-        {/* Table */}
-        <div className="rounded-lg border border-zinc-200 bg-white overflow-hidden">
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="border-b border-zinc-200 bg-zinc-50">
-                  <th className="px-3 py-3 text-left">
-                    <input
-                      type="checkbox"
-                      checked={partnerships.length > 0 && selectedIds.size === partnerships.length}
-                      onChange={toggleSelectAll}
-                      className="rounded border-zinc-300"
-                    />
-                  </th>
-                  <th
-                    className="cursor-pointer px-3 py-3 text-left font-medium text-zinc-600 hover:text-zinc-900"
-                    onClick={() => toggleSort("destination")}
-                  >
-                    <span className="flex items-center gap-1">
-                      Course
-                      <ArrowUpDown className="h-3 w-3" />
-                    </span>
-                  </th>
-                  <th
-                    className="cursor-pointer px-3 py-3 text-left font-medium text-zinc-600 hover:text-zinc-900"
-                    onClick={() => toggleSort("tier")}
-                  >
-                    <span className="flex items-center gap-1">
-                      Tier / Type
-                      <ArrowUpDown className="h-3 w-3" />
-                    </span>
-                  </th>
-                  <th className="px-3 py-3 text-left font-medium text-zinc-600">Contact</th>
-                  <th
-                    className="cursor-pointer px-3 py-3 text-left font-medium text-zinc-600 hover:text-zinc-900"
-                    onClick={() => toggleSort("status")}
-                  >
-                    <span className="flex items-center gap-1">
-                      Status
-                      <ArrowUpDown className="h-3 w-3" />
-                    </span>
-                  </th>
-                  <th className="px-3 py-3 text-right font-medium text-zinc-600">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {loading ? (
-                  <tr>
-                    <td colSpan={6} className="px-3 py-12 text-center text-zinc-400">
-                      <Loader2 className="mx-auto h-6 w-6 animate-spin" />
-                    </td>
-                  </tr>
-                ) : partnerships.length === 0 ? (
-                  <tr>
-                    <td colSpan={6} className="px-3 py-12 text-center text-zinc-400">
-                      No courses found
-                    </td>
-                  </tr>
-                ) : (
-                  partnerships.map((p) => (
-                    <>
-                      <tr
-                        key={p.id}
-                        className="border-b border-zinc-100 hover:bg-zinc-50 transition-colors"
-                      >
-                        <td className="px-3 py-3">
-                          <input
-                            type="checkbox"
-                            checked={selectedIds.has(p.id)}
-                            onChange={() => toggleSelect(p.id)}
-                            className="rounded border-zinc-300"
-                          />
-                        </td>
-                        <td className="px-3 py-3">
-                          <div className="font-medium text-zinc-900">{p.course_name}</div>
-                          <div className="text-xs text-zinc-500">{p.destination}</div>
-                        </td>
-                        <td className="px-3 py-3">
-                          <div className="flex gap-1.5">
-                            {p.tier && (
-                              <span className="rounded-full bg-zinc-100 px-2 py-0.5 text-xs font-medium text-zinc-600">
-                                {p.tier}
-                              </span>
-                            )}
-                            {p.course_type && (
-                              <span className="rounded-full bg-zinc-100 px-2 py-0.5 text-xs text-zinc-500">
-                                {p.course_type}
-                              </span>
-                            )}
-                          </div>
-                        </td>
-                        <td className="px-3 py-3">
-                          {contactEmail(p) ? (
-                            <div className="flex items-center gap-1.5">
-                              <Mail className="h-3.5 w-3.5 text-emerald-500" />
-                              <span className="text-xs text-zinc-700">{contactEmail(p)}</span>
-                            </div>
-                          ) : (
-                            <span className="text-xs text-zinc-400">No contact</span>
-                          )}
-                          {p.needs_review && (
-                            <span className="ml-2 rounded-full bg-yellow-100 px-2 py-0.5 text-xs text-yellow-700">
-                              Needs review
-                            </span>
-                          )}
-                        </td>
-                        <td className="px-3 py-3">
-                          <span
-                            className={`rounded-full px-2 py-0.5 text-xs font-medium ${statusBadge(p.outreach_status)}`}
-                          >
-                            {p.outreach_status === "none" ? "Not contacted" : p.outreach_status}
-                          </span>
-                        </td>
-                        <td className="px-3 py-3 text-right">
-                          <div className="flex items-center justify-end gap-2">
-                            <button
-                              onClick={() => researchCourse(p)}
-                              disabled={researchingId === p.id || batchRunning}
-                              className="rounded-lg border border-zinc-300 px-3 py-1.5 text-xs font-medium text-zinc-700 hover:bg-zinc-50 disabled:opacity-50"
-                            >
-                              {researchingId === p.id ? (
-                                <span className="flex items-center gap-1">
-                                  <Loader2 className="h-3 w-3 animate-spin" />
-                                  Researching...
-                                </span>
-                              ) : (
-                                "Research"
-                              )}
-                            </button>
-                            <button
-                              disabled={!contactEmail(p)}
-                              className="rounded-lg bg-emerald-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed"
-                            >
-                              Send Outreach
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-
-                      {/* Research result card */}
-                      {researchResult && researchResult.courseId === p.id && (
-                        <tr key={`${p.id}-research`}>
-                          <td colSpan={6} className="px-3 py-0">
-                            <div className="mb-3 rounded-lg border border-emerald-200 bg-emerald-50/50 p-4">
-                              <div className="flex items-start justify-between mb-3">
-                                <div>
-                                  <h3 className="font-medium text-zinc-900">
-                                    Research Results — {p.course_name}
-                                  </h3>
-                                  {researchResult.success && (
-                                    <span
-                                      className={`mt-1 inline-block rounded-full px-2 py-0.5 text-xs font-medium ${confidenceColor(researchResult.confidence)}`}
-                                    >
-                                      Confidence: {researchResult.confidence?.toUpperCase()}
-                                    </span>
-                                  )}
-                                </div>
-                                <button
-                                  onClick={() => {
-                                    setResearchResult(null);
-                                    setEditingFields({});
-                                  }}
-                                  className="text-zinc-400 hover:text-zinc-600"
-                                >
-                                  <X className="h-4 w-4" />
-                                </button>
-                              </div>
-
-                              {!researchResult.success ? (
-                                <div className="rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700">
-                                  {researchResult.error || "Research failed"}
-                                  {researchResult.raw && (
-                                    <pre className="mt-2 text-xs whitespace-pre-wrap">{researchResult.raw}</pre>
-                                  )}
-                                </div>
-                              ) : (
-                                <>
-                                  <div className="space-y-2">
-                                    <EditableField
-                                      icon={<User className="h-4 w-4 text-zinc-400" />}
-                                      label="Marketing Contact"
-                                      value={editingFields.marketing_contact_name}
-                                      onChange={(v) =>
-                                        setEditingFields({ ...editingFields, marketing_contact_name: v })
-                                      }
-                                    />
-                                    <EditableField
-                                      icon={<Mail className="h-4 w-4 text-zinc-400" />}
-                                      label="Email"
-                                      value={editingFields.marketing_contact_email}
-                                      onChange={(v) =>
-                                        setEditingFields({
-                                          ...editingFields,
-                                          marketing_contact_email: v,
-                                        })
-                                      }
-                                    />
-                                    <EditableField
-                                      icon={<Mail className="h-4 w-4 text-zinc-400" />}
-                                      label="Booking Email"
-                                      value={editingFields.booking_email}
-                                      onChange={(v) =>
-                                        setEditingFields({ ...editingFields, booking_email: v })
-                                      }
-                                    />
-                                    <EditableField
-                                      icon={<Globe className="h-4 w-4 text-zinc-400" />}
-                                      label="Website"
-                                      value={editingFields.website_url}
-                                      onChange={(v) =>
-                                        setEditingFields({ ...editingFields, website_url: v })
-                                      }
-                                    />
-                                  </div>
-
-                                  {researchResult.source_notes && (
-                                    <p className="mt-3 text-xs text-zinc-500">
-                                      Source: {researchResult.source_notes}
-                                    </p>
-                                  )}
-
-                                  <div className="mt-4 flex gap-2">
-                                    <button
-                                      onClick={() => saveContact(p.id)}
-                                      disabled={savingId === p.id}
-                                      className="flex items-center gap-1.5 rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-700 disabled:opacity-50"
-                                    >
-                                      {savingId === p.id ? (
-                                        <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                                      ) : (
-                                        <CheckCircle className="h-3.5 w-3.5" />
-                                      )}
-                                      Confirm & Save
-                                    </button>
-                                    <button
-                                      onClick={() => {
-                                        setResearchResult(null);
-                                        setEditingFields({});
-                                      }}
-                                      className="flex items-center gap-1.5 rounded-lg border border-zinc-300 px-4 py-2 text-sm font-medium text-zinc-700 hover:bg-zinc-50"
-                                    >
-                                      <XCircle className="h-3.5 w-3.5" />
-                                      Skip
-                                    </button>
-                                    <button
-                                      onClick={() => researchCourse(p)}
-                                      disabled={researchingId === p.id}
-                                      className="flex items-center gap-1.5 rounded-lg border border-zinc-300 px-4 py-2 text-sm font-medium text-zinc-700 hover:bg-zinc-50 disabled:opacity-50"
-                                    >
-                                      <RefreshCw className="h-3.5 w-3.5" />
-                                      Research Again
-                                    </button>
-                                  </div>
-                                </>
-                              )}
-                            </div>
-                          </td>
-                        </tr>
-                      )}
-                    </>
-                  ))
-                )}
-              </tbody>
-            </table>
+function CourseRow({
+  partnership: p,
+  selected,
+  onToggleSelect,
+  researchingId,
+  batchRunning,
+  researchResult,
+  editingFields,
+  savingId,
+  onResearch,
+  onSave,
+  onDismiss,
+  onEditField,
+  contactEmail,
+  confidenceColor,
+  statusBadge,
+}: {
+  partnership: Partnership;
+  selected: boolean;
+  onToggleSelect: () => void;
+  researchingId: string | null;
+  batchRunning: boolean;
+  researchResult: ResearchResult | null;
+  editingFields: Partial<ResearchResult>;
+  savingId: string | null;
+  onResearch: () => void;
+  onSave: () => void;
+  onDismiss: () => void;
+  onEditField: (fields: Partial<ResearchResult>) => void;
+  contactEmail: string | null;
+  confidenceColor: (c: string | null) => string;
+  statusBadge: (s: string) => string;
+}) {
+  return (
+    <>
+      <tr className="border-b border-zinc-100 hover:bg-zinc-50 transition-colors">
+        <td className="px-3 py-3">
+          <input
+            type="checkbox"
+            checked={selected}
+            onChange={onToggleSelect}
+            className="rounded border-zinc-300"
+          />
+        </td>
+        <td className="px-3 py-3">
+          <div className="font-medium text-zinc-900">{p.course_name}</div>
+          <div className="text-xs text-zinc-500">{p.destination}</div>
+        </td>
+        <td className="px-3 py-3">
+          <div className="flex gap-1.5">
+            {p.tier && (
+              <span className="rounded-full bg-zinc-100 px-2 py-0.5 text-xs font-medium text-zinc-600">
+                {p.tier}
+              </span>
+            )}
+            {p.course_type && (
+              <span className="rounded-full bg-zinc-100 px-2 py-0.5 text-xs text-zinc-500">
+                {p.course_type}
+              </span>
+            )}
           </div>
+        </td>
+        <td className="px-3 py-3">
+          {contactEmail ? (
+            <div className="flex items-center gap-1.5">
+              <Mail className="h-3.5 w-3.5 text-emerald-500" />
+              <span className="text-xs text-zinc-700">{contactEmail}</span>
+            </div>
+          ) : (
+            <span className="text-xs text-zinc-400">No contact</span>
+          )}
+          {p.needs_review && (
+            <span className="ml-2 rounded-full bg-yellow-100 px-2 py-0.5 text-xs text-yellow-700">
+              Needs review
+            </span>
+          )}
+        </td>
+        <td className="px-3 py-3">
+          <span
+            className={`rounded-full px-2 py-0.5 text-xs font-medium ${statusBadge(p.outreach_status)}`}
+          >
+            {p.outreach_status === "none" ? "Not contacted" : p.outreach_status}
+          </span>
+        </td>
+        <td className="px-3 py-3 text-right">
+          <div className="flex items-center justify-end gap-2">
+            <button
+              onClick={onResearch}
+              disabled={researchingId === p.id || batchRunning}
+              className="rounded-lg border border-zinc-300 px-3 py-1.5 text-xs font-medium text-zinc-700 hover:bg-zinc-50 disabled:opacity-50"
+            >
+              {researchingId === p.id ? (
+                <span className="flex items-center gap-1">
+                  <Loader2 className="h-3 w-3 animate-spin" />
+                  Researching...
+                </span>
+              ) : (
+                "Research"
+              )}
+            </button>
+            <button
+              disabled={!contactEmail}
+              className="rounded-lg bg-emerald-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              Send Outreach
+            </button>
+          </div>
+        </td>
+      </tr>
 
-          {/* Pagination */}
-          {!loading && totalPages > 1 && (
-            <div className="flex items-center justify-between border-t border-zinc-200 px-4 py-3">
-              <p className="text-xs text-zinc-500">
-                Page {page} of {totalPages}
-              </p>
-              <div className="flex gap-2">
+      {/* Research result card */}
+      {researchResult && (
+        <tr>
+          <td colSpan={6} className="px-3 py-0">
+            <div className="mb-3 rounded-lg border border-emerald-200 bg-emerald-50/50 p-4">
+              <div className="flex items-start justify-between mb-3">
+                <div>
+                  <h3 className="font-medium text-zinc-900">
+                    Research Results — {p.course_name}
+                  </h3>
+                  {researchResult.success && (
+                    <span
+                      className={`mt-1 inline-block rounded-full px-2 py-0.5 text-xs font-medium ${confidenceColor(researchResult.confidence)}`}
+                    >
+                      Confidence: {researchResult.confidence?.toUpperCase()}
+                    </span>
+                  )}
+                </div>
                 <button
-                  onClick={() => setPage(Math.max(1, page - 1))}
-                  disabled={page === 1}
-                  className="flex items-center gap-1 rounded-lg border border-zinc-300 px-3 py-1.5 text-xs font-medium text-zinc-700 hover:bg-zinc-50 disabled:opacity-50"
+                  onClick={onDismiss}
+                  className="text-zinc-400 hover:text-zinc-600"
                 >
-                  <ChevronLeft className="h-3 w-3" />
-                  Prev
-                </button>
-                <button
-                  onClick={() => setPage(Math.min(totalPages, page + 1))}
-                  disabled={page === totalPages}
-                  className="flex items-center gap-1 rounded-lg border border-zinc-300 px-3 py-1.5 text-xs font-medium text-zinc-700 hover:bg-zinc-50 disabled:opacity-50"
-                >
-                  Next
-                  <ChevronRight className="h-3 w-3" />
+                  <X className="h-4 w-4" />
                 </button>
               </div>
+
+              {!researchResult.success ? (
+                <div className="rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700">
+                  {researchResult.error || "Research failed"}
+                  {researchResult.raw && (
+                    <pre className="mt-2 text-xs whitespace-pre-wrap">
+                      {researchResult.raw}
+                    </pre>
+                  )}
+                </div>
+              ) : (
+                <>
+                  <div className="space-y-2">
+                    <EditableField
+                      icon={<User className="h-4 w-4 text-zinc-400" />}
+                      label="Marketing Contact"
+                      value={editingFields.marketing_contact_name}
+                      onChange={(v) =>
+                        onEditField({ marketing_contact_name: v })
+                      }
+                    />
+                    <EditableField
+                      icon={<Mail className="h-4 w-4 text-zinc-400" />}
+                      label="Email"
+                      value={editingFields.marketing_contact_email}
+                      onChange={(v) =>
+                        onEditField({ marketing_contact_email: v })
+                      }
+                    />
+                    <EditableField
+                      icon={<Mail className="h-4 w-4 text-zinc-400" />}
+                      label="Booking Email"
+                      value={editingFields.booking_email}
+                      onChange={(v) => onEditField({ booking_email: v })}
+                    />
+                    <EditableField
+                      icon={<Globe className="h-4 w-4 text-zinc-400" />}
+                      label="Website"
+                      value={editingFields.website_url}
+                      onChange={(v) => onEditField({ website_url: v })}
+                    />
+                  </div>
+
+                  {researchResult.source_notes && (
+                    <p className="mt-3 text-xs text-zinc-500">
+                      Source: {researchResult.source_notes}
+                    </p>
+                  )}
+
+                  <div className="mt-4 flex gap-2">
+                    <button
+                      onClick={onSave}
+                      disabled={savingId === p.id}
+                      className="flex items-center gap-1.5 rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-700 disabled:opacity-50"
+                    >
+                      {savingId === p.id ? (
+                        <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                      ) : (
+                        <CheckCircle className="h-3.5 w-3.5" />
+                      )}
+                      Confirm & Save
+                    </button>
+                    <button
+                      onClick={onDismiss}
+                      className="flex items-center gap-1.5 rounded-lg border border-zinc-300 px-4 py-2 text-sm font-medium text-zinc-700 hover:bg-zinc-50"
+                    >
+                      <XCircle className="h-3.5 w-3.5" />
+                      Skip
+                    </button>
+                    <button
+                      onClick={onResearch}
+                      disabled={researchingId === p.id}
+                      className="flex items-center gap-1.5 rounded-lg border border-zinc-300 px-4 py-2 text-sm font-medium text-zinc-700 hover:bg-zinc-50 disabled:opacity-50"
+                    >
+                      <RefreshCw className="h-3.5 w-3.5" />
+                      Research Again
+                    </button>
+                  </div>
+                </>
+              )}
             </div>
-          )}
-        </div>
-      </div>
-    </div>
+          </td>
+        </tr>
+      )}
+    </>
   );
 }
 
@@ -843,7 +1006,9 @@ function EditableField({
           onClick={() => setEditing(true)}
         >
           {value || <span className="text-zinc-400">null</span>}
-          <span className="ml-2 text-xs text-zinc-400 hover:text-emerald-500">[Edit]</span>
+          <span className="ml-2 text-xs text-zinc-400 hover:text-emerald-500">
+            [Edit]
+          </span>
         </span>
       )}
     </div>
