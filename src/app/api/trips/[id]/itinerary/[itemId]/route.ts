@@ -11,7 +11,9 @@ export async function PATCH(
 
   const { id: tripId, itemId } = await params;
   const membership = await getTripMembership(tripId, user.id);
-  if (!membership) return forbidden();
+  if (!membership || (membership.role !== "CAPTAIN" && membership.role !== "CO_CAPTAIN")) {
+    return forbidden();
+  }
 
   const item = await prisma.itineraryItems.findUnique({ where: { id: itemId } });
   if (!item || item.trip_id !== tripId) {
@@ -25,12 +27,13 @@ export async function PATCH(
   if (body.title !== undefined) data.title = body.title;
   if (body.description !== undefined) data.description = body.description;
   if (body.time !== undefined) data.time = body.time;
-  if (body.date !== undefined) data.date = body.date;
   if (body.type !== undefined) data.type = body.type;
   if (body.cost !== undefined) data.cost = body.cost;
   if (body.phone !== undefined) data.phone = body.phone;
   if (body.website !== undefined) data.website = body.website;
   if (body.email !== undefined) data.email = body.email;
+  if (body.date !== undefined) data.date = body.date;
+  if (body.notes !== undefined) data.notes = body.notes;
   if (body.sort_order !== undefined) data.sort_order = body.sort_order;
 
   const updated = await prisma.itineraryItems.update({
@@ -49,7 +52,9 @@ export async function DELETE(
 
   const { id: tripId, itemId } = await params;
   const membership = await getTripMembership(tripId, user.id);
-  if (!membership) return forbidden();
+  if (!membership || (membership.role !== "CAPTAIN" && membership.role !== "CO_CAPTAIN")) {
+    return forbidden();
+  }
 
   const item = await prisma.itineraryItems.findUnique({ where: { id: itemId } });
   if (!item || item.trip_id !== tripId) {

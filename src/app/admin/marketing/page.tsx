@@ -1,2000 +1,2670 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
-import { useRouter } from "next/navigation";
-import { createClient } from "@/lib/supabase/client";
+import { useEffect, useState, useCallback, useRef } from "react";
 import {
-  LayoutGrid,
-  Calendar,
   Search,
-  Handshake,
-  Mail,
-  BarChart3,
-  Settings,
-  Play,
-  ExternalLink,
-  X,
+  ChevronLeft,
   ChevronRight,
-  AlertCircle,
   Loader2,
-  Eye,
-  Check,
-  Clock,
-  Send,
-  Plus,
+  CheckCircle,
+  XCircle,
   RefreshCw,
+  Mail,
+  Globe,
+  User,
+  X,
+  ArrowUpDown,
+  BarChart3,
+  Handshake,
   FileText,
-  UserPlus,
+  Settings,
+  Columns3,
+  CalendarDays,
+  Radar,
+  Newspaper,
+  PenTool,
+  AlertCircle,
+  CheckCircle2,
+  Clock,
+  Eye,
+  MessageSquare,
+  ThumbsUp,
+  Trash2,
+  ExternalLink,
+  Key,
+  Zap,
   Users,
-  Link2,
+  TrendingUp,
+  Play,
+  Send,
   Gift,
+  Link,
+  Trophy,
   Pencil,
+  Save,
 } from "lucide-react";
 
-const ADMIN_EMAIL = "graybfrank@gmail.com";
+// ─── Types ──────────────────────────────────────────────────
 
-type Tab =
-  | "pipeline"
-  | "calendar"
-  | "scout"
-  | "partnerships"
-  | "newsletter"
-  | "seo"
-  | "analytics"
-  | "settings";
+interface Partnership {
+  id: string;
+  course_name: string;
+  destination: string;
+  tier: string;
+  course_type: string;
+  website_url: string | null;
+  marketing_contact_name: string | null;
+  marketing_contact_email: string | null;
+  booking_email: string | null;
+  outreach_status: string;
+  confidence: string | null;
+  source_notes: string | null;
+  needs_review: boolean;
+  updated_at: string;
+}
 
-const TABS: { id: Tab; label: string; icon: typeof LayoutGrid }[] = [
-  { id: "pipeline", label: "Pipeline", icon: LayoutGrid },
-  { id: "calendar", label: "Calendar", icon: Calendar },
-  { id: "scout", label: "Scout", icon: Search },
-  { id: "partnerships", label: "Partnerships", icon: Handshake },
-  { id: "newsletter", label: "Newsletter", icon: Mail },
-  { id: "seo", label: "SEO", icon: FileText },
-  { id: "analytics", label: "Analytics", icon: BarChart3 },
-  { id: "settings", label: "Settings", icon: Settings },
-];
+interface Stats {
+  totalCourses: number;
+  hasEmail: number;
+  contacted: number;
+  replied: number;
+  active: number;
+}
 
-const PILLAR_COLORS: Record<string, string> = {
-  trip_planning: "bg-blue-100 text-blue-700",
-  betting_culture: "bg-purple-100 text-purple-700",
-  course_reviews: "bg-amber-100 text-amber-700",
-  budget_breakdowns: "bg-emerald-100 text-emerald-700",
-  newsletter: "bg-pink-100 text-pink-700",
-  general: "bg-zinc-100 text-zinc-700",
+interface ResearchResult {
+  success: boolean;
+  courseId: string;
+  marketing_contact_name: string | null;
+  marketing_contact_email: string | null;
+  booking_email: string | null;
+  website_url: string | null;
+  confidence: string;
+  source_notes: string;
+  error?: string;
+  raw?: string;
+}
+
+type FilterType = "all" | "no_contact" | "has_email" | "needs_review" | "contacted" | "replied";
+type SortField = "destination" | "tier" | "status" | "updated";
+type TabKey = "pipeline" | "calendar" | "scout" | "partnerships" | "newsletter" | "seo" | "analytics" | "settings";
+
+// ─── Main Page ──────────────────────────────────────────────
+
+export default function MarketingCommandCenter() {
+  const [activeTab, setActiveTab] = useState<TabKey>("pipeline");
+
+  const tabs: { key: TabKey; label: string; icon: React.ReactNode }[] = [
+    { key: "pipeline", label: "Pipeline", icon: <Columns3 className="h-4 w-4" /> },
+    { key: "calendar", label: "Calendar", icon: <CalendarDays className="h-4 w-4" /> },
+    { key: "scout", label: "Scout", icon: <Radar className="h-4 w-4" /> },
+    { key: "partnerships", label: "Partnerships", icon: <Handshake className="h-4 w-4" /> },
+    { key: "newsletter", label: "Newsletter", icon: <Newspaper className="h-4 w-4" /> },
+    { key: "seo", label: "SEO", icon: <PenTool className="h-4 w-4" /> },
+    { key: "analytics", label: "Analytics", icon: <BarChart3 className="h-4 w-4" /> },
+    { key: "settings", label: "Settings", icon: <Settings className="h-4 w-4" /> },
+  ];
+
+  return (
+    <div className="min-h-screen bg-zinc-50">
+      {/* Header */}
+      <div className="border-b border-zinc-200 bg-white px-6 py-5">
+        <h1 className="text-2xl font-bold text-zinc-900">Marketing Command Center</h1>
+        <p className="mt-1 text-sm text-zinc-500">
+          Manage partnerships, outreach, and marketing content
+        </p>
+      </div>
+
+      {/* Tabs */}
+      <div className="border-b border-zinc-200 bg-white px-6">
+        <nav className="-mb-px flex gap-4 overflow-x-auto">
+          {tabs.map((tab) => (
+            <button
+              key={tab.key}
+              onClick={() => setActiveTab(tab.key)}
+              className={`flex shrink-0 items-center gap-2 border-b-2 px-1 py-3 text-sm font-medium transition-colors ${
+                activeTab === tab.key
+                  ? "border-emerald-600 text-emerald-600"
+                  : "border-transparent text-zinc-500 hover:border-zinc-300 hover:text-zinc-700"
+              }`}
+            >
+              {tab.icon}
+              {tab.label}
+            </button>
+          ))}
+        </nav>
+      </div>
+
+      {/* Tab Content */}
+      <div className="p-6">
+        <div className="mx-auto max-w-7xl">
+          {activeTab === "pipeline" && <PipelineTab />}
+          {activeTab === "calendar" && <CalendarTab />}
+          {activeTab === "scout" && <ScoutTab />}
+          {activeTab === "partnerships" && <PartnershipsTab />}
+          {activeTab === "newsletter" && <NewsletterTab />}
+          {activeTab === "seo" && <SEOTab />}
+          {activeTab === "analytics" && <AnalyticsTab />}
+          {activeTab === "settings" && <SettingsTab />}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─── Pipeline Tab (Kanban) ──────────────────────────────────
+
+const PIPELINE_STAGES = ["idea", "draft", "review", "approved", "scheduled", "published"] as const;
+const STAGE_LABELS: Record<string, string> = {
+  idea: "Idea",
+  draft: "Draft",
+  review: "Review",
+  approved: "Approved",
+  scheduled: "Scheduled",
+  published: "Published",
+};
+const STAGE_COLORS: Record<string, string> = {
+  idea: "border-zinc-300 bg-zinc-50",
+  draft: "border-blue-300 bg-blue-50",
+  review: "border-yellow-300 bg-yellow-50",
+  approved: "border-emerald-300 bg-emerald-50",
+  scheduled: "border-purple-300 bg-purple-50",
+  published: "border-green-300 bg-green-50",
 };
 
-const STATUS_COLUMNS = [
-  "idea",
-  "draft",
-  "review",
-  "approved",
-  "scheduled",
-  "published",
-];
+interface ContentItem {
+  id: string;
+  title?: string;
+  type?: string;
+  status?: string;
+  topic?: string;
+  platform?: string;
+  scheduled_date?: string;
+  created_at?: string;
+  updated_at?: string;
+  [key: string]: unknown;
+}
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-type ContentItem = any;
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-type AlertItem = any;
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-type PartnershipItem = any;
-
-export default function MarketingDashboard() {
-  const router = useRouter();
-  const [tab, setTab] = useState<Tab>("pipeline");
+function PipelineTab() {
+  const [columns, setColumns] = useState<Record<string, ContentItem[]>>({});
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  // Data
-  const [content, setContent] = useState<ContentItem[]>([]);
-  const [alerts, setAlerts] = useState<AlertItem[]>([]);
-  const [partnerships, setPartnerships] = useState<PartnershipItem[]>([]);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const [plans, setPlans] = useState<any[]>([]);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const [templates, setTemplates] = useState<any[]>([]);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const [subscribers, setSubscribers] = useState<any[]>([]);
-
-  // UI state
-  const [selectedContent, setSelectedContent] = useState<ContentItem | null>(null);
-  const [agentRunning, setAgentRunning] = useState<string | null>(null);
-  const [writerModal, setWriterModal] = useState(false);
-  const [writerForm, setWriterForm] = useState({
-    topic: "",
-    pillar: "trip_planning",
-    format: "all",
-    notes: "",
-  });
-
-  // Auth check
-  useEffect(() => {
-    const supabase = createClient();
-    supabase.auth.getUser().then(({ data: { user } }) => {
-      if (!user || user.email !== ADMIN_EMAIL) {
-        router.push("/dashboard");
-        return;
-      }
-      setLoading(false);
-    });
-  }, [router]);
-
-  // Fetch data
-  const fetchContent = useCallback(async () => {
-    const res = await fetch("/api/admin/marketing/content");
-    if (res.ok) setContent(await res.json());
-  }, []);
-
-  const fetchAlerts = useCallback(async () => {
-    const res = await fetch("/api/admin/marketing/alerts");
-    if (res.ok) setAlerts(await res.json());
-  }, []);
-
-  const fetchPartnerships = useCallback(async () => {
-    const res = await fetch("/api/admin/marketing/partnerships");
-    if (res.ok) setPartnerships(await res.json());
-  }, []);
-
-  const fetchPlans = useCallback(async () => {
-    const res = await fetch("/api/admin/marketing/plans");
-    if (res.ok) setPlans(await res.json());
-  }, []);
-
-  const fetchTemplates = useCallback(async () => {
-    const res = await fetch("/api/admin/marketing/templates");
-    if (res.ok) setTemplates(await res.json());
-  }, []);
-
-  const fetchSubscribers = useCallback(async () => {
-    const res = await fetch("/api/admin/marketing/subscribers");
-    if (res.ok) setSubscribers(await res.json());
-  }, []);
+  const [total, setTotal] = useState(0);
 
   useEffect(() => {
-    if (!loading) {
-      fetchContent();
-      fetchAlerts();
-      fetchPartnerships();
-      fetchPlans();
-      fetchTemplates();
-      fetchSubscribers();
-    }
-  }, [loading, fetchContent, fetchAlerts, fetchPartnerships, fetchPlans, fetchTemplates, fetchSubscribers]);
-
-  // Agent runners
-  async function runAgent(agent: string, body?: object) {
-    setAgentRunning(agent);
-    setError(null);
-    try {
-      const res = await fetch(`/api/admin/marketing/${agent}`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: body ? JSON.stringify(body) : undefined,
-      });
-      if (!res.ok) {
-        const data = await res.json().catch(() => ({}));
-        throw new Error(data.error || `Agent ${agent} failed`);
+    async function load() {
+      try {
+        const res = await fetch("/api/admin/marketing/pipeline");
+        const data = await res.json();
+        setColumns(data.columns || {});
+        setTotal(data.total || 0);
+      } catch {
+        // silent
+      } finally {
+        setLoading(false);
       }
-      // Refresh data after agent run
-      await Promise.all([fetchContent(), fetchAlerts(), fetchPlans()]);
-      return await res.json();
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Agent failed");
-      return null;
-    } finally {
-      setAgentRunning(null);
     }
-  }
-
-  async function updateContentStatus(id: string, status: string) {
-    const res = await fetch(`/api/admin/marketing/content/${id}`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ status }),
-    });
-    if (res.ok) await fetchContent();
-  }
-
-  async function updateAlertStatus(id: string, status: string) {
-    const res = await fetch(`/api/admin/marketing/alerts/${id}`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ status }),
-    });
-    if (res.ok) await fetchAlerts();
-  }
+    load();
+  }, []);
 
   if (loading) {
     return (
-      <div className="flex min-h-screen items-center justify-center">
+      <div className="flex items-center justify-center py-20">
         <Loader2 className="h-6 w-6 animate-spin text-zinc-400" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-zinc-50">
-      {/* Header */}
-      <div className="border-b border-zinc-200 bg-white">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
-          <div>
-            <h1 className="text-xl font-bold text-zinc-900">
-              Marketing Command Center
-            </h1>
-            <p className="text-sm text-zinc-500">Nassau Marketing Agents</p>
-          </div>
-          <div className="flex items-center gap-2">
-            {agentRunning && (
-              <span className="flex items-center gap-2 rounded-lg bg-emerald-50 px-3 py-1.5 text-sm text-emerald-700">
-                <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                Running {agentRunning}...
-              </span>
-            )}
-          </div>
-        </div>
-      </div>
-
-      {/* Error banner */}
-      {error && (
-        <div className="mx-auto max-w-7xl px-6 pt-4">
-          <div className="flex items-center gap-2 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
-            <AlertCircle className="h-4 w-4 shrink-0" />
-            {error}
-            <button onClick={() => setError(null)} className="ml-auto">
-              <X className="h-4 w-4" />
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* Tabs */}
-      <div className="border-b border-zinc-200 bg-white">
-        <div className="mx-auto max-w-7xl px-6">
-          <nav className="flex gap-1">
-            {TABS.map((t) => (
-              <button
-                key={t.id}
-                onClick={() => setTab(t.id)}
-                className={`flex items-center gap-2 border-b-2 px-4 py-3 text-sm font-medium transition-colors ${
-                  tab === t.id
-                    ? "border-emerald-600 text-emerald-600"
-                    : "border-transparent text-zinc-500 hover:text-zinc-700"
-                }`}
-              >
-                <t.icon className="h-4 w-4" />
-                {t.label}
-              </button>
-            ))}
-          </nav>
-        </div>
-      </div>
-
-      {/* Content */}
-      <div className="mx-auto max-w-7xl px-6 py-6">
-        {tab === "pipeline" && (
-          <PipelineTab
-            content={content}
-            onSelect={setSelectedContent}
-            onStatusChange={updateContentStatus}
-            onRunWriter={() => setWriterModal(true)}
-            agentRunning={agentRunning}
-          />
-        )}
-        {tab === "calendar" && (
-          <CalendarTab
-            content={content}
-            plans={plans}
-            onRunStrategist={() => runAgent("strategist")}
-            agentRunning={agentRunning}
-          />
-        )}
-        {tab === "scout" && (
-          <ScoutTab
-            alerts={alerts}
-            onUpdateStatus={updateAlertStatus}
-            onRunScout={() => runAgent("scout")}
-            onCreateContent={(topic: string) => {
-              setWriterForm({ ...writerForm, topic });
-              setWriterModal(true);
-            }}
-            agentRunning={agentRunning}
-          />
-        )}
-        {tab === "partnerships" && (
-          <PartnershipsTab
-            partnerships={partnerships}
-            templates={templates}
-            onRunOutreach={(ids: string[]) =>
-              runAgent("partnerships", {
-                action: "draft_outreach",
-                courseIds: ids,
-              })
-            }
-            agentRunning={agentRunning}
-            onRefresh={fetchPartnerships}
-          />
-        )}
-        {tab === "newsletter" && (
-          <NewsletterTab
-            content={content.filter((c: ContentItem) => c.pillar === "newsletter")}
-            subscribers={subscribers}
-            onRunNewsletter={() => runAgent("newsletter")}
-            agentRunning={agentRunning}
-          />
-        )}
-        {tab === "seo" && (
-          <SEOTab
-            onRunSEOWriter={(keyword: string) => runAgent("seo-writer", { keyword })}
-            agentRunning={agentRunning}
-          />
-        )}
-        {tab === "analytics" && (
-          <AnalyticsTab
-            content={content}
-            plans={plans}
-            onRunAnalyst={() => runAgent("analyst")}
-            agentRunning={agentRunning}
-          />
-        )}
-        {tab === "settings" && (
-          <SettingsTab
-            onRunOnboarding={() => runAgent("onboarding")}
-            onRunReactivation={() => runAgent("reactivation")}
-            onRunReferralTracker={() => runAgent("referral-tracker")}
-            agentRunning={agentRunning}
-          />
-        )}
-      </div>
-
-      {/* Content Detail Modal */}
-      {selectedContent && (
-        <ContentModal
-          content={selectedContent}
-          onClose={() => setSelectedContent(null)}
-          onStatusChange={async (status) => {
-            await updateContentStatus(selectedContent.id, status);
-            setSelectedContent(null);
-          }}
-        />
-      )}
-
-      {/* Writer Modal */}
-      {writerModal && (
-        <WriterModal
-          form={writerForm}
-          onChange={setWriterForm}
-          onClose={() => setWriterModal(false)}
-          onSubmit={async () => {
-            await runAgent("writer", writerForm);
-            setWriterModal(false);
-            setWriterForm({
-              topic: "",
-              pillar: "trip_planning",
-              format: "all",
-              notes: "",
-            });
-          }}
-          running={agentRunning === "writer"}
-        />
-      )}
-    </div>
-  );
-}
-
-/* ===================== TAB COMPONENTS ===================== */
-
-function PipelineTab({
-  content,
-  onSelect,
-  onStatusChange,
-  onRunWriter,
-  agentRunning,
-}: {
-  content: ContentItem[];
-  onSelect: (c: ContentItem) => void;
-  onStatusChange: (id: string, status: string) => void;
-  onRunWriter: () => void;
-  agentRunning: string | null;
-}) {
-  return (
-    <div>
+    <>
       <div className="mb-4 flex items-center justify-between">
-        <h2 className="text-lg font-semibold text-zinc-900">Content Pipeline</h2>
-        <button
-          onClick={onRunWriter}
-          disabled={agentRunning !== null}
-          className="inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-emerald-700 disabled:opacity-50"
-        >
-          <Play className="h-4 w-4" />
-          Run Writer
-        </button>
+        <p className="text-sm text-zinc-500">{total} content items</p>
       </div>
-      <div className="grid grid-cols-6 gap-3">
-        {STATUS_COLUMNS.map((status) => {
-          const items = content.filter((c: ContentItem) => c.status === status);
-          return (
-            <div key={status} className="min-h-[200px]">
-              <div className="mb-2 flex items-center justify-between">
-                <span className="text-xs font-semibold uppercase tracking-wider text-zinc-400">
-                  {status}
-                </span>
-                <span className="rounded-full bg-zinc-100 px-2 py-0.5 text-xs text-zinc-500">
-                  {items.length}
-                </span>
-              </div>
-              <div className="space-y-2">
-                {items.map((item: ContentItem) => (
-                  <button
+      <div className="grid grid-cols-6 gap-3 overflow-x-auto">
+        {PIPELINE_STAGES.map((stage) => (
+          <div key={stage} className={`rounded-lg border-2 p-3 ${STAGE_COLORS[stage]}`}>
+            <div className="mb-3 flex items-center justify-between">
+              <h3 className="text-xs font-semibold uppercase tracking-wider text-zinc-700">
+                {STAGE_LABELS[stage]}
+              </h3>
+              <span className="rounded-full bg-white px-2 py-0.5 text-xs font-medium text-zinc-600 shadow-sm">
+                {(columns[stage] || []).length}
+              </span>
+            </div>
+            <div className="space-y-2">
+              {(columns[stage] || []).length === 0 ? (
+                <p className="py-4 text-center text-xs text-zinc-400">Empty</p>
+              ) : (
+                (columns[stage] || []).map((item) => (
+                  <div
                     key={item.id}
-                    onClick={() => onSelect(item)}
-                    className="w-full rounded-lg border border-zinc-200 bg-white p-3 text-left shadow-sm transition-shadow hover:shadow-md"
+                    className="rounded-md border border-zinc-200 bg-white p-2.5 shadow-sm"
                   >
-                    <p className="text-sm font-medium text-zinc-900 line-clamp-2">
-                      {item.title}
+                    <p className="text-xs font-medium text-zinc-900 line-clamp-2">
+                      {item.title || item.topic || "Untitled"}
                     </p>
-                    <div className="mt-2 flex items-center gap-1.5">
-                      <span
-                        className={`rounded-full px-2 py-0.5 text-[10px] font-medium ${
-                          PILLAR_COLORS[item.pillar] || PILLAR_COLORS.general
-                        }`}
-                      >
-                        {item.pillar}
-                      </span>
-                      {item.scheduled_platform && (
-                        <span className="text-[10px] text-zinc-400">
-                          {item.scheduled_platform}
+                    <div className="mt-1.5 flex items-center gap-1.5">
+                      {item.type && (
+                        <span className="rounded bg-zinc-100 px-1.5 py-0.5 text-[10px] text-zinc-500">
+                          {item.type}
+                        </span>
+                      )}
+                      {item.platform && (
+                        <span className="rounded bg-zinc-100 px-1.5 py-0.5 text-[10px] text-zinc-500">
+                          {item.platform}
                         </span>
                       )}
                     </div>
-                    {item.scheduled_at && (
+                    {item.scheduled_date && (
                       <p className="mt-1 text-[10px] text-zinc-400">
-                        {new Date(item.scheduled_at).toLocaleDateString()}
+                        <Clock className="mr-0.5 inline h-3 w-3" />
+                        {new Date(item.scheduled_date).toLocaleDateString()}
                       </p>
                     )}
-                    {/* Quick status buttons */}
-                    <div className="mt-2 flex gap-1">
-                      {status !== "published" && (
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            const nextStatus =
-                              STATUS_COLUMNS[
-                                STATUS_COLUMNS.indexOf(status) + 1
-                              ];
-                            if (nextStatus) onStatusChange(item.id, nextStatus);
-                          }}
-                          className="rounded px-1.5 py-0.5 text-[10px] text-emerald-600 hover:bg-emerald-50"
-                        >
-                          <ChevronRight className="h-3 w-3" />
-                        </button>
-                      )}
-                    </div>
-                  </button>
-                ))}
-              </div>
+                  </div>
+                ))
+              )}
             </div>
-          );
-        })}
+          </div>
+        ))}
       </div>
-    </div>
+    </>
   );
 }
 
-function CalendarTab({
-  content,
-  plans,
-  onRunStrategist,
-  agentRunning,
-}: {
-  content: ContentItem[];
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  plans: any[];
-  onRunStrategist: () => void;
-  agentRunning: string | null;
-}) {
-  const scheduledContent = content.filter((c: ContentItem) => c.scheduled_at);
-  const today = new Date();
-  const weekDays = Array.from({ length: 7 }, (_, i) => {
-    const d = new Date(today);
-    d.setDate(d.getDate() - d.getDay() + i + 1); // Monday start
-    return d;
-  });
+// ─── Calendar Tab (Weekly View) ─────────────────────────────
+
+interface WeeklyPlan {
+  id: string;
+  week_start?: string;
+  week_end?: string;
+  theme?: string;
+  status?: string;
+  content_items?: unknown[];
+  notes?: string;
+  created_at?: string;
+  [key: string]: unknown;
+}
+
+function CalendarTab() {
+  const [plans, setPlans] = useState<WeeklyPlan[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function load() {
+      try {
+        const res = await fetch("/api/admin/marketing/calendar");
+        const data = await res.json();
+        setPlans(data.plans || []);
+      } catch {
+        // silent
+      } finally {
+        setLoading(false);
+      }
+    }
+    load();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-20">
+        <Loader2 className="h-6 w-6 animate-spin text-zinc-400" />
+      </div>
+    );
+  }
+
+  if (plans.length === 0) {
+    return (
+      <div className="rounded-lg border border-zinc-200 bg-white p-8 text-center text-zinc-500">
+        <CalendarDays className="mx-auto mb-3 h-10 w-10 text-zinc-300" />
+        <p className="font-medium text-zinc-700">No Weekly Plans</p>
+        <p className="mt-1 text-sm">Weekly marketing plans will appear here once created.</p>
+      </div>
+    );
+  }
 
   return (
-    <div>
-      <div className="mb-4 flex items-center justify-between">
-        <h2 className="text-lg font-semibold text-zinc-900">Content Calendar</h2>
-        <button
-          onClick={onRunStrategist}
-          disabled={agentRunning !== null}
-          className="inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-emerald-700 disabled:opacity-50"
+    <div className="space-y-4">
+      {plans.map((plan) => (
+        <div
+          key={plan.id}
+          className="rounded-lg border border-zinc-200 bg-white p-5"
         >
-          <Play className="h-4 w-4" />
-          Run Strategist
-        </button>
-      </div>
-
-      {/* Weekly view */}
-      <div className="grid grid-cols-7 gap-2">
-        {weekDays.map((day) => {
-          const dayStr = day.toISOString().split("T")[0];
-          const dayContent = scheduledContent.filter((c: ContentItem) =>
-            c.scheduled_at?.startsWith(dayStr)
-          );
-          const isToday = dayStr === today.toISOString().split("T")[0];
-          return (
-            <div
-              key={dayStr}
-              className={`min-h-[150px] rounded-lg border p-2 ${
-                isToday
-                  ? "border-emerald-300 bg-emerald-50/50"
-                  : "border-zinc-200 bg-white"
-              }`}
-            >
-              <p
-                className={`text-xs font-medium ${
-                  isToday ? "text-emerald-700" : "text-zinc-500"
+          <div className="flex items-start justify-between">
+            <div>
+              <h3 className="font-medium text-zinc-900">
+                {plan.week_start
+                  ? `Week of ${new Date(plan.week_start).toLocaleDateString("en-US", { month: "short", day: "numeric" })}`
+                  : "Week"}
+                {plan.week_end &&
+                  ` – ${new Date(plan.week_end).toLocaleDateString("en-US", { month: "short", day: "numeric" })}`}
+              </h3>
+              {plan.theme && (
+                <p className="mt-1 text-sm text-zinc-500">Theme: {plan.theme}</p>
+              )}
+            </div>
+            {plan.status && (
+              <span
+                className={`rounded-full px-2 py-0.5 text-xs font-medium ${
+                  plan.status === "active"
+                    ? "bg-green-100 text-green-700"
+                    : plan.status === "draft"
+                      ? "bg-zinc-100 text-zinc-600"
+                      : "bg-blue-100 text-blue-700"
                 }`}
               >
-                {day.toLocaleDateString("en-US", {
-                  weekday: "short",
-                  month: "short",
-                  day: "numeric",
-                })}
-              </p>
-              <div className="mt-2 space-y-1">
-                {dayContent.map((item: ContentItem) => (
-                  <div
-                    key={item.id}
-                    className={`rounded px-2 py-1 text-[10px] font-medium ${
-                      PILLAR_COLORS[item.pillar] || PILLAR_COLORS.general
-                    }`}
-                  >
-                    {item.title?.slice(0, 30)}
-                  </div>
-                ))}
-              </div>
-            </div>
-          );
-        })}
-      </div>
-
-      {/* Plans history */}
-      {plans.length > 0 && (
-        <div className="mt-8">
-          <h3 className="mb-3 text-sm font-semibold text-zinc-700">
-            Weekly Plans
-          </h3>
-          <div className="space-y-2">
-            {plans.map((plan) => (
-              <div
-                key={plan.id}
-                className="rounded-lg border border-zinc-200 bg-white p-4"
-              >
-                <p className="text-sm font-medium text-zinc-900">
-                  Week of {plan.week_start}
-                </p>
-                {plan.plan?.theme && (
-                  <p className="mt-1 text-xs text-zinc-500">
-                    Theme: {plan.plan.theme}
-                  </p>
-                )}
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-    </div>
-  );
-}
-
-function ScoutTab({
-  alerts,
-  onUpdateStatus,
-  onRunScout,
-  onCreateContent,
-  agentRunning,
-}: {
-  alerts: AlertItem[];
-  onUpdateStatus: (id: string, status: string) => void;
-  onRunScout: () => void;
-  onCreateContent: (topic: string) => void;
-  agentRunning: string | null;
-}) {
-  const TYPE_BADGES: Record<string, string> = {
-    engage: "bg-blue-100 text-blue-700",
-    content_idea: "bg-emerald-100 text-emerald-700",
-    trending: "bg-amber-100 text-amber-700",
-    competitor: "bg-red-100 text-red-700",
-    mention: "bg-purple-100 text-purple-700",
-  };
-
-  return (
-    <div>
-      <div className="mb-4 flex items-center justify-between">
-        <h2 className="text-lg font-semibold text-zinc-900">Scout Alerts</h2>
-        <button
-          onClick={onRunScout}
-          disabled={agentRunning !== null}
-          className="inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-emerald-700 disabled:opacity-50"
-        >
-          <Search className="h-4 w-4" />
-          Run Scout
-        </button>
-      </div>
-
-      <div className="space-y-3">
-        {alerts.length === 0 ? (
-          <p className="py-8 text-center text-sm text-zinc-400">
-            No alerts yet. Run the Scout agent to scan for opportunities.
-          </p>
-        ) : (
-          alerts.map((alert: AlertItem) => (
-            <div
-              key={alert.id}
-              className="rounded-lg border border-zinc-200 bg-white p-4 shadow-sm"
-            >
-              <div className="flex items-start justify-between">
-                <div className="flex items-center gap-2">
-                  <span className="rounded bg-zinc-100 px-2 py-0.5 text-xs font-medium text-zinc-600">
-                    {alert.source}
-                  </span>
-                  {alert.opportunity_type && (
-                    <span
-                      className={`rounded-full px-2 py-0.5 text-xs font-medium ${
-                        TYPE_BADGES[alert.opportunity_type] || "bg-zinc-100 text-zinc-600"
-                      }`}
-                    >
-                      {alert.opportunity_type}
-                    </span>
-                  )}
-                  {alert.status !== "new" && (
-                    <span className="rounded-full bg-zinc-100 px-2 py-0.5 text-xs text-zinc-500">
-                      {alert.status}
-                    </span>
-                  )}
-                </div>
-                <span className="text-xs text-zinc-400">
-                  {new Date(alert.created_at).toLocaleDateString()}
-                </span>
-              </div>
-              <p className="mt-2 text-sm text-zinc-700">{alert.summary}</p>
-              {alert.suggested_response && (
-                <p className="mt-1 text-xs text-zinc-500 italic">
-                  Suggested: {alert.suggested_response}
-                </p>
-              )}
-              <div className="mt-3 flex gap-2">
-                {alert.suggested_content_topic && (
-                  <button
-                    onClick={() =>
-                      onCreateContent(alert.suggested_content_topic)
-                    }
-                    className="rounded-lg border border-emerald-200 px-3 py-1.5 text-xs font-medium text-emerald-600 hover:bg-emerald-50"
-                  >
-                    Create Content
-                  </button>
-                )}
-                {alert.url && (
-                  <a
-                    href={alert.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1 rounded-lg border border-zinc-200 px-3 py-1.5 text-xs font-medium text-zinc-600 hover:bg-zinc-50"
-                  >
-                    <ExternalLink className="h-3 w-3" />
-                    Engage
-                  </a>
-                )}
-                <button
-                  onClick={() => onUpdateStatus(alert.id, "dismissed")}
-                  className="rounded-lg border border-zinc-200 px-3 py-1.5 text-xs font-medium text-zinc-400 hover:bg-zinc-50"
-                >
-                  Dismiss
-                </button>
-              </div>
-            </div>
-          ))
-        )}
-      </div>
-    </div>
-  );
-}
-
-function PartnershipsTab({
-  partnerships,
-  templates,
-  onRunOutreach,
-  agentRunning,
-  onRefresh,
-}: {
-  partnerships: PartnershipItem[];
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  templates: any[];
-  onRunOutreach: (ids: string[]) => void;
-  agentRunning: string | null;
-  onRefresh: () => void;
-}) {
-  const [selectedIds, setSelectedIds] = useState<string[]>([]);
-  const [showTemplates, setShowTemplates] = useState(false);
-
-  const PARTNERSHIP_STATUSES = [
-    "not_contacted",
-    "email_1_sent",
-    "email_2_sent",
-    "email_3_sent",
-    "email_4_sent",
-    "email_5_sent",
-    "replied",
-    "in_conversation",
-    "active",
-    "declined",
-  ];
-
-  const TIER_BADGES: Record<string, string> = {
-    top_20: "bg-amber-100 text-amber-700 border-amber-200",
-    premium: "bg-purple-100 text-purple-700 border-purple-200",
-    standard: "bg-zinc-100 text-zinc-600 border-zinc-200",
-  };
-
-  return (
-    <div>
-      <div className="mb-4 flex items-center justify-between">
-        <h2 className="text-lg font-semibold text-zinc-900">Partnerships</h2>
-        <div className="flex gap-2">
-          <button
-            onClick={() => setShowTemplates(!showTemplates)}
-            className="inline-flex items-center gap-2 rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm font-medium text-zinc-600 hover:bg-zinc-50"
-          >
-            <Mail className="h-4 w-4" />
-            Templates
-          </button>
-          <button
-            onClick={() => {
-              if (selectedIds.length > 0) onRunOutreach(selectedIds);
-            }}
-            disabled={agentRunning !== null || selectedIds.length === 0}
-            className="inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-emerald-700 disabled:opacity-50"
-          >
-            <Send className="h-4 w-4" />
-            Run Outreach ({selectedIds.length})
-          </button>
-        </div>
-      </div>
-
-      {/* Templates section */}
-      {showTemplates && (
-        <div className="mb-6 rounded-lg border border-zinc-200 bg-white p-4">
-          <h3 className="mb-3 text-sm font-semibold text-zinc-700">
-            Email Sequence Templates
-          </h3>
-          {templates.length === 0 ? (
-            <p className="text-sm text-zinc-400">No templates configured yet.</p>
-          ) : (
-            <div className="space-y-2">
-              {templates.map((t) => (
-                <div
-                  key={t.id}
-                  className="flex items-center gap-3 rounded border border-zinc-100 p-2"
-                >
-                  <span className="text-xs font-mono text-zinc-400">
-                    #{t.sequence_position}
-                  </span>
-                  <span className="text-xs font-medium text-zinc-600">
-                    {t.tier}
-                  </span>
-                  <span className="flex-1 text-sm text-zinc-700 truncate">
-                    {t.subject_template}
-                  </span>
-                  <span
-                    className={`text-xs ${
-                      t.approved ? "text-emerald-600" : "text-zinc-400"
-                    }`}
-                  >
-                    {t.approved ? "Approved" : "Draft"}
-                  </span>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-      )}
-
-      {/* Pipeline columns */}
-      <div className="flex gap-3 overflow-x-auto pb-4">
-        {PARTNERSHIP_STATUSES.map((status) => {
-          const items = partnerships.filter(
-            (p: PartnershipItem) => p.outreach_status === status
-          );
-          if (items.length === 0 && !["not_contacted", "replied", "active"].includes(status)) return null;
-          return (
-            <div key={status} className="min-w-[200px] flex-shrink-0">
-              <div className="mb-2 flex items-center justify-between">
-                <span className="text-xs font-semibold uppercase tracking-wider text-zinc-400">
-                  {status.replace(/_/g, " ")}
-                </span>
-                <span className="rounded-full bg-zinc-100 px-2 py-0.5 text-xs text-zinc-500">
-                  {items.length}
-                </span>
-              </div>
-              <div className="space-y-2">
-                {items.map((p: PartnershipItem) => (
-                  <div
-                    key={p.id}
-                    className="rounded-lg border border-zinc-200 bg-white p-3 shadow-sm"
-                  >
-                    <div className="flex items-start gap-2">
-                      <input
-                        type="checkbox"
-                        checked={selectedIds.includes(p.id)}
-                        onChange={(e) => {
-                          if (e.target.checked) {
-                            setSelectedIds([...selectedIds, p.id]);
-                          } else {
-                            setSelectedIds(
-                              selectedIds.filter((id) => id !== p.id)
-                            );
-                          }
-                        }}
-                        className="mt-0.5 h-3.5 w-3.5 rounded border-zinc-300"
-                      />
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium text-zinc-900 truncate">
-                          {p.course_name}
-                        </p>
-                        <p className="text-xs text-zinc-500">{p.destination}</p>
-                        <span
-                          className={`mt-1 inline-block rounded-full border px-2 py-0.5 text-[10px] font-medium ${
-                            TIER_BADGES[p.tier] || TIER_BADGES.standard
-                          }`}
-                        >
-                          {p.tier}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          );
-        })}
-      </div>
-
-      <button
-        onClick={onRefresh}
-        className="mt-4 inline-flex items-center gap-2 text-sm text-zinc-500 hover:text-zinc-700"
-      >
-        <RefreshCw className="h-3.5 w-3.5" />
-        Refresh
-      </button>
-    </div>
-  );
-}
-
-function NewsletterTab({
-  content,
-  subscribers,
-  onRunNewsletter,
-  agentRunning,
-}: {
-  content: ContentItem[];
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  subscribers: any[];
-  onRunNewsletter: () => void;
-  agentRunning: string | null;
-}) {
-  const latestDraft = content.find((c: ContentItem) => c.status === "draft");
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const newsletterData = latestDraft?.instagram_carousel as any; // newsletter JSON stored here
-  const [section1Text, setSection1Text] = useState("");
-
-  return (
-    <div>
-      <div className="mb-4 flex items-center justify-between">
-        <div>
-          <h2 className="text-lg font-semibold text-zinc-900">Newsletter</h2>
-          <p className="text-sm text-zinc-500">
-            {subscribers.filter((s: { subscribed: boolean }) => s.subscribed).length} subscribers
-          </p>
-        </div>
-        <button
-          onClick={onRunNewsletter}
-          disabled={agentRunning !== null}
-          className="inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-emerald-700 disabled:opacity-50"
-        >
-          <Play className="h-4 w-4" />
-          Generate Newsletter
-        </button>
-      </div>
-
-      {latestDraft && newsletterData ? (
-        <div className="space-y-6">
-          {/* Subject line options */}
-          {newsletterData.subject_line_options && (
-            <div className="rounded-lg border border-zinc-200 bg-white p-4">
-              <h3 className="mb-2 text-sm font-semibold text-zinc-700">
-                Subject Lines
-              </h3>
-              <div className="space-y-1">
-                {newsletterData.subject_line_options.map(
-                  (s: string, i: number) => (
-                    <p key={i} className="text-sm text-zinc-600">
-                      {i + 1}. {s}
-                    </p>
-                  )
-                )}
-              </div>
-            </div>
-          )}
-
-          {/* Section 1 - Grayson writes */}
-          <div className="rounded-lg border border-zinc-200 bg-white p-4">
-            <h3 className="mb-2 text-sm font-semibold text-zinc-700">
-              Section 1: From the First Tee
-              <span className="ml-2 text-xs font-normal text-zinc-400">
-                (You write this)
+                {plan.status}
               </span>
-            </h3>
-            {newsletterData.section_1_talking_points && (
-              <div className="mb-3 space-y-2">
-                {newsletterData.section_1_talking_points.map(
-                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                  (tp: any, i: number) => (
-                    <div
-                      key={i}
-                      className="rounded border border-zinc-100 bg-zinc-50 p-2 text-xs text-zinc-600"
-                    >
-                      <strong>Angle:</strong> {tp.angle}
-                      <br />
-                      <strong>Opening:</strong> {tp.opening_scene}
-                    </div>
-                  )
-                )}
-              </div>
             )}
-            <textarea
-              value={section1Text}
-              onChange={(e) => setSection1Text(e.target.value)}
-              placeholder="Write your From the First Tee section here..."
-              rows={8}
-              className="w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
-            />
           </div>
-
-          {/* Section 2 - The Intel */}
-          {newsletterData.section_2_intel && (
-            <div className="rounded-lg border border-zinc-200 bg-white p-4">
-              <h3 className="mb-2 text-sm font-semibold text-zinc-700">
-                Section 2: The Intel
-              </h3>
-              <div className="space-y-2">
-                {newsletterData.section_2_intel.map(
-                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                  (item: any, i: number) => (
-                    <div key={i} className="text-sm text-zinc-600">
-                      <strong>{item.headline || item.title}</strong>
-                      <p className="text-xs text-zinc-500 mt-0.5">
-                        {item.body || item.content}
-                      </p>
-                    </div>
-                  )
-                )}
-              </div>
+          {plan.notes && (
+            <p className="mt-2 text-sm text-zinc-600">{plan.notes}</p>
+          )}
+          {Array.isArray(plan.content_items) && plan.content_items.length > 0 && (
+            <div className="mt-3 border-t border-zinc-100 pt-3">
+              <p className="mb-1 text-xs font-medium text-zinc-500">
+                {plan.content_items.length} content items scheduled
+              </p>
             </div>
           )}
+        </div>
+      ))}
+    </div>
+  );
+}
 
-          {/* Section 3 - Trip Sheet */}
-          {newsletterData.section_3_trip_sheet && (
-            <div className="rounded-lg border border-zinc-200 bg-white p-4">
-              <h3 className="mb-2 text-sm font-semibold text-zinc-700">
-                Section 3: The Trip Sheet
-              </h3>
-              <div className="text-sm text-zinc-600">
-                <p>
-                  <strong>
-                    {newsletterData.section_3_trip_sheet.destination}
-                  </strong>{" "}
-                  ({newsletterData.section_3_trip_sheet.region})
-                </p>
-                <p className="mt-1 text-xs">
-                  {newsletterData.section_3_trip_sheet.why_go}
-                </p>
-                {newsletterData.section_3_trip_sheet.budget_estimate && (
-                  <p className="mt-1 text-xs text-zinc-500">
-                    Budget:{" "}
-                    {newsletterData.section_3_trip_sheet.budget_estimate}
-                  </p>
-                )}
-              </div>
-            </div>
-          )}
+// ─── Scout Tab (Alerts) ─────────────────────────────────────
 
-          <div className="flex gap-3">
-            <button className="inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-700">
-              <Check className="h-4 w-4" />
-              Approve & Schedule
-            </button>
-            <button className="inline-flex items-center gap-2 rounded-lg border border-zinc-200 px-4 py-2 text-sm font-medium text-zinc-600 hover:bg-zinc-50">
-              <Eye className="h-4 w-4" />
-              Preview
-            </button>
-          </div>
+interface ScoutAlert {
+  id: string;
+  title?: string;
+  description?: string;
+  source?: string;
+  source_url?: string;
+  type?: string;
+  status?: string;
+  relevance_score?: number;
+  created_at?: string;
+  [key: string]: unknown;
+}
+
+function ScoutTab() {
+  const [alerts, setAlerts] = useState<ScoutAlert[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [filter, setFilter] = useState<"all" | "new" | "engaged" | "dismissed">("all");
+
+  useEffect(() => {
+    async function load() {
+      try {
+        const res = await fetch("/api/admin/marketing/scout");
+        const data = await res.json();
+        setAlerts(data.alerts || []);
+      } catch {
+        // silent
+      } finally {
+        setLoading(false);
+      }
+    }
+    load();
+  }, []);
+
+  async function handleAction(id: string, action: "create" | "engage" | "dismiss") {
+    try {
+      await fetch("/api/admin/marketing/scout", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id, action }),
+      });
+      setAlerts((prev) =>
+        prev.map((a) =>
+          a.id === id
+            ? {
+                ...a,
+                status:
+                  action === "dismiss"
+                    ? "dismissed"
+                    : action === "engage"
+                      ? "engaged"
+                      : "content_created",
+              }
+            : a
+        )
+      );
+    } catch {
+      // silent
+    }
+  }
+
+  const filtered = alerts.filter((a) => {
+    if (filter === "all") return true;
+    if (filter === "new") return !a.status || a.status === "new";
+    return a.status === filter;
+  });
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-20">
+        <Loader2 className="h-6 w-6 animate-spin text-zinc-400" />
+      </div>
+    );
+  }
+
+  return (
+    <>
+      {/* Filter chips */}
+      <div className="mb-4 flex gap-2">
+        {(["all", "new", "engaged", "dismissed"] as const).map((f) => (
+          <button
+            key={f}
+            onClick={() => setFilter(f)}
+            className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${
+              filter === f
+                ? "bg-emerald-600 text-white"
+                : "bg-zinc-100 text-zinc-600 hover:bg-zinc-200"
+            }`}
+          >
+            {f.charAt(0).toUpperCase() + f.slice(1)}
+          </button>
+        ))}
+      </div>
+
+      {filtered.length === 0 ? (
+        <div className="rounded-lg border border-zinc-200 bg-white p-8 text-center text-zinc-500">
+          <Radar className="mx-auto mb-3 h-10 w-10 text-zinc-300" />
+          <p className="font-medium text-zinc-700">No Alerts</p>
+          <p className="mt-1 text-sm">Scout alerts will appear here as they are detected.</p>
         </div>
       ) : (
-        <div className="py-12 text-center">
-          <Mail className="mx-auto h-12 w-12 text-zinc-300" />
-          <p className="mt-4 text-sm text-zinc-500">
-            No newsletter draft. Generate one to get started.
+        <div className="space-y-3">
+          {filtered.map((alert) => (
+            <div
+              key={alert.id}
+              className="rounded-lg border border-zinc-200 bg-white p-4"
+            >
+              <div className="flex items-start justify-between">
+                <div className="flex-1">
+                  <div className="flex items-center gap-2">
+                    <h3 className="text-sm font-medium text-zinc-900">
+                      {alert.title || "Untitled Alert"}
+                    </h3>
+                    {alert.type && (
+                      <span className="rounded bg-zinc-100 px-1.5 py-0.5 text-[10px] font-medium text-zinc-500">
+                        {alert.type}
+                      </span>
+                    )}
+                    {alert.status && alert.status !== "new" && (
+                      <span
+                        className={`rounded-full px-2 py-0.5 text-[10px] font-medium ${
+                          alert.status === "dismissed"
+                            ? "bg-zinc-100 text-zinc-500"
+                            : alert.status === "engaged"
+                              ? "bg-blue-100 text-blue-700"
+                              : "bg-green-100 text-green-700"
+                        }`}
+                      >
+                        {alert.status}
+                      </span>
+                    )}
+                  </div>
+                  {alert.description && (
+                    <p className="mt-1 text-xs text-zinc-600 line-clamp-2">
+                      {alert.description}
+                    </p>
+                  )}
+                  <div className="mt-2 flex items-center gap-3 text-[10px] text-zinc-400">
+                    {alert.source && <span>Source: {alert.source}</span>}
+                    {alert.created_at && (
+                      <span>{new Date(alert.created_at).toLocaleDateString()}</span>
+                    )}
+                    {alert.relevance_score != null && (
+                      <span>Relevance: {alert.relevance_score}%</span>
+                    )}
+                  </div>
+                </div>
+                <div className="ml-4 flex items-center gap-1.5">
+                  {alert.source_url && (
+                    <a
+                      href={alert.source_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="rounded-lg border border-zinc-200 p-1.5 text-zinc-400 hover:text-zinc-600"
+                    >
+                      <ExternalLink className="h-3.5 w-3.5" />
+                    </a>
+                  )}
+                  <button
+                    onClick={() => handleAction(alert.id, "create")}
+                    className="rounded-lg border border-zinc-200 p-1.5 text-zinc-400 hover:bg-emerald-50 hover:text-emerald-600"
+                    title="Create Content"
+                  >
+                    <FileText className="h-3.5 w-3.5" />
+                  </button>
+                  <button
+                    onClick={() => handleAction(alert.id, "engage")}
+                    className="rounded-lg border border-zinc-200 p-1.5 text-zinc-400 hover:bg-blue-50 hover:text-blue-600"
+                    title="Engage"
+                  >
+                    <MessageSquare className="h-3.5 w-3.5" />
+                  </button>
+                  <button
+                    onClick={() => handleAction(alert.id, "dismiss")}
+                    className="rounded-lg border border-zinc-200 p-1.5 text-zinc-400 hover:bg-red-50 hover:text-red-600"
+                    title="Dismiss"
+                  >
+                    <Trash2 className="h-3.5 w-3.5" />
+                  </button>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </>
+  );
+}
+
+// ─── Newsletter Tab ─────────────────────────────────────────
+
+interface Subscriber {
+  id: string;
+  email?: string;
+  name?: string;
+  status?: string;
+  created_at?: string;
+  sections?: unknown[];
+  talking_points?: string[];
+  [key: string]: unknown;
+}
+
+function NewsletterTab() {
+  const [subscriberCount, setSubscriberCount] = useState(0);
+  const [subscribers, setSubscribers] = useState<Subscriber[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function load() {
+      try {
+        const res = await fetch("/api/admin/marketing/newsletter");
+        const data = await res.json();
+        setSubscriberCount(data.subscriberCount || 0);
+        setSubscribers(data.subscribers || []);
+      } catch {
+        // silent
+      } finally {
+        setLoading(false);
+      }
+    }
+    load();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-20">
+        <Loader2 className="h-6 w-6 animate-spin text-zinc-400" />
+      </div>
+    );
+  }
+
+  return (
+    <>
+      {/* Stats */}
+      <div className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-3">
+        <div className="rounded-lg border border-zinc-200 bg-white p-4">
+          <p className="text-xs font-medium text-zinc-500">Total Subscribers</p>
+          <p className="mt-1 text-2xl font-bold text-zinc-900">
+            {subscriberCount.toLocaleString()}
           </p>
         </div>
-      )}
+        <div className="rounded-lg border border-zinc-200 bg-white p-4">
+          <p className="text-xs font-medium text-zinc-500">Active</p>
+          <p className="mt-1 text-2xl font-bold text-zinc-900">
+            {subscribers.filter((s) => s.status === "active" || !s.status).length}
+          </p>
+        </div>
+        <div className="rounded-lg border border-zinc-200 bg-white p-4">
+          <p className="text-xs font-medium text-zinc-500">Recent (7d)</p>
+          <p className="mt-1 text-2xl font-bold text-zinc-900">
+            {
+              subscribers.filter((s) => {
+                if (!s.created_at) return false;
+                const d = new Date(s.created_at);
+                return Date.now() - d.getTime() < 7 * 86400000;
+              }).length
+            }
+          </p>
+        </div>
+      </div>
 
-      {/* Past issues */}
-      {content.filter((c: ContentItem) => c.status === "published").length > 0 && (
-        <div className="mt-8">
-          <h3 className="mb-3 text-sm font-semibold text-zinc-700">
-            Past Issues
-          </h3>
-          <div className="space-y-2">
-            {content
-              .filter((c: ContentItem) => c.status === "published")
-              .map((c: ContentItem) => (
-                <div
-                  key={c.id}
-                  className="flex items-center justify-between rounded-lg border border-zinc-200 bg-white p-3"
-                >
-                  <span className="text-sm text-zinc-700">{c.title}</span>
-                  <span className="text-xs text-zinc-400">
-                    {new Date(c.published_at).toLocaleDateString()}
-                  </span>
-                </div>
+      {/* Subscriber list */}
+      {subscribers.length === 0 ? (
+        <div className="rounded-lg border border-zinc-200 bg-white p-8 text-center text-zinc-500">
+          <Newspaper className="mx-auto mb-3 h-10 w-10 text-zinc-300" />
+          <p className="font-medium text-zinc-700">No Subscribers Yet</p>
+          <p className="mt-1 text-sm">Newsletter subscribers will appear here.</p>
+        </div>
+      ) : (
+        <div className="rounded-lg border border-zinc-200 bg-white overflow-hidden">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="border-b border-zinc-200 bg-zinc-50">
+                <th className="px-4 py-3 text-left font-medium text-zinc-600">Email</th>
+                <th className="px-4 py-3 text-left font-medium text-zinc-600">Name</th>
+                <th className="px-4 py-3 text-left font-medium text-zinc-600">Status</th>
+                <th className="px-4 py-3 text-left font-medium text-zinc-600">Subscribed</th>
+              </tr>
+            </thead>
+            <tbody>
+              {subscribers.map((sub) => (
+                <tr key={sub.id} className="border-b border-zinc-100">
+                  <td className="px-4 py-3 text-zinc-900">{sub.email || "—"}</td>
+                  <td className="px-4 py-3 text-zinc-600">{sub.name || "—"}</td>
+                  <td className="px-4 py-3">
+                    <span
+                      className={`rounded-full px-2 py-0.5 text-xs font-medium ${
+                        sub.status === "active" || !sub.status
+                          ? "bg-green-100 text-green-700"
+                          : "bg-zinc-100 text-zinc-500"
+                      }`}
+                    >
+                      {sub.status || "active"}
+                    </span>
+                  </td>
+                  <td className="px-4 py-3 text-xs text-zinc-500">
+                    {sub.created_at
+                      ? new Date(sub.created_at).toLocaleDateString()
+                      : "—"}
+                  </td>
+                </tr>
               ))}
-          </div>
+            </tbody>
+          </table>
         </div>
       )}
+    </>
+  );
+}
+
+// ─── SEO Tab ────────────────────────────────────────────────
+
+function SEOTab() {
+  return (
+    <div className="rounded-lg border border-zinc-200 bg-white p-8 text-center text-zinc-500">
+      <PenTool className="mx-auto mb-3 h-10 w-10 text-zinc-300" />
+      <p className="font-medium text-zinc-700">SEO Blog Pipeline</p>
+      <p className="mt-1 text-sm">Blog post SEO pipeline and content optimization tools.</p>
     </div>
   );
 }
 
-function AnalyticsTab({
-  content,
-  plans,
-  onRunAnalyst,
-  agentRunning,
-}: {
-  content: ContentItem[];
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  plans: any[];
-  onRunAnalyst: () => void;
-  agentRunning: string | null;
-}) {
-  const published = content.filter((c: ContentItem) => c.status === "published");
-  const totalImpressions = published.reduce(
-    (sum: number, c: ContentItem) => sum + (c.impressions || 0),
-    0
-  );
-  const totalLikes = published.reduce(
-    (sum: number, c: ContentItem) => sum + (c.likes || 0),
-    0
-  );
-  const totalClicks = published.reduce(
-    (sum: number, c: ContentItem) => sum + (c.link_clicks || 0),
-    0
-  );
-  const engagementRate =
-    totalImpressions > 0
-      ? (
-          ((totalLikes +
-            published.reduce(
-              (s: number, c: ContentItem) => s + (c.comments || 0),
-              0
-            )) /
-            totalImpressions) *
-          100
-        ).toFixed(2)
-      : "0.00";
+// ─── Analytics Tab ──────────────────────────────────────────
 
-  const latestAnalysis = plans.find((p) => p.performance_summary);
+interface AnalyticsMetrics {
+  totalViews: number;
+  uniqueVisitors: number;
+  signups: number;
+  conversionRate: number;
+  topReferrers: string[];
+  topPages: string[];
+}
+
+interface PerformanceEntry {
+  id?: string;
+  date?: string;
+  total_views?: number;
+  views?: number;
+  unique_visitors?: number;
+  visitors?: number;
+  signups?: number;
+  conversion_rate?: number;
+  [key: string]: unknown;
+}
+
+function AnalyticsTab() {
+  const [metrics, setMetrics] = useState<AnalyticsMetrics>({
+    totalViews: 0,
+    uniqueVisitors: 0,
+    signups: 0,
+    conversionRate: 0,
+    topReferrers: [],
+    topPages: [],
+  });
+  const [history, setHistory] = useState<PerformanceEntry[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function load() {
+      try {
+        const res = await fetch("/api/admin/marketing/analytics");
+        const data = await res.json();
+        if (data.metrics) setMetrics(data.metrics);
+        setHistory(data.history || []);
+      } catch {
+        // silent
+      } finally {
+        setLoading(false);
+      }
+    }
+    load();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-20">
+        <Loader2 className="h-6 w-6 animate-spin text-zinc-400" />
+      </div>
+    );
+  }
 
   return (
-    <div>
-      <div className="mb-4 flex items-center justify-between">
-        <h2 className="text-lg font-semibold text-zinc-900">Analytics</h2>
-        <button
-          onClick={onRunAnalyst}
-          disabled={agentRunning !== null}
-          className="inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-emerald-700 disabled:opacity-50"
-        >
-          <BarChart3 className="h-4 w-4" />
-          Run Analyst
-        </button>
-      </div>
-
-      {/* Metric cards */}
-      <div className="grid grid-cols-4 gap-4 mb-6">
+    <>
+      {/* Metric Cards */}
+      <div className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
         {[
-          { label: "Impressions", value: totalImpressions.toLocaleString() },
-          { label: "Engagement Rate", value: `${engagementRate}%` },
-          { label: "Link Clicks", value: totalClicks.toLocaleString() },
-          { label: "Published", value: published.length.toString() },
+          { label: "Total Views", value: metrics.totalViews, icon: <Eye className="h-5 w-5 text-blue-500" /> },
+          { label: "Unique Visitors", value: metrics.uniqueVisitors, icon: <Users className="h-5 w-5 text-emerald-500" /> },
+          { label: "Signups", value: metrics.signups, icon: <ThumbsUp className="h-5 w-5 text-purple-500" /> },
+          {
+            label: "Conversion Rate",
+            value: `${(metrics.conversionRate * 100).toFixed(1)}%`,
+            icon: <TrendingUp className="h-5 w-5 text-amber-500" />,
+          },
         ].map((m) => (
-          <div
-            key={m.label}
-            className="rounded-lg border border-zinc-200 bg-white p-4"
-          >
-            <p className="text-xs font-medium text-zinc-500">{m.label}</p>
-            <p className="mt-1 text-2xl font-bold text-zinc-900">{m.value}</p>
+          <div key={m.label} className="rounded-lg border border-zinc-200 bg-white p-4">
+            <div className="flex items-center gap-2">
+              {m.icon}
+              <p className="text-xs font-medium text-zinc-500">{m.label}</p>
+            </div>
+            <p className="mt-2 text-2xl font-bold text-zinc-900">
+              {typeof m.value === "number" ? m.value.toLocaleString() : m.value}
+            </p>
           </div>
         ))}
       </div>
 
-      {/* Platform comparison */}
-      <div className="rounded-lg border border-zinc-200 bg-white p-4 mb-6">
-        <h3 className="mb-3 text-sm font-semibold text-zinc-700">
-          Content by Platform
-        </h3>
-        <div className="space-y-2">
-          {["instagram", "twitter", "linkedin", "youtube"].map((platform) => {
-            const count = published.filter(
-              (c: ContentItem) => c.scheduled_platform === platform
-            ).length;
-            const maxCount = Math.max(
-              published.length || 1,
-              1
-            );
-            return (
-              <div key={platform} className="flex items-center gap-3">
-                <span className="w-20 text-xs text-zinc-500 capitalize">
-                  {platform}
-                </span>
-                <div className="flex-1 h-5 rounded-full bg-zinc-100">
-                  <div
-                    className="h-5 rounded-full bg-emerald-500"
-                    style={{
-                      width: `${(count / maxCount) * 100}%`,
-                      minWidth: count > 0 ? "8px" : "0",
-                    }}
-                  />
-                </div>
-                <span className="w-8 text-right text-xs text-zinc-500">
-                  {count}
-                </span>
-              </div>
-            );
-          })}
+      {/* History table */}
+      {history.length > 0 && (
+        <div className="rounded-lg border border-zinc-200 bg-white overflow-hidden">
+          <div className="border-b border-zinc-200 px-4 py-3">
+            <h3 className="text-sm font-medium text-zinc-700">Performance History</h3>
+          </div>
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b border-zinc-200 bg-zinc-50">
+                  <th className="px-4 py-2 text-left font-medium text-zinc-600">Date</th>
+                  <th className="px-4 py-2 text-right font-medium text-zinc-600">Views</th>
+                  <th className="px-4 py-2 text-right font-medium text-zinc-600">Visitors</th>
+                  <th className="px-4 py-2 text-right font-medium text-zinc-600">Signups</th>
+                </tr>
+              </thead>
+              <tbody>
+                {history.slice(0, 14).map((entry, i) => (
+                  <tr key={entry.id || i} className="border-b border-zinc-100">
+                    <td className="px-4 py-2 text-zinc-700">
+                      {entry.date
+                        ? new Date(entry.date).toLocaleDateString()
+                        : "—"}
+                    </td>
+                    <td className="px-4 py-2 text-right text-zinc-600">
+                      {(entry.total_views || entry.views || 0).toLocaleString()}
+                    </td>
+                    <td className="px-4 py-2 text-right text-zinc-600">
+                      {(entry.unique_visitors || entry.visitors || 0).toLocaleString()}
+                    </td>
+                    <td className="px-4 py-2 text-right text-zinc-600">
+                      {(entry.signups || 0).toLocaleString()}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
-      </div>
+      )}
 
-      {/* Pillar performance */}
-      <div className="rounded-lg border border-zinc-200 bg-white p-4 mb-6">
-        <h3 className="mb-3 text-sm font-semibold text-zinc-700">
-          Content by Pillar
-        </h3>
-        <div className="grid grid-cols-4 gap-3">
-          {Object.entries(PILLAR_COLORS).map(([pillar, colorClass]) => {
-            const count = content.filter(
-              (c: ContentItem) => c.pillar === pillar
-            ).length;
-            return (
-              <div
-                key={pillar}
-                className="rounded-lg border border-zinc-100 p-3 text-center"
-              >
-                <span
-                  className={`inline-block rounded-full px-2 py-0.5 text-xs font-medium ${colorClass}`}
-                >
-                  {pillar.replace(/_/g, " ")}
-                </span>
-                <p className="mt-1 text-lg font-bold text-zinc-900">{count}</p>
-              </div>
-            );
-          })}
-        </div>
-      </div>
-
-      {/* Top performers */}
-      <div className="rounded-lg border border-zinc-200 bg-white p-4 mb-6">
-        <h3 className="mb-3 text-sm font-semibold text-zinc-700">
-          Top Performing Content
-        </h3>
-        {published.length === 0 ? (
-          <p className="text-sm text-zinc-400">No published content yet.</p>
-        ) : (
-          <div className="space-y-2">
-            {published
-              .sort(
-                (a: ContentItem, b: ContentItem) =>
-                  (b.impressions || 0) - (a.impressions || 0)
-              )
-              .slice(0, 5)
-              .map((c: ContentItem) => (
-                <div
-                  key={c.id}
-                  className="flex items-center justify-between rounded border border-zinc-100 p-2"
-                >
-                  <span className="text-sm text-zinc-700 truncate max-w-[60%]">
-                    {c.title}
-                  </span>
-                  <span className="text-xs text-zinc-400">
-                    {(c.impressions || 0).toLocaleString()} impressions
-                  </span>
-                </div>
+      {/* Breakdowns */}
+      <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2">
+        {metrics.topReferrers.length > 0 && (
+          <div className="rounded-lg border border-zinc-200 bg-white p-4">
+            <h3 className="mb-2 text-sm font-medium text-zinc-700">Top Referrers</h3>
+            <ul className="space-y-1">
+              {metrics.topReferrers.map((r, i) => (
+                <li key={i} className="text-xs text-zinc-600">{r}</li>
               ))}
+            </ul>
+          </div>
+        )}
+        {metrics.topPages.length > 0 && (
+          <div className="rounded-lg border border-zinc-200 bg-white p-4">
+            <h3 className="mb-2 text-sm font-medium text-zinc-700">Top Pages</h3>
+            <ul className="space-y-1">
+              {metrics.topPages.map((p, i) => (
+                <li key={i} className="text-xs text-zinc-600">{p}</li>
+              ))}
+            </ul>
           </div>
         )}
       </div>
 
-      {/* Latest analysis */}
-      {latestAnalysis?.performance_summary && (
-        <div className="rounded-lg border border-zinc-200 bg-white p-4 mb-6">
-          <h3 className="mb-3 text-sm font-semibold text-zinc-700">
-            Latest Analysis
-          </h3>
-          <pre className="max-h-64 overflow-auto rounded bg-zinc-50 p-3 text-xs text-zinc-600">
-            {JSON.stringify(latestAnalysis.performance_summary, null, 2)}
-          </pre>
+      {history.length === 0 && metrics.totalViews === 0 && (
+        <div className="rounded-lg border border-zinc-200 bg-white p-8 text-center text-zinc-500">
+          <BarChart3 className="mx-auto mb-3 h-10 w-10 text-zinc-300" />
+          <p className="font-medium text-zinc-700">No Analytics Data</p>
+          <p className="mt-1 text-sm">Performance data will appear here as it is collected.</p>
         </div>
       )}
-
-      {/* Referral Section */}
-      <ReferralAnalyticsSection />
-    </div>
+    </>
   );
 }
 
-function ReferralAnalyticsSection() {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const [stats, setStats] = useState<any>(null);
+// ─── Settings Tab ───────────────────────────────────────────
 
-  useEffect(() => {
-    // Fetch referral performance data from marketing_performance
-    const supabase = createClient();
-    supabase
-      .from("marketing_performance")
-      .select("*")
-      .eq("platform", "referral")
-      .order("metric_date", { ascending: false })
-      .limit(1)
-      .single()
-      .then(({ data }) => {
-        if (data) setStats(data);
-      });
-  }, []);
-
-  // Fetch leaderboard
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const [leaderboard, setLeaderboard] = useState<any[]>([]);
-  useEffect(() => {
-    const supabase = createClient();
-    supabase
-      .from("referral_codes")
-      .select("user_id, code, clicks")
-      .order("clicks", { ascending: false })
-      .limit(10)
-      .then(({ data }) => {
-        if (data) setLeaderboard(data);
-      });
-  }, []);
-
-  return (
-    <div className="rounded-lg border border-zinc-200 bg-white p-4">
-      <h3 className="mb-3 text-sm font-semibold text-zinc-700 flex items-center gap-2">
-        <Link2 className="h-4 w-4 text-purple-600" />
-        Referrals
-      </h3>
-      <div className="grid grid-cols-4 gap-3 mb-4">
-        <div className="rounded-lg bg-zinc-50 p-3">
-          <div className="text-2xl font-bold text-zinc-900">{stats?.likes || 0}</div>
-          <div className="text-xs text-zinc-500">Total referrals</div>
-        </div>
-        <div className="rounded-lg bg-zinc-50 p-3">
-          <div className="text-2xl font-bold text-zinc-900">{stats?.shares || 0}</div>
-          <div className="text-xs text-zinc-500">This week</div>
-        </div>
-        <div className="rounded-lg bg-zinc-50 p-3">
-          <div className="text-2xl font-bold text-emerald-600">{stats?.comments || 0}</div>
-          <div className="text-xs text-zinc-500">Active referrals</div>
-        </div>
-        <div className="rounded-lg bg-zinc-50 p-3">
-          <div className="text-2xl font-bold text-zinc-900">
-            {stats && stats.impressions > 0
-              ? (stats.likes / stats.impressions).toFixed(2)
-              : "0.00"}
-          </div>
-          <div className="text-xs text-zinc-500">Viral coefficient</div>
-        </div>
-      </div>
-      {leaderboard.length > 0 && (
-        <div>
-          <h4 className="text-xs font-semibold text-zinc-500 mb-2">Top Referrers</h4>
-          <div className="space-y-1">
-            {leaderboard.map((r, i) => (
-              <div key={r.code} className="flex items-center justify-between rounded bg-zinc-50 px-3 py-2 text-xs">
-                <span className="text-zinc-400 font-mono w-6">{i + 1}.</span>
-                <span className="text-zinc-600 font-mono flex-1">{r.code}</span>
-                <span className="text-zinc-700 font-medium">{r.clicks || 0} clicks</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-      <div className="mt-3 flex items-center gap-2 text-xs text-zinc-400">
-        <Gift className="h-3.5 w-3.5" />
-        Reward status: <span className="font-medium text-zinc-600">Off (pre-launch)</span>
-      </div>
-    </div>
-  );
+interface MarketingSettings {
+  anthropicKeyConfigured: boolean;
+  supabaseConfigured: boolean;
+  serviceRoleConfigured: boolean;
+  senderEmail: string;
+  schedules: Record<string, string>;
 }
 
-function SEOTab({
-  onRunSEOWriter,
-  agentRunning,
-}: {
-  onRunSEOWriter: (keyword: string) => void;
-  agentRunning: string | null;
-}) {
-  const [keyword, setKeyword] = useState("");
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const [posts, setPosts] = useState<any[]>([]);
-  const [postsLoading, setPostsLoading] = useState(true);
+const AGENT_CRON_ENDPOINTS: Record<string, string> = {
+  scoutAgent: "/api/cron/scout",
+  strategistAgent: "/api/cron/strategist",
+  contentAgent: "/api/cron/writer",
+};
+
+function SettingsTab() {
+  const [settings, setSettings] = useState<MarketingSettings | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [agentStatus, setAgentStatus] = useState<Record<string, "idle" | "running" | "done" | "error">>({});
 
   useEffect(() => {
-    fetch("/api/admin/marketing/seo-writer")
-      .then((r) => r.json())
-      .then((d) => setPosts(d.posts || []))
-      .catch(() => {})
-      .finally(() => setPostsLoading(false));
-  }, [agentRunning]);
+    async function load() {
+      try {
+        const res = await fetch("/api/admin/marketing/settings");
+        const data = await res.json();
+        setSettings(data.settings || null);
+      } catch {
+        // silent
+      } finally {
+        setLoading(false);
+      }
+    }
+    load();
+  }, []);
 
-  async function updatePostStatus(id: string, status: string) {
-    const res = await fetch("/api/admin/marketing/seo-writer", {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ id, status }),
-    });
-    if (res.ok) {
-      const { post } = await res.json();
-      setPosts((prev) => prev.map((p) => (p.id === id ? post : p)));
+  async function runAgent(agentKey: string) {
+    const endpoint = AGENT_CRON_ENDPOINTS[agentKey];
+    if (!endpoint) return;
+
+    setAgentStatus((prev) => ({ ...prev, [agentKey]: "running" }));
+    try {
+      const res = await fetch(endpoint, { method: "POST" });
+      if (res.ok) {
+        setAgentStatus((prev) => ({ ...prev, [agentKey]: "done" }));
+        setTimeout(() => {
+          setAgentStatus((prev) => ({ ...prev, [agentKey]: "idle" }));
+        }, 3000);
+      } else {
+        setAgentStatus((prev) => ({ ...prev, [agentKey]: "error" }));
+        setTimeout(() => {
+          setAgentStatus((prev) => ({ ...prev, [agentKey]: "idle" }));
+        }, 3000);
+      }
+    } catch {
+      setAgentStatus((prev) => ({ ...prev, [agentKey]: "error" }));
+      setTimeout(() => {
+        setAgentStatus((prev) => ({ ...prev, [agentKey]: "idle" }));
+      }, 3000);
     }
   }
 
-  const drafts = posts.filter((p) => p.status === "draft");
-  const inReview = posts.filter((p) => p.status === "review");
-  const published = posts.filter((p) => p.status === "published");
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-20">
+        <Loader2 className="h-6 w-6 animate-spin text-zinc-400" />
+      </div>
+    );
+  }
+
+  if (!settings) {
+    return (
+      <div className="rounded-lg border border-zinc-200 bg-white p-8 text-center text-zinc-500">
+        <Settings className="mx-auto mb-3 h-10 w-10 text-zinc-300" />
+        <p className="font-medium text-zinc-700">Settings Unavailable</p>
+        <p className="mt-1 text-sm">Could not load settings.</p>
+      </div>
+    );
+  }
 
   return (
-    <div>
-      <div className="flex items-center justify-between mb-6">
-        <h2 className="text-lg font-semibold text-zinc-900">SEO Blog Posts</h2>
-        <div className="flex items-center gap-2">
-          <input
-            type="text"
-            value={keyword}
-            onChange={(e) => setKeyword(e.target.value)}
-            placeholder="Target keyword..."
-            className="rounded-lg border border-zinc-300 px-3 py-2 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
-          />
-          <button
-            onClick={() => {
-              onRunSEOWriter(keyword || "");
-              setKeyword("");
-            }}
-            disabled={agentRunning === "seo-writer"}
-            className="inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-700 disabled:opacity-50"
-          >
-            {agentRunning === "seo-writer" ? (
-              <Loader2 className="h-4 w-4 animate-spin" />
-            ) : (
-              <Pencil className="h-4 w-4" />
-            )}
-            Generate Post
-          </button>
+    <div className="space-y-6">
+      {/* Schedule Overview */}
+      <div className="rounded-lg border border-zinc-200 bg-white p-5">
+        <h3 className="mb-3 flex items-center gap-2 text-sm font-semibold text-zinc-900">
+          <Clock className="h-4 w-4 text-zinc-400" />
+          Agent Schedules
+        </h3>
+        <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+          {Object.entries(settings.schedules).map(([agent, schedule]) => {
+            const status = agentStatus[agent] || "idle";
+            const hasCron = !!AGENT_CRON_ENDPOINTS[agent];
+            return (
+              <div key={agent} className="flex items-center justify-between rounded-md border border-zinc-100 p-3">
+                <div className="flex flex-col">
+                  <span className="text-sm text-zinc-700 capitalize">
+                    {agent.replace(/([A-Z])/g, " $1").trim()}
+                  </span>
+                  <span className="text-xs text-zinc-500">{schedule}</span>
+                </div>
+                {hasCron && (
+                  <button
+                    onClick={() => runAgent(agent)}
+                    disabled={status === "running"}
+                    className={`flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-xs font-medium transition-colors ${
+                      status === "running"
+                        ? "cursor-not-allowed bg-zinc-100 text-zinc-400"
+                        : status === "done"
+                          ? "bg-green-50 text-green-700"
+                          : status === "error"
+                            ? "bg-red-50 text-red-700"
+                            : "bg-emerald-50 text-emerald-700 hover:bg-emerald-100"
+                    }`}
+                  >
+                    {status === "running" ? (
+                      <>
+                        <Loader2 className="h-3 w-3 animate-spin" />
+                        Running...
+                      </>
+                    ) : status === "done" ? (
+                      <>
+                        <CheckCircle2 className="h-3 w-3" />
+                        Done
+                      </>
+                    ) : status === "error" ? (
+                      <>
+                        <AlertCircle className="h-3 w-3" />
+                        Failed
+                      </>
+                    ) : (
+                      <>
+                        <Play className="h-3 w-3" />
+                        Run Now
+                      </>
+                    )}
+                  </button>
+                )}
+              </div>
+            );
+          })}
         </div>
       </div>
 
-      {postsLoading ? (
-        <div className="flex justify-center py-12">
-          <Loader2 className="h-6 w-6 animate-spin text-zinc-400" />
-        </div>
-      ) : (
-        <div className="grid grid-cols-3 gap-6">
-          {/* Draft column */}
-          <div>
-            <h3 className="mb-3 text-sm font-semibold text-zinc-500 uppercase tracking-wider">
-              Draft ({drafts.length})
-            </h3>
-            <div className="space-y-3">
-              {drafts.map((post) => (
-                <SEOPostCard key={post.id} post={post} onStatusChange={updatePostStatus} />
-              ))}
-            </div>
-          </div>
-          {/* Review column */}
-          <div>
-            <h3 className="mb-3 text-sm font-semibold text-amber-600 uppercase tracking-wider">
-              Review ({inReview.length})
-            </h3>
-            <div className="space-y-3">
-              {inReview.map((post) => (
-                <SEOPostCard key={post.id} post={post} onStatusChange={updatePostStatus} />
-              ))}
-            </div>
-          </div>
-          {/* Published column */}
-          <div>
-            <h3 className="mb-3 text-sm font-semibold text-emerald-600 uppercase tracking-wider">
-              Published ({published.length})
-            </h3>
-            <div className="space-y-3">
-              {published.map((post) => (
-                <SEOPostCard key={post.id} post={post} onStatusChange={updatePostStatus} />
-              ))}
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
-  );
-}
-
-function SEOPostCard({
-  post,
-  onStatusChange,
-}: {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  post: any;
-  onStatusChange: (id: string, status: string) => void;
-}) {
-  return (
-    <div className="rounded-lg border border-zinc-200 bg-white p-4">
-      <h4 className="text-sm font-semibold text-zinc-900 line-clamp-2">{post.title}</h4>
-      <div className="mt-1 text-xs text-emerald-600">{post.target_keyword}</div>
-      <div className="mt-2 flex items-center gap-2 text-xs text-zinc-400">
-        <span>{post.word_count} words</span>
-        {post.page_views > 0 && (
-          <>
-            <span>&bull;</span>
-            <span>{post.page_views} views</span>
-          </>
-        )}
-        {post.published_at && (
-          <>
-            <span>&bull;</span>
-            <span>{new Date(post.published_at).toLocaleDateString()}</span>
-          </>
-        )}
-      </div>
-      <div className="mt-3 flex gap-2">
-        {post.status === "draft" && (
-          <button
-            onClick={() => onStatusChange(post.id, "review")}
-            className="rounded bg-amber-100 px-2 py-1 text-xs font-medium text-amber-700 hover:bg-amber-200"
-          >
-            Send to Review
-          </button>
-        )}
-        {post.status === "review" && (
-          <button
-            onClick={() => onStatusChange(post.id, "published")}
-            className="rounded bg-emerald-100 px-2 py-1 text-xs font-medium text-emerald-700 hover:bg-emerald-200"
-          >
-            Mark Published
-          </button>
-        )}
-        {post.status === "published" && post.slug && (
-          <a
-            href={`/blog/${post.slug}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-1 rounded bg-zinc-100 px-2 py-1 text-xs font-medium text-zinc-600 hover:bg-zinc-200"
-          >
-            <ExternalLink className="h-3 w-3" />
-            View
-          </a>
-        )}
-      </div>
-    </div>
-  );
-}
-
-function SettingsTab({
-  onRunOnboarding,
-  onRunReactivation,
-  onRunReferralTracker,
-  agentRunning,
-}: {
-  onRunOnboarding: () => void;
-  onRunReactivation: () => void;
-  onRunReferralTracker: () => void;
-  agentRunning: string | null;
-}) {
-  const [bufferKey, setBufferKey] = useState("");
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const [onboardingStats, setOnboardingStats] = useState<any>(null);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const [reactivationStats, setReactivationStats] = useState<any>(null);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const [referralStats, setReferralStats] = useState<any>(null);
-
-  useEffect(() => {
-    fetch("/api/admin/marketing/onboarding")
-      .then((r) => r.json())
-      .then(setOnboardingStats)
-      .catch(() => {});
-    fetch("/api/admin/marketing/reactivation")
-      .then((r) => r.json())
-      .then(setReactivationStats)
-      .catch(() => {});
-  }, [agentRunning]);
-
-  return (
-    <div className="max-w-2xl">
-      <h2 className="mb-4 text-lg font-semibold text-zinc-900">Settings</h2>
-
-      <div className="space-y-6">
-        {/* Onboarding Card */}
-        <div className="rounded-lg border border-zinc-200 bg-white p-4">
-          <div className="flex items-center justify-between mb-3">
-            <h3 className="text-sm font-semibold text-zinc-700 flex items-center gap-2">
-              <UserPlus className="h-4 w-4 text-emerald-600" />
-              Onboarding
-            </h3>
-            <button
-              onClick={onRunOnboarding}
-              disabled={agentRunning === "onboarding"}
-              className="inline-flex items-center gap-1.5 rounded-lg bg-emerald-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-emerald-700 disabled:opacity-50"
-            >
-              {agentRunning === "onboarding" ? (
-                <Loader2 className="h-3.5 w-3.5 animate-spin" />
+      {/* API Key Status */}
+      <div className="rounded-lg border border-zinc-200 bg-white p-5">
+        <h3 className="mb-3 flex items-center gap-2 text-sm font-semibold text-zinc-900">
+          <Key className="h-4 w-4 text-zinc-400" />
+          API Key Status
+        </h3>
+        <div className="space-y-2">
+          {[
+            { label: "Anthropic API Key", ok: settings.anthropicKeyConfigured },
+            { label: "Supabase Connection", ok: settings.supabaseConfigured },
+            { label: "Service Role Key", ok: settings.serviceRoleConfigured },
+          ].map((item) => (
+            <div key={item.label} className="flex items-center gap-2">
+              {item.ok ? (
+                <CheckCircle2 className="h-4 w-4 text-green-500" />
               ) : (
-                <Play className="h-3.5 w-3.5" />
+                <AlertCircle className="h-4 w-4 text-red-500" />
               )}
-              Run
-            </button>
-          </div>
-          {onboardingStats && (
-            <div className="grid grid-cols-2 gap-3">
-              <div className="rounded-lg bg-zinc-50 p-3">
-                <div className="text-2xl font-bold text-zinc-900">{onboardingStats.total_in_sequence || 0}</div>
-                <div className="text-xs text-zinc-500">Users in sequence</div>
-              </div>
-              <div className="rounded-lg bg-zinc-50 p-3">
-                <div className="text-2xl font-bold text-emerald-600">{onboardingStats.completion_rate || 0}%</div>
-                <div className="text-xs text-zinc-500">Completion rate</div>
-              </div>
-              <div className="rounded-lg bg-zinc-50 p-3 col-span-2">
-                <div className="flex justify-between text-xs text-zinc-600">
-                  <span>Day 0: {onboardingStats.day0_sent || 0}</span>
-                  <span>Day 3: {onboardingStats.day3_sent || 0}</span>
-                  <span>Day 7: {onboardingStats.day7_sent || 0}</span>
-                  <span className="text-emerald-600 font-medium">Completed: {onboardingStats.completed || 0}</span>
-                </div>
-              </div>
-            </div>
-          )}
-        </div>
-
-        {/* Reactivation Card */}
-        <div className="rounded-lg border border-zinc-200 bg-white p-4">
-          <div className="flex items-center justify-between mb-3">
-            <h3 className="text-sm font-semibold text-zinc-700 flex items-center gap-2">
-              <RefreshCw className="h-4 w-4 text-amber-600" />
-              Reactivation
-            </h3>
-            <button
-              onClick={onRunReactivation}
-              disabled={agentRunning === "reactivation"}
-              className="inline-flex items-center gap-1.5 rounded-lg bg-emerald-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-emerald-700 disabled:opacity-50"
-            >
-              {agentRunning === "reactivation" ? (
-                <Loader2 className="h-3.5 w-3.5 animate-spin" />
-              ) : (
-                <Play className="h-3.5 w-3.5" />
-              )}
-              Run
-            </button>
-          </div>
-          {reactivationStats && (
-            <div className="space-y-3">
-              <div className="grid grid-cols-2 gap-3">
-                <div className="rounded-lg bg-zinc-50 p-3">
-                  <div className="text-2xl font-bold text-zinc-900">{reactivationStats.dormant_users || 0}</div>
-                  <div className="text-xs text-zinc-500">Dormant users</div>
-                </div>
-                <div className="rounded-lg bg-zinc-50 p-3">
-                  <div className="text-2xl font-bold text-zinc-900">{reactivationStats.emails_this_month || 0}</div>
-                  <div className="text-xs text-zinc-500">Emails this month</div>
-                </div>
-                <div className="rounded-lg bg-zinc-50 p-3">
-                  <div className="text-2xl font-bold text-emerald-600">{reactivationStats.reactivation_rate || 0}%</div>
-                  <div className="text-xs text-zinc-500">Reactivation rate</div>
-                </div>
-                <div className="rounded-lg bg-zinc-50 p-3">
-                  <div className="text-2xl font-bold text-red-600">{reactivationStats.churned_users || 0}</div>
-                  <div className="text-xs text-zinc-500">Churned</div>
-                </div>
-              </div>
-              {reactivationStats.recent_emails?.length > 0 && (
-                <div>
-                  <h4 className="text-xs font-semibold text-zinc-500 mb-2">Recent Emails</h4>
-                  <div className="space-y-1">
-                    {reactivationStats.recent_emails.slice(0, 5).map((e: { id: string; email: string; email_subject: string; opened: boolean; clicked: boolean; email_sent_at: string }) => (
-                      <div key={e.id} className="flex items-center justify-between rounded bg-zinc-50 px-3 py-2 text-xs">
-                        <span className="text-zinc-700 truncate max-w-[180px]">{e.email}</span>
-                        <span className="text-zinc-500 truncate max-w-[150px]">{e.email_subject}</span>
-                        <div className="flex gap-1.5">
-                          {e.opened && <span className="text-emerald-600">opened</span>}
-                          {e.clicked && <span className="text-blue-600">clicked</span>}
-                          {!e.opened && !e.clicked && <span className="text-zinc-400">sent</span>}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
-          )}
-        </div>
-
-        {/* Referral Tracker Card */}
-        <div className="rounded-lg border border-zinc-200 bg-white p-4">
-          <div className="flex items-center justify-between mb-3">
-            <h3 className="text-sm font-semibold text-zinc-700 flex items-center gap-2">
-              <Gift className="h-4 w-4 text-purple-600" />
-              Referral Tracker
-            </h3>
-            <button
-              onClick={onRunReferralTracker}
-              disabled={agentRunning === "referral-tracker"}
-              className="inline-flex items-center gap-1.5 rounded-lg bg-emerald-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-emerald-700 disabled:opacity-50"
-            >
-              {agentRunning === "referral-tracker" ? (
-                <Loader2 className="h-3.5 w-3.5 animate-spin" />
-              ) : (
-                <Play className="h-3.5 w-3.5" />
-              )}
-              Run
-            </button>
-          </div>
-          <p className="text-xs text-zinc-500">Processes referral stats daily. Reward status: <span className="font-medium text-zinc-700">Off (pre-launch)</span></p>
-        </div>
-
-        <div className="rounded-lg border border-zinc-200 bg-white p-4">
-          <h3 className="mb-3 text-sm font-semibold text-zinc-700">
-            API Keys
-          </h3>
-          <label className="block text-sm font-medium text-zinc-600">
-            Buffer API Key
-          </label>
-          <input
-            type="password"
-            value={bufferKey}
-            onChange={(e) => setBufferKey(e.target.value)}
-            placeholder="Enter Buffer API key..."
-            className="mt-1 block w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
-          />
-          <p className="mt-1 text-xs text-zinc-400">
-            Used for auto-publishing to social platforms (future feature)
-          </p>
-        </div>
-
-        <div className="rounded-lg border border-zinc-200 bg-white p-4">
-          <h3 className="mb-3 text-sm font-semibold text-zinc-700">
-            Agent Schedules (UTC)
-          </h3>
-          <div className="space-y-2 text-sm text-zinc-600">
-            <div className="flex justify-between">
-              <span>Strategist</span>
-              <span className="text-xs text-zinc-400">Mon 6 AM CT (11:00 UTC)</span>
-            </div>
-            <div className="flex justify-between">
-              <span>Scout</span>
-              <span className="text-xs text-zinc-400">Daily 7 AM CT (12:00 UTC)</span>
-            </div>
-            <div className="flex justify-between">
-              <span>Writer</span>
-              <span className="text-xs text-zinc-400">Daily 10 AM CT (15:00 UTC)</span>
-            </div>
-            <div className="flex justify-between">
-              <span>Distributor</span>
-              <span className="text-xs text-zinc-400">Daily 6 AM + 5 PM CT</span>
-            </div>
-            <div className="flex justify-between">
-              <span>Analyst</span>
-              <span className="text-xs text-zinc-400">Fri 6 PM CT (23:00 UTC)</span>
-            </div>
-            <div className="flex justify-between">
-              <span>Partnerships</span>
-              <span className="text-xs text-zinc-400">Daily 9 AM CT (14:00 UTC)</span>
-            </div>
-            <div className="flex justify-between">
-              <span>Newsletter</span>
-              <span className="text-xs text-zinc-400">Sat 10 AM CT (15:00 UTC)</span>
-            </div>
-            <div className="flex justify-between border-t border-zinc-100 pt-2 mt-2">
-              <span>Onboarding</span>
-              <span className="text-xs text-zinc-400">Daily 8 AM CT (13:00 UTC)</span>
-            </div>
-            <div className="flex justify-between">
-              <span>Reactivation</span>
-              <span className="text-xs text-zinc-400">Mon 9 AM CT (14:00 UTC)</span>
-            </div>
-            <div className="flex justify-between">
-              <span>SEO Writer</span>
-              <span className="text-xs text-zinc-400">Wed 11 AM CT (16:00 UTC)</span>
-            </div>
-            <div className="flex justify-between">
-              <span>Referral Tracker</span>
-              <span className="text-xs text-zinc-400">Daily 6 AM CT (11:00 UTC)</span>
-            </div>
-          </div>
-        </div>
-
-        <div className="rounded-lg border border-zinc-200 bg-white p-4">
-          <h3 className="mb-3 text-sm font-semibold text-zinc-700">
-            Admin Access
-          </h3>
-          <p className="text-sm text-zinc-500">
-            Admin email: graybfrank@gmail.com
-          </p>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-/* ===================== MODALS ===================== */
-
-function ContentModal({
-  content,
-  onClose,
-  onStatusChange,
-}: {
-  content: ContentItem;
-  onClose: () => void;
-  onStatusChange: (status: string) => void;
-}) {
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-      <div className="max-h-[90vh] w-full max-w-3xl overflow-auto rounded-xl bg-white shadow-xl">
-        <div className="flex items-center justify-between border-b border-zinc-200 p-4">
-          <div>
-            <h2 className="text-lg font-semibold text-zinc-900">
-              {content.title}
-            </h2>
-            <div className="mt-1 flex items-center gap-2">
+              <span className="text-sm text-zinc-700">{item.label}</span>
               <span
-                className={`rounded-full px-2 py-0.5 text-xs font-medium ${
-                  PILLAR_COLORS[content.pillar] || PILLAR_COLORS.general
+                className={`ml-auto text-xs font-medium ${
+                  item.ok ? "text-green-600" : "text-red-600"
                 }`}
               >
-                {content.pillar}
+                {item.ok ? "Configured" : "Missing"}
               </span>
-              <span className="rounded-full bg-zinc-100 px-2 py-0.5 text-xs text-zinc-500">
-                {content.status}
-              </span>
-              {content.scheduled_platform && (
-                <span className="text-xs text-zinc-400">
-                  {content.scheduled_platform}
-                </span>
-              )}
             </div>
-          </div>
-          <button
-            onClick={onClose}
-            className="rounded-lg p-2 text-zinc-400 hover:bg-zinc-100"
-          >
-            <X className="h-5 w-5" />
-          </button>
+          ))}
         </div>
+      </div>
 
-        <div className="space-y-4 p-4">
-          {content.instagram_caption && (
-            <ContentSection title="Instagram Caption" content={content.instagram_caption} />
-          )}
-          {content.instagram_carousel && (
-            <ContentSection
-              title="Instagram Carousel"
-              content={JSON.stringify(content.instagram_carousel, null, 2)}
-              isJSON
-            />
-          )}
-          {content.instagram_reel_script && (
-            <ContentSection title="Instagram Reel Script" content={content.instagram_reel_script} />
-          )}
-          {content.twitter_standalone && (
-            <ContentSection title="Twitter" content={content.twitter_standalone} />
-          )}
-          {content.twitter_thread && (
-            <ContentSection
-              title="Twitter Thread"
-              content={JSON.stringify(content.twitter_thread, null, 2)}
-              isJSON
-            />
-          )}
-          {content.linkedin_post && (
-            <ContentSection title="LinkedIn" content={content.linkedin_post} />
-          )}
-          {content.youtube_short_script && (
-            <ContentSection title="YouTube Short" content={content.youtube_short_script} />
-          )}
-          {content.email_segment && (
-            <ContentSection title="Email Segment" content={content.email_segment} />
-          )}
-          {content.visual_brief && (
-            <ContentSection
-              title="Visual Brief"
-              content={JSON.stringify(content.visual_brief, null, 2)}
-              isJSON
-            />
-          )}
+      {/* Sender info */}
+      <div className="rounded-lg border border-zinc-200 bg-white p-5">
+        <h3 className="mb-3 flex items-center gap-2 text-sm font-semibold text-zinc-900">
+          <Mail className="h-4 w-4 text-zinc-400" />
+          Outreach Configuration
+        </h3>
+        <div className="flex items-center gap-2">
+          <span className="text-sm text-zinc-500">Sender Email:</span>
+          <span className="text-sm font-medium text-zinc-900">{settings.senderEmail}</span>
         </div>
+      </div>
 
-        <div className="flex gap-2 border-t border-zinc-200 p-4">
-          {content.status !== "approved" && (
+      {/* Growth Campaigns */}
+      <GrowthCampaigns />
+    </div>
+  );
+}
+
+// ─── Growth Campaigns ────────────────────────────────────────
+
+type GrowthTab = "onboarding" | "reactivation" | "referral";
+
+interface EmailTemplate {
+  id: string;
+  category: string;
+  day?: number;
+  milestone?: number;
+  subject: string;
+  body: string;
+  updated_at?: string;
+}
+
+function GrowthCampaigns() {
+  const [activeTab, setActiveTab] = useState<GrowthTab>("onboarding");
+
+  const tabs: { key: GrowthTab; label: string; icon: React.ReactNode }[] = [
+    { key: "onboarding", label: "Onboarding", icon: <Zap className="h-3.5 w-3.5" /> },
+    { key: "reactivation", label: "Reactivation", icon: <RefreshCw className="h-3.5 w-3.5" /> },
+    { key: "referral", label: "Referral", icon: <Gift className="h-3.5 w-3.5" /> },
+  ];
+
+  return (
+    <div className="rounded-lg border border-zinc-200 bg-white">
+      <div className="border-b border-zinc-200 px-5 pt-4">
+        <h3 className="mb-3 flex items-center gap-2 text-sm font-semibold text-zinc-900">
+          <TrendingUp className="h-4 w-4 text-zinc-400" />
+          Growth Campaigns
+        </h3>
+        <nav className="-mb-px flex gap-3">
+          {tabs.map((tab) => (
             <button
-              onClick={() => onStatusChange("approved")}
-              className="inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-700"
+              key={tab.key}
+              onClick={() => setActiveTab(tab.key)}
+              className={`flex items-center gap-1.5 border-b-2 px-1 pb-2 text-xs font-medium transition-colors ${
+                activeTab === tab.key
+                  ? "border-emerald-600 text-emerald-600"
+                  : "border-transparent text-zinc-500 hover:border-zinc-300 hover:text-zinc-700"
+              }`}
             >
-              <Check className="h-4 w-4" />
-              Approve
+              {tab.icon}
+              {tab.label}
             </button>
-          )}
-          {content.status === "approved" && (
-            <button
-              onClick={() => onStatusChange("scheduled")}
-              className="inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-700"
-            >
-              <Clock className="h-4 w-4" />
-              Schedule
-            </button>
-          )}
-          <button
-            onClick={() => onStatusChange("review")}
-            className="inline-flex items-center gap-2 rounded-lg border border-zinc-200 px-4 py-2 text-sm font-medium text-zinc-600 hover:bg-zinc-50"
-          >
-            <Eye className="h-4 w-4" />
-            Send to Review
-          </button>
-        </div>
+          ))}
+        </nav>
+      </div>
+      <div className="p-5">
+        {activeTab === "onboarding" && <OnboardingCampaign />}
+        {activeTab === "reactivation" && <ReactivationCampaign />}
+        {activeTab === "referral" && <ReferralCampaign />}
       </div>
     </div>
   );
 }
 
-function ContentSection({
-  title,
-  content,
-  isJSON,
-}: {
-  title: string;
-  content: string;
-  isJSON?: boolean;
-}) {
-  return (
-    <div>
-      <h4 className="mb-1 text-xs font-semibold uppercase tracking-wider text-zinc-400">
-        {title}
-      </h4>
-      {isJSON ? (
-        <pre className="max-h-48 overflow-auto rounded-lg bg-zinc-50 p-3 text-xs text-zinc-600">
-          {content}
-        </pre>
-      ) : (
-        <p className="whitespace-pre-wrap rounded-lg bg-zinc-50 p-3 text-sm text-zinc-700">
-          {content}
-        </p>
-      )}
-    </div>
-  );
-}
+// ─── Template Edit Modal ─────────────────────────────────────
 
-function WriterModal({
-  form,
-  onChange,
+function TemplateEditModal({
+  template,
   onClose,
-  onSubmit,
-  running,
+  onSave,
 }: {
-  form: { topic: string; pillar: string; format: string; notes: string };
-  onChange: (form: { topic: string; pillar: string; format: string; notes: string }) => void;
+  template: EmailTemplate;
   onClose: () => void;
-  onSubmit: () => void;
-  running: boolean;
+  onSave: (id: string, subject: string, body: string) => Promise<void>;
 }) {
+  const [subject, setSubject] = useState(template.subject);
+  const [body, setBody] = useState(template.body);
+  const [saving, setSaving] = useState(false);
+
+  async function handleSave() {
+    setSaving(true);
+    await onSave(template.id, subject, body);
+    setSaving(false);
+    onClose();
+  }
+
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-      <div className="w-full max-w-lg rounded-xl bg-white p-6 shadow-xl">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg font-semibold text-zinc-900">Run Writer Agent</h2>
-          <button
-            onClick={onClose}
-            className="rounded-lg p-2 text-zinc-400 hover:bg-zinc-100"
-          >
-            <X className="h-5 w-5" />
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+      <div className="mx-4 w-full max-w-lg rounded-lg bg-white shadow-xl">
+        <div className="flex items-center justify-between border-b border-zinc-200 px-5 py-4">
+          <h3 className="text-sm font-semibold text-zinc-900">Edit Template</h3>
+          <button onClick={onClose} className="text-zinc-400 hover:text-zinc-600">
+            <X className="h-4 w-4" />
           </button>
         </div>
-
-        <div className="space-y-4">
+        <div className="space-y-4 p-5">
           <div>
-            <label className="block text-sm font-medium text-zinc-700">
-              Topic *
-            </label>
+            <label className="mb-1 block text-xs font-medium text-zinc-600">Subject Line</label>
             <input
               type="text"
-              value={form.topic}
-              onChange={(e) => onChange({ ...form, topic: e.target.value })}
-              placeholder="e.g., Scottsdale trip budget breakdown"
-              className="mt-1 block w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+              value={subject}
+              onChange={(e) => setSubject(e.target.value)}
+              className="w-full rounded-md border border-zinc-300 px-3 py-2 text-sm text-zinc-900 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-zinc-700">
-              Pillar
-            </label>
-            <select
-              value={form.pillar}
-              onChange={(e) => onChange({ ...form, pillar: e.target.value })}
-              className="mt-1 block w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm text-zinc-900 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
-            >
-              <option value="trip_planning">Trip Planning</option>
-              <option value="betting_culture">Betting Culture</option>
-              <option value="course_reviews">Course Reviews</option>
-              <option value="budget_breakdowns">Budget Breakdowns</option>
-            </select>
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-zinc-700">
-              Format
-            </label>
-            <select
-              value={form.format}
-              onChange={(e) => onChange({ ...form, format: e.target.value })}
-              className="mt-1 block w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm text-zinc-900 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
-            >
-              <option value="all">All Platforms</option>
-              <option value="carousel">Instagram Carousel</option>
-              <option value="reel">Instagram Reel</option>
-              <option value="thread">Twitter Thread</option>
-              <option value="linkedin">LinkedIn Post</option>
-              <option value="youtube_short">YouTube Short</option>
-            </select>
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-zinc-700">
-              Notes
-            </label>
+            <label className="mb-1 block text-xs font-medium text-zinc-600">Email Body</label>
             <textarea
-              value={form.notes}
-              onChange={(e) => onChange({ ...form, notes: e.target.value })}
-              placeholder="Any specific angles or details..."
-              rows={3}
-              className="mt-1 block w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+              value={body}
+              onChange={(e) => setBody(e.target.value)}
+              rows={12}
+              className="w-full rounded-md border border-zinc-300 px-3 py-2 text-sm text-zinc-900 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
             />
           </div>
         </div>
-
-        <div className="mt-6 flex gap-3">
-          <button
-            onClick={onSubmit}
-            disabled={!form.topic.trim() || running}
-            className="inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-5 py-2 text-sm font-semibold text-white transition-colors hover:bg-emerald-700 disabled:opacity-50"
-          >
-            {running ? (
-              <Loader2 className="h-4 w-4 animate-spin" />
-            ) : (
-              <Plus className="h-4 w-4" />
-            )}
-            {running ? "Generating..." : "Generate Content"}
-          </button>
+        <div className="flex justify-end gap-2 border-t border-zinc-200 px-5 py-4">
           <button
             onClick={onClose}
-            className="rounded-lg border border-zinc-300 px-5 py-2 text-sm font-medium text-zinc-600 hover:bg-zinc-50"
+            className="rounded-md border border-zinc-300 px-4 py-2 text-xs font-medium text-zinc-700 hover:bg-zinc-50"
           >
             Cancel
           </button>
+          <button
+            onClick={handleSave}
+            disabled={saving}
+            className="flex items-center gap-1.5 rounded-md bg-emerald-600 px-4 py-2 text-xs font-medium text-white hover:bg-emerald-700 disabled:opacity-50"
+          >
+            {saving ? <Loader2 className="h-3 w-3 animate-spin" /> : <Save className="h-3 w-3" />}
+            Save
+          </button>
         </div>
       </div>
+    </div>
+  );
+}
+
+// ─── Template Card ───────────────────────────────────────────
+
+function TemplateCard({
+  template,
+  label,
+  onSave,
+  onSendTest,
+  sendingTest,
+  testSent,
+}: {
+  template: EmailTemplate;
+  label: string;
+  onSave: (id: string, subject: string, body: string) => Promise<void>;
+  onSendTest: (id: string) => void;
+  sendingTest: boolean;
+  testSent: boolean;
+}) {
+  const [editing, setEditing] = useState(false);
+  const [inlineSubject, setInlineSubject] = useState(template.subject);
+  const [savingSubject, setSavingSubject] = useState(false);
+
+  async function saveSubject() {
+    if (inlineSubject !== template.subject) {
+      setSavingSubject(true);
+      await onSave(template.id, inlineSubject, template.body);
+      setSavingSubject(false);
+    }
+  }
+
+  return (
+    <>
+      <div className="rounded-lg border border-zinc-200 p-4">
+        <div className="mb-2 flex items-center justify-between">
+          <span className="text-xs font-semibold uppercase tracking-wider text-zinc-500">
+            {label}
+          </span>
+        </div>
+        <div className="mb-2 flex items-center gap-2">
+          <span className="text-xs text-zinc-500">Subject:</span>
+          <input
+            type="text"
+            value={inlineSubject}
+            onChange={(e) => setInlineSubject(e.target.value)}
+            onBlur={saveSubject}
+            onKeyDown={(e) => e.key === "Enter" && saveSubject()}
+            className="flex-1 rounded border border-transparent px-1.5 py-0.5 text-xs text-zinc-900 hover:border-zinc-300 focus:border-emerald-500 focus:outline-none"
+          />
+          {savingSubject && <Loader2 className="h-3 w-3 animate-spin text-zinc-400" />}
+        </div>
+        <p className="mb-3 text-xs text-zinc-500 line-clamp-2">
+          {template.body ? template.body.slice(0, 100) + (template.body.length > 100 ? "..." : "") : "No body content"}
+        </p>
+        <div className="flex gap-2">
+          <button
+            onClick={() => setEditing(true)}
+            className="flex items-center gap-1 rounded-md border border-zinc-300 px-2.5 py-1.5 text-xs font-medium text-zinc-700 hover:bg-zinc-50"
+          >
+            <Pencil className="h-3 w-3" />
+            Edit Template
+          </button>
+          <button
+            onClick={() => onSendTest(template.id)}
+            disabled={sendingTest}
+            className={`flex items-center gap-1 rounded-md px-2.5 py-1.5 text-xs font-medium transition-colors ${
+              testSent
+                ? "bg-green-50 text-green-700"
+                : "border border-zinc-300 text-zinc-700 hover:bg-zinc-50"
+            } disabled:opacity-50`}
+          >
+            {sendingTest ? (
+              <Loader2 className="h-3 w-3 animate-spin" />
+            ) : testSent ? (
+              <CheckCircle2 className="h-3 w-3" />
+            ) : (
+              <Send className="h-3 w-3" />
+            )}
+            {testSent ? "Sent" : "Send Test"}
+          </button>
+        </div>
+      </div>
+      {editing && (
+        <TemplateEditModal
+          template={{ ...template, subject: inlineSubject }}
+          onClose={() => setEditing(false)}
+          onSave={async (id, subject, body) => {
+            await onSave(id, subject, body);
+            setInlineSubject(subject);
+          }}
+        />
+      )}
+    </>
+  );
+}
+
+// ─── Onboarding Campaign ─────────────────────────────────────
+
+function OnboardingCampaign() {
+  const [stats, setStats] = useState<{
+    totalInSequence: number;
+    day0Sent: number;
+    day3Sent: number;
+    day7Sent: number;
+    completionRate: number;
+  } | null>(null);
+  const [templates, setTemplates] = useState<EmailTemplate[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [sendingTest, setSendingTest] = useState<string | null>(null);
+  const [testSent, setTestSent] = useState<Set<string>>(new Set());
+
+  useEffect(() => {
+    async function load() {
+      try {
+        const res = await fetch("/api/admin/marketing/onboarding");
+        const data = await res.json();
+        setStats(data.stats || null);
+        setTemplates(data.templates || []);
+      } catch {
+        // silent
+      } finally {
+        setLoading(false);
+      }
+    }
+    load();
+  }, []);
+
+  async function saveTemplate(id: string, subject: string, body: string) {
+    const res = await fetch("/api/admin/marketing/onboarding", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id, subject, body }),
+    });
+    if (res.ok) {
+      setTemplates((prev) =>
+        prev.map((t) => (t.id === id ? { ...t, subject, body } : t))
+      );
+    }
+  }
+
+  async function handleSendTest(templateId: string) {
+    setSendingTest(templateId);
+    try {
+      await fetch("/api/admin/marketing/onboarding", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "send_test", templateId }),
+      });
+      setTestSent((prev) => new Set(prev).add(templateId));
+      setTimeout(() => {
+        setTestSent((prev) => {
+          const next = new Set(prev);
+          next.delete(templateId);
+          return next;
+        });
+      }, 3000);
+    } catch {
+      // silent
+    } finally {
+      setSendingTest(null);
+    }
+  }
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-10">
+        <Loader2 className="h-5 w-5 animate-spin text-zinc-400" />
+      </div>
+    );
+  }
+
+  const dayLabels = ["Day 0 — Welcome", "Day 3 — Follow-up", "Day 7 — Value Prop"];
+
+  // Build display templates — use real data or placeholders
+  const displayTemplates: EmailTemplate[] =
+    templates.length > 0
+      ? templates
+      : [0, 3, 7].map((day, i) => ({
+          id: `placeholder-${day}`,
+          category: "onboarding",
+          day,
+          subject: day === 0 ? "Welcome to Nassau!" : day === 3 ? "Planning your first trip?" : "Your group is waiting",
+          body: day === 0
+            ? "Hey! Welcome to Nassau — the easiest way to plan golf trips with your crew..."
+            : day === 3
+              ? "Quick check-in — have you had a chance to set up your first trip?..."
+              : "Your buddies are already on Nassau. Here's what you're missing...",
+        }));
+
+  return (
+    <div className="space-y-5">
+      {/* Stats row */}
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-5">
+        {[
+          { label: "Total in Sequence", value: stats?.totalInSequence ?? 0 },
+          { label: "Day 0 Sent", value: stats?.day0Sent ?? 0 },
+          { label: "Day 3 Sent", value: stats?.day3Sent ?? 0 },
+          { label: "Day 7 Sent", value: stats?.day7Sent ?? 0 },
+          { label: "Completion Rate", value: `${stats?.completionRate ?? 0}%` },
+        ].map((s) => (
+          <div key={s.label} className="rounded-md border border-zinc-100 bg-zinc-50 p-3 text-center">
+            <p className="text-[10px] font-medium uppercase tracking-wider text-zinc-500">{s.label}</p>
+            <p className="mt-1 text-lg font-bold text-zinc-900">
+              {typeof s.value === "number" ? s.value.toLocaleString() : s.value}
+            </p>
+          </div>
+        ))}
+      </div>
+
+      {/* Email templates */}
+      <div>
+        <h4 className="mb-3 text-xs font-semibold uppercase tracking-wider text-zinc-500">
+          Email Templates
+        </h4>
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+          {displayTemplates.map((t, i) => (
+            <TemplateCard
+              key={t.id}
+              template={t}
+              label={dayLabels[i] || `Day ${t.day}`}
+              onSave={saveTemplate}
+              onSendTest={handleSendTest}
+              sendingTest={sendingTest === t.id}
+              testSent={testSent.has(t.id)}
+            />
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─── Reactivation Campaign ───────────────────────────────────
+
+function ReactivationCampaign() {
+  const [stats, setStats] = useState<{
+    dormantUsers: number;
+    emailsSentThisMonth: number;
+    reactivationRate: number;
+    churnedUsers: number;
+  } | null>(null);
+  const [template, setTemplate] = useState<EmailTemplate | null>(null);
+  const [threshold, setThreshold] = useState(30);
+  const [loading, setLoading] = useState(true);
+  const [sendingTest, setSendingTest] = useState(false);
+  const [testSent, setTestSent] = useState(false);
+  const [savingThreshold, setSavingThreshold] = useState(false);
+  const [thresholdSaved, setThresholdSaved] = useState(false);
+
+  useEffect(() => {
+    async function load() {
+      try {
+        const res = await fetch("/api/admin/marketing/reactivation");
+        const data = await res.json();
+        setStats(data.stats || null);
+        setTemplate(data.template || null);
+        if (data.threshold) setThreshold(data.threshold);
+      } catch {
+        // silent
+      } finally {
+        setLoading(false);
+      }
+    }
+    load();
+  }, []);
+
+  async function saveTemplate(id: string, subject: string, body: string) {
+    const res = await fetch("/api/admin/marketing/reactivation", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id, subject, body }),
+    });
+    if (res.ok) {
+      setTemplate((prev) => (prev ? { ...prev, subject, body } : prev));
+    }
+  }
+
+  async function handleSendTest() {
+    setSendingTest(true);
+    try {
+      await fetch("/api/admin/marketing/reactivation", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "send_test" }),
+      });
+      setTestSent(true);
+      setTimeout(() => setTestSent(false), 3000);
+    } catch {
+      // silent
+    } finally {
+      setSendingTest(false);
+    }
+  }
+
+  async function saveThreshold() {
+    setSavingThreshold(true);
+    try {
+      await fetch("/api/admin/marketing/reactivation", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ threshold }),
+      });
+      setThresholdSaved(true);
+      setTimeout(() => setThresholdSaved(false), 2000);
+    } catch {
+      // silent
+    } finally {
+      setSavingThreshold(false);
+    }
+  }
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-10">
+        <Loader2 className="h-5 w-5 animate-spin text-zinc-400" />
+      </div>
+    );
+  }
+
+  const displayTemplate: EmailTemplate = template || {
+    id: "placeholder-reactivation",
+    category: "reactivation",
+    subject: "We miss you on Nassau",
+    body: "Hey — it's been a while since your last trip on Nassau. Your crew is still out there playing...",
+  };
+
+  return (
+    <div className="space-y-5">
+      {/* Stats row */}
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+        {[
+          { label: "Dormant Users", value: stats?.dormantUsers ?? 0 },
+          { label: "Emails Sent (Month)", value: stats?.emailsSentThisMonth ?? 0 },
+          { label: "Reactivation Rate", value: `${stats?.reactivationRate ?? 0}%` },
+          { label: "Churned Users", value: stats?.churnedUsers ?? 0 },
+        ].map((s) => (
+          <div key={s.label} className="rounded-md border border-zinc-100 bg-zinc-50 p-3 text-center">
+            <p className="text-[10px] font-medium uppercase tracking-wider text-zinc-500">{s.label}</p>
+            <p className="mt-1 text-lg font-bold text-zinc-900">
+              {typeof s.value === "number" ? s.value.toLocaleString() : s.value}
+            </p>
+          </div>
+        ))}
+      </div>
+
+      {/* Email template */}
+      <div>
+        <h4 className="mb-3 text-xs font-semibold uppercase tracking-wider text-zinc-500">
+          Reactivation Email
+        </h4>
+        <TemplateCard
+          template={displayTemplate}
+          label="Win-Back Email"
+          onSave={saveTemplate}
+          onSendTest={handleSendTest}
+          sendingTest={sendingTest}
+          testSent={testSent}
+        />
+      </div>
+
+      {/* Dormancy threshold */}
+      <div className="rounded-lg border border-zinc-200 p-4">
+        <h4 className="mb-2 text-xs font-semibold uppercase tracking-wider text-zinc-500">
+          Dormancy Threshold
+        </h4>
+        <div className="flex items-center gap-3">
+          <span className="text-sm text-zinc-600">Mark as dormant after</span>
+          <input
+            type="number"
+            value={threshold}
+            onChange={(e) => setThreshold(parseInt(e.target.value, 10) || 0)}
+            min={7}
+            max={365}
+            className="w-20 rounded-md border border-zinc-300 px-2 py-1.5 text-center text-sm text-zinc-900 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+          />
+          <span className="text-sm text-zinc-600">days of inactivity</span>
+          <button
+            onClick={saveThreshold}
+            disabled={savingThreshold}
+            className={`flex items-center gap-1 rounded-md px-3 py-1.5 text-xs font-medium transition-colors ${
+              thresholdSaved
+                ? "bg-green-50 text-green-700"
+                : "bg-emerald-600 text-white hover:bg-emerald-700"
+            } disabled:opacity-50`}
+          >
+            {savingThreshold ? (
+              <Loader2 className="h-3 w-3 animate-spin" />
+            ) : thresholdSaved ? (
+              <CheckCircle2 className="h-3 w-3" />
+            ) : (
+              <Save className="h-3 w-3" />
+            )}
+            {thresholdSaved ? "Saved" : "Save"}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─── Referral Campaign ───────────────────────────────────────
+
+function ReferralCampaign() {
+  const [stats, setStats] = useState<{
+    totalReferrals: number;
+    thisMonth: number;
+    topReferrer: string;
+    viralCoefficient: string;
+  } | null>(null);
+  const [templates, setTemplates] = useState<EmailTemplate[]>([]);
+  const [rewardTiersEnabled, setRewardTiersEnabled] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [sendingTest, setSendingTest] = useState<string | null>(null);
+  const [testSent, setTestSent] = useState<Set<string>>(new Set());
+  const [togglingRewards, setTogglingRewards] = useState(false);
+
+  useEffect(() => {
+    async function load() {
+      try {
+        const res = await fetch("/api/admin/marketing/referral");
+        const data = await res.json();
+        setStats(data.stats || null);
+        setTemplates(data.templates || []);
+        setRewardTiersEnabled(data.rewardTiersEnabled || false);
+      } catch {
+        // silent
+      } finally {
+        setLoading(false);
+      }
+    }
+    load();
+  }, []);
+
+  async function saveTemplate(id: string, subject: string, body: string) {
+    const res = await fetch("/api/admin/marketing/referral", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id, subject, body }),
+    });
+    if (res.ok) {
+      setTemplates((prev) =>
+        prev.map((t) => (t.id === id ? { ...t, subject, body } : t))
+      );
+    }
+  }
+
+  async function handleSendTest(templateId: string) {
+    setSendingTest(templateId);
+    try {
+      await fetch("/api/admin/marketing/referral", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "send_test", templateId }),
+      });
+      setTestSent((prev) => new Set(prev).add(templateId));
+      setTimeout(() => {
+        setTestSent((prev) => {
+          const next = new Set(prev);
+          next.delete(templateId);
+          return next;
+        });
+      }, 3000);
+    } catch {
+      // silent
+    } finally {
+      setSendingTest(null);
+    }
+  }
+
+  async function toggleRewardTiers() {
+    setTogglingRewards(true);
+    const newVal = !rewardTiersEnabled;
+    try {
+      await fetch("/api/admin/marketing/referral", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ rewardTiersEnabled: newVal }),
+      });
+      setRewardTiersEnabled(newVal);
+    } catch {
+      // silent
+    } finally {
+      setTogglingRewards(false);
+    }
+  }
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-10">
+        <Loader2 className="h-5 w-5 animate-spin text-zinc-400" />
+      </div>
+    );
+  }
+
+  const milestones = [1, 3, 5, 10];
+  const milestoneLabels: Record<number, string> = {
+    1: "1st Referral",
+    3: "3 Referrals",
+    5: "5 Referrals",
+    10: "10 Referrals",
+  };
+
+  const displayTemplates: EmailTemplate[] =
+    templates.length > 0
+      ? templates
+      : milestones.map((m) => ({
+          id: `placeholder-ref-${m}`,
+          category: "referral",
+          milestone: m,
+          subject:
+            m === 1
+              ? "Your first referral just signed up!"
+              : m === 3
+                ? "3 friends on Nassau — you're on a roll"
+                : m === 5
+                  ? "5 referrals! You're a Nassau ambassador"
+                  : "10 referrals — legendary status unlocked",
+          body:
+            m === 1
+              ? "Congrats! Someone you referred just joined Nassau. Keep spreading the word..."
+              : m === 3
+                ? "Three of your friends are now on Nassau. You're building a crew..."
+                : m === 5
+                  ? "Five referrals! You're officially a Nassau ambassador. Here's what's next..."
+                  : "You've hit 10 referrals — that's legendary. We've got something special for you...",
+        }));
+
+  const rewardTiers = [
+    { referrals: 1, reward: "Early access to new features" },
+    { referrals: 3, reward: "Nassau Pro (1 month free)" },
+    { referrals: 5, reward: "Exclusive Nassau gear" },
+    { referrals: 10, reward: "Free trip coordination for a year" },
+  ];
+
+  return (
+    <div className="space-y-5">
+      {/* Stats row */}
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+        {[
+          { label: "Total Referrals", value: stats?.totalReferrals ?? 0 },
+          { label: "This Month", value: stats?.thisMonth ?? 0 },
+          { label: "Top Referrer", value: stats?.topReferrer ?? "—" },
+          { label: "Viral Coefficient", value: stats?.viralCoefficient ?? "0.00" },
+        ].map((s) => (
+          <div key={s.label} className="rounded-md border border-zinc-100 bg-zinc-50 p-3 text-center">
+            <p className="text-[10px] font-medium uppercase tracking-wider text-zinc-500">{s.label}</p>
+            <p className="mt-1 text-lg font-bold text-zinc-900">
+              {typeof s.value === "number" ? s.value.toLocaleString() : s.value}
+            </p>
+          </div>
+        ))}
+      </div>
+
+      {/* Milestone templates */}
+      <div>
+        <h4 className="mb-3 text-xs font-semibold uppercase tracking-wider text-zinc-500">
+          Milestone Messages
+        </h4>
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+          {displayTemplates.map((t, i) => (
+            <TemplateCard
+              key={t.id}
+              template={t}
+              label={milestoneLabels[milestones[i]] || `${milestones[i]} Referrals`}
+              onSave={saveTemplate}
+              onSendTest={handleSendTest}
+              sendingTest={sendingTest === t.id}
+              testSent={testSent.has(t.id)}
+            />
+          ))}
+        </div>
+      </div>
+
+      {/* Referral link format */}
+      <div className="rounded-lg border border-zinc-200 p-4">
+        <h4 className="mb-2 text-xs font-semibold uppercase tracking-wider text-zinc-500">
+          Referral Link Format
+        </h4>
+        <div className="flex items-center gap-2 rounded-md bg-zinc-50 px-3 py-2">
+          <Link className="h-4 w-4 text-zinc-400" />
+          <code className="text-sm text-zinc-700">nassau.golf/r/<span className="text-emerald-600">[CODE]</span></code>
+        </div>
+        <p className="mt-1.5 text-[10px] text-zinc-400">
+          Each user gets a unique referral code. Links redirect to the signup page with attribution.
+        </p>
+      </div>
+
+      {/* Reward tiers */}
+      <div className="rounded-lg border border-zinc-200 p-4">
+        <div className="mb-3 flex items-center justify-between">
+          <h4 className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-zinc-500">
+            <Trophy className="h-3.5 w-3.5" />
+            Reward Tiers
+          </h4>
+          <button
+            onClick={toggleRewardTiers}
+            disabled={togglingRewards}
+            className={`flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium transition-colors ${
+              rewardTiersEnabled
+                ? "bg-emerald-100 text-emerald-700"
+                : "bg-zinc-100 text-zinc-500"
+            }`}
+          >
+            {togglingRewards ? (
+              <Loader2 className="h-3 w-3 animate-spin" />
+            ) : rewardTiersEnabled ? (
+              <CheckCircle2 className="h-3 w-3" />
+            ) : (
+              <Clock className="h-3 w-3" />
+            )}
+            {rewardTiersEnabled ? "Active" : "Inactive — enable post-launch"}
+          </button>
+        </div>
+        <div className={`space-y-2 ${!rewardTiersEnabled ? "opacity-50" : ""}`}>
+          {rewardTiers.map((tier) => (
+            <div
+              key={tier.referrals}
+              className="flex items-center justify-between rounded-md border border-zinc-100 px-3 py-2"
+            >
+              <div className="flex items-center gap-2">
+                <span className="flex h-6 w-6 items-center justify-center rounded-full bg-emerald-100 text-xs font-bold text-emerald-700">
+                  {tier.referrals}
+                </span>
+                <span className="text-xs text-zinc-700">
+                  {tier.referrals} referral{tier.referrals > 1 ? "s" : ""}
+                </span>
+              </div>
+              <span className="text-xs text-zinc-500">{tier.reward}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─── Partnerships Tab ───────────────────────────────────────
+
+function PartnershipsTab() {
+  const [partnerships, setPartnerships] = useState<Partnership[]>([]);
+  const [stats, setStats] = useState<Stats>({
+    totalCourses: 0,
+    hasEmail: 0,
+    contacted: 0,
+    replied: 0,
+    active: 0,
+  });
+  const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [search, setSearch] = useState("");
+  const [filter, setFilter] = useState<FilterType>("all");
+  const [sortBy, setSortBy] = useState<SortField>("destination");
+  const [sortDir, setSortDir] = useState<"asc" | "desc">("asc");
+
+  // Research state
+  const [researchingId, setResearchingId] = useState<string | null>(null);
+  const [researchResult, setResearchResult] = useState<ResearchResult | null>(null);
+  const [editingFields, setEditingFields] = useState<Partial<ResearchResult>>({});
+  const [savingId, setSavingId] = useState<string | null>(null);
+
+  // Batch research state
+  const [batchRunning, setBatchRunning] = useState(false);
+  const [batchProgress, setBatchProgress] = useState({ current: 0, total: 0 });
+  const batchAbortRef = useRef(false);
+
+  // Selected rows for bulk operations
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+
+  // ─── Fetch partnerships ───────────────────────────────────
+
+  const fetchPartnerships = useCallback(async () => {
+    setLoading(true);
+    try {
+      const params = new URLSearchParams({
+        page: page.toString(),
+        limit: "25",
+        search,
+        filter,
+        sortBy,
+        sortDir,
+      });
+      const res = await fetch(`/api/admin/partnerships?${params}`);
+      const data = await res.json();
+      setPartnerships(data.partnerships || []);
+      setTotalPages(data.totalPages || 1);
+      if (data.stats) setStats(data.stats);
+    } catch {
+      // handle silently
+    } finally {
+      setLoading(false);
+    }
+  }, [page, search, filter, sortBy, sortDir]);
+
+  useEffect(() => {
+    fetchPartnerships();
+  }, [fetchPartnerships]);
+
+  // Reset page when filters change
+  useEffect(() => {
+    setPage(1);
+  }, [search, filter, sortBy, sortDir]);
+
+  // ─── Research a single course ─────────────────────────────
+
+  async function researchCourse(p: Partnership) {
+    setResearchingId(p.id);
+    setResearchResult(null);
+    setEditingFields({});
+
+    try {
+      const res = await fetch("/api/admin/partnerships/research", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          courseId: p.id,
+          courseName: p.course_name,
+          destination: p.destination,
+          websiteUrl: p.website_url,
+        }),
+      });
+      const result: ResearchResult = await res.json();
+      setResearchResult(result);
+      if (result.success) {
+        setEditingFields({
+          marketing_contact_name: result.marketing_contact_name,
+          marketing_contact_email: result.marketing_contact_email,
+          booking_email: result.booking_email,
+          website_url: result.website_url,
+        });
+      }
+    } catch {
+      setResearchResult({
+        success: false,
+        courseId: p.id,
+        marketing_contact_name: null,
+        marketing_contact_email: null,
+        booking_email: null,
+        website_url: null,
+        confidence: "low",
+        source_notes: "",
+        error: "Network error",
+      });
+    } finally {
+      setResearchingId(null);
+    }
+  }
+
+  // ─── Save confirmed contact ───────────────────────────────
+
+  async function saveContact(courseId: string) {
+    setSavingId(courseId);
+    try {
+      const res = await fetch(`/api/admin/partnerships/${courseId}/contact`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          marketing_contact_name: editingFields.marketing_contact_name || null,
+          marketing_contact_email: editingFields.marketing_contact_email || null,
+          booking_email: editingFields.booking_email || null,
+          website_url: editingFields.website_url || null,
+          confidence: researchResult?.confidence || null,
+          source_notes: researchResult?.source_notes || null,
+          needs_review: false,
+        }),
+      });
+      if (res.ok) {
+        setResearchResult(null);
+        setEditingFields({});
+        await fetchPartnerships();
+      }
+    } catch {
+      // handle silently
+    } finally {
+      setSavingId(null);
+    }
+  }
+
+  // ─── Batch research ───────────────────────────────────────
+
+  async function batchResearch() {
+    setBatchRunning(true);
+    batchAbortRef.current = false;
+
+    try {
+      const res = await fetch("/api/admin/partnerships?filter=no_contact&limit=9999&page=1");
+      const data = await res.json();
+      const courses: Partnership[] = data.partnerships || [];
+
+      setBatchProgress({ current: 0, total: courses.length });
+
+      for (let i = 0; i < courses.length; i++) {
+        if (batchAbortRef.current) break;
+
+        setBatchProgress({ current: i + 1, total: courses.length });
+        const course = courses[i];
+
+        try {
+          const researchRes = await fetch("/api/admin/partnerships/research", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              courseId: course.id,
+              courseName: course.course_name,
+              destination: course.destination,
+              websiteUrl: course.website_url,
+            }),
+          });
+          const result: ResearchResult = await researchRes.json();
+
+          if (result.success) {
+            const isHigh = result.confidence === "high";
+            await fetch(`/api/admin/partnerships/${course.id}/contact`, {
+              method: "PATCH",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                marketing_contact_name: result.marketing_contact_name,
+                marketing_contact_email: result.marketing_contact_email,
+                booking_email: result.booking_email,
+                website_url: result.website_url,
+                confidence: result.confidence,
+                source_notes: result.source_notes,
+                needs_review: !isHigh,
+              }),
+            });
+          }
+        } catch {
+          // Skip failed individual course
+        }
+
+        // 2-second delay to avoid rate limits
+        if (i < courses.length - 1 && !batchAbortRef.current) {
+          await new Promise((resolve) => setTimeout(resolve, 2000));
+        }
+      }
+    } catch {
+      // handle silently
+    } finally {
+      setBatchRunning(false);
+      setBatchProgress({ current: 0, total: 0 });
+      await fetchPartnerships();
+    }
+  }
+
+  // ─── Escape key to dismiss research card ──────────────────
+
+  useEffect(() => {
+    function handleKeyDown(e: KeyboardEvent) {
+      if (e.key === "Escape" && researchResult) {
+        setResearchResult(null);
+        setEditingFields({});
+      }
+    }
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [researchResult]);
+
+  // ─── Toggle sort ──────────────────────────────────────────
+
+  function toggleSort(field: SortField) {
+    if (sortBy === field) {
+      setSortDir(sortDir === "asc" ? "desc" : "asc");
+    } else {
+      setSortBy(field);
+      setSortDir("asc");
+    }
+  }
+
+  // ─── Toggle selection ─────────────────────────────────────
+
+  function toggleSelect(id: string) {
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  }
+
+  function toggleSelectAll() {
+    if (selectedIds.size === partnerships.length) {
+      setSelectedIds(new Set());
+    } else {
+      setSelectedIds(new Set(partnerships.map((p) => p.id)));
+    }
+  }
+
+  // ─── Bulk research selected ───────────────────────────────
+
+  async function bulkResearchSelected() {
+    const selected = partnerships.filter((p) => selectedIds.has(p.id));
+    if (selected.length === 0) return;
+
+    setBatchRunning(true);
+    batchAbortRef.current = false;
+    setBatchProgress({ current: 0, total: selected.length });
+
+    for (let i = 0; i < selected.length; i++) {
+      if (batchAbortRef.current) break;
+      setBatchProgress({ current: i + 1, total: selected.length });
+      const course = selected[i];
+
+      try {
+        const researchRes = await fetch("/api/admin/partnerships/research", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            courseId: course.id,
+            courseName: course.course_name,
+            destination: course.destination,
+            websiteUrl: course.website_url,
+          }),
+        });
+        const result: ResearchResult = await researchRes.json();
+
+        if (result.success) {
+          const isHigh = result.confidence === "high";
+          await fetch(`/api/admin/partnerships/${course.id}/contact`, {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              marketing_contact_name: result.marketing_contact_name,
+              marketing_contact_email: result.marketing_contact_email,
+              booking_email: result.booking_email,
+              website_url: result.website_url,
+              confidence: result.confidence,
+              source_notes: result.source_notes,
+              needs_review: !isHigh,
+            }),
+          });
+        }
+      } catch {
+        // skip
+      }
+
+      if (i < selected.length - 1 && !batchAbortRef.current) {
+        await new Promise((resolve) => setTimeout(resolve, 2000));
+      }
+    }
+
+    setBatchRunning(false);
+    setBatchProgress({ current: 0, total: 0 });
+    setSelectedIds(new Set());
+    await fetchPartnerships();
+  }
+
+  // ─── Helpers ──────────────────────────────────────────────
+
+  function confidenceColor(c: string | null) {
+    if (c === "high") return "bg-green-100 text-green-700";
+    if (c === "medium") return "bg-yellow-100 text-yellow-700";
+    if (c === "low") return "bg-red-100 text-red-700";
+    return "bg-zinc-100 text-zinc-500";
+  }
+
+  function statusBadge(status: string) {
+    switch (status) {
+      case "contacted":
+        return "bg-blue-100 text-blue-700";
+      case "replied":
+        return "bg-green-100 text-green-700";
+      case "active":
+        return "bg-emerald-100 text-emerald-700";
+      default:
+        return "bg-zinc-100 text-zinc-500";
+    }
+  }
+
+  const contactEmail = (p: Partnership) => p.marketing_contact_email || p.booking_email;
+
+  const filters: { key: FilterType; label: string }[] = [
+    { key: "all", label: "All" },
+    { key: "no_contact", label: "No Contact" },
+    { key: "has_email", label: "Has Email" },
+    { key: "needs_review", label: "Needs Review" },
+    { key: "contacted", label: "Contacted" },
+    { key: "replied", label: "Replied" },
+  ];
+
+  // ─── Render ───────────────────────────────────────────────
+
+  return (
+    <>
+      {/* Stats Bar */}
+      <div className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-5">
+        {[
+          { label: "Total Courses", value: stats.totalCourses },
+          { label: "Has Email", value: stats.hasEmail },
+          { label: "Contacted", value: stats.contacted },
+          { label: "Replied", value: stats.replied },
+          { label: "Active Partnerships", value: stats.active },
+        ].map((s) => (
+          <div key={s.label} className="rounded-lg border border-zinc-200 bg-white p-4">
+            <p className="text-xs font-medium text-zinc-500">{s.label}</p>
+            <p className="mt-1 text-2xl font-bold text-zinc-900">
+              {s.value.toLocaleString()}
+            </p>
+          </div>
+        ))}
+      </div>
+
+      {/* Controls Bar */}
+      <div className="mb-4 flex flex-wrap items-center gap-3">
+        {/* Search */}
+        <div className="relative flex-1 min-w-[200px]">
+          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-400" />
+          <input
+            type="text"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Search courses or destinations..."
+            className="w-full rounded-lg border border-zinc-300 py-2 pl-9 pr-3 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+          />
+        </div>
+
+        {/* Batch Research */}
+        <button
+          onClick={batchResearch}
+          disabled={batchRunning}
+          className="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-700 disabled:opacity-50"
+        >
+          {batchRunning ? "Stop" : "Research All Uncontacted"}
+        </button>
+
+        {/* Bulk research selected */}
+        {selectedIds.size > 0 && (
+          <button
+            onClick={bulkResearchSelected}
+            disabled={batchRunning}
+            className="rounded-lg border border-emerald-600 px-4 py-2 text-sm font-medium text-emerald-600 hover:bg-emerald-50 disabled:opacity-50"
+          >
+            Research Selected ({selectedIds.size})
+          </button>
+        )}
+
+        {batchRunning && (
+          <button
+            onClick={() => {
+              batchAbortRef.current = true;
+            }}
+            className="rounded-lg border border-red-300 px-4 py-2 text-sm font-medium text-red-600 hover:bg-red-50"
+          >
+            Stop Batch
+          </button>
+        )}
+      </div>
+
+      {/* Batch progress bar */}
+      {batchRunning && batchProgress.total > 0 && (
+        <div className="mb-4 rounded-lg border border-zinc-200 bg-white p-3">
+          <div className="flex items-center justify-between text-sm text-zinc-600 mb-2">
+            <span>
+              Researching {batchProgress.current} of {batchProgress.total}...
+            </span>
+            <span>
+              {Math.round((batchProgress.current / batchProgress.total) * 100)}%
+            </span>
+          </div>
+          <div className="h-2 rounded-full bg-zinc-100">
+            <div
+              className="h-2 rounded-full bg-emerald-500 transition-all"
+              style={{
+                width: `${(batchProgress.current / batchProgress.total) * 100}%`,
+              }}
+            />
+          </div>
+        </div>
+      )}
+
+      {/* Filter chips */}
+      <div className="mb-4 flex flex-wrap gap-2">
+        {filters.map((f) => (
+          <button
+            key={f.key}
+            onClick={() => setFilter(f.key)}
+            className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${
+              filter === f.key
+                ? "bg-emerald-600 text-white"
+                : "bg-zinc-100 text-zinc-600 hover:bg-zinc-200"
+            }`}
+          >
+            {f.label}
+          </button>
+        ))}
+      </div>
+
+      {/* Table */}
+      <div className="rounded-lg border border-zinc-200 bg-white overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="border-b border-zinc-200 bg-zinc-50">
+                <th className="px-3 py-3 text-left">
+                  <input
+                    type="checkbox"
+                    checked={
+                      partnerships.length > 0 &&
+                      selectedIds.size === partnerships.length
+                    }
+                    onChange={toggleSelectAll}
+                    className="rounded border-zinc-300"
+                  />
+                </th>
+                <th
+                  className="cursor-pointer px-3 py-3 text-left font-medium text-zinc-600 hover:text-zinc-900"
+                  onClick={() => toggleSort("destination")}
+                >
+                  <span className="flex items-center gap-1">
+                    Course
+                    <ArrowUpDown className="h-3 w-3" />
+                  </span>
+                </th>
+                <th
+                  className="cursor-pointer px-3 py-3 text-left font-medium text-zinc-600 hover:text-zinc-900"
+                  onClick={() => toggleSort("tier")}
+                >
+                  <span className="flex items-center gap-1">
+                    Tier / Type
+                    <ArrowUpDown className="h-3 w-3" />
+                  </span>
+                </th>
+                <th className="px-3 py-3 text-left font-medium text-zinc-600">
+                  Contact
+                </th>
+                <th
+                  className="cursor-pointer px-3 py-3 text-left font-medium text-zinc-600 hover:text-zinc-900"
+                  onClick={() => toggleSort("status")}
+                >
+                  <span className="flex items-center gap-1">
+                    Status
+                    <ArrowUpDown className="h-3 w-3" />
+                  </span>
+                </th>
+                <th className="px-3 py-3 text-right font-medium text-zinc-600">
+                  Actions
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {loading ? (
+                <tr>
+                  <td
+                    colSpan={6}
+                    className="px-3 py-12 text-center text-zinc-400"
+                  >
+                    <Loader2 className="mx-auto h-6 w-6 animate-spin" />
+                  </td>
+                </tr>
+              ) : partnerships.length === 0 ? (
+                <tr>
+                  <td
+                    colSpan={6}
+                    className="px-3 py-12 text-center text-zinc-400"
+                  >
+                    No courses found
+                  </td>
+                </tr>
+              ) : (
+                partnerships.map((p) => (
+                  <CourseRow
+                    key={p.id}
+                    partnership={p}
+                    selected={selectedIds.has(p.id)}
+                    onToggleSelect={() => toggleSelect(p.id)}
+                    researchingId={researchingId}
+                    batchRunning={batchRunning}
+                    researchResult={
+                      researchResult?.courseId === p.id
+                        ? researchResult
+                        : null
+                    }
+                    editingFields={
+                      researchResult?.courseId === p.id
+                        ? editingFields
+                        : {}
+                    }
+                    savingId={savingId}
+                    onResearch={() => researchCourse(p)}
+                    onSave={() => saveContact(p.id)}
+                    onDismiss={() => {
+                      setResearchResult(null);
+                      setEditingFields({});
+                    }}
+                    onEditField={(fields) =>
+                      setEditingFields({ ...editingFields, ...fields })
+                    }
+                    contactEmail={contactEmail(p)}
+                    confidenceColor={confidenceColor}
+                    statusBadge={statusBadge}
+                  />
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
+
+        {/* Pagination */}
+        {!loading && totalPages > 1 && (
+          <div className="flex items-center justify-between border-t border-zinc-200 px-4 py-3">
+            <p className="text-xs text-zinc-500">
+              Page {page} of {totalPages}
+            </p>
+            <div className="flex gap-2">
+              <button
+                onClick={() => setPage(Math.max(1, page - 1))}
+                disabled={page === 1}
+                className="flex items-center gap-1 rounded-lg border border-zinc-300 px-3 py-1.5 text-xs font-medium text-zinc-700 hover:bg-zinc-50 disabled:opacity-50"
+              >
+                <ChevronLeft className="h-3 w-3" />
+                Prev
+              </button>
+              <button
+                onClick={() => setPage(Math.min(totalPages, page + 1))}
+                disabled={page === totalPages}
+                className="flex items-center gap-1 rounded-lg border border-zinc-300 px-3 py-1.5 text-xs font-medium text-zinc-700 hover:bg-zinc-50 disabled:opacity-50"
+              >
+                Next
+                <ChevronRight className="h-3 w-3" />
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+    </>
+  );
+}
+
+// ─── Course Row ─────────────────────────────────────────────
+
+function CourseRow({
+  partnership: p,
+  selected,
+  onToggleSelect,
+  researchingId,
+  batchRunning,
+  researchResult,
+  editingFields,
+  savingId,
+  onResearch,
+  onSave,
+  onDismiss,
+  onEditField,
+  contactEmail,
+  confidenceColor,
+  statusBadge,
+}: {
+  partnership: Partnership;
+  selected: boolean;
+  onToggleSelect: () => void;
+  researchingId: string | null;
+  batchRunning: boolean;
+  researchResult: ResearchResult | null;
+  editingFields: Partial<ResearchResult>;
+  savingId: string | null;
+  onResearch: () => void;
+  onSave: () => void;
+  onDismiss: () => void;
+  onEditField: (fields: Partial<ResearchResult>) => void;
+  contactEmail: string | null;
+  confidenceColor: (c: string | null) => string;
+  statusBadge: (s: string) => string;
+}) {
+  return (
+    <>
+      <tr className="border-b border-zinc-100 hover:bg-zinc-50 transition-colors">
+        <td className="px-3 py-3">
+          <input
+            type="checkbox"
+            checked={selected}
+            onChange={onToggleSelect}
+            className="rounded border-zinc-300"
+          />
+        </td>
+        <td className="px-3 py-3">
+          <div className="font-medium text-zinc-900">{p.course_name}</div>
+          <div className="text-xs text-zinc-500">{p.destination}</div>
+        </td>
+        <td className="px-3 py-3">
+          <div className="flex gap-1.5">
+            {p.tier && (
+              <span className="rounded-full bg-zinc-100 px-2 py-0.5 text-xs font-medium text-zinc-600">
+                {p.tier}
+              </span>
+            )}
+            {p.course_type && (
+              <span className="rounded-full bg-zinc-100 px-2 py-0.5 text-xs text-zinc-500">
+                {p.course_type}
+              </span>
+            )}
+          </div>
+        </td>
+        <td className="px-3 py-3">
+          {contactEmail ? (
+            <div className="flex items-center gap-1.5">
+              <Mail className="h-3.5 w-3.5 text-emerald-500" />
+              <span className="text-xs text-zinc-700">{contactEmail}</span>
+            </div>
+          ) : (
+            <span className="text-xs text-zinc-400">No contact</span>
+          )}
+          {p.needs_review && (
+            <span className="ml-2 rounded-full bg-yellow-100 px-2 py-0.5 text-xs text-yellow-700">
+              Needs review
+            </span>
+          )}
+        </td>
+        <td className="px-3 py-3">
+          <span
+            className={`rounded-full px-2 py-0.5 text-xs font-medium ${statusBadge(p.outreach_status)}`}
+          >
+            {p.outreach_status === "none" ? "Not contacted" : p.outreach_status}
+          </span>
+        </td>
+        <td className="px-3 py-3 text-right">
+          <div className="flex items-center justify-end gap-2">
+            <button
+              onClick={onResearch}
+              disabled={researchingId === p.id || batchRunning}
+              className="rounded-lg border border-zinc-300 px-3 py-1.5 text-xs font-medium text-zinc-700 hover:bg-zinc-50 disabled:opacity-50"
+            >
+              {researchingId === p.id ? (
+                <span className="flex items-center gap-1">
+                  <Loader2 className="h-3 w-3 animate-spin" />
+                  Researching...
+                </span>
+              ) : (
+                "Research"
+              )}
+            </button>
+            <button
+              disabled={!contactEmail}
+              className="rounded-lg bg-emerald-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              Send Outreach
+            </button>
+          </div>
+        </td>
+      </tr>
+
+      {/* Research result card */}
+      {researchResult && (
+        <tr>
+          <td colSpan={6} className="px-3 py-0">
+            <div className="mb-3 rounded-lg border border-emerald-200 bg-emerald-50/50 p-4">
+              <div className="flex items-start justify-between mb-3">
+                <div>
+                  <h3 className="font-medium text-zinc-900">
+                    Research Results — {p.course_name}
+                  </h3>
+                  {researchResult.success && (
+                    <span
+                      className={`mt-1 inline-block rounded-full px-2 py-0.5 text-xs font-medium ${confidenceColor(researchResult.confidence)}`}
+                    >
+                      Confidence: {researchResult.confidence?.toUpperCase()}
+                    </span>
+                  )}
+                </div>
+                <button
+                  onClick={onDismiss}
+                  className="text-zinc-400 hover:text-zinc-600"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              </div>
+
+              {!researchResult.success ? (
+                <div className="rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700">
+                  {researchResult.error || "Research failed"}
+                  {researchResult.raw && (
+                    <pre className="mt-2 text-xs whitespace-pre-wrap">
+                      {researchResult.raw}
+                    </pre>
+                  )}
+                </div>
+              ) : (
+                <>
+                  <div className="space-y-2">
+                    <EditableField
+                      icon={<User className="h-4 w-4 text-zinc-400" />}
+                      label="Marketing Contact"
+                      value={editingFields.marketing_contact_name}
+                      onChange={(v) =>
+                        onEditField({ marketing_contact_name: v })
+                      }
+                    />
+                    <EditableField
+                      icon={<Mail className="h-4 w-4 text-zinc-400" />}
+                      label="Email"
+                      value={editingFields.marketing_contact_email}
+                      onChange={(v) =>
+                        onEditField({ marketing_contact_email: v })
+                      }
+                    />
+                    <EditableField
+                      icon={<Mail className="h-4 w-4 text-zinc-400" />}
+                      label="Booking Email"
+                      value={editingFields.booking_email}
+                      onChange={(v) => onEditField({ booking_email: v })}
+                    />
+                    <EditableField
+                      icon={<Globe className="h-4 w-4 text-zinc-400" />}
+                      label="Website"
+                      value={editingFields.website_url}
+                      onChange={(v) => onEditField({ website_url: v })}
+                    />
+                  </div>
+
+                  {researchResult.source_notes && (
+                    <p className="mt-3 text-xs text-zinc-500">
+                      Source: {researchResult.source_notes}
+                    </p>
+                  )}
+
+                  <div className="mt-4 flex gap-2">
+                    <button
+                      onClick={onSave}
+                      disabled={savingId === p.id}
+                      className="flex items-center gap-1.5 rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-700 disabled:opacity-50"
+                    >
+                      {savingId === p.id ? (
+                        <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                      ) : (
+                        <CheckCircle className="h-3.5 w-3.5" />
+                      )}
+                      Confirm & Save
+                    </button>
+                    <button
+                      onClick={onDismiss}
+                      className="flex items-center gap-1.5 rounded-lg border border-zinc-300 px-4 py-2 text-sm font-medium text-zinc-700 hover:bg-zinc-50"
+                    >
+                      <XCircle className="h-3.5 w-3.5" />
+                      Skip
+                    </button>
+                    <button
+                      onClick={onResearch}
+                      disabled={researchingId === p.id}
+                      className="flex items-center gap-1.5 rounded-lg border border-zinc-300 px-4 py-2 text-sm font-medium text-zinc-700 hover:bg-zinc-50 disabled:opacity-50"
+                    >
+                      <RefreshCw className="h-3.5 w-3.5" />
+                      Research Again
+                    </button>
+                  </div>
+                </>
+              )}
+            </div>
+          </td>
+        </tr>
+      )}
+    </>
+  );
+}
+
+// ─── Editable Field Component ───────────────────────────────
+
+function EditableField({
+  icon,
+  label,
+  value,
+  onChange,
+}: {
+  icon: React.ReactNode;
+  label: string;
+  value: string | null | undefined;
+  onChange: (v: string) => void;
+}) {
+  const [editing, setEditing] = useState(false);
+
+  return (
+    <div className="flex items-center gap-2 text-sm">
+      {icon}
+      <span className="w-32 text-zinc-500">{label}:</span>
+      {editing ? (
+        <input
+          autoFocus
+          type="text"
+          value={value || ""}
+          onChange={(e) => onChange(e.target.value)}
+          onBlur={() => setEditing(false)}
+          onKeyDown={(e) => e.key === "Enter" && setEditing(false)}
+          className="flex-1 rounded border border-zinc-300 px-2 py-1 text-sm text-zinc-900 focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500/20"
+        />
+      ) : (
+        <span
+          className="flex-1 cursor-pointer text-zinc-900 hover:text-emerald-600"
+          onClick={() => setEditing(true)}
+        >
+          {value || <span className="text-zinc-400">null</span>}
+          <span className="ml-2 text-xs text-zinc-400 hover:text-emerald-500">
+            [Edit]
+          </span>
+        </span>
+      )}
     </div>
   );
 }
