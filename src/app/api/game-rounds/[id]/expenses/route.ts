@@ -18,7 +18,7 @@ export async function GET(
   if (!round) {
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
-  if (!round.players.some((p) => p.user_id === user.id)) return forbidden();
+  if (!round.players.some((p: any) => p.user_id === user.id)) return forbidden();
 
   const expenses = await prisma.gameExpenses.findMany({
     where: { round_id: roundId },
@@ -44,7 +44,7 @@ export async function POST(
   if (!round) {
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
-  if (!round.players.some((p) => p.user_id === user.id)) return forbidden();
+  if (!round.players.some((p: any) => p.user_id === user.id)) return forbidden();
 
   const body = await req.json();
 

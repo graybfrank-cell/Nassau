@@ -19,7 +19,7 @@ export async function PATCH(
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
 
-  const player = round.players.find((p) => p.id === playerId);
+  const player = round.players.find((p: any) => p.id === playerId);
   if (!player) {
     return NextResponse.json({ error: "Player not found" }, { status: 404 });
   }

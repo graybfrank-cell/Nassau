@@ -180,11 +180,11 @@ export default function RoundDashboardPage() {
 
   const isCommissioner = round.commissionerId === userId;
   const confirmedPlayers = round.players.filter(
-    (p) => p.status === "confirmed" || p.role === "COMMISSIONER"
+    (p: any) => p.status === "confirmed" || p.role === "COMMISSIONER"
   );
 
   // Build scorecard data for grid
-  const gridScorecards = confirmedPlayers.map((player) => ({
+  const gridScorecards = confirmedPlayers.map((player: any) => ({
     playerId: player.id,
     holes: localScorecards.get(player.id) || Array(18).fill(0),
     total: (localScorecards.get(player.id) || []).reduce(
@@ -195,27 +195,27 @@ export default function RoundDashboardPage() {
 
   // Skins data for calculator
   const skinsPlayers = round.skinsGame
-    ? confirmedPlayers.map((p) => ({ id: p.id, name: p.name }))
+    ? confirmedPlayers.map((p: any) => ({ id: p.id, name: p.name }))
     : [];
   const skinsScorecards = round.skinsGame
-    ? confirmedPlayers.map((p) => ({
+    ? confirmedPlayers.map((p: any) => ({
         playerId: p.id,
         holes: localScorecards.get(p.id) || Array(18).fill(0),
       }))
     : [];
 
   // Settlement data with player names
-  const settlementData = round.settlements.map((s) => ({
+  const settlementData = round.settlements.map((s: any) => ({
     id: s.id,
     fromPlayer: {
       id: s.fromPlayer,
       name:
-        round.players.find((p) => p.id === s.fromPlayer)?.name || "Unknown",
+        round.players.find((p: any) => p.id === s.fromPlayer)?.name || "Unknown",
     },
     toPlayer: {
       id: s.toPlayer,
       name:
-        round.players.find((p) => p.id === s.toPlayer)?.name || "Unknown",
+        round.players.find((p: any) => p.id === s.toPlayer)?.name || "Unknown",
     },
     amount: s.amount,
     reason: s.reason,
@@ -224,11 +224,11 @@ export default function RoundDashboardPage() {
   }));
 
   // Expense data
-  const expenseMembers = confirmedPlayers.map((p) => ({
+  const expenseMembers = confirmedPlayers.map((p: any) => ({
     id: p.id,
     name: p.name,
   }));
-  const expenseData = round.expenses.map((e) => ({
+  const expenseData = round.expenses.map((e: any) => ({
     id: e.id,
     description: e.description,
     amount: e.amount,
@@ -294,7 +294,7 @@ export default function RoundDashboardPage() {
     try {
       for (const scanned of scannedPlayers) {
         // Fuzzy match scanned name to confirmed players
-        const match = confirmedPlayers.find((p) => {
+        const match = confirmedPlayers.find((p: any) => {
           const pName = p.name.toLowerCase();
           const sName = scanned.name.toLowerCase();
           return (
@@ -328,9 +328,9 @@ export default function RoundDashboardPage() {
     setError(null);
     try {
       // Find the current user's player id to use as paidBy
-      const myPlayer = round!.players.find((p) => p.userId === userId);
+      const myPlayer = round!.players.find((p: any) => p.userId === userId);
       const paidBy = myPlayer?.id || confirmedPlayers[0]?.id;
-      const splitAmong = confirmedPlayers.map((p) => p.id);
+      const splitAmong = confirmedPlayers.map((p: any) => p.id);
 
       for (const expense of scannedExpenses) {
         await addGameExpense(roundId, {
@@ -654,7 +654,7 @@ export default function RoundDashboardPage() {
           )}
 
           <div className="mt-4 grid gap-2 sm:grid-cols-2">
-            {round.players.map((player) => (
+            {round.players.map((player: any) => (
               <div
                 key={player.id}
                 className="group flex items-center justify-between rounded-lg border border-zinc-100 px-3 py-2"
@@ -714,7 +714,7 @@ export default function RoundDashboardPage() {
             </p>
           ) : (
             <ScorecardGrid
-              players={confirmedPlayers.map((p) => ({
+              players={confirmedPlayers.map((p: any) => ({
                 id: p.id,
                 name: p.name,
               }))}
@@ -847,11 +847,11 @@ export default function RoundDashboardPage() {
               </p>
             ) : (
               <NassauBetCalculator
-                players={confirmedPlayers.map((p) => ({
+                players={confirmedPlayers.map((p: any) => ({
                   id: p.id,
                   name: p.name,
                 }))}
-                scorecards={confirmedPlayers.map((p) => ({
+                scorecards={confirmedPlayers.map((p: any) => ({
                   playerId: p.id,
                   holes: localScorecards.get(p.id) || Array(18).fill(0),
                 }))}

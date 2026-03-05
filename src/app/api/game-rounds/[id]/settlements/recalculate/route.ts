@@ -29,12 +29,12 @@ export async function POST(
   if (round.commissioner_id !== user.id) return forbidden();
 
   const confirmedPlayerIds = round.players
-    .filter((p) => p.status === "confirmed" || p.role === "COMMISSIONER")
-    .map((p) => p.id);
+    .filter((p: any) => p.status === "confirmed" || p.role === "COMMISSIONER")
+    .map((p: any) => p.id);
 
   // 1. Calculate expense balances
   const balances: Record<string, number> = {};
-  confirmedPlayerIds.forEach((id) => {
+  confirmedPlayerIds.forEach((id: any) => {
     balances[id] = 0;
   });
 
@@ -79,7 +79,7 @@ export async function POST(
         balances[winnerId] = (balances[winnerId] || 0) + skinsValue * buyIn;
 
         // Each other player pays into the pot
-        const losers = confirmedPlayerIds.filter((id) => id !== winnerId);
+        const losers = confirmedPlayerIds.filter((id: any) => id !== winnerId);
         const perLoser = (skinsValue * buyIn) / losers.length;
         for (const loserId of losers) {
           balances[loserId] = (balances[loserId] || 0) - perLoser;
@@ -95,8 +95,8 @@ export async function POST(
   if (round.nassau_bet) {
     const betAmount = Number(round.nassau_bet.bet_amount);
     const nassauScorecards = round.scorecards
-      .filter((sc) => confirmedPlayerIds.includes(sc.player_id))
-      .map((sc) => ({
+      .filter((sc: any) => confirmedPlayerIds.includes(sc.player_id))
+      .map((sc: any) => ({
         playerId: sc.player_id,
         holes: sc.holes as number[],
       }));

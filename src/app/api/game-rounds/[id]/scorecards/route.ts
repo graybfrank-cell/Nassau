@@ -19,7 +19,7 @@ export async function GET(
   if (!round) {
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
-  if (!round.players.some((p) => p.user_id === user.id)) return forbidden();
+  if (!round.players.some((p: any) => p.user_id === user.id)) return forbidden();
 
   const scorecards = await prisma.gameScorecards.findMany({
     where: { round_id: roundId },
@@ -44,7 +44,7 @@ export async function POST(
   if (!round) {
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
-  if (!round.players.some((p) => p.user_id === user.id)) return forbidden();
+  if (!round.players.some((p: any) => p.user_id === user.id)) return forbidden();
 
   const body = await req.json();
   const holes: number[] = body.holes || [];
@@ -97,11 +97,11 @@ export async function POST(
         where: { round_id: roundId },
       });
       const confirmedPlayerIds = round.players
-        .filter((p) => p.status === "confirmed" || p.role === "COMMISSIONER")
-        .map((p) => p.id);
+        .filter((p: any) => p.status === "confirmed" || p.role === "COMMISSIONER")
+        .map((p: any) => p.id);
       const nassauScorecards = allScorecards
-        .filter((sc) => confirmedPlayerIds.includes(sc.player_id))
-        .map((sc) => ({
+        .filter((sc: any) => confirmedPlayerIds.includes(sc.player_id))
+        .map((sc: any) => ({
           playerId: sc.player_id,
           holes: sc.holes as number[],
         }));

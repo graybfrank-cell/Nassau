@@ -37,8 +37,8 @@ const STYLES = [
   { id: "sunset", name: "Golden Hour", bg: "#1C1917", text: "#FEF3C7", accent: "#F59E0B" },
 ];
 
-function PreviewCanvas({ config }) {
-  const platform = PLATFORMS[config.platform] || PLATFORMS.instagram_post;
+function PreviewCanvas({ config }: { config: any }) {
+  const platform = (PLATFORMS as any)[config.platform] || PLATFORMS.instagram_post;
   const style = STYLES.find(s => s.id === config.style) || STYLES[0];
   
   // Scale to fit in preview
@@ -126,7 +126,7 @@ function PreviewCanvas({ config }) {
                 <div style={{ fontSize: w * 0.045, fontWeight: 700, marginBottom: w * 0.02 }}>
                   {config.headline || "4 Days in Scottsdale — Per Person"}
                 </div>
-                {(config.items || ["Flights: $320", "Lodging: $480", "Greens Fees: $740", "Food & Drinks: $360", "Skins Losses: $47"]).map((item, i) => (
+                {(config.items || ["Flights: $320", "Lodging: $480", "Greens Fees: $740", "Food & Drinks: $360", "Skins Losses: $47"]).map((item: any, i: any) => (
                   <div key={i} style={{
                     display: "flex", justifyContent: "space-between", alignItems: "center",
                     padding: `${w * 0.015}px 0`,
@@ -254,7 +254,7 @@ export default function NassauVisualGenerator() {
   const [generatedContent, setGeneratedContent] = useState(null);
   const [activeTab, setActiveTab] = useState("design");
 
-  const updateConfig = (key, value) => setConfig(prev => ({ ...prev, [key]: value }));
+  const updateConfig = (key: any, value: any) => setConfig(prev => ({ ...prev, [key]: value }));
 
   async function handleAIGenerate() {
     if (!aiPrompt.trim()) return;

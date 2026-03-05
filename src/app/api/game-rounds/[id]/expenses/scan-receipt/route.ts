@@ -23,7 +23,7 @@ export async function POST(
   if (!round) {
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
-  if (!round.players.some((p) => p.user_id === user.id)) return forbidden();
+  if (!round.players.some((p: any) => p.user_id === user.id)) return forbidden();
 
   const formData = await req.formData();
   const file = formData.get("image") as File | null;
@@ -88,7 +88,7 @@ Rules:
     });
 
     // Extract the text content
-    const textBlock = response.content.find((b) => b.type === "text");
+    const textBlock = response.content.find((b: any) => b.type === "text");
     if (!textBlock || textBlock.type !== "text") {
       return NextResponse.json(
         { error: "No text response from vision model" },

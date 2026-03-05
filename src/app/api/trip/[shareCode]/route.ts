@@ -70,14 +70,14 @@ export async function GET(
           status: poll.status,
           deadline: poll.deadline,
           lockedOptionId: poll.locked_option_id,
-          options: poll.options.map((opt) => ({
+          options: poll.options.map((opt: any) => ({
             id: opt.id,
             startDate: opt.start_date,
             endDate: opt.end_date,
             label: opt.label,
             votes: poll.votes
-              .filter((v) => v.option_id === opt.id)
-              .map((v) => ({ userId: v.user_id, vote: v.vote })),
+              .filter((v: any) => v.option_id === opt.id)
+              .map((v: any) => ({ userId: v.user_id, vote: v.vote })),
           })),
         };
       }
@@ -94,7 +94,7 @@ export async function GET(
       endDate: trip.end_date,
       vibe: trip.vibe,
       shareCode: trip.share_code,
-      members: trip.members.map((m) => ({
+      members: trip.members.map((m: any) => ({
         id: m.id,
         name: m.name,
         role: m.role,

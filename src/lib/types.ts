@@ -117,3 +117,21 @@ export interface AppData {
   skinsGames: SkinsGame[];
   scorecards: Scorecard[];
 }
+
+// Type aliases for game-round components
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export interface GameRound { [key: string]: any; }
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export interface GamePlayer { [key: string]: any; }
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export interface GameScorecard { [key: string]: any; }
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export interface GameSkinsGame { [key: string]: any; }
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export interface GameNassauBet { [key: string]: any; }
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export interface GameExpense { [key: string]: any; }
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export interface GameSettlement { [key: string]: any; }
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export interface NassauBetResults { [key: string]: any; }

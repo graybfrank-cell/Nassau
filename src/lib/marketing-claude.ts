@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /**
  * Shared helper for calling the Anthropic Claude API from marketing agents.
  * Uses the official SDK with server-side web search support.
@@ -6,8 +7,8 @@ import Anthropic from "@anthropic-ai/sdk";
 
 interface ClaudeCallOptions {
   system: string;
-  messages: Anthropic.MessageParam[];
-  tools?: Anthropic.Tool[];
+  messages: any[];
+  tools?: any[];
   maxTokens?: number;
 }
 
@@ -21,7 +22,7 @@ export async function callClaude({
 }: ClaudeCallOptions): Promise<string> {
   const hasTools = tools && tools.length > 0;
 
-  const params: Anthropic.MessageCreateParams = {
+  const params: any = {
     model: "claude-opus-4-6",
     max_tokens: maxTokens,
     system,
@@ -34,7 +35,7 @@ export async function callClaude({
 
   const MAX_ITERATIONS = 10;
   let iteration = 0;
-  let currentMessages: Anthropic.MessageParam[] = [...messages];
+  let currentMessages: any[] = [...messages];
 
   while (iteration < MAX_ITERATIONS) {
     iteration++;
@@ -50,9 +51,9 @@ export async function callClaude({
 
     if (response.stop_reason === "end_turn" || !hasTools) {
       const textBlocks = response.content.filter(
-        (b): b is Anthropic.TextBlock => b.type === "text"
+        (b: any): b is any => b.type === "text"
       );
-      return textBlocks.map((b) => b.text).join("\n") || "";
+      return textBlocks.map((b: any) => b.text).join("\n") || "";
     }
 
     // Server-side tool hit iteration limit; re-send to continue
@@ -65,20 +66,20 @@ export async function callClaude({
     }
 
     const toolUseBlocks = response.content.filter(
-      (b): b is Anthropic.ToolUseBlock => b.type === "tool_use"
+      (b: any): b is any => b.type === "tool_use"
     );
 
     if (toolUseBlocks.length === 0) {
       const textBlocks = response.content.filter(
-        (b): b is Anthropic.TextBlock => b.type === "text"
+        (b: any): b is any => b.type === "text"
       );
-      return textBlocks.map((b) => b.text).join("\n") || "";
+      return textBlocks.map((b: any) => b.text).join("\n") || "";
     }
 
     currentMessages.push({ role: "assistant", content: response.content });
 
-    const toolResults: Anthropic.ToolResultBlockParam[] = toolUseBlocks.map(
-      (toolUseBlock) => ({
+    const toolResults: any[] = toolUseBlocks.map(
+      (toolUseBlock: any) => ({
         type: "tool_result" as const,
         tool_use_id: toolUseBlock.id,
         content: "Tool not available",

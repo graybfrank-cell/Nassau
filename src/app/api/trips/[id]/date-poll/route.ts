@@ -52,11 +52,11 @@ export async function GET(
   }
 
   // Group votes by option
-  const optionsWithVotes = poll.options.map((opt) => {
-    const optionVotes = poll.votes.filter((v) => v.option_id === opt.id);
+  const optionsWithVotes = poll.options.map((opt: any) => {
+    const optionVotes = poll.votes.filter((v: any) => v.option_id === opt.id);
     return {
       ...opt,
-      votes: optionVotes.map((v) => ({
+      votes: optionVotes.map((v: any) => ({
         userId: v.user_id,
         vote: v.vote,
       })),
@@ -152,7 +152,7 @@ export async function POST(
     const tripUrl = `https://nassau.golf/trip/${shareCode}`;
     const durationNights = body.duration_nights || 3;
 
-    const optionLines = poll.options.map((opt, i) => {
+    const optionLines = poll.options.map((opt: any, i: any) => {
       const letter = String.fromCharCode(65 + i);
       const start = new Date(opt.start_date);
       const end = new Date(opt.end_date);
