@@ -25,3 +25,35 @@ export async function GET() {
     );
   }
 }
+
+export async function PATCH(request: Request) {
+  const user = await getUser();
+  if (!user) return unauthorized();
+
+  try {
+    const body = await request.json();
+    const { id, plan } = body;
+
+    if (!id) {
+      return NextResponse.json({ error: "id is required" }, { status: 400 });
+    }
+
+    const { data, error } = await supabaseAdmin
+      .from("marketing_weekly_plans")
+      .update({ plan })
+      .eq("id", id)
+      .select()
+      .single();
+
+    if (error) {
+      return NextResponse.json({ error: error.message }, { status: 500 });
+    }
+
+    return NextResponse.json({ success: true, plan: data });
+  } catch (err) {
+    return NextResponse.json(
+      { error: err instanceof Error ? err.message : "Failed to update plan" },
+      { status: 500 }
+    );
+  }
+}
