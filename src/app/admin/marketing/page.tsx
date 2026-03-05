@@ -601,8 +601,8 @@ function CalendarTab() {
                                         </button>
                                         <button
                                           onClick={async () => {
-                                            const btn = document.activeElement as HTMLButtonElement;
-                                            if (btn) btn.textContent = "Generating...";
+                                            
+                                            setEditingSlot("generating-" + editKey);
                                             try {
                                               const res = await fetch("/api/admin/marketing/social-agent", {
                                                 method: "POST",
@@ -634,13 +634,13 @@ function CalendarTab() {
                                             } catch {
                                               console.error("Failed to generate content");
                                             } finally {
-                                              if (btn) btn.textContent = "Generate Content";
+                                              setEditingSlot(null);
                                             }
                                           }}
                                           className="flex items-center gap-1 rounded border border-purple-200 px-2.5 py-1 text-[11px] text-purple-700 hover:bg-purple-50"
                                         >
                                           <Sparkles className="h-3 w-3" />
-                                          Generate Content
+                                          {editingSlot === "generating-" + editKey ? "Generating..." : "Generate Content"}
                                         </button>
                                         <button
                                           onClick={async () => {
