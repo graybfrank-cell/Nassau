@@ -1,11 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireMarketingAdmin } from "@/lib/marketing-auth";
 import { createServiceClient } from "@/lib/supabase/admin";
-import { Resend } from "resend";
 import { callClaude, extractJSON } from "@/lib/marketing-claude";
 import { SEO_WRITER_AGENT_PROMPT } from "@/lib/marketing-prompts";
-
-const resend = new Resend(process.env.RESEND_API_KEY);
 
 const SEED_KEYWORDS = [
   "best golf trips in Arizona",
