@@ -35,6 +35,7 @@ import {
   Zap,
   Users,
   TrendingUp,
+  Play,
 } from "lucide-react";
 
 // ─── Types ──────────────────────────────────────────────────
@@ -858,9 +859,16 @@ interface MarketingSettings {
   schedules: Record<string, string>;
 }
 
+const AGENT_CRON_ENDPOINTS: Record<string, string> = {
+  scoutAgent: "/api/cron/scout",
+  strategistAgent: "/api/cron/strategist",
+  contentAgent: "/api/cron/writer",
+};
+
 function SettingsTab() {
   const [settings, setSettings] = useState<MarketingSettings | null>(null);
   const [loading, setLoading] = useState(true);
+  const [agentStatus, setAgentStatus] = useState<Record<string, "idle" | "running" | "done" | "error">>({});
 
   useEffect(() => {
     async function load() {
@@ -876,6 +884,32 @@ function SettingsTab() {
     }
     load();
   }, []);
+
+  async function runAgent(agentKey: string) {
+    const endpoint = AGENT_CRON_ENDPOINTS[agentKey];
+    if (!endpoint) return;
+
+    setAgentStatus((prev) => ({ ...prev, [agentKey]: "running" }));
+    try {
+      const res = await fetch(endpoint, { method: "POST" });
+      if (res.ok) {
+        setAgentStatus((prev) => ({ ...prev, [agentKey]: "done" }));
+        setTimeout(() => {
+          setAgentStatus((prev) => ({ ...prev, [agentKey]: "idle" }));
+        }, 3000);
+      } else {
+        setAgentStatus((prev) => ({ ...prev, [agentKey]: "error" }));
+        setTimeout(() => {
+          setAgentStatus((prev) => ({ ...prev, [agentKey]: "idle" }));
+        }, 3000);
+      }
+    } catch {
+      setAgentStatus((prev) => ({ ...prev, [agentKey]: "error" }));
+      setTimeout(() => {
+        setAgentStatus((prev) => ({ ...prev, [agentKey]: "idle" }));
+      }, 3000);
+    }
+  }
 
   if (loading) {
     return (
@@ -904,14 +938,57 @@ function SettingsTab() {
           Agent Schedules
         </h3>
         <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
-          {Object.entries(settings.schedules).map(([agent, schedule]) => (
-            <div key={agent} className="flex items-center justify-between rounded-md border border-zinc-100 p-3">
-              <span className="text-sm text-zinc-700 capitalize">
-                {agent.replace(/([A-Z])/g, " $1").trim()}
-              </span>
-              <span className="text-xs text-zinc-500">{schedule}</span>
-            </div>
-          ))}
+          {Object.entries(settings.schedules).map(([agent, schedule]) => {
+            const status = agentStatus[agent] || "idle";
+            const hasCron = !!AGENT_CRON_ENDPOINTS[agent];
+            return (
+              <div key={agent} className="flex items-center justify-between rounded-md border border-zinc-100 p-3">
+                <div className="flex flex-col">
+                  <span className="text-sm text-zinc-700 capitalize">
+                    {agent.replace(/([A-Z])/g, " $1").trim()}
+                  </span>
+                  <span className="text-xs text-zinc-500">{schedule}</span>
+                </div>
+                {hasCron && (
+                  <button
+                    onClick={() => runAgent(agent)}
+                    disabled={status === "running"}
+                    className={`flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-xs font-medium transition-colors ${
+                      status === "running"
+                        ? "cursor-not-allowed bg-zinc-100 text-zinc-400"
+                        : status === "done"
+                          ? "bg-green-50 text-green-700"
+                          : status === "error"
+                            ? "bg-red-50 text-red-700"
+                            : "bg-emerald-50 text-emerald-700 hover:bg-emerald-100"
+                    }`}
+                  >
+                    {status === "running" ? (
+                      <>
+                        <Loader2 className="h-3 w-3 animate-spin" />
+                        Running...
+                      </>
+                    ) : status === "done" ? (
+                      <>
+                        <CheckCircle2 className="h-3 w-3" />
+                        Done
+                      </>
+                    ) : status === "error" ? (
+                      <>
+                        <AlertCircle className="h-3 w-3" />
+                        Failed
+                      </>
+                    ) : (
+                      <>
+                        <Play className="h-3 w-3" />
+                        Run Now
+                      </>
+                    )}
+                  </button>
+                )}
+              </div>
+            );
+          })}
         </div>
       </div>
 
