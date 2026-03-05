@@ -221,8 +221,8 @@ export default function DashboardPage() {
             <div className="mt-3 grid gap-3 sm:grid-cols-3">
               {recentRounds.map((round) => {
                 const bestScore = round.scorecards
-                  .filter((sc) => sc.total && sc.total > 0)
-                  .sort((a, b) => (a.total || 999) - (b.total || 999))[0];
+                  .filter((sc: any) => sc.total && sc.total > 0)
+                  .sort((a: any, b: any) => (a.total || 999) - (b.total || 999))[0];
                 return (
                   <Link
                     key={round.id}

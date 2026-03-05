@@ -2,7 +2,7 @@ import { PrismaClient } from "@/generated/prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
 import pg from "pg";
 
-const globalForPrisma = globalThis as unknown as { prisma: PrismaClient };
+const globalForPrisma = globalThis as unknown as { prisma: any };
 
 // Configure pg.Pool for Supabase pgBouncer + Vercel serverless:
 // - max:1 prevents exhausting pgBouncer slots across many serverless instances

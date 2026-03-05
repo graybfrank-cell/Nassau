@@ -27,7 +27,7 @@ export async function GET(
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
 
-  const isPlayer = round.players.some((p) => p.user_id === user.id);
+  const isPlayer = round.players.some((p: any) => p.user_id === user.id);
   if (!isPlayer) return forbidden();
 
   return NextResponse.json(round);

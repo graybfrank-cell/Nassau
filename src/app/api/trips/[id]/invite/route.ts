@@ -75,7 +75,7 @@ export async function POST(
 
       // Check if already a member (by email field or linked user email)
       const alreadyInvited = trip.members.some(
-        (m) => m.email === trimmed
+        (m: any) => m.email === trimmed
       );
       if (alreadyInvited) {
         results.push({ email: trimmed, status: "already_invited" });
@@ -90,7 +90,7 @@ export async function POST(
       // Also check if that profile's user_id is already a member
       if (profile) {
         const existingByUser = trip.members.some(
-          (m) => m.user_id === profile.id
+          (m: any) => m.user_id === profile.id
         );
         if (existingByUser) {
           results.push({ email: trimmed, status: "already_invited" });

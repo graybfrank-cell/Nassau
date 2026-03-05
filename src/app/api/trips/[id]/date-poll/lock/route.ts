@@ -89,7 +89,7 @@ export async function POST(
     return NextResponse.json({ error: "No poll found" }, { status: 404 });
   }
 
-  const option = poll.options.find((o) => o.id === optionId);
+  const option = poll.options.find((o: any) => o.id === optionId);
   if (!option) {
     return NextResponse.json({ error: "Option not found" }, { status: 404 });
   }
@@ -160,7 +160,7 @@ export async function POST(
       (new Date(option.end_date).getTime() - new Date(option.start_date).getTime()) /
         (1000 * 60 * 60 * 24)
     );
-    const goingCount = members.filter((m) => m.rsvp_status === "GOING").length;
+    const goingCount = members.filter((m: any) => m.rsvp_status === "GOING").length;
 
     for (const member of members) {
       if (!member.email) continue;

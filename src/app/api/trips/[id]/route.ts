@@ -33,7 +33,7 @@ export async function GET(
 
       const isMember =
         trip.created_by === user.id ||
-        trip.members.some((m) => m.user_id === user.id);
+        trip.members.some((m: any) => m.user_id === user.id);
       if (!isMember) return forbidden();
 
       return NextResponse.json(trip);

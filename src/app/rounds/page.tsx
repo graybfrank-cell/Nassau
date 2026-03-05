@@ -154,19 +154,19 @@ export default function RoundsPage() {
 
 function RoundCard({ round }: { round: GameRound }) {
   const confirmedCount = round.players.filter(
-    (p) => p.status === "confirmed" || p.role === "COMMISSIONER"
+    (p: any) => p.status === "confirmed" || p.role === "COMMISSIONER"
   ).length;
 
-  const settledCount = round.settlements.filter((s) => s.settled).length;
+  const settledCount = round.settlements.filter((s: any) => s.settled).length;
   const totalSettlements = round.settlements.length;
 
   // Find best score
   const scores = round.scorecards
-    .filter((sc) => sc.total && sc.total > 0)
-    .sort((a, b) => (a.total || 999) - (b.total || 999));
+    .filter((sc: any) => sc.total && sc.total > 0)
+    .sort((a: any, b: any) => (a.total || 999) - (b.total || 999));
 
   const bestPlayer = scores.length > 0
-    ? round.players.find((p) => p.id === scores[0].playerId)
+    ? round.players.find((p: any) => p.id === scores[0].playerId)
     : null;
 
   return (
@@ -215,7 +215,7 @@ function RoundCard({ round }: { round: GameRound }) {
 
             {round.status === "completed" && scores.length > 0 && (
               <span className="text-zinc-400">
-                Scores: {scores.map((sc) => sc.total).join(", ")}
+                Scores: {scores.map((sc: any) => sc.total).join(", ")}
               </span>
             )}
 
