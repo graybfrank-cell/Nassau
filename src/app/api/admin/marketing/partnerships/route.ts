@@ -179,7 +179,8 @@ Draft a response as JSON with: subject, body, tone_match_notes, recommended_next
             const to = course.marketing_contact_email || course.booking_email;
             if (to) {
               await resend.emails.send({
-                from: "Nassau <noreply@nassau.golf>",
+                from: "Grayson at Nassau <grayson@nassau.golf>",
+                replyTo: "grayson@nassau.golf",
                 to,
                 subject,
                 text: emailBody,

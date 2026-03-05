@@ -146,7 +146,8 @@ export async function POST(req: NextRequest) {
         if (!player.email) continue;
         try {
           await resend.emails.send({
-            from: "Nassau <noreply@nassau.golf>",
+            from: "Grayson at Nassau <grayson@nassau.golf>",
+            replyTo: "grayson@nassau.golf",
             to: player.email.trim().toLowerCase(),
             subject: `\u26F3 You're invited to a round at ${body.courseName}`,
             html: buildRoundInviteEmail({

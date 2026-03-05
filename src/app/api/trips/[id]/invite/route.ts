@@ -118,7 +118,8 @@ export async function POST(
           const captainName = membership.name || "Your friend";
 
           await resend.emails.send({
-            from: "Nassau <noreply@nassau.golf>",
+            from: "Grayson at Nassau <grayson@nassau.golf>",
+            replyTo: "grayson@nassau.golf",
             to: trimmed,
             subject: `You're invited to ${trip.name}! \uD83C\uDFCC\uFE0F`,
             html: buildInviteEmail({
