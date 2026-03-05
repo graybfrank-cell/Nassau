@@ -272,21 +272,40 @@ function PipelineTab() {
 
 // ─── Calendar Tab (Weekly View) ─────────────────────────────
 
+interface PlanSlot {
+  hook?: string;
+  platform?: string;
+  content_type?: string;
+  topic?: string;
+  time?: string;
+  notes?: string;
+  [key: string]: unknown;
+}
+
+interface PlanDay {
+  date?: string;
+  slots?: PlanSlot[];
+  [key: string]: unknown;
+}
+
+interface PlanData {
+  days?: PlanDay[];
+  theme?: string;
+  [key: string]: unknown;
+}
+
 interface WeeklyPlan {
   id: string;
   week_start?: string;
-  week_end?: string;
-  theme?: string;
-  status?: string;
-  content_items?: unknown[];
-  notes?: string;
+  plan?: PlanData;
+  performance_summary?: string;
   created_at?: string;
-  [key: string]: unknown;
 }
 
 function CalendarTab() {
   const [plans, setPlans] = useState<WeeklyPlan[]>([]);
   const [loading, setLoading] = useState(true);
+  const [expandedPlan, setExpandedPlan] = useState<string | null>(null);
 
   useEffect(() => {
     async function load() {
@@ -294,6 +313,9 @@ function CalendarTab() {
         const res = await fetch("/api/admin/marketing/calendar");
         const data = await res.json();
         setPlans(data.plans || []);
+        if (data.plans?.length > 0) {
+          setExpandedPlan(data.plans[0].id);
+        }
       } catch {
         // silent
       } finally {
@@ -323,50 +345,99 @@ function CalendarTab() {
 
   return (
     <div className="space-y-4">
-      {plans.map((plan) => (
-        <div
-          key={plan.id}
-          className="rounded-lg border border-zinc-200 bg-white p-5"
-        >
-          <div className="flex items-start justify-between">
-            <div>
-              <h3 className="font-medium text-zinc-900">
-                {plan.week_start
-                  ? `Week of ${new Date(plan.week_start).toLocaleDateString("en-US", { month: "short", day: "numeric" })}`
-                  : "Week"}
-                {plan.week_end &&
-                  ` – ${new Date(plan.week_end).toLocaleDateString("en-US", { month: "short", day: "numeric" })}`}
-              </h3>
-              {plan.theme && (
-                <p className="mt-1 text-sm text-zinc-500">Theme: {plan.theme}</p>
-              )}
-            </div>
-            {plan.status && (
-              <span
-                className={`rounded-full px-2 py-0.5 text-xs font-medium ${
-                  plan.status === "active"
-                    ? "bg-green-100 text-green-700"
-                    : plan.status === "draft"
-                      ? "bg-zinc-100 text-zinc-600"
-                      : "bg-blue-100 text-blue-700"
-                }`}
-              >
-                {plan.status}
-              </span>
+      {plans.map((wp) => {
+        const plan = typeof wp.plan === "string" ? JSON.parse(wp.plan) : wp.plan;
+        const days: PlanDay[] = plan?.days || [];
+        const totalSlots = days.reduce((acc: number, d: PlanDay) => acc + (d.slots?.length || 0), 0);
+        const isExpanded = expandedPlan === wp.id;
+
+        return (
+          <div
+            key={wp.id}
+            className="rounded-lg border border-zinc-200 bg-white"
+          >
+            <button
+              onClick={() => setExpandedPlan(isExpanded ? null : wp.id)}
+              className="flex w-full items-center justify-between p-5 text-left"
+            >
+              <div>
+                <h3 className="font-medium text-zinc-900">
+                  {wp.week_start
+                    ? `Week of ${new Date(wp.week_start + "T00:00:00").toLocaleDateString("en-US", { month: "short", day: "numeric" })}`
+                    : "Week"}
+                </h3>
+                {plan?.theme && (
+                  <p className="mt-0.5 text-sm text-zinc-500">{plan.theme}</p>
+                )}
+                <p className="mt-0.5 text-xs text-zinc-400">
+                  {days.length} day{days.length !== 1 ? "s" : ""} · {totalSlots} content slot{totalSlots !== 1 ? "s" : ""}
+                </p>
+              </div>
+              <ChevronDown
+                className={`h-5 w-5 text-zinc-400 transition-transform ${isExpanded ? "rotate-180" : ""}`}
+              />
+            </button>
+
+            {isExpanded && days.length > 0 && (
+              <div className="border-t border-zinc-100 px-5 pb-5">
+                {days.map((day, dayIdx) => (
+                  <div key={dayIdx} className="mt-4">
+                    <h4 className="text-xs font-semibold text-zinc-500 uppercase tracking-wide">
+                      {day.date
+                        ? new Date(day.date + "T00:00:00").toLocaleDateString("en-US", {
+                            weekday: "long",
+                            month: "short",
+                            day: "numeric",
+                          })
+                        : `Day ${dayIdx + 1}`}
+                    </h4>
+                    {day.slots && day.slots.length > 0 ? (
+                      <div className="mt-2 space-y-2">
+                        {day.slots.map((slot, slotIdx) => (
+                          <div
+                            key={slotIdx}
+                            className="rounded-md border border-zinc-100 bg-zinc-50 p-3"
+                          >
+                            <div className="flex items-start justify-between">
+                              <div className="flex-1">
+                                <p className="text-sm font-medium text-zinc-800">
+                                  {slot.hook || slot.topic || "Content slot"}
+                                </p>
+                                <div className="mt-1 flex flex-wrap gap-1.5">
+                                  {slot.platform && (
+                                    <span className="rounded bg-emerald-100 px-1.5 py-0.5 text-[10px] font-medium text-emerald-700">
+                                      {slot.platform}
+                                    </span>
+                                  )}
+                                  {slot.content_type && (
+                                    <span className="rounded bg-blue-100 px-1.5 py-0.5 text-[10px] font-medium text-blue-700">
+                                      {slot.content_type}
+                                    </span>
+                                  )}
+                                  {slot.time && (
+                                    <span className="rounded bg-zinc-200 px-1.5 py-0.5 text-[10px] font-medium text-zinc-600">
+                                      {slot.time}
+                                    </span>
+                                  )}
+                                </div>
+                                {slot.notes && (
+                                  <p className="mt-1 text-xs text-zinc-500">{slot.notes}</p>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <p className="mt-2 text-xs text-zinc-400">No slots scheduled</p>
+                    )}
+                  </div>
+                ))}
+              </div>
             )}
           </div>
-          {plan.notes && (
-            <p className="mt-2 text-sm text-zinc-600">{plan.notes}</p>
-          )}
-          {Array.isArray(plan.content_items) && plan.content_items.length > 0 && (
-            <div className="mt-3 border-t border-zinc-100 pt-3">
-              <p className="mb-1 text-xs font-medium text-zinc-500">
-                {plan.content_items.length} content items scheduled
-              </p>
-            </div>
-          )}
-        </div>
-      ))}
+        );
+      })}
     </div>
   );
 }
