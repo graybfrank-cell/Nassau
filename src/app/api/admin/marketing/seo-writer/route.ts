@@ -59,7 +59,7 @@ export async function POST(req: NextRequest) {
           content: `Write a comprehensive blog post targeting the keyword: "${keyword}". Use web search to research current, accurate information about courses, prices, and conditions. Return the result as JSON.`,
         },
       ],
-      tools: [{ type: "web_search_20250305" as any, name: "web_search" }],
+      tools: [{ type: "web_search_20250305", name: "web_search" }] as any,
       maxTokens: 8192,
     });
 
