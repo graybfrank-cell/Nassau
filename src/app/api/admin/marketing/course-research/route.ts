@@ -1,3 +1,4 @@
+export const maxDuration = 60;
 import { NextRequest, NextResponse } from "next/server";
 import { requireMarketingAdmin } from "@/lib/marketing-auth";
 import { createServiceClient } from "@/lib/supabase/admin";
