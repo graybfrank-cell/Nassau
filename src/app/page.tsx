@@ -67,7 +67,7 @@ export default function Home() {
 
             <h1 className="text-5xl sm:text-7xl font-extrabold tracking-tight text-white leading-[1.1]">
               Your group chat<br />
-              <span className="text-emerald-400">can&apos;t do this.</span>
+              <span className="text-emerald-400">wasn&apos;t built for this.</span>
             </h1>
             
             <p className="mx-auto mt-6 max-w-2xl text-lg text-zinc-400 leading-relaxed">
