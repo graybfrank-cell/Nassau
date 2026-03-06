@@ -2568,7 +2568,7 @@ function PartnershipsTab() {
 
         // 2-second delay to avoid rate limits
         if (i < courses.length - 1 && !batchAbortRef.current) {
-          await new Promise((resolve) => setTimeout(resolve, 2000));
+          await new Promise((resolve) => setTimeout(resolve, 5000));
         }
       }
     } catch {
@@ -2672,7 +2672,7 @@ function PartnershipsTab() {
       }
 
       if (i < selected.length - 1 && !batchAbortRef.current) {
-        await new Promise((resolve) => setTimeout(resolve, 2000));
+        await new Promise((resolve) => setTimeout(resolve, 5000));
       }
     }
 
