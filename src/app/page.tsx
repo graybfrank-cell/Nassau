@@ -188,6 +188,14 @@ export default function Home() {
             ))}
           </div>
 
+          {/* Explore CTA */}
+          <div className="text-center mb-8">
+            <Link href="/explore" className="inline-flex items-center gap-2 rounded-xl border-2 border-[#1A1A1A] px-8 py-3 text-sm font-bold text-[#1A1A1A] transition-all hover:bg-[#1A1A1A] hover:text-white">
+              See All 50+ Destinations
+              <ArrowRight className="h-4 w-4" />
+            </Link>
+          </div>
+
           {/* Itinerary preview */}
           <div className="rounded-2xl border border-[#E2D9CC] bg-[#FDFAF5] overflow-hidden shadow-sm">
             <div className="border-b border-[#E2D9CC] px-6 py-4 flex items-center justify-between">

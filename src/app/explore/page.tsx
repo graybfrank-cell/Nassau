@@ -454,25 +454,25 @@ function TripCard({
 
           {/* Price tier badge */}
           <div
-            className="absolute top-3 right-3 bg-black/40 backdrop-blur-sm text-white text-xs font-semibold px-2.5 py-1 rounded-full z-10"
+            className="absolute top-3 right-3 bg-black/40 backdrop-blur-sm text-[#1A1A1A] text-xs font-semibold px-2.5 py-1 rounded-full z-10"
             style={{ fontFamily: "'DM Sans', sans-serif" }}
           >
             {trip.tier}
           </div>
 
           {/* Bottom gradient overlay */}
-          <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-black/80 via-black/40 to-transparent z-10" />
+          <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-[#F3EDE4]/80 via-black/40 to-transparent z-10" />
 
           {/* Title on image */}
           <div className="absolute bottom-3 left-3 right-3 z-10">
             <h3
-              className="text-white text-lg font-bold leading-tight mb-0.5 drop-shadow-lg"
+              className="text-[#1A1A1A] text-lg font-bold leading-tight mb-0.5 drop-shadow-lg"
               style={{ fontFamily: "'Playfair Display', serif" }}
             >
               {trip.title}
             </h3>
             <p
-              className="text-white/90 text-sm drop-shadow"
+              className="text-[#1A1A1A]/90 text-sm drop-shadow"
               style={{ fontFamily: "'DM Sans', sans-serif" }}
             >
               {trip.dest}
@@ -634,16 +634,16 @@ function TripModal({
               className={`absolute inset-0 bg-gradient-to-br ${pm?.fallback || "from-gray-500 to-gray-700"}`}
             />
           )}
-          <div className="absolute bottom-0 left-0 right-0 h-28 bg-gradient-to-t from-black/70 to-transparent" />
+          <div className="absolute bottom-0 left-0 right-0 h-28 bg-gradient-to-t from-[#F3EDE4]/70 to-transparent" />
           <div className="absolute bottom-4 left-5 right-5">
             <h2
-              className="text-white text-2xl font-bold drop-shadow-lg"
+              className="text-[#1A1A1A] text-2xl font-bold drop-shadow-lg"
               style={{ fontFamily: "'Playfair Display', serif" }}
             >
               {trip.title}
             </h2>
             <p
-              className="text-white/80 text-sm mt-1"
+              className="text-[#1A1A1A]/80 text-sm mt-1"
               style={{ fontFamily: "'DM Sans', sans-serif" }}
             >
               {trip.dest} &middot; {trip.region}
@@ -651,7 +651,7 @@ function TripModal({
           </div>
           <button
             onClick={onClose}
-            className="absolute top-4 right-4 w-8 h-8 bg-black/30 backdrop-blur-sm rounded-full flex items-center justify-center text-white hover:bg-black/50 transition"
+            className="absolute top-4 right-4 w-8 h-8 bg-black/30 backdrop-blur-sm rounded-full flex items-center justify-center text-[#1A1A1A] hover:bg-black/50 transition"
           >
             {"\u2715"}
           </button>
@@ -825,7 +825,7 @@ function TripModal({
           <button
             onClick={handlePlanTrip}
             disabled={creating}
-            className="w-full py-3.5 rounded-xl text-white font-bold text-base transition-all duration-200 hover:shadow-lg active:scale-[0.98] disabled:opacity-60"
+            className="w-full py-3.5 rounded-xl text-[#1A1A1A] font-bold text-base transition-all duration-200 hover:shadow-lg active:scale-[0.98] disabled:opacity-60"
             style={{
               backgroundColor: "#0C2E1E",
               fontFamily: "'DM Sans', sans-serif",
@@ -902,7 +902,7 @@ export default function NassauExplore() {
               style={{ backgroundColor: "#0C2E1E" }}
             >
               <span
-                className="text-white text-sm font-bold"
+                className="text-[#1A1A1A] text-sm font-bold"
                 style={{ fontFamily: "'DM Sans', sans-serif" }}
               >
                 N
@@ -938,7 +938,7 @@ export default function NassauExplore() {
 
           <a
             href="/trips/create/ai"
-            className="px-4 py-2 rounded-full text-sm font-semibold text-white transition hover:shadow-lg hidden sm:block"
+            className="px-4 py-2 rounded-full text-sm font-semibold text-[#1A1A1A] transition hover:shadow-lg hidden sm:block"
             style={{
               backgroundColor: "#0C2E1E",
               fontFamily: "'DM Sans', sans-serif",
@@ -1137,7 +1137,7 @@ export default function NassauExplore() {
                 setSelectedPrice("All");
                 setSearchQuery("");
               }}
-              className="mt-4 px-5 py-2 rounded-full text-sm font-semibold text-white"
+              className="mt-4 px-5 py-2 rounded-full text-sm font-semibold text-[#1A1A1A]"
               style={{
                 backgroundColor: "#0C2E1E",
                 fontFamily: "'DM Sans', sans-serif",
@@ -1156,7 +1156,7 @@ export default function NassauExplore() {
       >
         <div className="max-w-7xl mx-auto px-4 text-center">
           <h2
-            className="text-2xl sm:text-3xl font-bold text-white mb-3"
+            className="text-2xl sm:text-3xl font-bold text-[#1A1A1A] mb-3"
             style={{ fontFamily: "'Playfair Display', serif" }}
           >
             Don&apos;t see your perfect trip?
