@@ -113,10 +113,10 @@ export default function Home() {
       </section>
 
       {/* ═══ TWO PILLARS ═══ */}
-      <section className="px-6 py-12 bg-[#F3EDE4]">
+      <section className="px-6 py-10 bg-[#F3EDE4]">
         <div className="mx-auto max-w-5xl grid sm:grid-cols-2 gap-6">
-          <Link href="/login" className="group relative overflow-hidden rounded-2xl border border-[#E2D9CC] bg-[#FDFAF5] p-8 transition-all hover:border-[#D94F2B]/30 hover:shadow-lg">
-            <div className="absolute top-0 right-0 w-32 h-32 bg-[#D94F2B]/8 rounded-full blur-2xl" />
+          <Link href="/login" className="group relative overflow-hidden rounded-2xl border border-[#E2D9CC] bg-[#FDFAF5] p-8 shadow-sm shadow-sm transition-all hover:border-[#D94F2B]/30 hover:shadow-md">
+            
             <div className="relative">
               <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-[#D94F2B]/10 mb-4">
                 <MapPin className="h-6 w-6 text-[#D94F2B]" />
@@ -132,8 +132,8 @@ export default function Home() {
             </div>
           </Link>
 
-          <Link href="/login" className="group relative overflow-hidden rounded-2xl border border-[#E2D9CC] bg-[#FDFAF5] p-8 transition-all hover:border-amber-500/30 hover:shadow-lg">
-            <div className="absolute top-0 right-0 w-32 h-32 bg-amber-500/8 rounded-full blur-2xl" />
+          <Link href="/login" className="group relative overflow-hidden rounded-2xl border border-[#E2D9CC] bg-[#FDFAF5] p-8 shadow-sm shadow-sm transition-all hover:border-amber-500/30 hover:shadow-md">
+            
             <div className="relative">
               <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-amber-500/10 mb-4">
                 <Trophy className="h-6 w-6 text-amber-400" />
@@ -171,7 +171,7 @@ export default function Home() {
               <Link
                 href="/login"
                 key={dest.name}
-                className="group rounded-xl border border-[#E2D9CC] bg-[#FDFAF5] p-4 transition-all hover:border-[#D94F2B]/30 hover:-translate-y-1 hover:shadow-lg"
+                className="group rounded-xl border border-[#E2D9CC] bg-[#FDFAF5] p-4 shadow-sm transition-all hover:border-[#D94F2B]/30 hover:-translate-y-1 hover:shadow-md"
               >
                 <div className="text-3xl mb-3">{dest.img}</div>
                 <h4 className="font-semibold text-white text-sm">{dest.name}</h4>
@@ -185,7 +185,7 @@ export default function Home() {
           </div>
 
           {/* Itinerary preview */}
-          <div className="rounded-2xl border border-[#E2D9CC] bg-[#FDFAF5] overflow-hidden">
+          <div className="rounded-2xl border border-[#E2D9CC] bg-[#FDFAF5] overflow-hidden shadow-sm">
             <div className="border-b border-[#E2D9CC] px-6 py-4 flex items-center justify-between">
               <div>
                 <h3 className="font-bold text-[#1A1A1A]">Scottsdale Trip — March 2026</h3>
@@ -215,7 +215,7 @@ export default function Home() {
       </section>
 
       {/* ═══ SECTION 2: ROUND TRACKER / COMMISSIONER MODE ═══ */}
-      <section className="px-6 py-20 bg-[#EDE7DD]">
+      <section className="px-6 py-20 bg-[#F3EDE4] border-t border-[#E2D9CC]">
         <div className="mx-auto max-w-5xl">
           <div className="text-center mb-12">
             <p className="text-xs font-semibold text-amber-400 uppercase tracking-widest mb-3">Commissioner Mode</p>
@@ -229,7 +229,7 @@ export default function Home() {
           </div>
 
           {/* Scorecard preview */}
-          <div className="rounded-2xl border border-[#E2D9CC] bg-[#FDFAF5] overflow-hidden">
+          <div className="rounded-2xl border border-[#E2D9CC] bg-[#FDFAF5] overflow-hidden shadow-sm">
             <div className="border-b border-[#E2D9CC] px-6 py-4 flex items-center justify-between">
               <div>
                 <h3 className="font-bold text-[#1A1A1A]">TPC Scottsdale — Stadium Course</h3>
@@ -299,7 +299,7 @@ export default function Home() {
             </p>
           </div>
 
-          <div className="rounded-2xl border border-[#E2D9CC] bg-[#FDFAF5] overflow-hidden max-w-2xl mx-auto">
+          <div className="rounded-2xl border border-[#E2D9CC] bg-[#FDFAF5] overflow-hidden shadow-sm max-w-2xl mx-auto">
             <div className="border-b border-[#E2D9CC] px-6 py-4">
               <h3 className="font-bold text-[#1A1A1A]">Trip Expenses — Scottsdale</h3>
               <p className="text-xs text-[#8A8078] mt-0.5">Total: $3,120 · $780/person</p>
@@ -309,13 +309,13 @@ export default function Home() {
                 <div key={exp.item} className="px-6 py-3 flex items-center justify-between">
                   <div>
                     <p className="text-sm font-medium text-[#1A1A1A]">{exp.item}</p>
-                    <p className="text-xs text-[#8A8078]">Paid by {exp.by} · {exp.split}</p>
+                    <p className="text-xs text-[#6A6058]">Paid by {exp.by} · {exp.split}</p>
                   </div>
                   <span className="text-sm font-bold text-[#1A1A1A]">{exp.amount}</span>
                 </div>
               ))}
             </div>
-            <div className="px-6 py-4 border-t border-[#E2D9CC] bg-[#EDE7DD]/50">
+            <div className="px-6 py-4 border-t border-[#E2D9CC] bg-[#F3EDE4]/80">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-xs font-semibold text-zinc-400 uppercase">Settlement</p>
@@ -332,7 +332,7 @@ export default function Home() {
       </section>
 
       {/* ═══ HOW IT WORKS (simplified) ═══ */}
-      <section className="px-6 py-20 bg-[#EDE7DD]">
+      <section className="px-6 py-20 bg-[#F3EDE4] border-t border-[#E2D9CC]">
         <div className="mx-auto max-w-4xl">
           <h2 className="text-center text-3xl font-bold text-[#1A1A1A] mb-16">
             60 seconds. That&apos;s it.
@@ -344,7 +344,7 @@ export default function Home() {
               { icon: CheckCircle2, title: "Play and settle", desc: "Scores, skins, expenses — tracked live. Settle up on the 18th green." },
             ].map((step, i) => (
               <div key={step.title} className="text-center">
-                <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-[#D94F2B]/12 mb-4">
+                <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-[#D94F2B]/15 border border-[#D94F2B]/20 mb-4">
                   <step.icon className="h-7 w-7 text-[#D94F2B]" />
                 </div>
                 <h3 className="font-bold text-white mb-2">{step.title}</h3>
@@ -365,7 +365,7 @@ export default function Home() {
 
           <div className="grid sm:grid-cols-2 gap-6 max-w-2xl mx-auto">
             {/* Free tier */}
-            <div className="rounded-2xl border border-[#E2D9CC] bg-[#FDFAF5] p-8">
+            <div className="rounded-2xl border border-[#E2D9CC] bg-[#FDFAF5] p-8 shadow-sm">
               <div className="text-xs font-semibold text-amber-400 uppercase tracking-widest mb-2">Commissioner Mode</div>
               <div className="flex items-baseline gap-1 mb-4">
                 <span className="text-4xl font-extrabold text-[#1A1A1A]">$0</span>
@@ -386,7 +386,7 @@ export default function Home() {
             </div>
 
             {/* Pro tier */}
-            <div className="relative rounded-2xl border border-[#D94F2B]/30 bg-[#FDFAF5] p-8 shadow-lg">
+            <div className="relative rounded-2xl border border-[#D94F2B]/30 bg-[#FDFAF5] p-8 shadow-md">
               <div className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-[#D94F2B] px-3 py-0.5 text-xs font-bold text-[#1A1A1A]">
                 Most Popular
               </div>
