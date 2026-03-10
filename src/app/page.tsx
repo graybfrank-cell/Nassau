@@ -69,7 +69,7 @@ export default function Home() {
         <div className="relative mx-auto max-w-5xl">
           <div className="text-center">
             {/* Badge */}
-            <div className="inline-flex items-center gap-2 rounded-full border border-[#D94F2B]/20 bg-[#D94F2B]/10 px-4 py-1.5 mb-8">
+            <div className="inline-flex items-center gap-2 rounded-full border border-[#E2D9CC] bg-[#FDFAF5] px-4 py-1.5 mb-8">
               <Zap className="h-3.5 w-3.5 text-[#D94F2B]" />
               <span className="text-xs font-medium text-[#e8785e]">Launching April 1, 2026</span>
             </div>
@@ -117,12 +117,12 @@ export default function Home() {
       </section>
 
       {/* ═══ TWO PILLARS ═══ */}
-      <section className="relative z-10 px-6 py-10 bg-[#F3EDE4]">
+      <section className="relative z-10 px-6 py-8 bg-[#F3EDE4]">
         <div className="mx-auto max-w-5xl grid sm:grid-cols-2 gap-6">
           <Link href="/login" className="group relative overflow-hidden rounded-2xl border border-[#E2D9CC] bg-[#FDFAF5] p-8 shadow-sm shadow-sm transition-all hover:border-[#D94F2B]/30 hover:shadow-md">
             
             <div className="relative">
-              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-[#D94F2B]/10 mb-4">
+              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-[#F3EDE4] border border-[#E2D9CC] mb-4">
                 <MapPin className="h-6 w-6 text-[#D94F2B]" />
               </div>
               <h3 className="text-xl font-bold text-[#1A1A1A] mb-2">Plan a Trip</h3>
@@ -130,7 +130,7 @@ export default function Home() {
                 Pick a destination, invite your crew, build the itinerary, split costs — 
                 all without a single spreadsheet.
               </p>
-              <span className="inline-flex items-center gap-1 text-sm font-medium text-[#B83D25] group-hover:gap-2 transition-all">
+              <span className="inline-flex items-center gap-1 text-sm font-medium text-[#1A1A1A] underline underline-offset-2 group-hover:gap-2 transition-all">
                 Start planning <ChevronRight className="h-4 w-4" />
               </span>
             </div>
@@ -158,7 +158,7 @@ export default function Home() {
       {/* ═══ SECTION 1: TRIP PLANNER PREVIEW ═══ */}
       <section id="trip-planner" className="relative z-10 px-6 py-20 bg-[#F3EDE4]">
         <div className="mx-auto max-w-5xl">
-          <div className="text-center mb-12">
+          <div className="text-center mb-8">
             <p className="text-xs font-semibold text-[#B83D25] uppercase tracking-widest mb-3">Trip Planning</p>
             <h2 className="text-3xl sm:text-4xl font-bold text-[#1A1A1A]">
               Pick a destination. We&apos;ll handle the rest.
@@ -178,12 +178,12 @@ export default function Home() {
                 className="group rounded-xl border border-[#E2D9CC] bg-[#FDFAF5] p-4 shadow-sm transition-all hover:border-[#D94F2B]/30 hover:-translate-y-1 hover:shadow-md"
               >
                 <div className="text-3xl mb-2">{dest.img}</div>
-                <h4 className="font-semibold text-white text-sm">{dest.name}</h4>
+                <h4 className="font-bold text-[#1A1A1A] text-sm">{dest.name}</h4>
                 <div className="mt-2 flex items-center gap-3 text-xs text-[#5A4F45]">
                   <span>{dest.courses} courses</span>
                   <span>{dest.temp}</span>
                 </div>
-                <div className="mt-2 text-sm font-bold text-[#D94F2B]">{dest.avgCost}<span className="text-xs font-normal text-zinc-500">/person</span></div>
+                <div className="mt-2 text-sm font-bold text-[#1A1A1A]">{dest.avgCost}<span className="text-xs font-normal text-zinc-500">/person</span></div>
               </Link>
             ))}
           </div>
@@ -219,9 +219,9 @@ export default function Home() {
       </section>
 
       {/* ═══ SECTION 2: ROUND TRACKER / COMMISSIONER MODE ═══ */}
-      <section className="relative z-10 px-6 py-20 bg-[#F3EDE4]/95 border-t border-[#E2D9CC]">
+      <section className="relative z-10 px-6 py-16 bg-[#F3EDE4]/95 border-t border-[#E2D9CC]">
         <div className="mx-auto max-w-5xl">
-          <div className="text-center mb-12">
+          <div className="text-center mb-8">
             <p className="text-xs font-semibold text-amber-400 uppercase tracking-widest mb-3">Commissioner Mode</p>
             <h2 className="text-3xl sm:text-4xl font-bold text-[#1A1A1A]">
               Track rounds. Settle bets. No arguments.
@@ -292,7 +292,7 @@ export default function Home() {
       {/* ═══ SECTION 3: EXPENSE SPLITTING ═══ */}
       <section className="relative z-10 px-6 py-20">
         <div className="mx-auto max-w-5xl">
-          <div className="text-center mb-12">
+          <div className="text-center mb-8">
             <p className="text-xs font-semibold text-[#B83D25] uppercase tracking-widest mb-3">Expense Tracking</p>
             <h2 className="text-3xl sm:text-4xl font-bold text-[#1A1A1A]">
               &quot;I&apos;ll Venmo you later&quot; — and they never do.
@@ -335,8 +335,123 @@ export default function Home() {
         </div>
       </section>
 
+
+      {/* ═══ PHONE MOCKUP — See it in action ═══ */}
+      <section className="relative z-10 px-6 py-20 bg-[#F3EDE4]">
+        <div className="mx-auto max-w-5xl">
+          <div className="text-center mb-12">
+            <p className="text-xs font-semibold text-[#B83D25] uppercase tracking-widest mb-3">See It In Action</p>
+            <h2 className="text-3xl sm:text-4xl font-bold text-[#1A1A1A]">
+              Your golfer&apos;s dashboard.
+            </h2>
+            <p className="mt-4 text-[#5A4F45] max-w-xl mx-auto">
+              Everything you need — trips, rounds, scores, bets, expenses — organized in one place. 
+              Dark mode for on-course readability.
+            </p>
+          </div>
+
+          {/* Phone frame */}
+          <div className="mx-auto max-w-sm">
+            <div className="rounded-[2.5rem] border-[6px] border-[#1A1A1A] bg-[#09090b] p-2 shadow-2xl">
+              {/* Phone notch */}
+              <div className="mx-auto mb-2 h-6 w-28 rounded-full bg-[#1A1A1A]" />
+              
+              {/* Screen content */}
+              <div className="rounded-[2rem] bg-[#09090b] overflow-hidden">
+                {/* App nav */}
+                <div className="px-5 py-3 flex items-center justify-between border-b border-zinc-800">
+                  <span className="text-sm font-bold text-[#D94F2B]">Nassau</span>
+                  <div className="flex gap-3 text-xs text-zinc-400">
+                    <span className="text-white font-medium">Trips</span>
+                    <span>Rounds</span>
+                  </div>
+                </div>
+
+                {/* Dashboard */}
+                <div className="px-5 py-4">
+                  <p className="text-sm text-zinc-400">Good afternoon,</p>
+                  <p className="text-lg font-bold text-white">Grayson</p>
+                  
+                  {/* Quick actions */}
+                  <div className="grid grid-cols-2 gap-2 mt-4">
+                    <div className="rounded-lg bg-zinc-900 border border-zinc-800 p-3">
+                      <p className="text-[10px] font-medium text-[#D94F2B] uppercase tracking-wider">New Trip</p>
+                      <p className="text-xs text-white mt-1">Plan a getaway</p>
+                    </div>
+                    <div className="rounded-lg bg-zinc-900 border border-zinc-800 p-3">
+                      <p className="text-[10px] font-medium text-amber-500 uppercase tracking-wider">Track Round</p>
+                      <p className="text-xs text-white mt-1">Commissioner</p>
+                    </div>
+                  </div>
+
+                  {/* Upcoming round */}
+                  <div className="mt-4 rounded-lg bg-zinc-900 border border-zinc-800 overflow-hidden">
+                    <div className="px-3 py-2.5 flex justify-between items-center">
+                      <div>
+                        <p className="text-xs font-semibold text-white">TPC Scottsdale</p>
+                        <p className="text-[10px] text-zinc-500 mt-0.5">Tomorrow · 8:15 AM · 4 players</p>
+                      </div>
+                      <div className="text-right">
+                        <p className="text-base font-light text-amber-500">72°</p>
+                        <p className="text-[9px] text-zinc-500">Sunny</p>
+                      </div>
+                    </div>
+                    <div className="px-3 py-2 border-t border-zinc-800 flex gap-1.5">
+                      {["G","T","J","M"].map((n, i) => (
+                        <div key={n} className={`w-6 h-6 rounded-full flex items-center justify-center text-[9px] font-bold ${i === 0 ? "bg-[#D94F2B]/20 text-[#D94F2B]" : "bg-zinc-800 text-zinc-500"}`}>{n}</div>
+                      ))}
+                      <span className="text-[9px] text-zinc-500 self-center ml-1">All in</span>
+                    </div>
+                  </div>
+
+                  {/* Last round */}
+                  <div className="mt-3 rounded-lg bg-zinc-900 border border-zinc-800 overflow-hidden">
+                    <div className="px-3 py-2 border-b border-zinc-800 flex justify-between">
+                      <span className="text-[10px] font-medium text-white">Grayhawk Raptor</span>
+                      <span className="text-[9px] text-zinc-500">Mar 3</span>
+                    </div>
+                    {[
+                      {n:"Grayson",s:79,m:"+$45",t:true},
+                      {n:"Tyler",s:81,m:"+$15",t:false},
+                      {n:"Jake",s:87,m:"-$20",t:false},
+                    ].map((p) => (
+                      <div key={p.n} className={`px-3 py-1.5 flex justify-between items-center border-b border-zinc-800/50 ${p.t ? "bg-[#D94F2B]/5" : ""}`}>
+                        <span className={`text-[10px] ${p.t ? "font-bold text-white" : "text-zinc-400"}`}>{p.n}</span>
+                        <div className="flex gap-3">
+                          <span className="text-[10px] font-bold text-white">{p.s}</span>
+                          <span className={`text-[10px] font-bold ${p.m.startsWith("+") ? "text-[#3D6B4A]" : "text-[#D94F2B]"}`}>{p.m}</span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Settlement */}
+                  <div className="mt-3 rounded-lg bg-[#D94F2B]/5 border border-[#D94F2B]/15 p-3 flex justify-between items-center">
+                    <div>
+                      <p className="text-[9px] text-[#D94F2B] font-medium uppercase tracking-wider">You&apos;re owed</p>
+                      <p className="text-xl font-light text-[#D94F2B]">$45</p>
+                    </div>
+                    <div className="bg-[#D94F2B] text-white text-[10px] font-semibold px-3 py-1.5 rounded-md">Settle Up</div>
+                  </div>
+                </div>
+
+                {/* Bottom nav */}
+                <div className="px-5 py-3 border-t border-zinc-800 flex justify-around mt-2">
+                  {["Home","Trips","Rounds","Profile"].map((t, i) => (
+                    <div key={t} className="text-center">
+                      <div className={`w-1 h-1 rounded-full mx-auto mb-1 ${i === 0 ? "bg-[#D94F2B]" : "bg-transparent"}`} />
+                      <span className={`text-[9px] ${i === 0 ? "text-[#D94F2B] font-medium" : "text-zinc-600"}`}>{t}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* ═══ HOW IT WORKS (simplified) ═══ */}
-      <section className="relative z-10 px-6 py-20 bg-[#F3EDE4]/95 border-t border-[#E2D9CC]">
+      <section className="relative z-10 px-6 py-16 bg-[#F3EDE4]/95 border-t border-[#E2D9CC]">
         <div className="mx-auto max-w-4xl">
           <h2 className="text-center text-3xl font-bold text-[#1A1A1A] mb-16">
             60 seconds. That&apos;s it.
@@ -348,7 +463,7 @@ export default function Home() {
               { icon: CheckCircle2, title: "Play and settle", desc: "Scores, skins, expenses — tracked live. Settle up on the 18th green." },
             ].map((step, i) => (
               <div key={step.title} className="text-center">
-                <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-[#D94F2B]/15 border border-[#D94F2B]/20 mb-4">
+                <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-[#FDFAF5] border border-[#E2D9CC] shadow-sm mb-4">
                   <step.icon className="h-7 w-7 text-[#D94F2B]" />
                 </div>
                 <h3 className="font-bold text-white mb-2">{step.title}</h3>
