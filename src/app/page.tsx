@@ -155,6 +155,14 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Browse curated trips */}
+      <div className="relative z-10 text-center py-4 bg-[#F3EDE4]">
+        <Link href="/explore" className="inline-flex items-center gap-2 text-sm font-medium text-[#1A1A1A] underline underline-offset-4 decoration-[#E2D9CC] hover:decoration-[#D94F2B] transition-colors">
+          Just browsing? Explore our curated trip guides
+          <ArrowRight className="h-3.5 w-3.5" />
+        </Link>
+      </div>
+
       {/* ═══ SECTION 1: TRIP PLANNER PREVIEW ═══ */}
       <section id="trip-planner" className="relative z-10 px-6 py-20 bg-[#F3EDE4]">
         <div className="mx-auto max-w-5xl">
@@ -191,7 +199,7 @@ export default function Home() {
           {/* Explore CTA */}
           <div className="text-center mb-8">
             <Link href="/explore" className="inline-flex items-center gap-2 rounded-xl border-2 border-[#1A1A1A] px-8 py-3 text-sm font-bold text-[#1A1A1A] transition-all hover:bg-[#1A1A1A] hover:text-white">
-              See All 50+ Destinations
+              See Our Top 50+ Curated Destinations
               <ArrowRight className="h-4 w-4" />
             </Link>
           </div>
