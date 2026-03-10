@@ -72,8 +72,8 @@ export default function Home() {
             
             <p className="mx-auto mt-6 max-w-2xl text-lg text-zinc-400 leading-relaxed">
               Nassau replaces the 47-text thread, the shared spreadsheet nobody updates, 
-              and the buddy who &quot;forgot&quot; he owes you $85. Plan trips. Track rounds. Settle bets. 
-              All in one place.
+              and the buddy who &quot;forgot&quot; he owes you $85.
+
             </p>
 
             <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
