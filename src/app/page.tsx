@@ -54,20 +54,20 @@ export default function Home() {
       {/* ═══ HERO ═══ */}
       <section className="relative overflow-hidden px-6 py-20 sm:py-28">
         {/* Background effects */}
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-emerald-900/40 via-zinc-950 to-zinc-950" />
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[800px] bg-emerald-500/5 rounded-full blur-3xl" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-[#D94F2B]/15 via-zinc-950 to-zinc-950" />
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[800px] bg-[#D94F2B]/5 rounded-full blur-3xl" />
         
         <div className="relative mx-auto max-w-5xl">
           <div className="text-center">
             {/* Badge */}
-            <div className="inline-flex items-center gap-2 rounded-full border border-emerald-500/20 bg-emerald-500/10 px-4 py-1.5 mb-8">
-              <Zap className="h-3.5 w-3.5 text-emerald-400" />
-              <span className="text-xs font-medium text-emerald-300">Launching April 1, 2026</span>
+            <div className="inline-flex items-center gap-2 rounded-full border border-[#D94F2B]/20 bg-[#D94F2B]/10 px-4 py-1.5 mb-8">
+              <Zap className="h-3.5 w-3.5 text-[#D94F2B]" />
+              <span className="text-xs font-medium text-[#e8785e]">Launching April 1, 2026</span>
             </div>
 
             <h1 className="text-5xl sm:text-7xl font-extrabold tracking-tight text-white leading-[1.1]">
-              Your group chat<br />
-              <span className="text-emerald-400">wasn&apos;t built for this.</span>
+              Plan trips. Track rounds.<br />
+              <span className="text-[#D94F2B]">Settle bets. All in one place.</span>
             </h1>
             
             <p className="mx-auto mt-6 max-w-2xl text-lg text-zinc-400 leading-relaxed">
@@ -79,7 +79,7 @@ export default function Home() {
             <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
               <Link
                 href="/login"
-                className="group inline-flex items-center gap-2 rounded-xl bg-emerald-500 px-8 py-4 text-base font-bold text-white shadow-lg shadow-emerald-500/25 transition-all hover:bg-emerald-400 hover:shadow-emerald-400/30 hover:-translate-y-0.5"
+                className="group inline-flex items-center gap-2 rounded-xl bg-[#D94F2B] px-8 py-4 text-base font-bold text-white shadow-lg shadow-[#D94F2B]/20 transition-all hover:bg-[#D94F2B] hover:shadow-[#D94F2B]/20 hover:-translate-y-0.5"
               >
                 Start Free — No Card Required
                 <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
@@ -110,18 +110,18 @@ export default function Home() {
       {/* ═══ TWO PILLARS ═══ */}
       <section className="px-6 py-12">
         <div className="mx-auto max-w-5xl grid sm:grid-cols-2 gap-6">
-          <Link href="/login" className="group relative overflow-hidden rounded-2xl border border-zinc-800 bg-zinc-900 p-8 transition-all hover:border-emerald-500/30 hover:bg-zinc-900/80">
-            <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/5 rounded-full blur-2xl" />
+          <Link href="/login" className="group relative overflow-hidden rounded-2xl border border-zinc-800 bg-zinc-900 p-8 transition-all hover:border-[#D94F2B]/30 hover:bg-zinc-900/80">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-[#D94F2B]/5 rounded-full blur-2xl" />
             <div className="relative">
-              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-500/10 mb-4">
-                <MapPin className="h-6 w-6 text-emerald-400" />
+              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-[#D94F2B]/10 mb-4">
+                <MapPin className="h-6 w-6 text-[#D94F2B]" />
               </div>
               <h3 className="text-xl font-bold text-white mb-2">Plan a Trip</h3>
               <p className="text-sm text-zinc-400 leading-relaxed mb-4">
                 Pick a destination, invite your crew, build the itinerary, split costs — 
                 all without a single spreadsheet.
               </p>
-              <span className="inline-flex items-center gap-1 text-sm font-medium text-emerald-400 group-hover:gap-2 transition-all">
+              <span className="inline-flex items-center gap-1 text-sm font-medium text-[#D94F2B] group-hover:gap-2 transition-all">
                 Start planning <ChevronRight className="h-4 w-4" />
               </span>
             </div>
@@ -150,7 +150,7 @@ export default function Home() {
       <section id="trip-planner" className="px-6 py-20">
         <div className="mx-auto max-w-5xl">
           <div className="text-center mb-12">
-            <p className="text-xs font-semibold text-emerald-400 uppercase tracking-widest mb-3">Trip Planning</p>
+            <p className="text-xs font-semibold text-[#D94F2B] uppercase tracking-widest mb-3">Trip Planning</p>
             <h2 className="text-3xl sm:text-4xl font-bold text-white">
               Pick a destination. We&apos;ll handle the rest.
             </h2>
@@ -166,7 +166,7 @@ export default function Home() {
               <Link
                 href="/login"
                 key={dest.name}
-                className="group rounded-xl border border-zinc-800 bg-zinc-900 p-4 transition-all hover:border-emerald-500/30 hover:-translate-y-1 hover:shadow-lg hover:shadow-emerald-500/5"
+                className="group rounded-xl border border-zinc-800 bg-zinc-900 p-4 transition-all hover:border-[#D94F2B]/30 hover:-translate-y-1 hover:shadow-lg hover:shadow-[#D94F2B]/5"
               >
                 <div className="text-3xl mb-3">{dest.img}</div>
                 <h4 className="font-semibold text-white text-sm">{dest.name}</h4>
@@ -174,7 +174,7 @@ export default function Home() {
                   <span>{dest.courses} courses</span>
                   <span>{dest.temp}</span>
                 </div>
-                <div className="mt-2 text-sm font-bold text-emerald-400">{dest.avgCost}<span className="text-xs font-normal text-zinc-500">/person</span></div>
+                <div className="mt-2 text-sm font-bold text-[#D94F2B]">{dest.avgCost}<span className="text-xs font-normal text-zinc-500">/person</span></div>
               </Link>
             ))}
           </div>
@@ -186,7 +186,7 @@ export default function Home() {
                 <h3 className="font-bold text-white">Scottsdale Trip — March 2026</h3>
                 <p className="text-xs text-zinc-500 mt-0.5">4 days · 4 players · 4 rounds</p>
               </div>
-              <Link href="/login" className="rounded-lg bg-emerald-500/10 px-3 py-1.5 text-xs font-medium text-emerald-400 hover:bg-emerald-500/20 transition-colors">
+              <Link href="/login" className="rounded-lg bg-[#D94F2B]/10 px-3 py-1.5 text-xs font-medium text-[#D94F2B] hover:bg-[#D94F2B]/20 transition-colors">
                 Create yours →
               </Link>
             </div>
@@ -248,21 +248,21 @@ export default function Home() {
                 </thead>
                 <tbody>
                   {sampleScorecard.map((player, i) => (
-                    <tr key={player.name} className={`border-b border-zinc-800/50 ${i === 0 ? "bg-emerald-500/5" : ""}`}>
+                    <tr key={player.name} className={`border-b border-zinc-800/50 ${i === 0 ? "bg-[#D94F2B]/5" : ""}`}>
                       <td className="px-6 py-3">
                         <div className="flex items-center gap-2">
-                          <div className={`h-7 w-7 rounded-full flex items-center justify-center text-xs font-bold ${i === 0 ? "bg-emerald-500/20 text-emerald-400" : "bg-zinc-800 text-zinc-400"}`}>
+                          <div className={`h-7 w-7 rounded-full flex items-center justify-center text-xs font-bold ${i === 0 ? "bg-[#D94F2B]/20 text-[#D94F2B]" : "bg-zinc-800 text-zinc-400"}`}>
                             {player.name[0]}
                           </div>
                           <span className="font-medium text-white">{player.name}</span>
-                          {i === 0 && <span className="text-xs text-emerald-400">👑</span>}
+                          {i === 0 && <span className="text-xs text-[#D94F2B]">👑</span>}
                         </div>
                       </td>
                       <td className="px-4 py-3 text-center text-zinc-300">{player.front}</td>
                       <td className="px-4 py-3 text-center text-zinc-300">{player.back}</td>
                       <td className="px-4 py-3 text-center font-bold text-white">{player.total}</td>
                       <td className="px-4 py-3 text-center text-zinc-300">{player.skins}</td>
-                      <td className={`px-4 py-3 text-right font-bold ${player.money.startsWith("+") ? "text-emerald-400" : "text-red-400"}`}>
+                      <td className={`px-4 py-3 text-right font-bold ${player.money.startsWith("+") ? "text-[#D94F2B]" : "text-red-400"}`}>
                         {player.money}
                       </td>
                     </tr>
@@ -284,7 +284,7 @@ export default function Home() {
       <section className="px-6 py-20">
         <div className="mx-auto max-w-5xl">
           <div className="text-center mb-12">
-            <p className="text-xs font-semibold text-emerald-400 uppercase tracking-widest mb-3">Expense Tracking</p>
+            <p className="text-xs font-semibold text-[#D94F2B] uppercase tracking-widest mb-3">Expense Tracking</p>
             <h2 className="text-3xl sm:text-4xl font-bold text-white">
               &quot;I&apos;ll Venmo you later&quot; — and they never do.
             </h2>
@@ -314,10 +314,10 @@ export default function Home() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-xs font-semibold text-zinc-400 uppercase">Settlement</p>
-                  <p className="text-sm text-zinc-300 mt-1">Tyler owes Grayson <span className="font-bold text-emerald-400">$185</span></p>
-                  <p className="text-sm text-zinc-300">Jake owes Grayson <span className="font-bold text-emerald-400">$95</span></p>
+                  <p className="text-sm text-zinc-300 mt-1">Tyler owes Grayson <span className="font-bold text-[#D94F2B]">$185</span></p>
+                  <p className="text-sm text-zinc-300">Jake owes Grayson <span className="font-bold text-[#D94F2B]">$95</span></p>
                 </div>
-                <Link href="/login" className="rounded-lg bg-emerald-500 px-4 py-2 text-xs font-bold text-white hover:bg-emerald-400 transition-colors">
+                <Link href="/login" className="rounded-lg bg-[#D94F2B] px-4 py-2 text-xs font-bold text-white hover:bg-[#D94F2B] transition-colors">
                   Settle Up
                 </Link>
               </div>
@@ -339,8 +339,8 @@ export default function Home() {
               { icon: CheckCircle2, title: "Play and settle", desc: "Scores, skins, expenses — tracked live. Settle up on the 18th green." },
             ].map((step, i) => (
               <div key={step.title} className="text-center">
-                <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-emerald-500/10 mb-4">
-                  <step.icon className="h-7 w-7 text-emerald-400" />
+                <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-[#D94F2B]/10 mb-4">
+                  <step.icon className="h-7 w-7 text-[#D94F2B]" />
                 </div>
                 <h3 className="font-bold text-white mb-2">{step.title}</h3>
                 <p className="text-sm text-zinc-400 leading-relaxed">{step.desc}</p>
@@ -370,7 +370,7 @@ export default function Home() {
               <ul className="space-y-3 mb-8">
                 {["Scorecard tracking", "Skins games + Nassau bets", "Expense splitting", "Invite via link", "Settlement calculator"].map((f) => (
                   <li key={f} className="flex items-center gap-2 text-sm text-zinc-300">
-                    <CheckCircle2 className="h-4 w-4 text-emerald-400 shrink-0" />
+                    <CheckCircle2 className="h-4 w-4 text-[#D94F2B] shrink-0" />
                     {f}
                   </li>
                 ))}
@@ -381,11 +381,11 @@ export default function Home() {
             </div>
 
             {/* Pro tier */}
-            <div className="relative rounded-2xl border border-emerald-500/30 bg-zinc-900 p-8">
-              <div className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-emerald-500 px-3 py-0.5 text-xs font-bold text-white">
+            <div className="relative rounded-2xl border border-[#D94F2B]/30 bg-zinc-900 p-8">
+              <div className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-[#D94F2B] px-3 py-0.5 text-xs font-bold text-white">
                 Most Popular
               </div>
-              <div className="text-xs font-semibold text-emerald-400 uppercase tracking-widest mb-2">Nassau Pro</div>
+              <div className="text-xs font-semibold text-[#D94F2B] uppercase tracking-widest mb-2">Nassau Pro</div>
               <div className="flex items-baseline gap-1 mb-1">
                 <span className="text-4xl font-extrabold text-white">$6.99</span>
                 <span className="text-zinc-500">/month</span>
@@ -395,12 +395,12 @@ export default function Home() {
               <ul className="space-y-3 mb-8">
                 {["Everything in Commissioner Mode", "AI trip ideation", "Itinerary builder", "Group coordination", "Trip recaps + sharing", "Destination guides"].map((f) => (
                   <li key={f} className="flex items-center gap-2 text-sm text-zinc-300">
-                    <CheckCircle2 className="h-4 w-4 text-emerald-400 shrink-0" />
+                    <CheckCircle2 className="h-4 w-4 text-[#D94F2B] shrink-0" />
                     {f}
                   </li>
                 ))}
               </ul>
-              <Link href="/login" className="block w-full rounded-xl bg-emerald-500 py-3 text-center text-sm font-bold text-white hover:bg-emerald-400 transition-colors shadow-lg shadow-emerald-500/20">
+              <Link href="/login" className="block w-full rounded-xl bg-[#D94F2B] py-3 text-center text-sm font-bold text-white hover:bg-[#D94F2B] transition-colors shadow-lg shadow-[#D94F2B]/20">
                 Start 30-Day Free Trial
               </Link>
             </div>
@@ -423,7 +423,7 @@ export default function Home() {
           </p>
           <Link
             href="/login"
-            className="group mt-10 inline-flex items-center gap-2 rounded-xl bg-emerald-500 px-10 py-4 text-base font-bold text-white shadow-lg shadow-emerald-500/25 transition-all hover:bg-emerald-400 hover:shadow-emerald-400/30 hover:-translate-y-0.5"
+            className="group mt-10 inline-flex items-center gap-2 rounded-xl bg-[#D94F2B] px-10 py-4 text-base font-bold text-white shadow-lg shadow-[#D94F2B]/20 transition-all hover:bg-[#D94F2B] hover:shadow-[#D94F2B]/20 hover:-translate-y-0.5"
           >
             Create Your Free Account
             <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
@@ -436,7 +436,7 @@ export default function Home() {
       <footer className="border-t border-zinc-800 px-6 py-8">
         <div className="mx-auto max-w-5xl flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <span className="text-lg font-extrabold text-emerald-400 tracking-tight">Nassau</span>
+            <span className="text-lg font-extrabold text-[#D94F2B] tracking-tight">Nassau</span>
             <span className="text-xs text-zinc-600">Plan trips. Track rounds. Settle bets.</span>
           </div>
           <div className="flex items-center gap-6 text-xs text-zinc-500">
