@@ -1,1 +1,0 @@
-pbpaste > src/middleware.ts
