@@ -48,11 +48,15 @@ const sampleExpenses = [
 
 export default function Home() {
   return (
-    <div className="min-h-[calc(100vh-64px)] bg-[#F3EDE4]">
+    <div className="relative min-h-[calc(100vh-64px)] bg-[#F3EDE4]">
+      {/* Course texture watermark */}
+      <div className="pointer-events-none fixed inset-0 z-0 flex items-center justify-center opacity-[0.04]">
+        <img src="/course-texture.png" alt="" className="w-[90%] max-w-[1200px]" />
+      </div>
       <AuthRedirect />
 
       {/* ═══ HERO ═══ */}
-      <section className="relative overflow-hidden px-6 py-20 sm:py-28">
+      <section className="relative z-10 overflow-hidden px-6 py-20 sm:py-28">
         {/* Background image */}
         <div className="absolute inset-0">
           <img src="/hero-bg.jpg" alt="" className="h-full w-full object-cover" />
@@ -113,7 +117,7 @@ export default function Home() {
       </section>
 
       {/* ═══ TWO PILLARS ═══ */}
-      <section className="px-6 py-10 bg-[#F3EDE4]">
+      <section className="relative z-10 px-6 py-10 bg-[#F3EDE4]">
         <div className="mx-auto max-w-5xl grid sm:grid-cols-2 gap-6">
           <Link href="/login" className="group relative overflow-hidden rounded-2xl border border-[#E2D9CC] bg-[#FDFAF5] p-8 shadow-sm shadow-sm transition-all hover:border-[#D94F2B]/30 hover:shadow-md">
             
@@ -152,7 +156,7 @@ export default function Home() {
       </section>
 
       {/* ═══ SECTION 1: TRIP PLANNER PREVIEW ═══ */}
-      <section id="trip-planner" className="px-6 py-20 bg-[#F3EDE4]">
+      <section id="trip-planner" className="relative z-10 px-6 py-20 bg-[#F3EDE4]">
         <div className="mx-auto max-w-5xl">
           <div className="text-center mb-12">
             <p className="text-xs font-semibold text-[#D94F2B] uppercase tracking-widest mb-3">Trip Planning</p>
@@ -173,7 +177,7 @@ export default function Home() {
                 key={dest.name}
                 className="group rounded-xl border border-[#E2D9CC] bg-[#FDFAF5] p-4 shadow-sm transition-all hover:border-[#D94F2B]/30 hover:-translate-y-1 hover:shadow-md"
               >
-                <div className="text-3xl mb-3">{dest.img}</div>
+                <div className="text-3xl mb-2">{dest.img}</div>
                 <h4 className="font-semibold text-white text-sm">{dest.name}</h4>
                 <div className="mt-2 flex items-center gap-3 text-xs text-[#8A8078]">
                   <span>{dest.courses} courses</span>
@@ -215,7 +219,7 @@ export default function Home() {
       </section>
 
       {/* ═══ SECTION 2: ROUND TRACKER / COMMISSIONER MODE ═══ */}
-      <section className="px-6 py-20 bg-[#F3EDE4] border-t border-[#E2D9CC]">
+      <section className="relative z-10 px-6 py-20 bg-[#F3EDE4]/95 border-t border-[#E2D9CC]">
         <div className="mx-auto max-w-5xl">
           <div className="text-center mb-12">
             <p className="text-xs font-semibold text-amber-400 uppercase tracking-widest mb-3">Commissioner Mode</p>
@@ -286,7 +290,7 @@ export default function Home() {
       </section>
 
       {/* ═══ SECTION 3: EXPENSE SPLITTING ═══ */}
-      <section className="px-6 py-20">
+      <section className="relative z-10 px-6 py-20">
         <div className="mx-auto max-w-5xl">
           <div className="text-center mb-12">
             <p className="text-xs font-semibold text-[#D94F2B] uppercase tracking-widest mb-3">Expense Tracking</p>
@@ -332,7 +336,7 @@ export default function Home() {
       </section>
 
       {/* ═══ HOW IT WORKS (simplified) ═══ */}
-      <section className="px-6 py-20 bg-[#F3EDE4] border-t border-[#E2D9CC]">
+      <section className="relative z-10 px-6 py-20 bg-[#F3EDE4]/95 border-t border-[#E2D9CC]">
         <div className="mx-auto max-w-4xl">
           <h2 className="text-center text-3xl font-bold text-[#1A1A1A] mb-16">
             60 seconds. That&apos;s it.
@@ -356,7 +360,7 @@ export default function Home() {
       </section>
 
       {/* ═══ PRICING ═══ */}
-      <section className="px-6 py-20">
+      <section className="relative z-10 px-6 py-20">
         <div className="mx-auto max-w-4xl">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold text-[#1A1A1A]">Simple pricing. No surprises.</h2>
@@ -418,7 +422,7 @@ export default function Home() {
       </section>
 
       {/* ═══ FINAL CTA ═══ */}
-      <section className="px-6 py-24">
+      <section className="relative z-10 px-6 py-24">
         <div className="mx-auto max-w-3xl text-center">
           <h2 className="text-3xl sm:text-4xl font-bold text-[#1A1A1A]">
             Your crew is already planning<br />the next trip without you.
