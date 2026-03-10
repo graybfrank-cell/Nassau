@@ -53,7 +53,12 @@ export default function Home() {
 
       {/* ═══ HERO ═══ */}
       <section className="relative overflow-hidden px-6 py-20 sm:py-28">
-        {/* Background effects */}
+        {/* Background image */}
+        <div className="absolute inset-0">
+          <img src="/hero-bg.jpg" alt="" className="h-full w-full object-cover" />
+          <div className="absolute inset-0 bg-gradient-to-b from-zinc-950/70 via-zinc-950/80 to-zinc-950" />
+        </div>
+        {/* Glow effect */}
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-[#D94F2B]/15 via-zinc-950 to-zinc-950" />
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[800px] bg-[#D94F2B]/5 rounded-full blur-3xl" />
         
