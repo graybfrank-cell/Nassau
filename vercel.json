@@ -11,6 +11,7 @@
     { "path": "/api/admin/marketing/onboarding", "schedule": "0 13 * * *" },
     { "path": "/api/admin/marketing/reactivation", "schedule": "0 14 * * 1" },
     { "path": "/api/admin/marketing/seo-writer", "schedule": "0 16 * * 3" },
-    { "path": "/api/admin/marketing/referral-tracker", "schedule": "0 11 * * *" }
+    { "path": "/api/admin/marketing/referral-tracker", "schedule": "0 11 * * *" },
+    { "path": "/api/cron/complete-rounds", "schedule": "0 * * * *" }
   ]
 }

@@ -8,6 +8,24 @@ import { getGameRounds } from "@/lib/game-store";
 import { GameRound } from "@/lib/types";
 import { Plus, MapPin, Users, Calendar, Trophy, DollarSign } from "lucide-react";
 
+const FOUR_HOURS_MS = 4 * 60 * 60 * 1000;
+
+/** True if the round's tee time is more than 4 hours in the past. */
+function isRoundPastDue(round: GameRound): boolean {
+  return new Date(round.teeTime).getTime() < Date.now() - FOUR_HOURS_MS;
+}
+
+/** Returns the effective status, treating past-due active/in_progress rounds as completed. */
+function effectiveStatus(round: GameRound): string {
+  if (
+    (round.status === "upcoming" || round.status === "in_progress") &&
+    isRoundPastDue(round)
+  ) {
+    return "completed";
+  }
+  return round.status;
+}
+
 function formatDateTime(dateStr: string): string {
   const d = new Date(dateStr);
   return d.toLocaleDateString("en-US", {
@@ -69,11 +87,14 @@ export default function RoundsPage() {
   }
 
   const upcoming = rounds
-    .filter((r) => r.status === "upcoming" || r.status === "in_progress")
+    .filter((r) => {
+      const es = effectiveStatus(r);
+      return es === "upcoming" || es === "in_progress";
+    })
     .sort((a, b) => new Date(a.teeTime).getTime() - new Date(b.teeTime).getTime());
 
   const past = rounds
-    .filter((r) => r.status === "completed")
+    .filter((r) => effectiveStatus(r) === "completed")
     .sort((a, b) => new Date(b.teeTime).getTime() - new Date(a.teeTime).getTime());
 
   return (
@@ -153,6 +174,7 @@ export default function RoundsPage() {
 }
 
 function RoundCard({ round }: { round: GameRound }) {
+  const displayStatus = effectiveStatus(round);
   const confirmedCount = round.players.filter(
     (p) => p.status === "confirmed" || p.role === "COMMISSIONER"
   ).length;
@@ -185,7 +207,7 @@ function RoundCard({ round }: { round: GameRound }) {
                 </span>
               )}
             </h3>
-            <StatusBadge status={round.status} />
+            <StatusBadge status={displayStatus} />
           </div>
 
           {round.courseLocation && (
@@ -213,14 +235,14 @@ function RoundCard({ round }: { round: GameRound }) {
               </span>
             )}
 
-            {round.status === "completed" && bestPlayer && scores[0].total && (
+            {displayStatus === "completed" && bestPlayer && scores[0].total && (
               <span className="inline-flex items-center gap-1 text-emerald-600">
                 <Trophy className="h-3.5 w-3.5" />
                 {bestPlayer.name} shot {scores[0].total}
               </span>
             )}
 
-            {round.status === "completed" && scores.length > 0 && (
+            {displayStatus === "completed" && scores.length > 0 && (
               <span className="text-zinc-400">
                 Scores: {scores.map((sc) => sc.total).join(", ")}
               </span>
