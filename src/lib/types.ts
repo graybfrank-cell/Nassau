@@ -127,6 +127,7 @@ export interface GameRound {
   courseName: string;
   courseId?: string;
   courseLocation?: string;
+  courseLayout?: string;
   courseLat?: number;
   courseLng?: number;
   teeTime: string;

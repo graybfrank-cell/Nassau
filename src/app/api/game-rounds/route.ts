@@ -83,6 +83,7 @@ export async function POST(req: NextRequest) {
         course_name: body.courseName,
         course_id: body.courseId || null,
         course_location: body.courseLocation || null,
+        course_layout: body.courseLayout || null,
         course_lat: body.courseLat ?? null,
         course_lng: body.courseLng ?? null,
         tee_time: teeTime,

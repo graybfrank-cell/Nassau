@@ -513,6 +513,11 @@ export default function RoundDashboardPage() {
                 <h1 className="text-2xl font-bold tracking-tight text-zinc-900">
                   {round.courseName}
                 </h1>
+                {round.courseLayout && (
+                  <span className="inline-flex items-center rounded-full bg-emerald-100 px-2.5 py-0.5 text-xs font-medium text-emerald-700">
+                    {round.courseLayout}
+                  </span>
+                )}
                 <StatusBadge status={round.status} />
               </div>
               <div className="mt-2 space-y-1">

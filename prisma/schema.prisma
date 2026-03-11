@@ -226,6 +226,7 @@ model GameRounds {
   course_name     String
   course_id       String?
   course_location String?
+  course_layout   String?
   course_lat      Float?
   course_lng      Float?
   tee_time        DateTime @db.Timestamptz()

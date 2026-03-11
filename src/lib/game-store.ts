@@ -36,6 +36,7 @@ export async function createGameRound(data: {
   courseName: string;
   courseId?: string;
   courseLocation?: string;
+  courseLayout?: string;
   courseLat?: number;
   courseLng?: number;
   teeTime: string;
@@ -300,6 +301,7 @@ function mapGameRound(row: any): GameRound {
     courseName: row.course_name || "",
     courseId: row.course_id || undefined,
     courseLocation: row.course_location || undefined,
+    courseLayout: row.course_layout || undefined,
     courseLat: row.course_lat ?? undefined,
     courseLng: row.course_lng ?? undefined,
     teeTime: row.tee_time,
