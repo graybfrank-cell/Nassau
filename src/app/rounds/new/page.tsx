@@ -176,7 +176,7 @@ export default function NewRoundPage() {
                   type="date"
                   value={date}
                   onChange={(e) => setDate(e.target.value)}
-                  className="mt-1 block w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm text-zinc-900 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+                  className="mt-1 block w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm text-zinc-900 focus:border-[#D94F2B] focus:outline-none focus:ring-2 focus:ring-[#D94F2B]/20"
                 />
               </div>
               <div>
@@ -187,7 +187,7 @@ export default function NewRoundPage() {
                   type="time"
                   value={time}
                   onChange={(e) => setTime(e.target.value)}
-                  className="mt-1 block w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm text-zinc-900 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+                  className="mt-1 block w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm text-zinc-900 focus:border-[#D94F2B] focus:outline-none focus:ring-2 focus:ring-[#D94F2B]/20"
                 />
               </div>
             </div>
@@ -209,7 +209,7 @@ export default function NewRoundPage() {
                   onClick={() => setStartingHole(hole)}
                   className={`rounded-full px-4 py-1.5 text-xs font-medium transition-colors ${
                     startingHole === hole
-                      ? "bg-emerald-100 text-emerald-700"
+                      ? "bg-emerald-100 text-[#D94F2B]"
                       : "bg-zinc-100 text-zinc-500 hover:bg-zinc-200"
                   }`}
                 >
@@ -229,7 +229,7 @@ export default function NewRoundPage() {
                 type="button"
                 onClick={() => setSkinsEnabled(!skinsEnabled)}
                 className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ${
-                  skinsEnabled ? "bg-emerald-600" : "bg-zinc-200"
+                  skinsEnabled ? "bg-[#D94F2B]" : "bg-zinc-200"
                 }`}
               >
                 <span
@@ -253,7 +253,7 @@ export default function NewRoundPage() {
                       onClick={() => setBuyIn(String(amount))}
                       className={`rounded-full px-3 py-1.5 text-xs font-medium transition-colors ${
                         buyIn === String(amount)
-                          ? "bg-emerald-100 text-emerald-700"
+                          ? "bg-emerald-100 text-[#D94F2B]"
                           : "bg-zinc-100 text-zinc-500 hover:bg-zinc-200"
                       }`}
                     >
@@ -270,7 +270,7 @@ export default function NewRoundPage() {
                       step="1"
                       value={buyIn}
                       onChange={(e) => setBuyIn(e.target.value)}
-                      className="w-20 rounded-lg border border-zinc-300 py-1.5 pl-6 pr-2 text-xs text-zinc-900 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+                      className="w-20 rounded-lg border border-zinc-300 py-1.5 pl-6 pr-2 text-xs text-zinc-900 focus:border-[#D94F2B] focus:outline-none focus:ring-2 focus:ring-[#D94F2B]/20"
                     />
                   </div>
                 </div>
@@ -288,7 +288,7 @@ export default function NewRoundPage() {
                 type="button"
                 onClick={() => setNassauEnabled(!nassauEnabled)}
                 className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ${
-                  nassauEnabled ? "bg-emerald-600" : "bg-zinc-200"
+                  nassauEnabled ? "bg-[#D94F2B]" : "bg-zinc-200"
                 }`}
               >
                 <span
@@ -312,7 +312,7 @@ export default function NewRoundPage() {
                       onClick={() => setNassauBetAmount(String(amount))}
                       className={`rounded-full px-3 py-1.5 text-xs font-medium transition-colors ${
                         nassauBetAmount === String(amount)
-                          ? "bg-emerald-100 text-emerald-700"
+                          ? "bg-emerald-100 text-[#D94F2B]"
                           : "bg-zinc-100 text-zinc-500 hover:bg-zinc-200"
                       }`}
                     >
@@ -329,7 +329,7 @@ export default function NewRoundPage() {
                       step="1"
                       value={nassauBetAmount}
                       onChange={(e) => setNassauBetAmount(e.target.value)}
-                      className="w-20 rounded-lg border border-zinc-300 py-1.5 pl-6 pr-2 text-xs text-zinc-900 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+                      className="w-20 rounded-lg border border-zinc-300 py-1.5 pl-6 pr-2 text-xs text-zinc-900 focus:border-[#D94F2B] focus:outline-none focus:ring-2 focus:ring-[#D94F2B]/20"
                     />
                   </div>
                 </div>
@@ -351,7 +351,7 @@ export default function NewRoundPage() {
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
               placeholder="Meet at the range at 7:30"
-              className="mt-2 block w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+              className="mt-2 block w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-[#D94F2B] focus:outline-none focus:ring-2 focus:ring-[#D94F2B]/20"
             />
           </div>
 
@@ -393,7 +393,7 @@ export default function NewRoundPage() {
                 onClick={() => setAddMode("name")}
                 className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${
                   addMode === "name"
-                    ? "bg-emerald-100 text-emerald-700"
+                    ? "bg-emerald-100 text-[#D94F2B]"
                     : "bg-zinc-100 text-zinc-500"
                 }`}
               >
@@ -404,7 +404,7 @@ export default function NewRoundPage() {
                 onClick={() => setAddMode("email")}
                 className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${
                   addMode === "email"
-                    ? "bg-emerald-100 text-emerald-700"
+                    ? "bg-emerald-100 text-[#D94F2B]"
                     : "bg-zinc-100 text-zinc-500"
                 }`}
               >
@@ -425,7 +425,7 @@ export default function NewRoundPage() {
                     }
                   }}
                   placeholder="Player name"
-                  className="flex-1 rounded-lg border border-zinc-300 px-3 py-2 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+                  className="flex-1 rounded-lg border border-zinc-300 px-3 py-2 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-[#D94F2B] focus:outline-none focus:ring-2 focus:ring-[#D94F2B]/20"
                 />
               ) : (
                 <input
@@ -439,7 +439,7 @@ export default function NewRoundPage() {
                     }
                   }}
                   placeholder="player@email.com"
-                  className="flex-1 rounded-lg border border-zinc-300 px-3 py-2 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+                  className="flex-1 rounded-lg border border-zinc-300 px-3 py-2 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-[#D94F2B] focus:outline-none focus:ring-2 focus:ring-[#D94F2B]/20"
                 />
               )}
               <button
@@ -458,7 +458,7 @@ export default function NewRoundPage() {
             <button
               type="submit"
               disabled={submitting || !courseName.trim()}
-              className="rounded-lg bg-emerald-600 px-6 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-emerald-700 disabled:cursor-not-allowed disabled:opacity-50"
+              className="rounded-lg bg-[#D94F2B] px-6 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[#B83D25] disabled:cursor-not-allowed disabled:opacity-50"
             >
               {submitting ? "Creating..." : "Create Round"}
             </button>
