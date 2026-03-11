@@ -15,6 +15,8 @@ ALTER TABLE profiles ADD COLUMN IF NOT EXISTS subscription_expires_at TIMESTAMPT
 -- ═══════════════════════════════════════════════════════════════
 ALTER TABLE game_rounds ADD COLUMN IF NOT EXISTS course_photo_url TEXT;
 ALTER TABLE game_rounds ADD COLUMN IF NOT EXISTS course_address TEXT;
+ALTER TABLE game_rounds ADD COLUMN IF NOT EXISTS course_lat DOUBLE PRECISION;
+ALTER TABLE game_rounds ADD COLUMN IF NOT EXISTS course_lng DOUBLE PRECISION;
 ALTER TABLE game_rounds ADD COLUMN IF NOT EXISTS weather_data JSONB;
 ALTER TABLE game_rounds ADD COLUMN IF NOT EXISTS awards JSONB;
 
