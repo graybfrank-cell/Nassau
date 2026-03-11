@@ -61,7 +61,7 @@ import {
 import RoundHub from "@/components/RoundHub";
 
 const SCHEDULE_TYPES = [
-  { value: "tee_time", label: "Tee Time", emoji: "\u26F3", color: "bg-emerald-100 text-emerald-700", border: "border-l-emerald-500" },
+  { value: "tee_time", label: "Tee Time", emoji: "\u26F3", color: "bg-emerald-100 text-[#D94F2B]", border: "border-l-emerald-500" },
   { value: "dinner", label: "Dining", emoji: "\uD83C\uDF7D\uFE0F", color: "bg-rose-100 text-rose-700", border: "border-l-rose-500" },
   { value: "activity", label: "Activity", emoji: "\uD83C\uDFAF", color: "bg-blue-100 text-blue-700", border: "border-l-blue-500" },
   { value: "travel", label: "Travel", emoji: "\u2708\uFE0F", color: "bg-purple-100 text-purple-700", border: "border-l-purple-500" },
@@ -758,7 +758,7 @@ export default function TripDetailPage() {
           <p className="mt-2 text-sm text-zinc-500">This trip may have been deleted.</p>
           <Link
             href="/dashboard"
-            className="mt-4 inline-block text-sm font-medium text-emerald-600 hover:text-emerald-700"
+            className="mt-4 inline-block text-sm font-medium text-[#D94F2B] hover:text-[#B83D25]"
           >
             Back to Dashboard
           </Link>
@@ -891,7 +891,7 @@ export default function TripDetailPage() {
       title: "Scorecards",
       desc: `${scorecardCount} round${scorecardCount !== 1 ? "s" : ""} scored`,
       href: `/trips/${tripId}/scorecards`,
-      color: "bg-emerald-100 text-emerald-700",
+      color: "bg-emerald-100 text-[#D94F2B]",
     },
     {
       icon: Medal,
@@ -937,12 +937,12 @@ export default function TripDetailPage() {
                       if (e.key === "Enter") (e.target as HTMLInputElement).blur();
                       if (e.key === "Escape") { setEditingName(false); }
                     }}
-                    className="w-full rounded-md border border-emerald-300 px-2 py-1 text-2xl font-bold tracking-tight text-zinc-900 outline-none focus:ring-2 focus:ring-emerald-500/20"
+                    className="w-full rounded-md border border-[#D94F2B]/40 px-2 py-1 text-2xl font-bold tracking-tight text-zinc-900 outline-none focus:ring-2 focus:ring-[#D94F2B]/20"
                   />
                 </div>
               ) : (
                 <h1
-                  className={`text-2xl font-bold tracking-tight text-zinc-900${isCaptain ? " cursor-pointer hover:text-emerald-700" : ""}`}
+                  className={`text-2xl font-bold tracking-tight text-zinc-900${isCaptain ? " cursor-pointer hover:text-[#B83D25]" : ""}`}
                   onClick={isCaptain ? () => { setNameDraft(trip.name); setEditingName(true); } : undefined}
                   title={isCaptain ? "Click to edit trip name" : undefined}
                 >
@@ -1006,7 +1006,7 @@ export default function TripDetailPage() {
                       value={arrivalTime}
                       onChange={(e) => setArrivalTime(e.target.value)}
                       placeholder="Fri 3/14 at 2:30 PM"
-                      className="mt-1 block w-44 rounded-md border border-zinc-300 px-3 py-1.5 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+                      className="mt-1 block w-44 rounded-md border border-zinc-300 px-3 py-1.5 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-[#D94F2B] focus:outline-none focus:ring-2 focus:ring-[#D94F2B]/20"
                     />
                   </div>
                   <div>
@@ -1018,12 +1018,12 @@ export default function TripDetailPage() {
                       value={departureTime}
                       onChange={(e) => setDepartureTime(e.target.value)}
                       placeholder="Sun 3/16 at 6:00 PM"
-                      className="mt-1 block w-44 rounded-md border border-zinc-300 px-3 py-1.5 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+                      className="mt-1 block w-44 rounded-md border border-zinc-300 px-3 py-1.5 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-[#D94F2B] focus:outline-none focus:ring-2 focus:ring-[#D94F2B]/20"
                     />
                   </div>
                   <button
                     type="submit"
-                    className="rounded-md bg-emerald-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-emerald-700"
+                    className="rounded-md bg-[#D94F2B] px-3 py-1.5 text-sm font-medium text-white hover:bg-[#B83D25]"
                   >
                     Save
                   </button>
@@ -1044,7 +1044,7 @@ export default function TripDetailPage() {
             >
               {copied ? (
                 <>
-                  <Check className="h-3.5 w-3.5 text-emerald-600" />
+                  <Check className="h-3.5 w-3.5 text-[#D94F2B]" />
                   Copied!
                 </>
               ) : inviteLoading ? (
@@ -1064,7 +1064,7 @@ export default function TripDetailPage() {
           /* Locked dates display */
           <div className="mt-6 rounded-xl border-2 border-emerald-200 bg-emerald-50/30 p-5 shadow-sm">
             <div className="flex items-center gap-2">
-              <Lock className="h-5 w-5 text-emerald-600" />
+              <Lock className="h-5 w-5 text-[#D94F2B]" />
               <h2 className="text-lg font-semibold text-zinc-900">Trip Dates Locked</h2>
             </div>
             <p className="mt-2 text-sm text-zinc-700">
@@ -1099,7 +1099,7 @@ export default function TripDetailPage() {
               </p>
               <button
                 onClick={() => { setShowCreatePoll(true); setPollStep(1); }}
-                className="mt-4 inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-emerald-700"
+                className="mt-4 inline-flex items-center gap-2 rounded-lg bg-[#D94F2B] px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[#B83D25]"
               >
                 <Vote className="h-4 w-4" />
                 Set Up Date Poll
@@ -1138,7 +1138,7 @@ export default function TripDetailPage() {
                         onClick={() => setPollNights(n)}
                         className={`rounded-full px-4 py-2 text-sm font-medium transition-colors min-h-[44px] ${
                           pollNights === n
-                            ? "bg-emerald-100 text-emerald-700 ring-2 ring-emerald-500/30"
+                            ? "bg-emerald-100 text-[#D94F2B] ring-2 ring-[#D94F2B]/30"
                             : "bg-zinc-100 text-zinc-600 hover:bg-zinc-200"
                         }`}
                       >
@@ -1149,7 +1149,7 @@ export default function TripDetailPage() {
                   <button
                     onClick={handleFetchSuggestions}
                     disabled={pollLoadingSuggestions}
-                    className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-lg bg-emerald-600 px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-emerald-700 disabled:opacity-50"
+                    className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-lg bg-[#D94F2B] px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[#B83D25] disabled:opacity-50"
                   >
                     {pollLoadingSuggestions ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
                     {pollLoadingSuggestions ? "Getting suggestions..." : "Next — Pick Dates"}
@@ -1194,7 +1194,7 @@ export default function TripDetailPage() {
                               }}
                               className={`rounded-lg border px-3 py-2 text-left text-sm transition-colors ${
                                 isSelected
-                                  ? "border-emerald-300 bg-emerald-50 text-emerald-800"
+                                  ? "border-[#D94F2B]/40 bg-emerald-50 text-[#1A1A1A]"
                                   : "border-zinc-200 bg-white text-zinc-700 hover:border-zinc-300"
                               }`}
                             >
@@ -1227,7 +1227,7 @@ export default function TripDetailPage() {
                               value={opt.start_date}
                               onChange={(e) => handlePollOptionDateChange(idx, e.target.value)}
                               min={addDaysISO(new Date().toISOString().split("T")[0], 7)}
-                              className="mt-1 block w-full rounded-md border border-zinc-300 px-3 py-1.5 text-sm text-zinc-900 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+                              className="mt-1 block w-full rounded-md border border-zinc-300 px-3 py-1.5 text-sm text-zinc-900 focus:border-[#D94F2B] focus:outline-none focus:ring-2 focus:ring-[#D94F2B]/20"
                             />
                           </div>
                           <div>
@@ -1251,7 +1251,7 @@ export default function TripDetailPage() {
                             });
                           }}
                           placeholder='Optional label (e.g. "Spring Break")'
-                          className="mt-2 block w-full rounded-md border border-zinc-300 px-3 py-1.5 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+                          className="mt-2 block w-full rounded-md border border-zinc-300 px-3 py-1.5 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-[#D94F2B] focus:outline-none focus:ring-2 focus:ring-[#D94F2B]/20"
                         />
                       </div>
                     ))}
@@ -1260,7 +1260,7 @@ export default function TripDetailPage() {
                   {pollDraftOptions.length < 5 && (
                     <button
                       onClick={handleAddPollOption}
-                      className="mt-3 inline-flex items-center gap-1 text-sm font-medium text-emerald-600 hover:text-emerald-700"
+                      className="mt-3 inline-flex items-center gap-1 text-sm font-medium text-[#D94F2B] hover:text-[#B83D25]"
                     >
                       <Plus className="h-3.5 w-3.5" />
                       Add Option
@@ -1277,7 +1277,7 @@ export default function TripDetailPage() {
                     <button
                       onClick={() => setPollStep(3)}
                       disabled={pollDraftOptions.filter((o) => o.start_date && o.end_date).length < 2}
-                      className="flex-1 rounded-lg bg-emerald-600 px-5 py-2 text-sm font-semibold text-white transition-colors hover:bg-emerald-700 disabled:opacity-40 disabled:cursor-not-allowed"
+                      className="flex-1 rounded-lg bg-[#D94F2B] px-5 py-2 text-sm font-semibold text-white transition-colors hover:bg-[#B83D25] disabled:opacity-40 disabled:cursor-not-allowed"
                     >
                       Review & Send
                     </button>
@@ -1294,7 +1294,7 @@ export default function TripDetailPage() {
                   <div className="space-y-2">
                     {pollDraftOptions.filter((o) => o.start_date && o.end_date).map((opt, idx) => (
                       <div key={idx} className="flex items-center gap-3 rounded-lg border border-zinc-200 bg-white px-4 py-3">
-                        <span className="flex h-7 w-7 items-center justify-center rounded-full bg-emerald-100 text-xs font-bold text-emerald-700">
+                        <span className="flex h-7 w-7 items-center justify-center rounded-full bg-emerald-100 text-xs font-bold text-[#D94F2B]">
                           {String.fromCharCode(65 + idx)}
                         </span>
                         <div>
@@ -1320,7 +1320,7 @@ export default function TripDetailPage() {
                     <button
                       onClick={handleCreatePoll}
                       disabled={pollCreating}
-                      className="flex-1 inline-flex items-center justify-center gap-2 rounded-lg bg-emerald-600 px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-emerald-700 disabled:opacity-50"
+                      className="flex-1 inline-flex items-center justify-center gap-2 rounded-lg bg-[#D94F2B] px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[#B83D25] disabled:opacity-50"
                     >
                       {pollCreating ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
                       {pollCreating ? "Creating..." : "Send Poll to Crew"}
@@ -1368,7 +1368,7 @@ export default function TripDetailPage() {
                     setLodgingForm({ ...lodgingForm, name: e.target.value })
                   }
                   placeholder="Hotel / Rental name"
-                  className="block w-full rounded-md border border-zinc-300 px-3 py-1.5 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+                  className="block w-full rounded-md border border-zinc-300 px-3 py-1.5 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-[#D94F2B] focus:outline-none focus:ring-2 focus:ring-[#D94F2B]/20"
                 />
                 <input
                   type="text"
@@ -1377,7 +1377,7 @@ export default function TripDetailPage() {
                     setLodgingForm({ ...lodgingForm, address: e.target.value })
                   }
                   placeholder="Address"
-                  className="block w-full rounded-md border border-zinc-300 px-3 py-1.5 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+                  className="block w-full rounded-md border border-zinc-300 px-3 py-1.5 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-[#D94F2B] focus:outline-none focus:ring-2 focus:ring-[#D94F2B]/20"
                 />
                 <div className="grid grid-cols-2 gap-3">
                   <div>
@@ -1391,7 +1391,7 @@ export default function TripDetailPage() {
                         setLodgingForm({ ...lodgingForm, checkIn: e.target.value })
                       }
                       placeholder="3:00 PM"
-                      className="mt-1 block w-full rounded-md border border-zinc-300 px-3 py-1.5 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+                      className="mt-1 block w-full rounded-md border border-zinc-300 px-3 py-1.5 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-[#D94F2B] focus:outline-none focus:ring-2 focus:ring-[#D94F2B]/20"
                     />
                   </div>
                   <div>
@@ -1405,7 +1405,7 @@ export default function TripDetailPage() {
                         setLodgingForm({ ...lodgingForm, checkOut: e.target.value })
                       }
                       placeholder="11:00 AM"
-                      className="mt-1 block w-full rounded-md border border-zinc-300 px-3 py-1.5 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+                      className="mt-1 block w-full rounded-md border border-zinc-300 px-3 py-1.5 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-[#D94F2B] focus:outline-none focus:ring-2 focus:ring-[#D94F2B]/20"
                     />
                   </div>
                 </div>
@@ -1420,7 +1420,7 @@ export default function TripDetailPage() {
                       })
                     }
                     placeholder="Confirmation #"
-                    className="block w-full rounded-md border border-zinc-300 px-3 py-1.5 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+                    className="block w-full rounded-md border border-zinc-300 px-3 py-1.5 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-[#D94F2B] focus:outline-none focus:ring-2 focus:ring-[#D94F2B]/20"
                   />
                   <input
                     type="text"
@@ -1429,7 +1429,7 @@ export default function TripDetailPage() {
                       setLodgingForm({ ...lodgingForm, phone: e.target.value })
                     }
                     placeholder="Phone"
-                    className="block w-full rounded-md border border-zinc-300 px-3 py-1.5 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+                    className="block w-full rounded-md border border-zinc-300 px-3 py-1.5 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-[#D94F2B] focus:outline-none focus:ring-2 focus:ring-[#D94F2B]/20"
                   />
                 </div>
                 <textarea
@@ -1439,11 +1439,11 @@ export default function TripDetailPage() {
                   }
                   placeholder="Notes (WiFi password, gate code, etc.)"
                   rows={2}
-                  className="block w-full rounded-md border border-zinc-300 px-3 py-1.5 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+                  className="block w-full rounded-md border border-zinc-300 px-3 py-1.5 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-[#D94F2B] focus:outline-none focus:ring-2 focus:ring-[#D94F2B]/20"
                 />
                 <button
                   type="submit"
-                  className="rounded-md bg-emerald-600 px-4 py-1.5 text-sm font-medium text-white hover:bg-emerald-700"
+                  className="rounded-md bg-[#D94F2B] px-4 py-1.5 text-sm font-medium text-white hover:bg-[#B83D25]"
                 >
                   Save
                 </button>
@@ -1504,7 +1504,7 @@ export default function TripDetailPage() {
               {leaderboard.length > 0 && (
                 <Link
                   href={`/trips/${tripId}/leaderboard`}
-                  className="text-xs font-medium text-emerald-600 hover:text-emerald-700"
+                  className="text-xs font-medium text-[#D94F2B] hover:text-[#B83D25]"
                 >
                   View Full
                 </Link>
@@ -1587,7 +1587,7 @@ export default function TripDetailPage() {
               <div className="h-2 w-full overflow-hidden rounded-full bg-zinc-100">
                 <div
                   className={`h-full rounded-full transition-all duration-500 ${
-                    allBooked ? "bg-emerald-500" : "bg-emerald-400"
+                    allBooked ? "bg-[#D94F2B]" : "bg-[#D94F2B]"
                   }`}
                   style={{ width: `${totalBookable > 0 ? (bookedCount / totalBookable) * 100 : 0}%` }}
                 />
@@ -1597,7 +1597,7 @@ export default function TripDetailPage() {
             {/* Celebration state */}
             {allBooked ? (
               <div className="mt-5 rounded-lg border border-emerald-200 bg-emerald-50 px-5 py-4 text-center">
-                <p className="text-base font-semibold text-emerald-800">
+                <p className="text-base font-semibold text-[#1A1A1A]">
                   {"\uD83C\uDF89"} Everything&apos;s booked! Your crew is all set.
                 </p>
               </div>
@@ -1632,15 +1632,15 @@ export default function TripDetailPage() {
                                   title={isBooked ? "Mark as needs booking" : "Mark as booked"}
                                 >
                                   {isBooked ? (
-                                    <CheckCircle2 className="h-5 w-5 text-emerald-600" />
+                                    <CheckCircle2 className="h-5 w-5 text-[#D94F2B]" />
                                   ) : (
-                                    <Circle className="h-5 w-5 text-zinc-300 hover:text-emerald-400" />
+                                    <Circle className="h-5 w-5 text-zinc-300 hover:text-[#D94F2B]" />
                                   )}
                                 </button>
                               ) : (
                                 <span className="mt-0.5 shrink-0">
                                   {isBooked ? (
-                                    <CheckCircle2 className="h-5 w-5 text-emerald-600" />
+                                    <CheckCircle2 className="h-5 w-5 text-[#D94F2B]" />
                                   ) : (
                                     <Circle className="h-5 w-5 text-zinc-300" />
                                   )}
@@ -1650,13 +1650,13 @@ export default function TripDetailPage() {
                                 <div className="flex items-center gap-2">
                                   <span
                                     className={`text-sm font-semibold ${
-                                      isBooked ? "text-emerald-800 line-through" : "text-zinc-900"
+                                      isBooked ? "text-[#1A1A1A] line-through" : "text-zinc-900"
                                     }`}
                                   >
                                     {item.title}
                                   </span>
                                   {isBooked && (
-                                    <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-semibold text-emerald-700">
+                                    <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-semibold text-[#D94F2B]">
                                       Booked
                                     </span>
                                   )}
@@ -1713,7 +1713,7 @@ export default function TripDetailPage() {
                                           href={item.website.startsWith("http") ? item.website : `https://${item.website}`}
                                           target="_blank"
                                           rel="noopener noreferrer"
-                                          className="text-emerald-600 underline hover:text-emerald-700"
+                                          className="text-[#D94F2B] underline hover:text-[#B83D25]"
                                         >
                                           {item.website.replace(/^https?:\/\//, "")}
                                           <ExternalLink className="ml-0.5 inline h-2.5 w-2.5" />
@@ -1792,7 +1792,7 @@ export default function TripDetailPage() {
                   setShowAddEvent(!showAddEvent);
                   if (!showAddEvent && trip.startDate) setEventDate(trip.startDate);
                 }}
-                className="inline-flex items-center gap-1.5 rounded-lg bg-emerald-600 px-3 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-emerald-700"
+                className="inline-flex items-center gap-1.5 rounded-lg bg-[#D94F2B] px-3 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-[#B83D25]"
               >
                 <Plus className="h-3.5 w-3.5" />
                 Add Event
@@ -1808,29 +1808,29 @@ export default function TripDetailPage() {
               <div className="grid gap-3 sm:grid-cols-2">
                 <div>
                   <label className="block text-xs font-medium text-zinc-600">Date *</label>
-                  <input type="date" required value={eventDate} onChange={(e) => setEventDate(e.target.value)} className="mt-1 block w-full rounded-md border border-zinc-300 px-3 py-1.5 text-sm text-zinc-900 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20" />
+                  <input type="date" required value={eventDate} onChange={(e) => setEventDate(e.target.value)} className="mt-1 block w-full rounded-md border border-zinc-300 px-3 py-1.5 text-sm text-zinc-900 focus:border-[#D94F2B] focus:outline-none focus:ring-2 focus:ring-[#D94F2B]/20" />
                 </div>
                 <div>
                   <label className="block text-xs font-medium text-zinc-600">Time</label>
-                  <input type="time" value={eventTime} onChange={(e) => setEventTime(e.target.value)} className="mt-1 block w-full rounded-md border border-zinc-300 px-3 py-1.5 text-sm text-zinc-900 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20" />
+                  <input type="time" value={eventTime} onChange={(e) => setEventTime(e.target.value)} className="mt-1 block w-full rounded-md border border-zinc-300 px-3 py-1.5 text-sm text-zinc-900 focus:border-[#D94F2B] focus:outline-none focus:ring-2 focus:ring-[#D94F2B]/20" />
                 </div>
                 <div>
                   <label className="block text-xs font-medium text-zinc-600">Title *</label>
-                  <input type="text" required value={eventTitle} onChange={(e) => setEventTitle(e.target.value)} placeholder="TPC Scottsdale - Round 1" className="mt-1 block w-full rounded-md border border-zinc-300 px-3 py-1.5 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20" />
+                  <input type="text" required value={eventTitle} onChange={(e) => setEventTitle(e.target.value)} placeholder="TPC Scottsdale - Round 1" className="mt-1 block w-full rounded-md border border-zinc-300 px-3 py-1.5 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-[#D94F2B] focus:outline-none focus:ring-2 focus:ring-[#D94F2B]/20" />
                 </div>
                 <div>
                   <label className="block text-xs font-medium text-zinc-600">Type</label>
-                  <select value={eventType} onChange={(e) => setEventType(e.target.value as ScheduleItem["type"])} className="mt-1 block w-full rounded-md border border-zinc-300 px-3 py-1.5 text-sm text-zinc-900 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20">
+                  <select value={eventType} onChange={(e) => setEventType(e.target.value as ScheduleItem["type"])} className="mt-1 block w-full rounded-md border border-zinc-300 px-3 py-1.5 text-sm text-zinc-900 focus:border-[#D94F2B] focus:outline-none focus:ring-2 focus:ring-[#D94F2B]/20">
                     {SCHEDULE_TYPES.map((t) => (<option key={t.value} value={t.value}>{t.emoji} {t.label}</option>))}
                   </select>
                 </div>
                 <div className="sm:col-span-2">
                   <label className="block text-xs font-medium text-zinc-600">Description</label>
-                  <input type="text" value={eventDesc} onChange={(e) => setEventDesc(e.target.value)} placeholder="Optional details" className="mt-1 block w-full rounded-md border border-zinc-300 px-3 py-1.5 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20" />
+                  <input type="text" value={eventDesc} onChange={(e) => setEventDesc(e.target.value)} placeholder="Optional details" className="mt-1 block w-full rounded-md border border-zinc-300 px-3 py-1.5 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-[#D94F2B] focus:outline-none focus:ring-2 focus:ring-[#D94F2B]/20" />
                 </div>
               </div>
               <div className="mt-4 flex gap-3">
-                <button type="submit" className="rounded-md bg-emerald-600 px-4 py-1.5 text-sm font-medium text-white hover:bg-emerald-700">Add</button>
+                <button type="submit" className="rounded-md bg-[#D94F2B] px-4 py-1.5 text-sm font-medium text-white hover:bg-[#B83D25]">Add</button>
                 <button type="button" onClick={() => setShowAddEvent(false)} className="rounded-md border border-zinc-300 px-4 py-1.5 text-sm font-medium text-zinc-600 hover:bg-zinc-50">Cancel</button>
               </div>
             </form>
@@ -1870,7 +1870,7 @@ export default function TripDetailPage() {
                             onDragEnd={() => { setDragId(null); setDragOverId(null); }}
                             className={`group relative rounded-lg border-l-4 ${typeConfig?.border || "border-l-zinc-300"} border border-zinc-200 bg-white px-3 py-2.5 transition-all ${
                               isDragging ? "opacity-40" : ""
-                            } ${isDragOver ? "ring-2 ring-emerald-400 ring-offset-1" : ""} ${
+                            } ${isDragOver ? "ring-2 ring-[#D94F2B] ring-offset-1" : ""} ${
                               isCaptain ? "cursor-pointer hover:shadow-sm" : ""
                             }`}
                             onClick={isCaptain ? () => openEditModal(event) : undefined}
@@ -2002,18 +2002,18 @@ export default function TripDetailPage() {
                                 value={addForm.title}
                                 onChange={(e) => setAddForm({ ...addForm, title: e.target.value })}
                                 placeholder="Event title *"
-                                className="col-span-1 rounded-md border border-zinc-300 px-3 py-1.5 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+                                className="col-span-1 rounded-md border border-zinc-300 px-3 py-1.5 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-[#D94F2B] focus:outline-none focus:ring-2 focus:ring-[#D94F2B]/20"
                               />
                               <input
                                 type="time"
                                 value={addForm.time}
                                 onChange={(e) => setAddForm({ ...addForm, time: e.target.value })}
-                                className="rounded-md border border-zinc-300 px-3 py-1.5 text-sm text-zinc-900 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+                                className="rounded-md border border-zinc-300 px-3 py-1.5 text-sm text-zinc-900 focus:border-[#D94F2B] focus:outline-none focus:ring-2 focus:ring-[#D94F2B]/20"
                               />
                               <select
                                 value={addForm.type}
                                 onChange={(e) => setAddForm({ ...addForm, type: e.target.value })}
-                                className="rounded-md border border-zinc-300 px-3 py-1.5 text-sm text-zinc-900 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+                                className="rounded-md border border-zinc-300 px-3 py-1.5 text-sm text-zinc-900 focus:border-[#D94F2B] focus:outline-none focus:ring-2 focus:ring-[#D94F2B]/20"
                               >
                                 {SCHEDULE_TYPES.map((t) => (<option key={t.value} value={t.value}>{t.emoji} {t.label}</option>))}
                               </select>
@@ -2024,21 +2024,21 @@ export default function TripDetailPage() {
                                 value={addForm.cost}
                                 onChange={(e) => setAddForm({ ...addForm, cost: e.target.value })}
                                 placeholder="$ Cost per person (optional)"
-                                className="rounded-md border border-zinc-300 px-3 py-1.5 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+                                className="rounded-md border border-zinc-300 px-3 py-1.5 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-[#D94F2B] focus:outline-none focus:ring-2 focus:ring-[#D94F2B]/20"
                               />
                               <input
                                 type="text"
                                 value={addForm.notes}
                                 onChange={(e) => setAddForm({ ...addForm, notes: e.target.value })}
                                 placeholder="Notes (optional)"
-                                className="rounded-md border border-zinc-300 px-3 py-1.5 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+                                className="rounded-md border border-zinc-300 px-3 py-1.5 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-[#D94F2B] focus:outline-none focus:ring-2 focus:ring-[#D94F2B]/20"
                               />
                             </div>
                             <div className="mt-2 flex gap-2">
                               <button
                                 onClick={handleAddForDay}
                                 disabled={addSaving || !addForm.title.trim()}
-                                className="inline-flex items-center gap-1 rounded-md bg-emerald-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-emerald-700 disabled:opacity-50"
+                                className="inline-flex items-center gap-1 rounded-md bg-[#D94F2B] px-3 py-1.5 text-xs font-medium text-white hover:bg-[#B83D25] disabled:opacity-50"
                               >
                                 {addSaving ? <Loader2 className="h-3 w-3 animate-spin" /> : <Plus className="h-3 w-3" />}
                                 Add
@@ -2092,12 +2092,12 @@ export default function TripDetailPage() {
               <div className="space-y-3">
                 <div>
                   <label className="block text-xs font-medium text-zinc-600">Title *</label>
-                  <input type="text" value={editForm.title} onChange={(e) => setEditForm({ ...editForm, title: e.target.value })} className="mt-1 block w-full rounded-md border border-zinc-300 px-3 py-2 text-sm text-zinc-900 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20" />
+                  <input type="text" value={editForm.title} onChange={(e) => setEditForm({ ...editForm, title: e.target.value })} className="mt-1 block w-full rounded-md border border-zinc-300 px-3 py-2 text-sm text-zinc-900 focus:border-[#D94F2B] focus:outline-none focus:ring-2 focus:ring-[#D94F2B]/20" />
                 </div>
                 <div className="grid gap-3 sm:grid-cols-2">
                   <div>
                     <label className="block text-xs font-medium text-zinc-600">Time</label>
-                    <input type="time" value={editForm.time} onChange={(e) => setEditForm({ ...editForm, time: e.target.value })} className="mt-1 block w-full rounded-md border border-zinc-300 px-3 py-2 text-sm text-zinc-900 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20" />
+                    <input type="time" value={editForm.time} onChange={(e) => setEditForm({ ...editForm, time: e.target.value })} className="mt-1 block w-full rounded-md border border-zinc-300 px-3 py-2 text-sm text-zinc-900 focus:border-[#D94F2B] focus:outline-none focus:ring-2 focus:ring-[#D94F2B]/20" />
                   </div>
                   <div>
                     <label className="block text-xs font-medium text-zinc-600">Type</label>
@@ -2122,23 +2122,23 @@ export default function TripDetailPage() {
                 <div>
                   <label className="block text-xs font-medium text-zinc-600">Day</label>
                   {tripDates.length > 0 ? (
-                    <select value={editForm.date} onChange={(e) => setEditForm({ ...editForm, date: e.target.value })} className="mt-1 block w-full rounded-md border border-zinc-300 px-3 py-2 text-sm text-zinc-900 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20">
+                    <select value={editForm.date} onChange={(e) => setEditForm({ ...editForm, date: e.target.value })} className="mt-1 block w-full rounded-md border border-zinc-300 px-3 py-2 text-sm text-zinc-900 focus:border-[#D94F2B] focus:outline-none focus:ring-2 focus:ring-[#D94F2B]/20">
                       {tripDates.map((td) => (<option key={td.date} value={td.date}>{td.label}</option>))}
                     </select>
                   ) : (
-                    <input type="date" value={editForm.date} onChange={(e) => setEditForm({ ...editForm, date: e.target.value })} className="mt-1 block w-full rounded-md border border-zinc-300 px-3 py-2 text-sm text-zinc-900 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20" />
+                    <input type="date" value={editForm.date} onChange={(e) => setEditForm({ ...editForm, date: e.target.value })} className="mt-1 block w-full rounded-md border border-zinc-300 px-3 py-2 text-sm text-zinc-900 focus:border-[#D94F2B] focus:outline-none focus:ring-2 focus:ring-[#D94F2B]/20" />
                   )}
                 </div>
                 <div>
                   <label className="block text-xs font-medium text-zinc-600">Est. cost per person</label>
                   <div className="relative mt-1">
                     <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-zinc-400">$</span>
-                    <input type="number" value={editForm.cost} onChange={(e) => setEditForm({ ...editForm, cost: e.target.value })} placeholder="0" className="block w-full rounded-md border border-zinc-300 pl-7 pr-3 py-2 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20" />
+                    <input type="number" value={editForm.cost} onChange={(e) => setEditForm({ ...editForm, cost: e.target.value })} placeholder="0" className="block w-full rounded-md border border-zinc-300 pl-7 pr-3 py-2 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-[#D94F2B] focus:outline-none focus:ring-2 focus:ring-[#D94F2B]/20" />
                   </div>
                 </div>
                 <div>
                   <label className="block text-xs font-medium text-zinc-600">Notes</label>
-                  <textarea value={editForm.notes} onChange={(e) => setEditForm({ ...editForm, notes: e.target.value })} rows={2} placeholder="Optional notes..." className="mt-1 block w-full rounded-md border border-zinc-300 px-3 py-2 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20" />
+                  <textarea value={editForm.notes} onChange={(e) => setEditForm({ ...editForm, notes: e.target.value })} rows={2} placeholder="Optional notes..." className="mt-1 block w-full rounded-md border border-zinc-300 px-3 py-2 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-[#D94F2B] focus:outline-none focus:ring-2 focus:ring-[#D94F2B]/20" />
                 </div>
               </div>
 
@@ -2147,7 +2147,7 @@ export default function TripDetailPage() {
                 <button
                   onClick={handleEditSave}
                   disabled={editSaving || !editForm.title.trim()}
-                  className="inline-flex items-center gap-1.5 rounded-lg bg-emerald-600 px-5 py-2 text-sm font-semibold text-white transition-colors hover:bg-emerald-700 disabled:opacity-50 min-h-[44px]"
+                  className="inline-flex items-center gap-1.5 rounded-lg bg-[#D94F2B] px-5 py-2 text-sm font-semibold text-white transition-colors hover:bg-[#B83D25] disabled:opacity-50 min-h-[44px]"
                 >
                   {editSaving && <Loader2 className="h-4 w-4 animate-spin" />}
                   Save
@@ -2215,14 +2215,14 @@ export default function TripDetailPage() {
             <div className="flex items-center gap-2">
               <button
                 onClick={() => setShowInvite(!showInvite)}
-                className="inline-flex items-center gap-1.5 rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-1.5 text-xs font-semibold text-emerald-700 transition-colors hover:bg-emerald-100"
+                className="inline-flex items-center gap-1.5 rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-1.5 text-xs font-semibold text-[#D94F2B] transition-colors hover:bg-emerald-100"
               >
                 <Mail className="h-3.5 w-3.5" />
                 Invite Crew
               </button>
               <button
                 onClick={() => setShowAddMember(!showAddMember)}
-                className="inline-flex items-center gap-1.5 rounded-lg bg-emerald-600 px-3 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-emerald-700"
+                className="inline-flex items-center gap-1.5 rounded-lg bg-[#D94F2B] px-3 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-[#B83D25]"
               >
                 <Plus className="h-3.5 w-3.5" />
                 Add Member
@@ -2258,13 +2258,13 @@ export default function TripDetailPage() {
                 onChange={(e) => setInviteEmails(e.target.value)}
                 rows={3}
                 placeholder={"john@example.com, mike@example.com\nor paste multiple emails..."}
-                className="mt-1 block w-full rounded-md border border-zinc-300 px-3 py-1.5 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+                className="mt-1 block w-full rounded-md border border-zinc-300 px-3 py-1.5 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-[#D94F2B] focus:outline-none focus:ring-2 focus:ring-[#D94F2B]/20"
               />
               <div className="mt-3 flex gap-3">
                 <button
                   type="submit"
                   disabled={inviteSending || !inviteEmails.trim()}
-                  className="inline-flex items-center gap-1.5 rounded-md bg-emerald-600 px-4 py-1.5 text-sm font-medium text-white hover:bg-emerald-700 disabled:opacity-50"
+                  className="inline-flex items-center gap-1.5 rounded-md bg-[#D94F2B] px-4 py-1.5 text-sm font-medium text-white hover:bg-[#B83D25] disabled:opacity-50"
                 >
                   {inviteSending ? (
                     <RotateCw className="h-3.5 w-3.5 animate-spin" />
@@ -2300,7 +2300,7 @@ export default function TripDetailPage() {
                   value={memberName}
                   onChange={(e) => setMemberName(e.target.value)}
                   placeholder="John Smith"
-                  className="mt-1 block w-full rounded-md border border-zinc-300 px-3 py-1.5 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+                  className="mt-1 block w-full rounded-md border border-zinc-300 px-3 py-1.5 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-[#D94F2B] focus:outline-none focus:ring-2 focus:ring-[#D94F2B]/20"
                 />
               </div>
               <div className="w-24">
@@ -2312,12 +2312,12 @@ export default function TripDetailPage() {
                   value={memberHandicap}
                   onChange={(e) => setMemberHandicap(e.target.value)}
                   placeholder="12"
-                  className="mt-1 block w-full rounded-md border border-zinc-300 px-3 py-1.5 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+                  className="mt-1 block w-full rounded-md border border-zinc-300 px-3 py-1.5 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-[#D94F2B] focus:outline-none focus:ring-2 focus:ring-[#D94F2B]/20"
                 />
               </div>
               <button
                 type="submit"
-                className="rounded-md bg-emerald-600 px-4 py-1.5 text-sm font-medium text-white hover:bg-emerald-700"
+                className="rounded-md bg-[#D94F2B] px-4 py-1.5 text-sm font-medium text-white hover:bg-[#B83D25]"
               >
                 Add
               </button>
@@ -2466,7 +2466,7 @@ function InlineContactField({
           onBlur={handleBlur}
           onKeyDown={handleKeyDown}
           placeholder={label}
-          className="w-40 rounded border border-emerald-300 bg-white px-1.5 py-0.5 text-xs text-zinc-700 outline-none focus:ring-1 focus:ring-emerald-400"
+          className="w-40 rounded border border-[#D94F2B]/40 bg-white px-1.5 py-0.5 text-xs text-zinc-700 outline-none focus:ring-1 focus:ring-[#D94F2B]"
         />
       </span>
     );
@@ -2481,7 +2481,7 @@ function InlineContactField({
             href={value.startsWith("http") ? value : `https://${value}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-emerald-600 underline hover:text-emerald-700"
+            className="text-[#D94F2B] underline hover:text-[#B83D25]"
           >
             {value.replace(/^https?:\/\//, "")}
             <ExternalLink className="ml-0.5 inline h-2.5 w-2.5" />
@@ -2700,13 +2700,13 @@ function DatePollVotingCard({
     <div className={`mt-6 rounded-xl border-2 ${isActive ? "border-emerald-200" : "border-zinc-200"} bg-white p-5 shadow-sm`}>
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <Vote className="h-5 w-5 text-emerald-600" />
+          <Vote className="h-5 w-5 text-[#D94F2B]" />
           <h2 className="text-lg font-semibold text-zinc-900">
             {isActive ? "Vote on Trip Dates" : "Date Poll Results"}
           </h2>
         </div>
         <span className={`rounded-full px-2.5 py-1 text-xs font-medium ${
-          isActive ? "bg-emerald-100 text-emerald-700" : "bg-zinc-100 text-zinc-600"
+          isActive ? "bg-emerald-100 text-[#D94F2B]" : "bg-zinc-100 text-zinc-600"
         }`}>
           {isActive ? formatCountdown(poll.deadline) : "Voting closed"}
         </span>
@@ -2716,7 +2716,7 @@ function DatePollVotingCard({
       <div className="mt-3 flex items-center gap-2">
         <div className="h-1.5 flex-1 rounded-full bg-zinc-100 overflow-hidden">
           <div
-            className="h-full rounded-full bg-emerald-500 transition-all"
+            className="h-full rounded-full bg-[#D94F2B] transition-all"
             style={{ width: `${totalMembers > 0 ? (votedCount / totalMembers) * 100 : 0}%` }}
           />
         </div>
@@ -2743,7 +2743,7 @@ function DatePollVotingCard({
             <div
               key={opt.id}
               className={`rounded-lg border ${
-                isBest && (isClosed || votedCount >= 2) ? "border-emerald-300 bg-emerald-50/30" : "border-zinc-200"
+                isBest && (isClosed || votedCount >= 2) ? "border-[#D94F2B]/40 bg-emerald-50/30" : "border-zinc-200"
               } p-4`}
             >
               <div className="flex items-start justify-between">
@@ -2762,7 +2762,7 @@ function DatePollVotingCard({
                   </p>
                 </div>
                 {isBest && (isClosed || votedCount >= 2) && (
-                  <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-semibold text-emerald-700">
+                  <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-semibold text-[#D94F2B]">
                     Best match
                   </span>
                 )}
@@ -2819,7 +2819,7 @@ function DatePollVotingCard({
                       <button
                         onClick={() => onLock(opt.id)}
                         disabled={locking}
-                        className="inline-flex items-center gap-1 rounded-md bg-emerald-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-emerald-700 disabled:opacity-50"
+                        className="inline-flex items-center gap-1 rounded-md bg-[#D94F2B] px-3 py-1.5 text-xs font-medium text-white hover:bg-[#B83D25] disabled:opacity-50"
                       >
                         {locking ? <Loader2 className="h-3 w-3 animate-spin" /> : <Lock className="h-3 w-3" />}
                         {locking ? "Locking..." : "Confirm"}
@@ -2834,7 +2834,7 @@ function DatePollVotingCard({
                   ) : (
                     <button
                       onClick={() => onLockConfirm(opt.id)}
-                      className="inline-flex items-center gap-1.5 text-xs font-medium text-emerald-600 hover:text-emerald-700"
+                      className="inline-flex items-center gap-1.5 text-xs font-medium text-[#D94F2B] hover:text-[#B83D25]"
                     >
                       <Lock className="h-3 w-3" />
                       Lock In These Dates
@@ -2860,7 +2860,7 @@ function DatePollVotingCard({
         <button
           onClick={handleSubmitVotes}
           disabled={voting}
-          className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-lg bg-emerald-600 px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-emerald-700 disabled:opacity-50 min-h-[44px]"
+          className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-lg bg-[#D94F2B] px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[#B83D25] disabled:opacity-50 min-h-[44px]"
         >
           {voting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Check className="h-4 w-4" />}
           {voting ? "Submitting..." : "Submit Votes"}
@@ -2869,7 +2869,7 @@ function DatePollVotingCard({
 
       {/* All voted message */}
       {votedCount === totalMembers && totalMembers > 0 && isActive && (
-        <p className="mt-3 text-center text-xs text-emerald-600 font-medium">
+        <p className="mt-3 text-center text-xs text-[#D94F2B] font-medium">
           Everyone&apos;s voted! {isCaptain ? "You can lock in dates now." : "Waiting for the captain to lock in dates."}
         </p>
       )}
