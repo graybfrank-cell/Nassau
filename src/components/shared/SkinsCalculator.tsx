@@ -134,7 +134,7 @@ export default function SkinsCalculator({
                   return (
                     <td
                       key={p.id}
-                      className={`px-2 py-1.5 text-center text-xs ${isWinner ? "font-bold text-emerald-600" : "text-zinc-600"}`}
+                      className={`px-2 py-1.5 text-center text-xs ${isWinner ? "font-bold text-[#D94F2B]" : "text-zinc-600"}`}
                     >
                       {score || "-"}
                     </td>
@@ -142,7 +142,7 @@ export default function SkinsCalculator({
                 })}
                 <td className="px-2 py-1.5 text-center text-xs">
                   {result.winnerId ? (
-                    <span className="font-semibold text-emerald-600">
+                    <span className="font-semibold text-[#D94F2B]">
                       {getPlayerName(result.winnerId)}
                       {result.skinsValue > 1 && ` (${result.skinsValue})`}
                     </span>
@@ -179,7 +179,7 @@ export default function SkinsCalculator({
                       {t?.skins || 0} skin{(t?.skins || 0) !== 1 ? "s" : ""}
                     </span>
                     <span
-                      className={`text-sm font-semibold ${(t?.winnings || 0) > 0 ? "text-emerald-600" : "text-zinc-400"}`}
+                      className={`text-sm font-semibold ${(t?.winnings || 0) > 0 ? "text-[#D94F2B]" : "text-zinc-400"}`}
                     >
                       ${(t?.winnings || 0).toFixed(2)}
                     </span>

@@ -1,67 +1,67 @@
-import { NextResponse } from "next/server";
-import { requireMarketingAdmin } from "@/lib/marketing-auth";
-import { createServiceClient } from "@/lib/supabase/admin";
-import { callClaude, extractJSON } from "@/lib/marketing-claude";
-import { SCOUT_PROMPT } from "@/lib/marketing-prompts";
+import { NextRequest, NextResponse } from "next/server";
+import { supabaseAdmin } from "@/lib/supabase/admin";
+import { getUser, unauthorized } from "@/lib/auth";
 
-export async function POST() {
+export async function GET() {
+  const user = await getUser();
+  if (!user) return unauthorized();
+
   try {
-    const auth = await requireMarketingAdmin();
-    if (!auth.authorized) return auth.response;
+    const { data, error } = await supabaseAdmin
+      .from("marketing_scout_alerts")
+      .select("*")
+      .order("created_at", { ascending: false })
+      .limit(50);
 
-    const supabase = createServiceClient();
-
-    const response = await callClaude({
-      system: SCOUT_PROMPT,
-      messages: [
-        {
-          role: "user",
-          content: `Scan the internet for content opportunities for Nassau (nassau.golf). Today is ${new Date().toISOString().split("T")[0]}. Find 3-8 opportunities across Reddit, Twitter/X, and Google Trends related to golf trips, golf travel, group golf coordination, and golf betting games.`,
-        },
-      ],
-      tools: [{ type: "web_search_20250305", name: "web_search" }],
-    });
-
-    let alerts: unknown[];
-    try {
-      const parsed = extractJSON(response);
-      alerts = Array.isArray(parsed) ? parsed : [];
-    } catch {
-      console.error("[scout] Failed to parse alerts from response");
-      alerts = [];
+    if (error) {
+      return NextResponse.json({ error: error.message }, { status: 500 });
     }
 
-    // Save alerts to marketing_scout_alerts
-    const savedAlerts = [];
-    for (const alert of alerts) {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const a = alert as any;
-      const { data, error } = await supabase
-        .from("marketing_scout_alerts")
-        .insert({
-          source: a.source || "unknown",
-          url: a.url || null,
-          summary: a.summary || "",
-          opportunity_type: a.opportunity_type || null,
-          suggested_response: a.suggested_response || null,
-          suggested_content_topic: a.suggested_content_topic || null,
-          status: "new",
-        })
-        .select()
-        .single();
-
-      if (error) {
-        console.error("[scout] Failed to save alert:", error);
-      } else {
-        savedAlerts.push(data);
-      }
-    }
-
-    return NextResponse.json({ alerts: savedAlerts });
-  } catch (error) {
-    console.error("[scout] Error:", error);
+    return NextResponse.json({ alerts: data || [] });
+  } catch (err) {
     return NextResponse.json(
-      { error: "Scout agent failed" },
+      { error: err instanceof Error ? err.message : "Failed to fetch alerts" },
+      { status: 500 }
+    );
+  }
+}
+
+export async function PATCH(request: NextRequest) {
+  const user = await getUser();
+  if (!user) return unauthorized();
+
+  const { id, action } = await request.json();
+
+  if (!id || !action) {
+    return NextResponse.json({ error: "id and action required" }, { status: 400 });
+  }
+
+  try {
+    const updateData: Record<string, unknown> = { updated_at: new Date().toISOString() };
+
+    if (action === "dismiss") {
+      updateData.status = "dismissed";
+    } else if (action === "engage") {
+      updateData.status = "engaged";
+    } else if (action === "create") {
+      updateData.status = "content_created";
+    }
+
+    const { data, error } = await supabaseAdmin
+      .from("marketing_scout_alerts")
+      .update(updateData)
+      .eq("id", id)
+      .select()
+      .single();
+
+    if (error) {
+      return NextResponse.json({ error: error.message }, { status: 500 });
+    }
+
+    return NextResponse.json({ success: true, data });
+  } catch (err) {
+    return NextResponse.json(
+      { error: err instanceof Error ? err.message : "Failed to update alert" },
       { status: 500 }
     );
   }

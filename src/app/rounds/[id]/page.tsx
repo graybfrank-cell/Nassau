@@ -84,8 +84,8 @@ function StatusBadge({ status }: { status: string }) {
   }
   if (status === "in_progress") {
     return (
-      <span className="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-2.5 py-0.5 text-xs font-medium text-emerald-700">
-        <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+      <span className="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-2.5 py-0.5 text-xs font-medium text-[#D94F2B]">
+        <span className="h-1.5 w-1.5 rounded-full bg-[#D94F2B] animate-pulse" />
         In Progress
       </span>
     );
@@ -218,7 +218,7 @@ export default function RoundDashboardPage() {
           </p>
           <Link
             href="/rounds"
-            className="mt-4 inline-block text-sm font-medium text-emerald-600"
+            className="mt-4 inline-block text-sm font-medium text-[#D94F2B]"
           >
             Back to Rounds
           </Link>
@@ -229,11 +229,11 @@ export default function RoundDashboardPage() {
 
   const isCommissioner = round.commissionerId === userId;
   const confirmedPlayers = round.players.filter(
-    (p) => p.status === "confirmed" || p.role === "COMMISSIONER"
+    (p: any) => p.status === "confirmed" || p.role === "COMMISSIONER"
   );
 
   // Build scorecard data for grid
-  const gridScorecards = confirmedPlayers.map((player) => ({
+  const gridScorecards = confirmedPlayers.map((player: any) => ({
     playerId: player.id,
     holes: localScorecards.get(player.id) || Array(18).fill(0),
     total: (localScorecards.get(player.id) || []).reduce(
@@ -244,27 +244,27 @@ export default function RoundDashboardPage() {
 
   // Skins data for calculator
   const skinsPlayers = round.skinsGame
-    ? confirmedPlayers.map((p) => ({ id: p.id, name: p.name }))
+    ? confirmedPlayers.map((p: any) => ({ id: p.id, name: p.name }))
     : [];
   const skinsScorecards = round.skinsGame
-    ? confirmedPlayers.map((p) => ({
+    ? confirmedPlayers.map((p: any) => ({
         playerId: p.id,
         holes: localScorecards.get(p.id) || Array(18).fill(0),
       }))
     : [];
 
   // Settlement data with player names
-  const settlementData = round.settlements.map((s) => ({
+  const settlementData = round.settlements.map((s: any) => ({
     id: s.id,
     fromPlayer: {
       id: s.fromPlayer,
       name:
-        round.players.find((p) => p.id === s.fromPlayer)?.name || "Unknown",
+        round.players.find((p: any) => p.id === s.fromPlayer)?.name || "Unknown",
     },
     toPlayer: {
       id: s.toPlayer,
       name:
-        round.players.find((p) => p.id === s.toPlayer)?.name || "Unknown",
+        round.players.find((p: any) => p.id === s.toPlayer)?.name || "Unknown",
     },
     amount: s.amount,
     reason: s.reason,
@@ -273,11 +273,11 @@ export default function RoundDashboardPage() {
   }));
 
   // Expense data
-  const expenseMembers = confirmedPlayers.map((p) => ({
+  const expenseMembers = confirmedPlayers.map((p: any) => ({
     id: p.id,
     name: p.name,
   }));
-  const expenseData = round.expenses.map((e) => ({
+  const expenseData = round.expenses.map((e: any) => ({
     id: e.id,
     description: e.description,
     amount: e.amount,
@@ -343,7 +343,7 @@ export default function RoundDashboardPage() {
     try {
       for (const scanned of scannedPlayers) {
         // Fuzzy match scanned name to confirmed players
-        const match = confirmedPlayers.find((p) => {
+        const match = confirmedPlayers.find((p: any) => {
           const pName = p.name.toLowerCase();
           const sName = scanned.name.toLowerCase();
           return (
@@ -377,9 +377,9 @@ export default function RoundDashboardPage() {
     setError(null);
     try {
       // Find the current user's player id to use as paidBy
-      const myPlayer = round!.players.find((p) => p.userId === userId);
+      const myPlayer = round!.players.find((p: any) => p.userId === userId);
       const paidBy = myPlayer?.id || confirmedPlayers[0]?.id;
-      const splitAmong = confirmedPlayers.map((p) => p.id);
+      const splitAmong = confirmedPlayers.map((p: any) => p.id);
 
       for (const expense of scannedExpenses) {
         await addGameExpense(roundId, {
@@ -658,7 +658,7 @@ export default function RoundDashboardPage() {
                         onClick={() => handleStartingHoleChange(hole)}
                         className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${
                           round.startingHole === hole
-                            ? "bg-emerald-100 text-emerald-700"
+                            ? "bg-emerald-100 text-[#D94F2B]"
                             : "bg-zinc-100 text-zinc-500 hover:bg-zinc-200"
                         }`}
                       >
@@ -674,7 +674,7 @@ export default function RoundDashboardPage() {
               {isCommissioner && round.status === "upcoming" && (
                 <button
                   onClick={() => handleStatusChange("in_progress")}
-                  className="rounded-lg bg-emerald-600 px-3 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-emerald-700"
+                  className="rounded-lg bg-[#D94F2B] px-3 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-[#B83D25]"
                 >
                   Start Round
                 </button>
@@ -707,7 +707,7 @@ export default function RoundDashboardPage() {
               >
                 {copiedLink ? (
                   <>
-                    <Check className="h-3.5 w-3.5 text-emerald-600" />
+                    <Check className="h-3.5 w-3.5 text-[#D94F2B]" />
                     Copied!
                   </>
                 ) : (
@@ -720,7 +720,7 @@ export default function RoundDashboardPage() {
               {isCommissioner && (
                 <button
                   onClick={() => setShowAddPlayer(!showAddPlayer)}
-                  className="inline-flex items-center gap-1.5 rounded-lg bg-emerald-600 px-3 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-emerald-700"
+                  className="inline-flex items-center gap-1.5 rounded-lg bg-[#D94F2B] px-3 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-[#B83D25]"
                 >
                   <Plus className="h-3.5 w-3.5" />
                   Add Player
@@ -744,12 +744,12 @@ export default function RoundDashboardPage() {
                   value={newPlayerName}
                   onChange={(e) => setNewPlayerName(e.target.value)}
                   placeholder="Player name"
-                  className="mt-1 block w-full rounded-md border border-zinc-300 px-3 py-1.5 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+                  className="mt-1 block w-full rounded-md border border-zinc-300 px-3 py-1.5 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-[#D94F2B] focus:outline-none focus:ring-2 focus:ring-[#D94F2B]/20"
                 />
               </div>
               <button
                 type="submit"
-                className="rounded-md bg-emerald-600 px-4 py-1.5 text-sm font-medium text-white hover:bg-emerald-700"
+                className="rounded-md bg-[#D94F2B] px-4 py-1.5 text-sm font-medium text-white hover:bg-[#B83D25]"
               >
                 Add
               </button>
@@ -764,7 +764,7 @@ export default function RoundDashboardPage() {
           )}
 
           <div className="mt-4 grid gap-2 sm:grid-cols-2">
-            {round.players.map((player) => (
+            {round.players.map((player: any) => (
               <div
                 key={player.id}
                 className="group flex items-center justify-between rounded-lg border border-zinc-100 px-3 py-2"
@@ -777,7 +777,7 @@ export default function RoundDashboardPage() {
                     {player.name}
                   </span>
                   {player.status === "confirmed" || player.role === "COMMISSIONER" ? (
-                    <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" />
+                    <CheckCircle2 className="h-3.5 w-3.5 text-[#D94F2B]" />
                   ) : player.status === "declined" ? (
                     <X className="h-3.5 w-3.5 text-red-400" />
                   ) : (
@@ -824,7 +824,7 @@ export default function RoundDashboardPage() {
             </p>
           ) : (
             <ScorecardGrid
-              players={confirmedPlayers.map((p) => ({
+              players={confirmedPlayers.map((p: any) => ({
                 id: p.id,
                 name: p.name,
               }))}
@@ -882,7 +882,7 @@ export default function RoundDashboardPage() {
                       onClick={() => setSkinsBuyIn(String(amount))}
                       className={`rounded-full px-3 py-1.5 text-xs font-medium transition-colors ${
                         skinsBuyIn === String(amount)
-                          ? "bg-emerald-100 text-emerald-700"
+                          ? "bg-emerald-100 text-[#D94F2B]"
                           : "bg-zinc-100 text-zinc-500 hover:bg-zinc-200"
                       }`}
                     >
@@ -896,14 +896,14 @@ export default function RoundDashboardPage() {
                       min="1"
                       value={skinsBuyIn}
                       onChange={(e) => setSkinsBuyIn(e.target.value)}
-                      className="w-20 rounded-lg border border-zinc-300 py-1.5 pl-6 pr-2 text-xs text-zinc-900 focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500/20"
+                      className="w-20 rounded-lg border border-zinc-300 py-1.5 pl-6 pr-2 text-xs text-zinc-900 focus:border-[#D94F2B] focus:outline-none focus:ring-1 focus:ring-[#D94F2B]/20"
                     />
                   </div>
                 </div>
                 <div className="mt-3 flex gap-2">
                   <button
                     onClick={handleAddSkinsGame}
-                    className="rounded-md bg-emerald-600 px-4 py-1.5 text-xs font-medium text-white hover:bg-emerald-700"
+                    className="rounded-md bg-[#D94F2B] px-4 py-1.5 text-xs font-medium text-white hover:bg-[#B83D25]"
                   >
                     Create Skins Game
                   </button>
@@ -918,7 +918,7 @@ export default function RoundDashboardPage() {
             ) : (
               <button
                 onClick={() => setShowAddSkins(true)}
-                className="inline-flex items-center gap-1.5 rounded-lg border border-dashed border-zinc-300 px-4 py-3 text-sm font-medium text-zinc-500 transition-colors hover:border-emerald-400 hover:text-emerald-600 w-full justify-center"
+                className="inline-flex items-center gap-1.5 rounded-lg border border-dashed border-zinc-300 px-4 py-3 text-sm font-medium text-zinc-500 transition-colors hover:border-emerald-400 hover:text-[#D94F2B] w-full justify-center"
               >
                 <Plus className="h-4 w-4" />
                 Add Skins Game
@@ -957,11 +957,11 @@ export default function RoundDashboardPage() {
               </p>
             ) : (
               <NassauBetCalculator
-                players={confirmedPlayers.map((p) => ({
+                players={confirmedPlayers.map((p: any) => ({
                   id: p.id,
                   name: p.name,
                 }))}
-                scorecards={confirmedPlayers.map((p) => ({
+                scorecards={confirmedPlayers.map((p: any) => ({
                   playerId: p.id,
                   holes: localScorecards.get(p.id) || Array(18).fill(0),
                 }))}
@@ -980,7 +980,7 @@ export default function RoundDashboardPage() {
                       onClick={() => setNassauBetAmount(String(amount))}
                       className={`rounded-full px-3 py-1.5 text-xs font-medium transition-colors ${
                         nassauBetAmount === String(amount)
-                          ? "bg-emerald-100 text-emerald-700"
+                          ? "bg-emerald-100 text-[#D94F2B]"
                           : "bg-zinc-100 text-zinc-500 hover:bg-zinc-200"
                       }`}
                     >
@@ -994,7 +994,7 @@ export default function RoundDashboardPage() {
                       min="1"
                       value={nassauBetAmount}
                       onChange={(e) => setNassauBetAmount(e.target.value)}
-                      className="w-20 rounded-lg border border-zinc-300 py-1.5 pl-6 pr-2 text-xs text-zinc-900 focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500/20"
+                      className="w-20 rounded-lg border border-zinc-300 py-1.5 pl-6 pr-2 text-xs text-zinc-900 focus:border-[#D94F2B] focus:outline-none focus:ring-1 focus:ring-[#D94F2B]/20"
                     />
                   </div>
                 </div>
@@ -1005,7 +1005,7 @@ export default function RoundDashboardPage() {
                 <div className="mt-3 flex gap-2">
                   <button
                     onClick={handleAddNassauBet}
-                    className="rounded-md bg-emerald-600 px-4 py-1.5 text-xs font-medium text-white hover:bg-emerald-700"
+                    className="rounded-md bg-[#D94F2B] px-4 py-1.5 text-xs font-medium text-white hover:bg-[#B83D25]"
                   >
                     Create Nassau Bet
                   </button>
@@ -1020,7 +1020,7 @@ export default function RoundDashboardPage() {
             ) : (
               <button
                 onClick={() => setShowAddNassau(true)}
-                className="inline-flex items-center gap-1.5 rounded-lg border border-dashed border-zinc-300 px-4 py-3 text-sm font-medium text-zinc-500 transition-colors hover:border-emerald-400 hover:text-emerald-600 w-full justify-center"
+                className="inline-flex items-center gap-1.5 rounded-lg border border-dashed border-zinc-300 px-4 py-3 text-sm font-medium text-zinc-500 transition-colors hover:border-emerald-400 hover:text-[#D94F2B] w-full justify-center"
               >
                 <Plus className="h-4 w-4" />
                 Add Nassau Bet
@@ -1067,7 +1067,7 @@ export default function RoundDashboardPage() {
             {isCommissioner && (
               <button
                 onClick={handleRecalculate}
-                className="text-xs font-medium text-emerald-600 hover:text-emerald-700"
+                className="text-xs font-medium text-[#D94F2B] hover:text-[#D94F2B]"
               >
                 Recalculate
               </button>
@@ -1112,7 +1112,7 @@ export default function RoundDashboardPage() {
             >
               {copiedLink ? (
                 <>
-                  <Check className="h-4 w-4 text-emerald-600" />
+                  <Check className="h-4 w-4 text-[#D94F2B]" />
                   Copied!
                 </>
               ) : (
@@ -1128,7 +1128,7 @@ export default function RoundDashboardPage() {
             >
               {copiedSummary ? (
                 <>
-                  <Check className="h-4 w-4 text-emerald-600" />
+                  <Check className="h-4 w-4 text-[#D94F2B]" />
                   Copied!
                 </>
               ) : (

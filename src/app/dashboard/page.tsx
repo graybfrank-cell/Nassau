@@ -177,7 +177,17 @@ export default function DashboardPage() {
   useEffect(() => {
     const supabase = createClient();
     supabase.auth.getUser().then(async ({ data: { user } }) => {
-      if (!user) {
+      if (user) {
+        const pendingInvite = sessionStorage.getItem("pendingInvite");
+        if (pendingInvite) {
+          sessionStorage.removeItem("pendingInvite");
+          router.push(`/invite/${pendingInvite}`);
+          return;
+        }
+        const [t, r] = await Promise.all([getTrips(), getGameRounds()]);
+        setTrips(t);
+        setRecentRounds(r.slice(0, 3));
+      } else {
         router.push("/login");
         return;
       }
@@ -220,16 +230,8 @@ export default function DashboardPage() {
     if (!name.trim()) return;
     setError(null);
     try {
-      await createTrip({
-        name: name.trim(),
-        destination: destination.trim(),
-        startDate,
-        endDate,
-      });
-      setName("");
-      setDestination("");
-      setStartDate("");
-      setEndDate("");
+      await createTrip({ name: name.trim(), destination: destination.trim(), startDate, endDate });
+      setName(""); setDestination(""); setStartDate(""); setEndDate("");
       setShowForm(false);
       setTrips(await getTrips());
     } catch (err) {
@@ -247,284 +249,142 @@ export default function DashboardPage() {
     }
   }
 
-  // --- Derived values ---
-  const greeting = getGreeting();
-  const seasonLine = (() => {
-    if (!data?.seasonStats) return null;
-    const { totalMoneyNet, roundsThisMonth } = data.seasonStats;
-    if (totalMoneyNet > 0)
-      return {
-        text: `You're up $${Math.abs(totalMoneyNet).toFixed(0)} this season`,
-        color: "text-emerald-400",
-      };
-    if (totalMoneyNet < 0)
-      return {
-        text: `You're down $${Math.abs(totalMoneyNet).toFixed(0)} this season`,
-        color: "text-red-400",
-      };
-    if (roundsThisMonth > 0)
-      return {
-        text: `${roundsThisMonth} round${roundsThisMonth !== 1 ? "s" : ""} this month`,
-        color: "text-zinc-400",
-      };
-    return { text: "Let's get out on the course", color: "text-zinc-400" };
-  })();
-
-  const hasSettlements =
-    data &&
-    ((data.settlements?.owed?.length ?? 0) > 0 ||
-      (data.settlements?.owing?.length ?? 0) > 0);
+  if (loading) {
+    return (
+      <div className="flex min-h-[calc(100vh-64px)] items-center justify-center bg-zinc-950">
+        <p className="text-sm text-zinc-400">Loading...</p>
+      </div>
+    );
+  }
 
   // --- Render ---
   return (
-    <div className="min-h-[calc(100vh-64px)] bg-[#1A1A1A] px-4 py-8 sm:px-6">
-      <div className="mx-auto max-w-2xl space-y-8">
-        {/* Error Banner */}
+    <div className="min-h-[calc(100vh-64px)] bg-zinc-950 px-6 py-10">
+      <div className="mx-auto max-w-5xl">
         {error && (
-          <div className="flex items-center gap-2 rounded-lg border border-red-800 bg-red-950/50 px-4 py-3 text-sm text-red-300">
+          <div className="mb-4 flex items-center gap-2 rounded-lg border border-red-800 bg-red-950 px-4 py-3 text-sm text-red-400">
             <AlertCircle className="h-4 w-4 shrink-0" />
             {error}
           </div>
         )}
 
-        {loading || !data ? (
-          <DashboardSkeleton />
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl font-bold tracking-tight text-white">My Trips</h1>
+            <p className="mt-1 text-sm text-zinc-400">Plan and manage your golf getaways.</p>
+          </div>
+          <div className="flex items-center gap-3">
+            <Link href="/rounds/new" className="inline-flex items-center gap-2 rounded-lg border border-zinc-700 bg-zinc-900 px-4 py-2.5 text-sm font-semibold text-zinc-300 transition-colors hover:bg-zinc-800">
+              <Trophy className="h-4 w-4" />
+              Quick Round
+            </Link>
+            <Link href="/trips/new" className="inline-flex items-center gap-2 rounded-lg px-4 py-2.5 text-sm font-semibold text-white transition-colors" style={{ backgroundColor: "#D94F2B" }}>
+              <Plus className="h-4 w-4" />
+              New Trip
+            </Link>
+          </div>
+        </div>
+
+        {showForm && (
+          <form onSubmit={handleCreate} className="mt-6 rounded-xl border border-zinc-800 bg-zinc-900 p-6">
+            <h2 className="text-lg font-semibold text-white">Create a New Trip</h2>
+            <div className="mt-4 grid gap-4 sm:grid-cols-2">
+              {[
+                { label: "Trip Name *", value: name, setter: setName, placeholder: "Scottsdale 2026", required: true },
+                { label: "Destination", value: destination, setter: setDestination, placeholder: "Scottsdale, AZ", required: false },
+              ].map((field) => (
+                <div key={field.label}>
+                  <label className="block text-sm font-medium text-zinc-300">{field.label}</label>
+                  <input type="text" required={field.required} value={field.value} onChange={(e) => field.setter(e.target.value)} placeholder={field.placeholder}
+                    className="mt-1 block w-full rounded-lg border border-zinc-700 bg-zinc-800 px-3 py-2 text-sm text-white placeholder:text-zinc-500 focus:border-[#D94F2B] focus:outline-none focus:ring-2 focus:ring-[#D94F2B]/20" />
+                </div>
+              ))}
+              {[
+                { label: "Start Date", value: startDate, setter: setStartDate },
+                { label: "End Date", value: endDate, setter: setEndDate },
+              ].map((field) => (
+                <div key={field.label}>
+                  <label className="block text-sm font-medium text-zinc-300">{field.label}</label>
+                  <input type="date" value={field.value} onChange={(e) => field.setter(e.target.value)}
+                    className="mt-1 block w-full rounded-lg border border-zinc-700 bg-zinc-800 px-3 py-2 text-sm text-white focus:border-[#D94F2B] focus:outline-none focus:ring-2 focus:ring-[#D94F2B]/20" />
+                </div>
+              ))}
+            </div>
+            <div className="mt-6 flex gap-3">
+              <button type="submit" className="rounded-lg px-5 py-2 text-sm font-semibold text-white transition-colors" style={{ backgroundColor: "#D94F2B" }}>
+                Create Trip
+              </button>
+              <button type="button" onClick={() => setShowForm(false)} className="rounded-lg border border-zinc-700 px-5 py-2 text-sm font-medium text-zinc-400 transition-colors hover:bg-zinc-800">
+                Cancel
+              </button>
+            </div>
+
+        {recentRounds.length > 0 && (
+          <div className="mt-8">
+            <div className="flex items-center justify-between">
+              <h2 className="text-lg font-semibold text-white">Recent Rounds</h2>
+              <Link href="/rounds" className="text-sm font-medium text-[#D94F2B] hover:text-[#B83D25]">
+                View All &rarr;
+              </Link>
+            </div>
+            <div className="mt-3 grid gap-3 sm:grid-cols-3">
+              {recentRounds.map((round) => {
+                const bestScore = round.scorecards
+                  .filter((sc: any) => sc.total && sc.total > 0)
+                  .sort((a: any, b: any) => (a.total || 999) - (b.total || 999))[0];
+                return (
+                  <Link key={round.id} href={`/rounds/${round.id}`}
+                    className="rounded-lg border border-zinc-800 bg-zinc-900 p-4 transition-shadow hover:border-zinc-700">
+                    <p className="text-sm font-semibold text-white">{round.courseName}</p>
+                    <p className="mt-1 text-xs text-zinc-500">
+                      {new Date(round.teeTime).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
+                    </p>
+                    {bestScore && (
+                      <p className="mt-1 text-xs text-[#D94F2B]">Low: {bestScore.total}</p>
+                    )}
+                  </Link>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+        {trips.length === 0 ? (
+          <div className="mt-16 text-center">
+            <MapPin className="mx-auto h-12 w-12 text-zinc-700" />
+            <h2 className="mt-4 text-lg font-semibold text-white">No trips yet</h2>
+            <p className="mt-2 text-sm text-zinc-400">Create your first golf trip to get started.</p>
+            <button onClick={() => setShowForm(true)}
+              className="mt-6 inline-flex items-center gap-2 rounded-lg px-5 py-2.5 text-sm font-semibold text-white" style={{ backgroundColor: "#D94F2B" }}>
+              <Plus className="h-4 w-4" />
+              New Trip
+            </button>
+          </div>
         ) : (
-          <>
-            {/* ── Section 1: Greeting ─────────────────────────── */}
-            <div>
-              <h1 className="text-2xl font-bold tracking-tight text-[#F3EDE4]">
-                {greeting}, {data.user.firstName}.
-              </h1>
-              {seasonLine && (
-                <p className={`mt-1 text-sm font-medium ${seasonLine.color}`}>
-                  {seasonLine.text}
-                </p>
-              )}
-            </div>
-
-            {/* ── Section 2: CTA Cards ────────────────────────── */}
-            <div className="flex gap-4 overflow-x-auto pb-1 sm:grid sm:grid-cols-2 sm:overflow-visible">
-              <Link
-                href="/trips/new"
-                className="flex min-w-[160px] flex-1 shrink-0 items-center gap-3 rounded-xl bg-[#D94F2B] px-5 py-4 transition-opacity hover:opacity-90"
-              >
-                <MapPin className="h-6 w-6 text-white/80" />
-                <div>
-                  <p className="text-sm font-bold text-white">Plan a Trip</p>
-                  <p className="text-xs text-white/70">Organize a getaway</p>
-                </div>
-              </Link>
-              <Link
-                href="/rounds/new"
-                className="flex min-w-[160px] flex-1 shrink-0 items-center gap-3 rounded-xl border border-zinc-700 bg-[#242424] px-5 py-4 transition-colors hover:border-zinc-600"
-              >
-                <Trophy className="h-6 w-6 text-[#F3EDE4]/70" />
-                <div>
-                  <p className="text-sm font-bold text-[#F3EDE4]">
-                    Track a Round
-                  </p>
-                  <p className="text-xs text-zinc-400">Score &amp; settle up</p>
-                </div>
-              </Link>
-            </div>
-
-            {/* ── Section 3: Upcoming Round ───────────────────── */}
-            {data.upcomingRound ? (
-              <UpcomingRoundCard round={data.upcomingRound} />
-            ) : (
-              <Link
-                href="/rounds/new"
-                className="flex items-center justify-between rounded-xl border border-zinc-800 bg-[#242424] px-5 py-5 transition-colors hover:border-zinc-700"
-              >
-                <div>
-                  <p className="text-sm font-semibold text-[#F3EDE4]">
-                    No rounds scheduled
-                  </p>
-                  <p className="mt-0.5 text-xs text-zinc-400">
-                    Track your next one
-                  </p>
-                </div>
-                <ChevronRight className="h-5 w-5 text-zinc-500" />
-              </Link>
-            )}
-
-            {/* ── Partial load warning ──────────────────────── */}
-            {data._errors && data._errors.length > 0 && (
-              <div className="flex items-center gap-2 rounded-lg border border-yellow-800/50 bg-yellow-950/30 px-4 py-2.5 text-xs text-yellow-400/80">
-                <AlertCircle className="h-3.5 w-3.5 shrink-0" />
-                Some data couldn&apos;t load. Pull to refresh.
-              </div>
-            )}
-
-            {/* ── Section 4: Recent Scores ────────────────────── */}
-            {(data.recentScores?.length ?? 0) > 0 && (
-              <div>
-                <h2 className="mb-3 text-sm font-semibold uppercase tracking-wider text-zinc-400">
-                  Recent Scores
-                </h2>
-                <div className="space-y-2">
-                  {data.recentScores.map((rs) => (
-                    <Link
-                      key={rs.roundId}
-                      href={`/rounds/${rs.roundId}`}
-                      className="flex items-center justify-between rounded-xl border border-zinc-800 bg-[#242424] px-4 py-3 transition-colors hover:border-zinc-700"
-                    >
-                      <div className="min-w-0 flex-1">
-                        <div className="flex items-center gap-2">
-                          <p className="truncate text-sm font-semibold text-[#F3EDE4]">
-                            {rs.courseName}
-                          </p>
-                          {rs.isPersonalBest && (
-                            <span className="flex items-center gap-0.5 rounded-full bg-amber-900/40 px-2 py-0.5 text-[10px] font-bold uppercase text-amber-400">
-                              <Star className="h-3 w-3" /> PB
-                            </span>
-                          )}
-                        </div>
-                        <p className="mt-0.5 text-xs text-zinc-500">
-                          {formatShortDate(rs.date)}
-                        </p>
-                      </div>
-                      <div className="flex items-center gap-4 pl-4">
-                        <span className="text-lg font-bold text-[#F3EDE4]">
-                          {rs.score}
-                          {rs.par !== null && (
-                            <span className="ml-1 text-xs font-normal text-zinc-500">
-                              ({rs.score - rs.par >= 0 ? "+" : ""}
-                              {rs.score - rs.par})
-                            </span>
-                          )}
-                        </span>
-                        {rs.moneyNet !== 0 && (
-                          <span
-                            className={`text-sm font-semibold ${rs.moneyNet > 0 ? "text-emerald-400" : "text-red-400"}`}
-                          >
-                            {moneyStr(rs.moneyNet)}
-                          </span>
-                        )}
-                      </div>
-                    </Link>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* ── Section 5: Settlement Banner ────────────────── */}
-            {hasSettlements && (
-              <div className="rounded-xl border border-zinc-800 bg-[#242424] p-5">
-                <div className="space-y-3">
-                  {(data.settlements?.totalOwed ?? 0) > 0 && (
-                    <div>
-                      <p className="text-sm font-semibold text-emerald-400">
-                        You&apos;re owed ${(data.settlements?.totalOwed ?? 0).toFixed(0)}
-                      </p>
-                      <div className="mt-1 space-y-0.5">
-                        {(data.settlements?.owed ?? []).map((s, i) => (
-                          <p key={i} className="text-xs text-zinc-400">
-                            {s.fromUser} owes you ${s.amount.toFixed(0)}
-                            {s.roundNote ? ` - ${s.roundNote}` : ""}
-                          </p>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                  {(data.settlements?.totalOwing ?? 0) > 0 && (
-                    <div>
-                      <p className="text-sm font-semibold text-red-400">
-                        You owe ${(data.settlements?.totalOwing ?? 0).toFixed(0)}
-                      </p>
-                      <div className="mt-1 space-y-0.5">
-                        {(data.settlements?.owing ?? []).map((s, i) => (
-                          <p key={i} className="text-xs text-zinc-400">
-                            You owe {s.toUser} ${s.amount.toFixed(0)}
-                            {s.roundNote ? ` - ${s.roundNote}` : ""}
-                          </p>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                </div>
-                <Link
-                  href="/settlements"
-                  className="mt-4 inline-flex items-center gap-2 rounded-lg bg-[#D94F2B] px-4 py-2 text-sm font-semibold text-white transition-opacity hover:opacity-90"
-                >
-                  <DollarSign className="h-4 w-4" />
-                  Settle Up
-                </Link>
-              </div>
-            )}
-
-            {/* ── Section 6: Trips ────────────────────────────── */}
-            <div>
-              <div className="mb-3 flex items-center justify-between">
-                <h2 className="text-sm font-semibold uppercase tracking-wider text-zinc-400">
-                  Your Trips
-                </h2>
-                <button
-                  onClick={() => setShowForm((v) => !v)}
-                  className="text-xs font-semibold text-[#D94F2B] hover:underline"
-                >
-                  {showForm ? "Cancel" : "+ New Trip"}
+          <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {trips.map((trip) => (
+              <div key={trip.id} className="group relative rounded-xl border border-zinc-800 bg-zinc-900 p-5 transition-all hover:border-zinc-700 hover:shadow-lg">
+                <button onClick={() => handleDelete(trip.id)}
+                  className="absolute right-3 top-3 rounded-md p-1.5 text-zinc-600 opacity-0 transition-all hover:bg-red-950 hover:text-red-500 group-hover:opacity-100">
+                  <Trash2 className="h-4 w-4" />
                 </button>
-              </div>
-
-              {/* Create trip form */}
-              {showForm && (
-                <form
-                  onSubmit={handleCreateTrip}
-                  className="mb-4 rounded-xl border border-zinc-800 bg-[#242424] p-5"
-                >
-                  <h3 className="text-sm font-semibold text-[#F3EDE4]">
-                    Create a New Trip
-                  </h3>
-                  <div className="mt-3 grid gap-3 sm:grid-cols-2">
-                    <div>
-                      <label className="block text-xs font-medium text-zinc-400">
-                        Trip Name *
-                      </label>
-                      <input
-                        type="text"
-                        required
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                        placeholder="Scottsdale 2026"
-                        className="mt-1 block w-full rounded-lg border border-zinc-700 bg-[#1A1A1A] px-3 py-2 text-sm text-[#F3EDE4] placeholder:text-zinc-600 focus:border-[#D94F2B] focus:outline-none focus:ring-1 focus:ring-[#D94F2B]/30"
-                      />
+                <Link href={`/trips/${trip.id}`} className="block">
+                  <h3 className="font-semibold text-white">{trip.name}</h3>
+                  {trip.destination && (
+                    <div className="mt-2 flex items-center gap-1.5 text-sm text-zinc-400">
+                      <MapPin className="h-3.5 w-3.5" />
+                      {trip.destination}
                     </div>
-                    <div>
-                      <label className="block text-xs font-medium text-zinc-400">
-                        Destination
-                      </label>
-                      <input
-                        type="text"
-                        value={destination}
-                        onChange={(e) => setDestination(e.target.value)}
-                        placeholder="Scottsdale, AZ"
-                        className="mt-1 block w-full rounded-lg border border-zinc-700 bg-[#1A1A1A] px-3 py-2 text-sm text-[#F3EDE4] placeholder:text-zinc-600 focus:border-[#D94F2B] focus:outline-none focus:ring-1 focus:ring-[#D94F2B]/30"
-                      />
+                  )}
+                  {(trip.startDate || trip.endDate) && (
+                    <div className="mt-1 flex items-center gap-1.5 text-sm text-zinc-400">
+                      <Calendar className="h-3.5 w-3.5" />
+                      {trip.startDate && trip.endDate ? `${trip.startDate} — ${trip.endDate}` : trip.startDate || trip.endDate}
                     </div>
-                    <div>
-                      <label className="block text-xs font-medium text-zinc-400">
-                        Start Date
-                      </label>
-                      <input
-                        type="date"
-                        value={startDate}
-                        onChange={(e) => setStartDate(e.target.value)}
-                        className="mt-1 block w-full rounded-lg border border-zinc-700 bg-[#1A1A1A] px-3 py-2 text-sm text-[#F3EDE4] focus:border-[#D94F2B] focus:outline-none focus:ring-1 focus:ring-[#D94F2B]/30"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-xs font-medium text-zinc-400">
-                        End Date
-                      </label>
-                      <input
-                        type="date"
-                        value={endDate}
-                        onChange={(e) => setEndDate(e.target.value)}
-                        className="mt-1 block w-full rounded-lg border border-zinc-700 bg-[#1A1A1A] px-3 py-2 text-sm text-[#F3EDE4] focus:border-[#D94F2B] focus:outline-none focus:ring-1 focus:ring-[#D94F2B]/30"
-                      />
-                    </div>
+                  )}
+                  <div className="mt-3 flex items-center gap-1.5 text-xs text-zinc-500">
+                    <Users className="h-3.5 w-3.5" />
+                    {trip.members.length} member{trip.members.length !== 1 ? "s" : ""}
                   </div>
                   <div className="mt-4 flex gap-3">
                     <button

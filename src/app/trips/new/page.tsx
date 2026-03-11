@@ -53,7 +53,7 @@ export default function NewTripPage() {
             <Link
               key={path.title}
               href={path.href}
-              className="group relative block rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm transition-all hover:border-emerald-300 hover:shadow-md"
+              className="group relative block rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm transition-all hover:border-[#D94F2B]/40 hover:shadow-md"
             >
               {!path.available && (
                 <span className="absolute right-4 top-4 rounded-full bg-zinc-100 px-2.5 py-0.5 text-xs font-medium text-zinc-500">
@@ -63,7 +63,7 @@ export default function NewTripPage() {
               <div className="flex items-start gap-4">
                 <span className="text-4xl">{path.emoji}</span>
                 <div>
-                  <h2 className="text-lg font-semibold text-zinc-900 group-hover:text-emerald-700">
+                  <h2 className="text-lg font-semibold text-zinc-900 group-hover:text-[#D94F2B]">
                     {path.title}
                   </h2>
                   <p className="mt-1 text-sm text-zinc-500">

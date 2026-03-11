@@ -23,7 +23,7 @@ function getScoreColor(score: number, par: number): string {
   if (!score || !par) return "";
   const diff = score - par;
   if (diff <= -2) return "bg-yellow-100 text-yellow-800 font-bold"; // eagle+
-  if (diff === -1) return "bg-emerald-100 text-emerald-700"; // birdie
+  if (diff === -1) return "bg-emerald-100 text-[#D94F2B]"; // birdie
   if (diff === 0) return ""; // par
   if (diff === 1) return "bg-red-50 text-red-600"; // bogey
   return "bg-red-100 text-red-700 font-bold"; // double+
@@ -173,7 +173,7 @@ export default function ScorecardGrid({
                         onChange={(e) =>
                           handleChange(player.id, idx, e.target.value)
                         }
-                        className={`w-full h-8 rounded border border-zinc-200 px-0.5 text-center text-xs focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500/20 ${getScoreColor(scores[idx], defaultPars[idx])}`}
+                        className={`w-full h-8 rounded border border-zinc-200 px-0.5 text-center text-xs focus:border-[#D94F2B] focus:outline-none focus:ring-1 focus:ring-[#D94F2B]/20 ${getScoreColor(scores[idx], defaultPars[idx])}`}
                         placeholder="-"
                       />
                     )}
@@ -199,7 +199,7 @@ export default function ScorecardGrid({
                         onChange={(e) =>
                           handleChange(player.id, idx, e.target.value)
                         }
-                        className={`w-full h-8 rounded border border-zinc-200 px-0.5 text-center text-xs focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500/20 ${getScoreColor(scores[idx], defaultPars[idx])}`}
+                        className={`w-full h-8 rounded border border-zinc-200 px-0.5 text-center text-xs focus:border-[#D94F2B] focus:outline-none focus:ring-1 focus:ring-[#D94F2B]/20 ${getScoreColor(scores[idx], defaultPars[idx])}`}
                         placeholder="-"
                       />
                     )}

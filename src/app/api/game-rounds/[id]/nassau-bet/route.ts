@@ -18,7 +18,7 @@ export async function GET(
   if (!round) {
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
-  if (!round.players.some((p) => p.user_id === user.id)) return forbidden();
+  if (!round.players.some((p: any) => p.user_id === user.id)) return forbidden();
 
   const nassauBet = await prisma.gameNassauBets.findUnique({
     where: { round_id: roundId },

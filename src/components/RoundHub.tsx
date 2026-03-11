@@ -108,7 +108,7 @@ function scoreClass(score: number | null, par: number): string {
   if (score === null || score === 0) return "";
   const diff = score - par;
   if (diff <= -2) return "bg-yellow-100 text-yellow-800 font-bold"; // eagle+
-  if (diff === -1) return "bg-emerald-100 text-emerald-800 font-bold"; // birdie
+  if (diff === -1) return "bg-emerald-100 text-[#1A1A1A] font-bold"; // birdie
   if (diff === 1) return "bg-red-50 text-red-700"; // bogey
   if (diff >= 2) return "bg-red-100 text-red-800"; // double+
   return ""; // par
@@ -190,14 +190,14 @@ export default function RoundHub({
               >
                 <div className="min-w-0">
                   <div className="flex items-center gap-2 flex-wrap">
-                    <span className="text-xs font-bold uppercase tracking-wider text-emerald-600">
+                    <span className="text-xs font-bold uppercase tracking-wider text-[#D94F2B]">
                       Round {idx + 1}
                     </span>
                     <span className="text-sm font-semibold text-zinc-900 truncate">
                       — {item.title}
                     </span>
                     {isBooked ? (
-                      <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-semibold text-emerald-700">
+                      <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-semibold text-[#D94F2B]">
                         Booked
                       </span>
                     ) : (
@@ -242,7 +242,7 @@ export default function RoundHub({
                         onClick={() => selectTab(item.id, t.key)}
                         className={`flex items-center gap-1.5 px-4 py-2.5 text-sm font-medium whitespace-nowrap transition-colors border-b-2 ${
                           tab === t.key
-                            ? "border-emerald-500 text-emerald-700"
+                            ? "border-[#D94F2B] text-[#D94F2B]"
                             : "border-transparent text-zinc-500 hover:text-zinc-700"
                         }`}
                       >
@@ -365,7 +365,7 @@ function PairingsTab({
         <button
           onClick={handleGenerate}
           disabled={loading || trip.members.length < 2}
-          className="mt-3 inline-flex items-center gap-1.5 rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-700 disabled:opacity-50"
+          className="mt-3 inline-flex items-center gap-1.5 rounded-lg bg-[#D94F2B] px-4 py-2 text-sm font-semibold text-white hover:bg-[#B83D25] disabled:opacity-50"
         >
           <Shuffle className="h-3.5 w-3.5" />
           {loading ? "Generating..." : "Generate Pairings"}
@@ -658,7 +658,7 @@ function ScorecardTab({
         <button
           onClick={handleCreate}
           disabled={loading || !currentUserId}
-          className="mt-3 inline-flex items-center gap-1.5 rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-700 disabled:opacity-50"
+          className="mt-3 inline-flex items-center gap-1.5 rounded-lg bg-[#D94F2B] px-4 py-2 text-sm font-semibold text-white hover:bg-[#B83D25] disabled:opacity-50"
         >
           <ClipboardList className="h-3.5 w-3.5" />
           {loading ? "Creating..." : "Start Scorecard"}
@@ -734,9 +734,9 @@ function ScorecardTab({
         <div className="mb-4 rounded-xl border border-emerald-200 bg-emerald-50/50 p-4">
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-2">
-              <Camera className="h-4 w-4 text-emerald-600" />
+              <Camera className="h-4 w-4 text-[#D94F2B]" />
               <h4
-                className="text-sm font-semibold text-emerald-800"
+                className="text-sm font-semibold text-[#1A1A1A]"
               >
                 Scores Extracted from Photo
               </h4>
@@ -745,7 +745,7 @@ function ScorecardTab({
               <span
                 className={`text-xs px-2 py-0.5 rounded-full font-medium ${
                   ocrResult.confidence === "high"
-                    ? "bg-emerald-100 text-emerald-700"
+                    ? "bg-emerald-100 text-[#D94F2B]"
                     : ocrResult.confidence === "medium"
                       ? "bg-amber-100 text-amber-700"
                       : "bg-red-100 text-red-700"
@@ -767,18 +767,18 @@ function ScorecardTab({
             <table className="w-full text-xs min-w-[500px]">
               <thead>
                 <tr className="border-b border-emerald-200">
-                  <th className="px-1 py-1 text-left font-semibold text-emerald-700 min-w-[70px]">
+                  <th className="px-1 py-1 text-left font-semibold text-[#D94F2B] min-w-[70px]">
                     Player
                   </th>
                   {Array.from({ length: 18 }, (_, i) => (
                     <th
                       key={i}
-                      className="px-0.5 py-1 text-center font-medium text-emerald-600 w-6"
+                      className="px-0.5 py-1 text-center font-medium text-[#D94F2B] w-6"
                     >
                       {i + 1}
                     </th>
                   ))}
-                  <th className="px-1 py-1 text-center font-bold text-emerald-700">
+                  <th className="px-1 py-1 text-center font-bold text-[#D94F2B]">
                     TOT
                   </th>
                 </tr>
@@ -821,7 +821,7 @@ function ScorecardTab({
             <button
               onClick={handleOcrConfirm}
               disabled={ocrConfirming}
-              className="inline-flex items-center gap-1.5 rounded-lg bg-emerald-600 px-4 py-2 text-xs font-semibold text-white hover:bg-emerald-700 disabled:opacity-50 transition"
+              className="inline-flex items-center gap-1.5 rounded-lg bg-[#D94F2B] px-4 py-2 text-xs font-semibold text-white hover:bg-[#B83D25] disabled:opacity-50 transition"
             >
               {ocrConfirming ? (
                 <Loader2 className="h-3.5 w-3.5 animate-spin" />
@@ -888,7 +888,7 @@ function ScorecardTab({
                     max="6"
                     value={p}
                     onChange={(e) => handleParChange(i, e.target.value)}
-                    className="min-w-[32px] min-h-[32px] w-8 rounded border border-zinc-200 px-0 py-0.5 text-center text-xs text-zinc-600 focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500/30"
+                    className="min-w-[32px] min-h-[32px] w-8 rounded border border-zinc-200 px-0 py-0.5 text-center text-xs text-zinc-600 focus:border-[#D94F2B] focus:outline-none focus:ring-1 focus:ring-[#D94F2B]/30"
                   />
                 </td>
               ))}
@@ -903,7 +903,7 @@ function ScorecardTab({
                     max="6"
                     value={p}
                     onChange={(e) => handleParChange(i + 9, e.target.value)}
-                    className="min-w-[32px] min-h-[32px] w-8 rounded border border-zinc-200 px-0 py-0.5 text-center text-xs text-zinc-600 focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500/30"
+                    className="min-w-[32px] min-h-[32px] w-8 rounded border border-zinc-200 px-0 py-0.5 text-center text-xs text-zinc-600 focus:border-[#D94F2B] focus:outline-none focus:ring-1 focus:ring-[#D94F2B]/30"
                   />
                 </td>
               ))}
@@ -1062,7 +1062,7 @@ const ScoreInput = React.forwardRef<
         }
       }}
       onKeyDown={handleKeyDown}
-      className={`min-w-[32px] min-h-[32px] w-8 h-8 rounded border px-0 py-0.5 text-center text-xs transition-colors focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/30 ${
+      className={`min-w-[32px] min-h-[32px] w-8 h-8 rounded border px-0 py-0.5 text-center text-xs transition-colors focus:border-[#D94F2B] focus:outline-none focus:ring-2 focus:ring-[#D94F2B]/30 ${
         editing
           ? "border-emerald-400 bg-white"
           : colorClass
@@ -1286,12 +1286,12 @@ function SkinsTab({
             step="1"
             value={stake}
             onChange={(e) => setStake(e.target.value)}
-            className="w-16 rounded border border-zinc-300 px-2 py-1 text-sm text-center text-zinc-900 focus:border-emerald-500 focus:outline-none"
+            className="w-16 rounded border border-zinc-300 px-2 py-1 text-sm text-center text-zinc-900 focus:border-[#D94F2B] focus:outline-none"
           />
           <button
             onClick={handleCreate}
             disabled={loading}
-            className="inline-flex items-center gap-1.5 rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-700 disabled:opacity-50"
+            className="inline-flex items-center gap-1.5 rounded-lg bg-[#D94F2B] px-4 py-2 text-sm font-semibold text-white hover:bg-[#B83D25] disabled:opacity-50"
           >
             <Trophy className="h-3.5 w-3.5" />
             {loading ? "Creating..." : "Start Skins Game"}
@@ -1371,14 +1371,14 @@ function SkinsTab({
                             );
                           }
                         }}
-                        className="w-10 rounded border border-zinc-200 px-1 py-0.5 text-center text-xs text-zinc-900 focus:border-emerald-500 focus:outline-none"
+                        className="w-10 rounded border border-zinc-200 px-1 py-0.5 text-center text-xs text-zinc-900 focus:border-[#D94F2B] focus:outline-none"
                         placeholder="-"
                       />
                     </td>
                   ))}
                   <td className="px-1.5 py-1 text-center">
                     {result?.winner ? (
-                      <span className="font-semibold text-emerald-600">
+                      <span className="font-semibold text-[#D94F2B]">
                         {getMemberName(result.winner).split(" ")[0]}
                         {result.skinsValue > 1 && ` (${result.skinsValue})`}
                       </span>
@@ -1421,7 +1421,7 @@ function SkinsTab({
                     <span
                       className={`text-xs font-semibold ${
                         (t?.winnings || 0) > 0
-                          ? "text-emerald-600"
+                          ? "text-[#D94F2B]"
                           : "text-zinc-400"
                       }`}
                     >
@@ -1454,7 +1454,7 @@ function SkinsTab({
                     {" owes "}
                     <span className="font-medium">{getMemberName(s.to)}</span>
                   </p>
-                  <span className="text-xs font-semibold text-emerald-600">
+                  <span className="text-xs font-semibold text-[#D94F2B]">
                     ${s.amount.toFixed(2)}
                   </span>
                 </div>
