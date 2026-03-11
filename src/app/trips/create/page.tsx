@@ -535,7 +535,7 @@ export default function CreateTripWizardPage() {
   ][budgetIdx];
 
   const budgetThumbClass = [
-    "[&::-webkit-slider-thumb]:bg-[#D94F2B] [&::-moz-range-thumb]:bg-[#D94F2B] accent-emerald-600",
+    "[&::-webkit-slider-thumb]:bg-[#D94F2B] [&::-moz-range-thumb]:bg-[#D94F2B] accent-[#D94F2B]",
     "[&::-webkit-slider-thumb]:bg-blue-600 [&::-moz-range-thumb]:bg-blue-600 accent-blue-600",
     "[&::-webkit-slider-thumb]:bg-purple-600 [&::-moz-range-thumb]:bg-purple-600 accent-purple-600",
     "[&::-webkit-slider-thumb]:bg-amber-500 [&::-moz-range-thumb]:bg-amber-500 accent-amber-500",
@@ -957,7 +957,7 @@ export default function CreateTripWizardPage() {
                     step={1}
                     value={groupSize}
                     onChange={(e) => setGroupSize(parseInt(e.target.value))}
-                    className="w-full h-2 rounded-full appearance-none cursor-pointer bg-zinc-200 accent-emerald-600 [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-8 [&::-webkit-slider-thumb]:h-8 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-[#D94F2B] [&::-webkit-slider-thumb]:shadow-lg [&::-webkit-slider-thumb]:cursor-pointer [&::-moz-range-thumb]:w-8 [&::-moz-range-thumb]:h-8 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-[#D94F2B] [&::-moz-range-thumb]:border-0 [&::-moz-range-thumb]:shadow-lg [&::-moz-range-thumb]:cursor-pointer"
+                    className="w-full h-2 rounded-full appearance-none cursor-pointer bg-zinc-200 accent-[#D94F2B] [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-8 [&::-webkit-slider-thumb]:h-8 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-[#D94F2B] [&::-webkit-slider-thumb]:shadow-lg [&::-webkit-slider-thumb]:cursor-pointer [&::-moz-range-thumb]:w-8 [&::-moz-range-thumb]:h-8 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-[#D94F2B] [&::-moz-range-thumb]:border-0 [&::-moz-range-thumb]:shadow-lg [&::-moz-range-thumb]:cursor-pointer"
                   />
                   <div className="flex justify-between mt-1 px-0.5">
                     {[2, 4, 6, 8, 10, 12, 16, 20].map((n) => (
@@ -1203,7 +1203,7 @@ export default function CreateTripWizardPage() {
                 type="button"
                 onClick={handleSubmit}
                 disabled={submitting || !tripName.trim()}
-                className="inline-flex items-center gap-2 rounded-lg bg-[#D94F2B] px-8 py-3 text-base font-semibold text-white transition-all hover:bg-[#B83D25] disabled:opacity-50 active:scale-[0.97] min-h-[48px] shadow-lg shadow-emerald-600/25"
+                className="inline-flex items-center gap-2 rounded-lg bg-[#D94F2B] px-8 py-3 text-base font-semibold text-white transition-all hover:bg-[#B83D25] disabled:opacity-50 active:scale-[0.97] min-h-[48px] shadow-lg shadow-[#D94F2B]/25"
               >
                 {submitting ? (
                   <>
