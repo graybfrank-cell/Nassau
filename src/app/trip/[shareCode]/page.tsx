@@ -185,7 +185,7 @@ export default function TripSharePage() {
           </p>
           <Link
             href="/dashboard"
-            className="mt-6 inline-block rounded-lg bg-emerald-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-emerald-700"
+            className="mt-6 inline-block rounded-lg bg-[#D94F2B] px-5 py-2.5 text-sm font-semibold text-white hover:bg-[#B83D25]"
           >
             Go to Dashboard
           </Link>
@@ -334,7 +334,7 @@ export default function TripSharePage() {
               </p>
               <Link
                 href={`/login?returnTo=/trip/${shareCode}`}
-                className="inline-block rounded-lg bg-emerald-600 px-6 py-2.5 text-sm font-semibold text-white hover:bg-emerald-700"
+                className="inline-block rounded-lg bg-[#D94F2B] px-6 py-2.5 text-sm font-semibold text-white hover:bg-[#B83D25]"
               >
                 Sign Up to RSVP
               </Link>
@@ -347,11 +347,11 @@ export default function TripSharePage() {
           <div className="mt-6 rounded-2xl border-2 border-emerald-200 bg-white p-6 shadow-sm">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <Vote className="h-5 w-5 text-emerald-600" />
+                <Vote className="h-5 w-5 text-[#D94F2B]" />
                 <h2 className="text-sm font-semibold text-zinc-900">Vote on Trip Dates</h2>
               </div>
               <span className={`rounded-full px-2.5 py-1 text-xs font-medium ${
-                pollActive ? "bg-emerald-100 text-emerald-700" : "bg-zinc-100 text-zinc-600"
+                pollActive ? "bg-emerald-100 text-[#D94F2B]" : "bg-zinc-100 text-zinc-600"
               }`}>
                 {pollActive ? formatCountdown(poll.deadline) : "Voting closed"}
               </span>
@@ -440,7 +440,7 @@ export default function TripSharePage() {
               <button
                 onClick={handleSubmitPollVotes}
                 disabled={pollVoting}
-                className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-lg bg-emerald-600 px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-emerald-700 disabled:opacity-50 min-h-[44px]"
+                className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-lg bg-[#D94F2B] px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[#B83D25] disabled:opacity-50 min-h-[44px]"
               >
                 {pollVoting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Check className="h-4 w-4" />}
                 {pollVoting ? "Submitting..." : "Submit Votes"}
@@ -452,7 +452,7 @@ export default function TripSharePage() {
               <div className="mt-4 text-center">
                 <Link
                   href={`/login?returnTo=/trip/${shareCode}`}
-                  className="inline-block rounded-lg bg-emerald-600 px-6 py-2.5 text-sm font-semibold text-white hover:bg-emerald-700"
+                  className="inline-block rounded-lg bg-[#D94F2B] px-6 py-2.5 text-sm font-semibold text-white hover:bg-[#B83D25]"
                 >
                   Sign In to Vote
                 </Link>

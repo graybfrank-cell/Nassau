@@ -51,7 +51,7 @@ export default function SettlementList({
           {settled.length} of {settlements.length} settled
         </p>
         {settled.length === settlements.length && settlements.length > 0 && (
-          <span className="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-2.5 py-0.5 text-xs font-medium text-emerald-700">
+          <span className="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-2.5 py-0.5 text-xs font-medium text-[#D94F2B]">
             All settled
           </span>
         )}
@@ -79,7 +79,7 @@ export default function SettlementList({
               {canToggle(s) && (
                 <button
                   onClick={() => onMarkSettled(s.id, true)}
-                  className="inline-flex items-center gap-1 rounded-lg bg-emerald-600 px-3 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-emerald-700 min-h-[36px]"
+                  className="inline-flex items-center gap-1 rounded-lg bg-[#D94F2B] px-3 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-[#B83D25] min-h-[36px]"
                 >
                   <Check className="h-3.5 w-3.5" />
                   Paid
@@ -101,7 +101,7 @@ export default function SettlementList({
                 {" pays "}
                 <span className="font-medium">{s.toPlayer.name}</span>
               </p>
-              <p className="text-xs text-emerald-600">
+              <p className="text-xs text-[#D94F2B]">
                 Settled{" "}
                 {s.settledAt &&
                   new Date(s.settledAt).toLocaleDateString("en-US", {

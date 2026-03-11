@@ -44,7 +44,7 @@ export default async function BlogIndex() {
         <div className="mx-auto flex max-w-5xl items-center justify-between px-6 py-4">
           <Link
             href="/"
-            className="text-xl font-extrabold tracking-tight text-emerald-400"
+            className="text-xl font-extrabold tracking-tight text-[#D94F2B]"
           >
             Nassau
           </Link>
@@ -78,10 +78,10 @@ export default async function BlogIndex() {
                 href={`/blog/${post.slug}`}
                 className="group rounded-xl border border-zinc-200 bg-white p-6 transition-shadow hover:shadow-md"
               >
-                <div className="text-xs font-medium text-emerald-600 uppercase tracking-wider">
+                <div className="text-xs font-medium text-[#D94F2B] uppercase tracking-wider">
                   {post.target_keyword}
                 </div>
-                <h2 className="mt-2 text-lg font-semibold text-zinc-900 group-hover:text-emerald-700 transition-colors line-clamp-2">
+                <h2 className="mt-2 text-lg font-semibold text-zinc-900 group-hover:text-[#D94F2B] transition-colors line-clamp-2">
                   {post.title}
                 </h2>
                 <p className="mt-2 text-sm text-zinc-500 line-clamp-3">

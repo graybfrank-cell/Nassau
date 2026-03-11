@@ -199,7 +199,7 @@ export default function CourseSearch({ onSelect, initialCourseName = "" }: Cours
               value={query}
               onChange={(e) => handleInputChange(e.target.value)}
               placeholder="Search courses..."
-              className="block w-full rounded-lg border border-zinc-300 pl-9 pr-8 py-2 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+              className="block w-full rounded-lg border border-zinc-300 pl-9 pr-8 py-2 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-[#D94F2B] focus:outline-none focus:ring-2 focus:ring-[#D94F2B]/20"
             />
             {query && (
               <button
@@ -235,7 +235,7 @@ export default function CourseSearch({ onSelect, initialCourseName = "" }: Cours
                 <button
                   type="button"
                   onClick={handleManual}
-                  className="text-xs text-zinc-500 hover:text-emerald-600 transition-colors"
+                  className="text-xs text-zinc-500 hover:text-[#D94F2B] transition-colors"
                 >
                   Use &quot;{query}&quot; as manual entry
                 </button>
@@ -268,7 +268,7 @@ export default function CourseSearch({ onSelect, initialCourseName = "" }: Cours
                 onClick={() => handleGenderChange("male")}
                 className={`px-3 py-1.5 font-medium transition-colors ${
                   gender === "male"
-                    ? "bg-emerald-600 text-white"
+                    ? "bg-[#D94F2B] text-white"
                     : "bg-white text-zinc-600 hover:bg-zinc-50"
                 }`}
               >
@@ -279,7 +279,7 @@ export default function CourseSearch({ onSelect, initialCourseName = "" }: Cours
                 onClick={() => handleGenderChange("female")}
                 className={`px-3 py-1.5 font-medium transition-colors ${
                   gender === "female"
-                    ? "bg-emerald-600 text-white"
+                    ? "bg-[#D94F2B] text-white"
                     : "bg-white text-zinc-600 hover:bg-zinc-50"
                 }`}
               >
@@ -292,7 +292,7 @@ export default function CourseSearch({ onSelect, initialCourseName = "" }: Cours
               <select
                 value={selectedTee}
                 onChange={(e) => handleTeeChange(e.target.value)}
-                className="block w-full appearance-none rounded-lg border border-zinc-300 bg-white px-3 py-1.5 pr-8 text-sm text-zinc-900 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+                className="block w-full appearance-none rounded-lg border border-zinc-300 bg-white px-3 py-1.5 pr-8 text-sm text-zinc-900 focus:border-[#D94F2B] focus:outline-none focus:ring-2 focus:ring-[#D94F2B]/20"
               >
                 {filteredTees.map((tee) => (
                   <option key={tee.name} value={tee.name}>
