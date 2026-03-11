@@ -528,14 +528,14 @@ export default function CreateTripWizardPage() {
   // ---- Budget slider color helpers ----
 
   const budgetTextColor = [
-    "text-emerald-600",
+    "text-[#D94F2B]",
     "text-blue-600",
     "text-purple-600",
     "text-amber-600",
   ][budgetIdx];
 
   const budgetThumbClass = [
-    "[&::-webkit-slider-thumb]:bg-emerald-600 [&::-moz-range-thumb]:bg-emerald-600 accent-emerald-600",
+    "[&::-webkit-slider-thumb]:bg-[#D94F2B] [&::-moz-range-thumb]:bg-[#D94F2B] accent-emerald-600",
     "[&::-webkit-slider-thumb]:bg-blue-600 [&::-moz-range-thumb]:bg-blue-600 accent-blue-600",
     "[&::-webkit-slider-thumb]:bg-purple-600 [&::-moz-range-thumb]:bg-purple-600 accent-purple-600",
     "[&::-webkit-slider-thumb]:bg-amber-500 [&::-moz-range-thumb]:bg-amber-500 accent-amber-500",
@@ -579,7 +579,7 @@ export default function CreateTripWizardPage() {
               className="h-2 flex-1 rounded-full bg-zinc-200 overflow-hidden"
             >
               <div
-                className="h-full rounded-full bg-emerald-500 transition-all duration-500 ease-out"
+                className="h-full rounded-full bg-[#D94F2B] transition-all duration-500 ease-out"
                 style={{ width: s <= step ? "100%" : "0%" }}
               />
             </div>
@@ -597,7 +597,7 @@ export default function CreateTripWizardPage() {
         {/* Success overlay */}
         {showSuccess && (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-            <div className="rounded-full bg-emerald-500 p-6 animate-bounce">
+            <div className="rounded-full bg-[#D94F2B] p-6 animate-bounce">
               <Check className="h-12 w-12 text-white" />
             </div>
           </div>
@@ -623,12 +623,12 @@ export default function CreateTripWizardPage() {
                   onClick={() => handleVibeSelect(v.id)}
                   className={`relative rounded-xl border-2 p-5 text-left transition-all duration-200 min-h-[80px] active:scale-[0.97] ${
                     vibe === v.id
-                      ? "border-emerald-500 bg-emerald-50 shadow-md scale-[1.02]"
+                      ? "border-[#D94F2B] bg-emerald-50 shadow-md scale-[1.02]"
                       : "border-zinc-200 bg-white hover:border-zinc-300 hover:shadow-sm"
                   }`}
                 >
                   {vibe === v.id && (
-                    <div className="absolute top-3 right-3 rounded-full bg-emerald-500 p-0.5">
+                    <div className="absolute top-3 right-3 rounded-full bg-[#D94F2B] p-0.5">
                       <Check className="h-3.5 w-3.5 text-white" />
                     </div>
                   )}
@@ -677,7 +677,7 @@ export default function CreateTripWizardPage() {
                       if (!e.target.value) setDestFocused(true);
                     }}
                     placeholder="e.g. Scottsdale, Myrtle Beach..."
-                    className="block w-full rounded-lg border border-zinc-300 pl-9 pr-9 py-2.5 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+                    className="block w-full rounded-lg border border-zinc-300 pl-9 pr-9 py-2.5 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-[#D94F2B] focus:outline-none focus:ring-2 focus:ring-[#D94F2B]/20"
                   />
                   {destSearch && (
                     <button
@@ -719,11 +719,11 @@ export default function CreateTripWizardPage() {
                               {d.region}
                             </span>
                           </div>
-                          <span className="shrink-0 rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-medium text-emerald-700">
+                          <span className="shrink-0 rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-medium text-[#D94F2B]">
                             {"\uD83C\uDFCC\uFE0F"} Nassau Destination
                           </span>
                         </div>
-                        <span className="shrink-0 ml-2 text-xs font-medium text-emerald-600">
+                        <span className="shrink-0 ml-2 text-xs font-medium text-[#D94F2B]">
                           {priceTierIndicator(d.price_tier)}
                         </span>
                       </button>
@@ -777,7 +777,7 @@ export default function CreateTripWizardPage() {
                           key={n}
                           type="button"
                           onClick={() => handlePopularClick(n)}
-                          className="text-xs font-medium text-emerald-600 hover:text-emerald-700 hover:underline transition-colors"
+                          className="text-xs font-medium text-[#D94F2B] hover:text-[#D94F2B] hover:underline transition-colors"
                         >
                           {n}
                         </button>
@@ -788,7 +788,7 @@ export default function CreateTripWizardPage() {
 
                 {/* KB info badge */}
                 {selectedKBDest && (
-                  <div className="mt-2 inline-flex items-center gap-2 rounded-lg bg-emerald-50 border border-emerald-200 px-3 py-1.5 text-xs text-emerald-700">
+                  <div className="mt-2 inline-flex items-center gap-2 rounded-lg bg-emerald-50 border border-emerald-200 px-3 py-1.5 text-xs text-[#D94F2B]">
                     <span>
                       {"\uD83C\uDFCC\uFE0F"} {selectedKBDest.courses} courses
                     </span>
@@ -818,7 +818,7 @@ export default function CreateTripWizardPage() {
                       onClick={() => handleDatePill(p.id)}
                       className={`rounded-full px-4 py-2 text-sm font-medium transition-all duration-200 active:scale-95 min-h-[44px] ${
                         dateQuickSelect === p.id
-                          ? "bg-emerald-600 text-white shadow-sm"
+                          ? "bg-[#D94F2B] text-white shadow-sm"
                           : "bg-white border border-zinc-200 text-zinc-700 hover:bg-zinc-50 hover:border-zinc-300"
                       }`}
                     >
@@ -853,7 +853,7 @@ export default function CreateTripWizardPage() {
                           type="date"
                           value={startDate}
                           onChange={(e) => setStartDate(e.target.value)}
-                          className="mt-1 block w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm text-zinc-900 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+                          className="mt-1 block w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm text-zinc-900 focus:border-[#D94F2B] focus:outline-none focus:ring-2 focus:ring-[#D94F2B]/20"
                         />
                       </div>
                       <div>
@@ -864,7 +864,7 @@ export default function CreateTripWizardPage() {
                           type="date"
                           value={endDate}
                           onChange={(e) => setEndDate(e.target.value)}
-                          className="mt-1 block w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm text-zinc-900 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+                          className="mt-1 block w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm text-zinc-900 focus:border-[#D94F2B] focus:outline-none focus:ring-2 focus:ring-[#D94F2B]/20"
                         />
                       </div>
                     </div>
@@ -889,7 +889,7 @@ export default function CreateTripWizardPage() {
                             setStartDate(e.target.value);
                             setDateQuickSelect(null);
                           }}
-                          className="mt-1 block w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm text-zinc-900 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+                          className="mt-1 block w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm text-zinc-900 focus:border-[#D94F2B] focus:outline-none focus:ring-2 focus:ring-[#D94F2B]/20"
                         />
                       </div>
                       <div>
@@ -903,7 +903,7 @@ export default function CreateTripWizardPage() {
                             setEndDate(e.target.value);
                             setDateQuickSelect(null);
                           }}
-                          className="mt-1 block w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm text-zinc-900 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+                          className="mt-1 block w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm text-zinc-900 focus:border-[#D94F2B] focus:outline-none focus:ring-2 focus:ring-[#D94F2B]/20"
                         />
                       </div>
                     </div>
@@ -912,7 +912,7 @@ export default function CreateTripWizardPage() {
 
                 {/* Duration */}
                 {duration && !flexibleDates && (
-                  <p className="mt-2 text-sm font-medium text-emerald-600">
+                  <p className="mt-2 text-sm font-medium text-[#D94F2B]">
                     {duration}
                   </p>
                 )}
@@ -957,7 +957,7 @@ export default function CreateTripWizardPage() {
                     step={1}
                     value={groupSize}
                     onChange={(e) => setGroupSize(parseInt(e.target.value))}
-                    className="w-full h-2 rounded-full appearance-none cursor-pointer bg-zinc-200 accent-emerald-600 [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-8 [&::-webkit-slider-thumb]:h-8 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-emerald-600 [&::-webkit-slider-thumb]:shadow-lg [&::-webkit-slider-thumb]:cursor-pointer [&::-moz-range-thumb]:w-8 [&::-moz-range-thumb]:h-8 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-emerald-600 [&::-moz-range-thumb]:border-0 [&::-moz-range-thumb]:shadow-lg [&::-moz-range-thumb]:cursor-pointer"
+                    className="w-full h-2 rounded-full appearance-none cursor-pointer bg-zinc-200 accent-emerald-600 [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-8 [&::-webkit-slider-thumb]:h-8 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-[#D94F2B] [&::-webkit-slider-thumb]:shadow-lg [&::-webkit-slider-thumb]:cursor-pointer [&::-moz-range-thumb]:w-8 [&::-moz-range-thumb]:h-8 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-[#D94F2B] [&::-moz-range-thumb]:border-0 [&::-moz-range-thumb]:shadow-lg [&::-moz-range-thumb]:cursor-pointer"
                   />
                   <div className="flex justify-between mt-1 px-0.5">
                     {[2, 4, 6, 8, 10, 12, 16, 20].map((n) => (
@@ -1043,7 +1043,7 @@ export default function CreateTripWizardPage() {
                     type="text"
                     value={tripName}
                     onChange={(e) => setTripName(e.target.value)}
-                    className="block w-full rounded-lg border border-zinc-300 pl-9 pr-3 py-2.5 text-lg font-semibold text-zinc-900 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+                    className="block w-full rounded-lg border border-zinc-300 pl-9 pr-3 py-2.5 text-lg font-semibold text-zinc-900 focus:border-[#D94F2B] focus:outline-none focus:ring-2 focus:ring-[#D94F2B]/20"
                   />
                 </div>
 
@@ -1057,7 +1057,7 @@ export default function CreateTripWizardPage() {
                         onClick={() => setTripName(n)}
                         className={`rounded-full px-3 py-1.5 text-xs font-medium transition-all duration-150 active:scale-95 min-h-[36px] ${
                           tripName === n
-                            ? "bg-emerald-100 text-emerald-700 border border-emerald-300"
+                            ? "bg-emerald-100 text-[#D94F2B] border border-[#D94F2B]/40"
                             : "bg-zinc-100 text-zinc-600 hover:bg-zinc-200 border border-transparent"
                         }`}
                       >
@@ -1082,7 +1082,7 @@ export default function CreateTripWizardPage() {
                       onClick={() => handleNoteChip(chip)}
                       className={`rounded-full px-3 py-1.5 text-xs font-medium transition-all duration-150 active:scale-95 min-h-[36px] ${
                         addedChips.has(chip)
-                          ? "bg-emerald-100 text-emerald-700 border border-emerald-300"
+                          ? "bg-emerald-100 text-[#D94F2B] border border-[#D94F2B]/40"
                           : "bg-white text-zinc-600 border border-zinc-200 hover:bg-zinc-50 hover:border-zinc-300"
                       }`}
                     >
@@ -1099,7 +1099,7 @@ export default function CreateTripWizardPage() {
                   onChange={(e) => setNotes(e.target.value)}
                   rows={3}
                   placeholder="Type any additional notes..."
-                  className="mt-2 block w-full rounded-lg border border-zinc-300 px-3 py-2.5 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+                  className="mt-2 block w-full rounded-lg border border-zinc-300 px-3 py-2.5 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-[#D94F2B] focus:outline-none focus:ring-2 focus:ring-[#D94F2B]/20"
                 />
               </div>
 
@@ -1193,7 +1193,7 @@ export default function CreateTripWizardPage() {
                 type="button"
                 onClick={goNext}
                 disabled={!canProceed()}
-                className="inline-flex items-center gap-1.5 rounded-lg bg-emerald-600 px-6 py-2.5 text-sm font-semibold text-white transition-all hover:bg-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.97] min-h-[44px]"
+                className="inline-flex items-center gap-1.5 rounded-lg bg-[#D94F2B] px-6 py-2.5 text-sm font-semibold text-white transition-all hover:bg-[#B83D25] disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.97] min-h-[44px]"
               >
                 Next
                 <ChevronRight className="h-4 w-4" />
@@ -1203,7 +1203,7 @@ export default function CreateTripWizardPage() {
                 type="button"
                 onClick={handleSubmit}
                 disabled={submitting || !tripName.trim()}
-                className="inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-8 py-3 text-base font-semibold text-white transition-all hover:bg-emerald-700 disabled:opacity-50 active:scale-[0.97] min-h-[48px] shadow-lg shadow-emerald-600/25"
+                className="inline-flex items-center gap-2 rounded-lg bg-[#D94F2B] px-8 py-3 text-base font-semibold text-white transition-all hover:bg-[#B83D25] disabled:opacity-50 active:scale-[0.97] min-h-[48px] shadow-lg shadow-emerald-600/25"
               >
                 {submitting ? (
                   <>
