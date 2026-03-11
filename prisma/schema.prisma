@@ -16,6 +16,13 @@ model Profiles {
   created_at DateTime @default(now()) @db.Timestamptz()
   updated_at DateTime @default(now()) @db.Timestamptz()
 
+  // Payment & subscription
+  venmo_username      String?
+  stripe_customer_id  String?  @unique
+  subscription_status String?  @default("free") // free | trialing | active | past_due | canceled
+  subscription_tier   String?  // pro | premium
+  subscription_expires_at DateTime? @db.Timestamptz()
+
   trips       Trips[]
   tripMembers TripMembers[]
   scorecards  Scorecards[]
@@ -23,6 +30,10 @@ model Profiles {
   // Commissioner Mode
   game_rounds_as_commissioner GameRounds[]
   game_round_players          GamePlayers[]
+
+  // Settlements
+  settlements_paid     Settlements[] @relation("SettlementsPaid")
+  settlements_received Settlements[] @relation("SettlementsReceived")
 
   @@map("profiles")
 }
@@ -229,11 +240,15 @@ model GameRounds {
   course_layout   String?
   course_lat      Float?
   course_lng      Float?
+  course_photo_url String?
+  course_address  String?
   tee_time        DateTime @db.Timestamptz()
   status          String   @default("upcoming") // "upcoming", "in_progress", "completed"
   share_code      String   @unique @default(cuid())
   notes           String?
   starting_hole   Int      @default(1)
+  weather_data    Json?
+  awards          Json?
   created_at      DateTime @default(now()) @db.Timestamptz()
   updated_at      DateTime @updatedAt @db.Timestamptz()
 
@@ -251,14 +266,15 @@ model GameRounds {
 
 // ─── game_players ────────────────────────────────────────────
 model GamePlayers {
-  id        String   @id @default(uuid()) @db.Uuid
-  round_id  String   @db.Uuid
-  user_id   String?  @db.Uuid
-  name      String
-  email     String?
-  status    String   @default("invited") // "invited", "confirmed", "declined"
-  role      String   @default("PLAYER") // "COMMISSIONER", "PLAYER"
-  joined_at DateTime @default(now()) @db.Timestamptz()
+  id              String   @id @default(uuid()) @db.Uuid
+  round_id        String   @db.Uuid
+  user_id         String?  @db.Uuid
+  name            String
+  email           String?
+  status          String   @default("invited") // "invited", "confirmed", "declined"
+  role            String   @default("PLAYER") // "COMMISSIONER", "PLAYER"
+  is_personal_best Boolean @default(false)
+  joined_at       DateTime @default(now()) @db.Timestamptz()
 
   round GameRounds @relation(fields: [round_id], references: [id], onDelete: Cascade)
   user  Profiles?  @relation(fields: [user_id], references: [id], onDelete: SetNull)
@@ -353,4 +369,28 @@ model GameSettlements {
   @@unique([round_id, from_player, to_player])
   @@index([round_id])
   @@map("game_settlements")
+}
+
+// ─── settlements (user-level, cross-round) ──────────────────
+model Settlements {
+  id           String    @id @default(uuid()) @db.Uuid
+  round_id     String?   @db.Uuid
+  trip_id      String?   @db.Uuid
+  payer_id     String    @db.Uuid
+  payee_id     String    @db.Uuid
+  amount       Decimal   @default(0) @db.Decimal(10, 2)
+  note         String?
+  status       String    @default("pending") // pending | paid | confirmed
+  paid_at      DateTime? @db.Timestamptz()
+  confirmed_at DateTime? @db.Timestamptz()
+  created_at   DateTime  @default(now()) @db.Timestamptz()
+  updated_at   DateTime  @updatedAt @db.Timestamptz()
+
+  payer Profiles @relation("SettlementsPaid", fields: [payer_id], references: [id], onDelete: Cascade)
+  payee Profiles @relation("SettlementsReceived", fields: [payee_id], references: [id], onDelete: Cascade)
+
+  @@index([payer_id])
+  @@index([payee_id])
+  @@index([round_id])
+  @@map("settlements")
 }

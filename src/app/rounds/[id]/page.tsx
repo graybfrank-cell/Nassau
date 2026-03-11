@@ -28,6 +28,7 @@ import ExpenseList from "@/components/shared/ExpenseList";
 import SettlementList from "@/components/shared/SettlementList";
 import ScorecardScanner from "@/components/shared/ScorecardScanner";
 import ReceiptScanner from "@/components/shared/ReceiptScanner";
+import AwardsList from "@/components/shared/AwardsList";
 import {
   ArrowLeft,
   Users,
@@ -46,7 +47,15 @@ import {
   ClipboardList,
   CheckCircle2,
   Trash2,
+  Sun,
+  Cloud,
+  CloudSun,
+  CloudRain,
+  CloudDrizzle,
+  CloudLightning,
+  Snowflake,
 } from "lucide-react";
+import { isWeatherStale } from "@/lib/weather";
 
 function formatFullDate(dateStr: string): string {
   const d = new Date(dateStr);
@@ -88,6 +97,28 @@ function StatusBadge({ status }: { status: string }) {
   );
 }
 
+function WeatherIcon({ icon }: { icon: string }) {
+  const cls = "h-8 w-8 text-zinc-600";
+  switch (icon) {
+    case "sun":
+      return <Sun className={cls} />;
+    case "cloud-sun":
+      return <CloudSun className={cls} />;
+    case "cloud-rain":
+      return <CloudRain className={cls} />;
+    case "cloud-drizzle":
+      return <CloudDrizzle className={cls} />;
+    case "cloud-lightning":
+      return <CloudLightning className={cls} />;
+    case "snowflake":
+      return <Snowflake className={cls} />;
+    case "cloud-fog":
+      return <Cloud className={cls} />;
+    default:
+      return <Cloud className={cls} />;
+  }
+}
+
 export default function RoundDashboardPage() {
   const params = useParams();
   const router = useRouter();
@@ -97,6 +128,9 @@ export default function RoundDashboardPage() {
   const [userId, setUserId] = useState<string>("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  // Weather
+  const [weatherData, setWeatherData] = useState<any>(null);
 
   // Player form
   const [showAddPlayer, setShowAddPlayer] = useState(false);
@@ -148,6 +182,21 @@ export default function RoundDashboardPage() {
       router.push("/login");
     });
   }, [router, refresh]);
+
+  useEffect(() => {
+    if (!round?.courseLat || !round?.courseLng) return;
+    // Check if round already has cached weather
+    if (round.weatherData && !isWeatherStale(round.weatherData)) {
+      setWeatherData(round.weatherData);
+      return;
+    }
+    // Fetch fresh weather
+    const dateStr = new Date(round.teeTime).toISOString().split('T')[0];
+    fetch(`/api/weather?lat=${round.courseLat}&lng=${round.courseLng}&date=${dateStr}`)
+      .then(r => r.ok ? r.json() : null)
+      .then(data => { if (data) setWeatherData(data); })
+      .catch(() => {});
+  }, [round]);
 
   if (loading) {
     return (
@@ -409,9 +458,17 @@ export default function RoundDashboardPage() {
   async function handleStatusChange(status: string) {
     setError(null);
     try {
-      await updateGameRound(roundId, { status });
       if (status === "completed") {
-        await recalculateSettlements(roundId);
+        // Use the complete endpoint for full post-round processing
+        const res = await fetch(`/api/rounds/${roundId}/complete`, {
+          method: "POST",
+        });
+        if (!res.ok) {
+          const data = await res.json();
+          throw new Error(data.error || "Failed to complete round");
+        }
+      } else {
+        await updateGameRound(roundId, { status });
       }
       await refresh();
     } catch (err) {
@@ -504,6 +561,54 @@ export default function RoundDashboardPage() {
             {error}
           </div>
         )}
+
+        {/* Course Hero */}
+        <div className="mt-6 relative h-48 rounded-xl overflow-hidden">
+          {round.coursePhotoUrl ? (
+            <img src={round.coursePhotoUrl} alt={round.courseName} className="w-full h-full object-cover" />
+          ) : (
+            <div className="w-full h-full bg-gradient-to-r from-emerald-800 to-emerald-600" />
+          )}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+          <div className="absolute bottom-4 left-4">
+            <h1 className="text-2xl font-bold text-white">{round.courseName}</h1>
+            {round.courseLayout && (
+              <span className="text-sm text-white/80">{round.courseLayout}</span>
+            )}
+          </div>
+        </div>
+
+        <div className="mt-3 flex flex-wrap gap-3">
+          {/* Weather card */}
+          {weatherData && (
+            <div className="flex items-center gap-3 rounded-lg border border-zinc-200 bg-white px-4 py-2">
+              <WeatherIcon icon={weatherData.weatherIcon} />
+              <div>
+                <p className="text-sm font-medium text-zinc-900">{weatherData.tempHigh}&deg;/{weatherData.tempLow}&deg;F</p>
+                <p className="text-xs text-zinc-500">{weatherData.weatherLabel} &middot; Wind {weatherData.windSpeedMax}mph &middot; {weatherData.precipitationProbability}% rain</p>
+              </div>
+            </div>
+          )}
+          {/* Google Maps link */}
+          {round.courseLat && round.courseLng && (
+            <a
+              href={`https://www.google.com/maps/search/?api=1&query=${round.courseLat},${round.courseLng}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 rounded-lg border border-zinc-200 bg-white px-4 py-2 text-sm text-zinc-700 hover:bg-zinc-50"
+            >
+              <MapPin className="h-4 w-4" />
+              Open in Google Maps
+            </a>
+          )}
+          {/* Address */}
+          {round.courseAddress && (
+            <span className="inline-flex items-center gap-1.5 text-sm text-zinc-500">
+              <MapPin className="h-3.5 w-3.5" />
+              {round.courseAddress}
+            </span>
+          )}
+        </div>
 
         {/* Round Header */}
         <div className="mt-6 rounded-xl border border-zinc-200 bg-white p-6 shadow-sm">
@@ -976,6 +1081,22 @@ export default function RoundDashboardPage() {
             canManageAll={isCommissioner}
           />
         </div>
+
+        {/* Awards */}
+        {round.status === "completed" &&
+          round.awards &&
+          Array.isArray(round.awards) &&
+          round.awards.length > 0 && (
+            <div className="mt-6 rounded-xl border border-zinc-200 bg-white p-6 shadow-sm">
+              <div className="flex items-center gap-2 mb-4">
+                <Trophy className="h-5 w-5 text-amber-500" />
+                <h2 className="text-lg font-semibold text-zinc-900">
+                  Post-Round Awards
+                </h2>
+              </div>
+              <AwardsList awards={round.awards} />
+            </div>
+          )}
 
         {/* Share */}
         <div className="mt-6 rounded-xl border border-zinc-200 bg-white p-6 shadow-sm">
