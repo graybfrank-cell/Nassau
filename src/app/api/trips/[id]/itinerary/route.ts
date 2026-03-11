@@ -11,7 +11,9 @@ export async function POST(
 
   const { id: tripId } = await params;
   const membership = await getTripMembership(tripId, user.id);
-  if (!membership) return forbidden();
+  if (!membership || (membership.role !== "CAPTAIN" && membership.role !== "CO_CAPTAIN")) {
+    return forbidden();
+  }
 
   const body = await req.json();
 
@@ -31,6 +33,7 @@ export async function POST(
       title: body.title || "",
       description: body.description || "",
       cost: body.cost ?? 0,
+      notes: body.notes || "",
       booking_status: body.booking_status || "",
       sort_order: sortOrder,
     },

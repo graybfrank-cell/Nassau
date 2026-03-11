@@ -145,7 +145,7 @@ export default function PairingsPage() {
           </div>
           <button
             onClick={() => setShowForm(!showForm)}
-            className="inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-emerald-700"
+            className="inline-flex items-center gap-2 rounded-lg bg-[#D94F2B] px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[#B83D25]"
           >
             <Plus className="h-4 w-4" />
             New Round
@@ -182,7 +182,7 @@ export default function PairingsPage() {
                   value={roundName}
                   onChange={(e) => setRoundName(e.target.value)}
                   placeholder="Round 1"
-                  className="mt-1 block w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+                  className="mt-1 block w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-[#D94F2B] focus:outline-none focus:ring-2 focus:ring-[#D94F2B]/20"
                 />
               </div>
               <div>
@@ -205,7 +205,7 @@ export default function PairingsPage() {
                   type="date"
                   value={roundDate}
                   onChange={(e) => setRoundDate(e.target.value)}
-                  className="mt-1 block w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm text-zinc-900 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+                  className="mt-1 block w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm text-zinc-900 focus:border-[#D94F2B] focus:outline-none focus:ring-2 focus:ring-[#D94F2B]/20"
                 />
               </div>
               <div>
@@ -215,7 +215,7 @@ export default function PairingsPage() {
                 <select
                   value={groupSize}
                   onChange={(e) => setGroupSize(parseInt(e.target.value))}
-                  className="mt-1 block w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm text-zinc-900 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+                  className="mt-1 block w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm text-zinc-900 focus:border-[#D94F2B] focus:outline-none focus:ring-2 focus:ring-[#D94F2B]/20"
                 >
                   <option value={2}>Twosomes</option>
                   <option value={3}>Threesomes</option>
@@ -226,7 +226,7 @@ export default function PairingsPage() {
             <div className="mt-6 flex gap-3">
               <button
                 type="submit"
-                className="rounded-lg bg-emerald-600 px-5 py-2 text-sm font-semibold text-white transition-colors hover:bg-emerald-700"
+                className="rounded-lg bg-[#D94F2B] px-5 py-2 text-sm font-semibold text-white transition-colors hover:bg-[#B83D25]"
               >
                 Generate Pairings
               </button>

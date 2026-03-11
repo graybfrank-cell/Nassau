@@ -18,15 +18,15 @@ export async function GET(
   if (!round) {
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
-  if (!round.players.some((p) => p.user_id === user.id)) return forbidden();
+  if (!round.players.some((p: any) => p.user_id === user.id)) return forbidden();
   if (!round.skins_game) {
     return NextResponse.json({ error: "No skins game" }, { status: 404 });
   }
 
   // Auto-calculate results from scorecards
   const confirmedPlayerIds = round.players
-    .filter((p) => p.status === "confirmed" || p.role === "COMMISSIONER")
-    .map((p) => p.id);
+    .filter((p: any) => p.status === "confirmed" || p.role === "COMMISSIONER")
+    .map((p: any) => p.id);
   const results = calculateSkinsResults(
     round.scorecards,
     confirmedPlayerIds,

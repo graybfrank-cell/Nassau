@@ -54,7 +54,7 @@ export default async function BlogIndex() {
         <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
           <Link
             href="/"
-            className="text-xl font-extrabold tracking-tight text-emerald-400"
+            className="text-xl font-extrabold tracking-tight text-[#D94F2B]"
           >
             Nassau
           </Link>
@@ -105,54 +105,25 @@ export default async function BlogIndex() {
                 href={`/blog/${featured.slug}`}
                 className="group mb-12 block overflow-hidden rounded-2xl border border-zinc-200 transition-shadow hover:shadow-lg"
               >
-                <div className="grid md:grid-cols-2">
-                  {featured.featured_image_url ? (
-                    <div className="aspect-video md:aspect-auto overflow-hidden bg-zinc-100">
-                      <img
-                        src={featured.featured_image_url}
-                        alt={featured.featured_image_alt || featured.title}
-                        className="h-full w-full object-cover transition-transform group-hover:scale-105"
-                      />
-                    </div>
-                  ) : (
-                    <div className="flex aspect-video items-center justify-center bg-gradient-to-br from-emerald-800 to-slate-900 md:aspect-auto">
-                      <span className="text-6xl font-extrabold text-emerald-500/20">
-                        N
-                      </span>
-                    </div>
-                  )}
-                  <div className="flex flex-col justify-center p-8 md:p-10">
-                    <div className="flex items-center gap-2 text-xs">
-                      {featured.tags?.[0] && (
-                        <span className="rounded-full bg-emerald-100 px-3 py-1 font-medium text-emerald-700">
-                          {featured.tags[0]}
-                        </span>
-                      )}
-                      <span className="text-zinc-400">Featured</span>
-                    </div>
-                    <h2 className="mt-3 text-2xl font-bold text-zinc-900 group-hover:text-emerald-700 transition-colors sm:text-3xl">
-                      {featured.title}
-                    </h2>
-                    <p className="mt-3 text-zinc-500 line-clamp-3">
-                      {featured.meta_description}
-                    </p>
-                    <div className="mt-4 flex items-center gap-3 text-sm text-zinc-400">
-                      <span>{featured.author_name || "Nassau Team"}</span>
-                      <span>&bull;</span>
-                      <span>
-                        {featured.reading_time_minutes ||
-                          Math.ceil((featured.word_count || 0) / 200)}{" "}
-                        min read
-                      </span>
-                      <span>&bull;</span>
-                      <span>
-                        {new Date(featured.published_at).toLocaleDateString(
-                          "en-US",
-                          { month: "short", day: "numeric", year: "numeric" }
-                        )}
-                      </span>
-                    </div>
-                  </div>
+                <div className="text-xs font-medium text-[#D94F2B] uppercase tracking-wider">
+                  {post.target_keyword}
+                </div>
+                <h2 className="mt-2 text-lg font-semibold text-zinc-900 group-hover:text-[#D94F2B] transition-colors line-clamp-2">
+                  {post.title}
+                </h2>
+                <p className="mt-2 text-sm text-zinc-500 line-clamp-3">
+                  {post.meta_description}
+                </p>
+                <div className="mt-4 flex items-center gap-3 text-xs text-zinc-400">
+                  <span>{post.word_count} words</span>
+                  <span>&bull;</span>
+                  <span>
+                    {new Date(post.published_at).toLocaleDateString("en-US", {
+                      month: "short",
+                      day: "numeric",
+                      year: "numeric",
+                    })}
+                  </span>
                 </div>
               </Link>
             )}

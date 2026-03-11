@@ -7,9 +7,9 @@ import { STRATEGIST_PROMPT } from "@/lib/marketing-prompts";
 export async function POST() {
   try {
     console.log("[strategist] Starting...");
-
     const auth = await requireMarketingAdmin();
     if (!auth.authorized) return auth.response;
+
     console.log("[strategist] Auth passed");
 
     let supabase;
@@ -27,6 +27,7 @@ export async function POST() {
     // Fetch last week's performance — tolerate table not existing
     const oneWeekAgo = new Date();
     oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+
     const { data: performance, error: perfError } = await supabase
       .from("marketing_performance")
       .select("*")
@@ -77,6 +78,7 @@ Today's date: ${new Date().toISOString().split("T")[0]}
 Generate the weekly content plan as JSON.`;
 
     console.log("[strategist] Calling Claude API...");
+
     let response: string;
     try {
       response = await callClaude({
@@ -119,6 +121,7 @@ Generate the weekly content plan as JSON.`;
     // Save plan to marketing_weekly_plans
     const weekStart = new Date();
     weekStart.setDate(weekStart.getDate() - weekStart.getDay() + 1); // Monday
+
     const { data: savedPlan, error: planError } = await supabase
       .from("marketing_weekly_plans")
       .insert({
@@ -143,6 +146,7 @@ Generate the weekly content plan as JSON.`;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const planObj = plan as any;
     let slotsCreated = 0;
+
     if (planObj?.days) {
       for (const day of planObj.days) {
         if (day.slots) {
@@ -161,6 +165,7 @@ Generate the weekly content plan as JSON.`;
                   ? new Date(`${day.date}T12:00:00Z`).toISOString()
                   : null,
               });
+
             if (slotError) {
               console.error(
                 "[strategist] Failed to insert content slot:",
@@ -173,6 +178,7 @@ Generate the weekly content plan as JSON.`;
         }
       }
     }
+
     console.log(`[strategist] Created ${slotsCreated} content slots`);
 
     return NextResponse.json({ plan: savedPlan || plan, raw: planObj });

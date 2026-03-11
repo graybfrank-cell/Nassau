@@ -115,7 +115,7 @@ export default function CourseSearch({
             if (!manualMode && results.length > 0) setOpen(true);
           }}
           placeholder={manualMode ? "Type the course name" : placeholder}
-          className="block w-full rounded-lg border border-zinc-300 py-2 pl-9 pr-3 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+          className="block w-full rounded-lg border border-zinc-300 py-2 pl-9 pr-3 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-[#D94F2B] focus:outline-none focus:ring-2 focus:ring-[#D94F2B]/20"
         />
         {loading && (
           <div className="absolute right-3 top-1/2 -translate-y-1/2">
@@ -136,7 +136,7 @@ export default function CourseSearch({
                     onClick={() => selectCourse(course)}
                     className="flex w-full items-start gap-2.5 px-3 py-2.5 text-left transition-colors hover:bg-zinc-50"
                   >
-                    <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-emerald-500" />
+                    <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-[#D94F2B]" />
                     <div className="min-w-0">
                       <p className="text-sm font-medium text-zinc-900 truncate">
                         {course.name}
@@ -188,7 +188,7 @@ export default function CourseSearch({
             setManualMode(false);
             setApiDown(false);
           }}
-          className="mt-1 text-xs text-emerald-600 hover:text-emerald-700"
+          className="mt-1 text-xs text-[#D94F2B] hover:text-[#D94F2B]"
         >
           Switch back to search
         </button>

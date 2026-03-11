@@ -1,11 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireMarketingAdmin } from "@/lib/marketing-auth";
 import { createServiceClient } from "@/lib/supabase/admin";
-import { Resend } from "resend";
 import { callClaude, extractJSON } from "@/lib/marketing-claude";
 import { SEO_WRITER_AGENT_PROMPT } from "@/lib/marketing-prompts";
-
-const resend = new Resend(process.env.RESEND_API_KEY);
 
 const SEED_KEYWORDS = [
   "best golf trips in Arizona",
@@ -62,7 +59,7 @@ export async function POST(req: NextRequest) {
           content: `Write a comprehensive blog post targeting the keyword: "${keyword}". Use web search to research current, accurate information about courses, prices, and conditions. Return the result as JSON.`,
         },
       ],
-      tools: [{ type: "web_search_20250305", name: "web_search" }],
+      tools: [{ type: "web_search_20250305", name: "web_search" }] as any,
       maxTokens: 8192,
     });
 
@@ -100,19 +97,6 @@ export async function POST(req: NextRequest) {
     if (error) {
       console.error("[seo-writer] Failed to save post:", error);
       return NextResponse.json({ error: "Failed to save post" }, { status: 500 });
-    }
-
-    // Notify admin via email
-    try {
-      await resend.emails.send({
-        from: "Grayson at Nassau <grayson@nassau.golf>",
-        replyTo: "grayson@nassau.golf",
-        to: "graybfrank@gmail.com",
-        subject: `[SEO] New draft: ${post.title}`,
-        text: `A new blog post has been generated:\n\nTitle: ${post.title}\nKeyword: ${keyword}\nWord count: ${wordCount}\n\nReview it in the Marketing Command Center > SEO tab.`,
-      });
-    } catch (emailError) {
-      console.error("[seo-writer] Notification email failed:", emailError);
     }
 
     return NextResponse.json({

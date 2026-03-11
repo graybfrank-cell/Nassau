@@ -29,10 +29,10 @@ export async function PATCH(
   // Commissioner, from_player, or to_player can mark settlements
   const isCommissioner = round.commissioner_id === user.id;
   const fromPlayerRecord = round.players.find(
-    (p) => p.id === settlement.from_player
+    (p: any) => p.id === settlement.from_player
   );
   const toPlayerRecord = round.players.find(
-    (p) => p.id === settlement.to_player
+    (p: any) => p.id === settlement.to_player
   );
   const isParty =
     fromPlayerRecord?.user_id === user.id ||

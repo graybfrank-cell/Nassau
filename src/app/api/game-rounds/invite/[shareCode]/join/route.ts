@@ -22,7 +22,7 @@ export async function POST(
     }
 
     // Check if already a player
-    const existing = round.players.find((p) => p.user_id === user.id);
+    const existing = round.players.find((p: any) => p.user_id === user.id);
     if (existing) {
       // Update status to confirmed if they were invited
       if (existing.status === "invited") {
@@ -37,7 +37,7 @@ export async function POST(
     // Check if invited by email
     const emailInvite = user.email
       ? round.players.find(
-          (p) => p.email === user.email && !p.user_id
+          (p: any) => p.email === user.email && !p.user_id
         )
       : null;
 
