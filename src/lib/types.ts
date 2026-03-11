@@ -130,6 +130,10 @@ export interface GameRound {
   courseLayout?: string;
   courseLat?: number;
   courseLng?: number;
+  coursePhotoUrl?: string;
+  courseAddress?: string;
+  weatherData?: any;
+  awards?: any;
   teeTime: string;
   status: "upcoming" | "in_progress" | "completed";
   shareCode: string;
@@ -152,6 +156,7 @@ export interface GamePlayer {
   email?: string;
   status: "invited" | "confirmed" | "declined";
   role: "COMMISSIONER" | "PLAYER";
+  isPersonalBest?: boolean;
   joinedAt: string;
 }
 

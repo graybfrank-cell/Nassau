@@ -86,6 +86,8 @@ export async function POST(req: NextRequest) {
         course_layout: body.courseLayout || null,
         course_lat: body.courseLat ?? null,
         course_lng: body.courseLng ?? null,
+        course_photo_url: body.coursePhotoUrl || null,
+        course_address: body.courseAddress || null,
         tee_time: teeTime,
         notes: body.notes || null,
         starting_hole: body.startingHole === 10 ? 10 : 1,

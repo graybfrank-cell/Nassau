@@ -66,9 +66,18 @@ export default async function RootLayout({
                 >
                   Rounds
                 </Link>
-                <span className="hidden text-xs text-zinc-500 sm:inline">
+                <Link
+                  href="/settlements"
+                  className="text-sm font-medium text-zinc-300 transition-colors hover:text-white"
+                >
+                  Settle Up
+                </Link>
+                <Link
+                  href="/profile"
+                  className="hidden text-xs text-zinc-400 transition-colors hover:text-white sm:inline"
+                >
                   {user.email}
-                </span>
+                </Link>
                 <form action="/auth/signout" method="post">
                   <button
                     type="submit"
