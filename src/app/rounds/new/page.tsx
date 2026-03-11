@@ -6,6 +6,8 @@ import Link from "next/link";
 import { createGameRound } from "@/lib/game-store";
 import { ArrowLeft, Plus, X, AlertCircle } from "lucide-react";
 import CourseSearch from "@/components/shared/CourseSearch";
+import LayoutSelector from "@/components/shared/LayoutSelector";
+import { detectCourseLayouts } from "@/lib/course-layouts";
 
 const STAKE_PILLS = [5, 10, 20, 50];
 
@@ -26,6 +28,9 @@ export default function NewRoundPage() {
   const [courseLocation, setCourseLocation] = useState<string | undefined>();
   const [courseLat, setCourseLat] = useState<number | undefined>();
   const [courseLng, setCourseLng] = useState<number | undefined>();
+  const [courseLayout, setCourseLayout] = useState<string | undefined>();
+  const [layoutOptions, setLayoutOptions] = useState<string[] | null>(null);
+  const [loadingLayouts, setLoadingLayouts] = useState(false);
 
   // Date & Time
   const [date, setDate] = useState(getNextSaturday());
@@ -90,6 +95,7 @@ export default function NewRoundPage() {
         courseName: courseName.trim(),
         courseId,
         courseLocation,
+        courseLayout,
         courseLat,
         courseLng,
         teeTime,
@@ -146,15 +152,75 @@ export default function NewRoundPage() {
               <CourseSearch
                 value={courseName}
                 onChange={setCourseName}
-                onCourseSelect={(course) => {
+                onCourseSelect={async (course) => {
                   setCourseId(course.id);
                   setCourseLocation(course.location || undefined);
                   setCourseLat(course.lat);
                   setCourseLng(course.lng);
+                  setCourseLayout(undefined);
+                  setLayoutOptions(null);
+
+                  // Fetch full course details to check for combined layouts
+                  if (course.id) {
+                    setLoadingLayouts(true);
+                    try {
+                      const res = await fetch("/api/courses/search", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ courseId: course.id }),
+                      });
+                      if (res.ok) {
+                        const data = await res.json();
+                        const layouts = detectCourseLayouts(data);
+                        if (layouts) {
+                          setLayoutOptions(layouts);
+                        }
+                      }
+                    } catch {
+                      // Layout detection is best-effort
+                    } finally {
+                      setLoadingLayouts(false);
+                    }
+                  }
                 }}
                 placeholder="Search for a course..."
               />
             </div>
+            {loadingLayouts && (
+              <p className="mt-2 text-xs text-zinc-400">
+                Checking course layouts...
+              </p>
+            )}
+            {layoutOptions && !courseLayout && (
+              <div className="mt-3">
+                <LayoutSelector
+                  courseName={courseName}
+                  courseLocation={courseLocation}
+                  layouts={layoutOptions}
+                  onSelect={(layout) => {
+                    setCourseLayout(layout);
+                    setLayoutOptions(null);
+                  }}
+                  onCancel={() => {
+                    setLayoutOptions(null);
+                  }}
+                />
+              </div>
+            )}
+            {courseLayout && (
+              <div className="mt-2 flex items-center gap-2">
+                <span className="inline-flex items-center rounded-full bg-emerald-100 px-2.5 py-0.5 text-xs font-medium text-emerald-700">
+                  {courseLayout}
+                </span>
+                <button
+                  type="button"
+                  onClick={() => setCourseLayout(undefined)}
+                  className="text-xs text-zinc-400 hover:text-zinc-600"
+                >
+                  Change
+                </button>
+              </div>
+            )}
             {!courseId && courseName && (
               <p className="mt-1 text-xs text-zinc-400">
                 Using manual entry: {courseName}

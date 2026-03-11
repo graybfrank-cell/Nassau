@@ -177,7 +177,14 @@ function RoundCard({ round }: { round: GameRound }) {
       <div className="flex items-start justify-between">
         <div className="flex-1">
           <div className="flex items-center gap-2">
-            <h3 className="font-semibold text-zinc-900">{round.courseName}</h3>
+            <h3 className="font-semibold text-zinc-900">
+              {round.courseName}
+              {round.courseLayout && (
+                <span className="ml-1.5 text-sm font-normal text-zinc-500">
+                  ({round.courseLayout})
+                </span>
+              )}
+            </h3>
             <StatusBadge status={round.status} />
           </div>
 
