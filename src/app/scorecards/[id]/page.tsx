@@ -151,7 +151,7 @@ export default function ScorecardDetailPage() {
           </h1>
           <div className="mt-1 flex items-center gap-3">
             {scorecard.teeName && (
-              <span className="text-sm text-emerald-600">{scorecard.teeName} tees</span>
+              <span className="text-sm text-[#D94F2B]">{scorecard.teeName} tees</span>
             )}
             {scorecard.date && (
               <span className="text-sm text-zinc-400">{scorecard.date}</span>
@@ -308,7 +308,7 @@ export default function ScorecardDetailPage() {
                               onChange={(e) =>
                                 handleScoreChange(pIdx, hIdx, e.target.value)
                               }
-                              className={`w-10 rounded border border-zinc-200 px-1 py-0.5 text-center text-sm font-medium focus:border-emerald-400 focus:outline-none focus:ring-1 focus:ring-emerald-400/30 ${cellColor}`}
+                              className={`w-10 rounded border border-zinc-200 px-1 py-0.5 text-center text-sm font-medium focus:border-emerald-400 focus:outline-none focus:ring-1 focus:ring-[#D94F2B]/30 ${cellColor}`}
                             />
                           </td>
                         );
@@ -447,7 +447,7 @@ export default function ScorecardDetailPage() {
                                   e.target.value
                                 )
                               }
-                              className={`w-10 rounded border border-zinc-200 px-1 py-0.5 text-center text-sm font-medium focus:border-emerald-400 focus:outline-none focus:ring-1 focus:ring-emerald-400/30 ${cellColor}`}
+                              className={`w-10 rounded border border-zinc-200 px-1 py-0.5 text-center text-sm font-medium focus:border-emerald-400 focus:outline-none focus:ring-1 focus:ring-[#D94F2B]/30 ${cellColor}`}
                             />
                           </td>
                         );
@@ -529,7 +529,7 @@ export default function ScorecardDetailPage() {
                       <td className="px-3 py-2 text-center text-zinc-400">
                         {player.handicap}
                       </td>
-                      <td className="px-3 py-2 text-center font-bold text-emerald-700">
+                      <td className="px-3 py-2 text-center font-bold text-[#D94F2B]">
                         {gross ? net : "\u2013"}
                       </td>
                       <td

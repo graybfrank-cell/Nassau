@@ -103,7 +103,7 @@ export default function ExpenseList({
         </p>
         <button
           onClick={() => setShowForm(!showForm)}
-          className="inline-flex items-center gap-1.5 rounded-lg bg-emerald-600 px-3 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-emerald-700"
+          className="inline-flex items-center gap-1.5 rounded-lg bg-[#D94F2B] px-3 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-[#B83D25]"
         >
           <Plus className="h-3.5 w-3.5" />
           Add Expense
@@ -126,7 +126,7 @@ export default function ExpenseList({
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 placeholder="Cart fee"
-                className="mt-1 block w-full rounded-md border border-zinc-300 px-3 py-2 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+                className="mt-1 block w-full rounded-md border border-zinc-300 px-3 py-2 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-[#D94F2B] focus:outline-none focus:ring-2 focus:ring-[#D94F2B]/20"
               />
             </div>
             <div>
@@ -141,7 +141,7 @@ export default function ExpenseList({
                 value={amount}
                 onChange={(e) => setAmount(e.target.value)}
                 placeholder="60.00"
-                className="mt-1 block w-full rounded-md border border-zinc-300 px-3 py-2 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+                className="mt-1 block w-full rounded-md border border-zinc-300 px-3 py-2 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-[#D94F2B] focus:outline-none focus:ring-2 focus:ring-[#D94F2B]/20"
               />
             </div>
             <div>
@@ -156,7 +156,7 @@ export default function ExpenseList({
                     onClick={() => setCategory(c.value)}
                     className={`rounded-full px-2.5 py-1 text-xs font-medium transition-colors ${
                       category === c.value
-                        ? "bg-emerald-100 text-emerald-700"
+                        ? "bg-emerald-100 text-[#D94F2B]"
                         : "bg-zinc-100 text-zinc-500 hover:bg-zinc-200"
                     }`}
                   >
@@ -173,7 +173,7 @@ export default function ExpenseList({
                 required
                 value={paidBy}
                 onChange={(e) => setPaidBy(e.target.value)}
-                className="mt-1 block w-full rounded-md border border-zinc-300 px-3 py-2 text-sm text-zinc-900 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+                className="mt-1 block w-full rounded-md border border-zinc-300 px-3 py-2 text-sm text-zinc-900 focus:border-[#D94F2B] focus:outline-none focus:ring-2 focus:ring-[#D94F2B]/20"
               >
                 <option value="">Select who paid</option>
                 {members.map((m) => (
@@ -191,7 +191,7 @@ export default function ExpenseList({
                 <button
                   type="button"
                   onClick={handleSelectAll}
-                  className="text-xs font-medium text-emerald-600 hover:text-emerald-700"
+                  className="text-xs font-medium text-[#D94F2B] hover:text-[#D94F2B]"
                 >
                   {splitAmong.length === members.length
                     ? "Deselect All"
@@ -206,7 +206,7 @@ export default function ExpenseList({
                     onClick={() => handleSplitToggle(m.id)}
                     className={`rounded-full px-2.5 py-1 text-xs font-medium transition-colors ${
                       splitAmong.includes(m.id)
-                        ? "bg-emerald-100 text-emerald-700"
+                        ? "bg-emerald-100 text-[#D94F2B]"
                         : "bg-zinc-100 text-zinc-500 hover:bg-zinc-200"
                     }`}
                   >
@@ -219,7 +219,7 @@ export default function ExpenseList({
           <div className="mt-4 flex gap-3">
             <button
               type="submit"
-              className="rounded-md bg-emerald-600 px-4 py-1.5 text-sm font-medium text-white hover:bg-emerald-700"
+              className="rounded-md bg-[#D94F2B] px-4 py-1.5 text-sm font-medium text-white hover:bg-[#B83D25]"
             >
               Add
             </button>

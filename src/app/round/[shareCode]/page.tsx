@@ -141,7 +141,7 @@ export default function RoundInvitePage() {
           </p>
           <Link
             href="/"
-            className="mt-4 inline-block text-sm font-medium text-emerald-600"
+            className="mt-4 inline-block text-sm font-medium text-[#D94F2B]"
           >
             Go Home
           </Link>
@@ -221,7 +221,7 @@ export default function RoundInvitePage() {
             <button
               onClick={handleJoin}
               disabled={joining}
-              className="mt-6 w-full rounded-lg bg-emerald-600 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-emerald-700 disabled:opacity-50"
+              className="mt-6 w-full rounded-lg bg-[#D94F2B] px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-[#B83D25] disabled:opacity-50"
             >
               {joining
                 ? "Joining..."

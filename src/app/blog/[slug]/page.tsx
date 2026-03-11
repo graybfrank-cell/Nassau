@@ -56,7 +56,7 @@ function markdownToHtml(md: string): string {
     .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
     .replace(/\*(.+?)\*/g, '<em>$1</em>')
     // Links
-    .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" class="text-emerald-600 hover:text-emerald-700 underline">$1</a>')
+    .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" class="text-[#D94F2B] hover:text-[#D94F2B] underline">$1</a>')
     // Unordered lists
     .replace(/^[-*]\s+(.+)$/gm, '<li>$1</li>')
     // Ordered lists
@@ -129,7 +129,7 @@ export default async function BlogPost({ params }: Props) {
         <div className="mx-auto flex max-w-5xl items-center justify-between px-6 py-4">
           <Link
             href="/"
-            className="text-xl font-extrabold tracking-tight text-emerald-400"
+            className="text-xl font-extrabold tracking-tight text-[#D94F2B]"
           >
             Nassau
           </Link>
@@ -162,7 +162,7 @@ export default async function BlogPost({ params }: Props) {
 
         {/* Header */}
         <header className="mb-10">
-          <div className="text-xs font-medium text-emerald-600 uppercase tracking-wider">
+          <div className="text-xs font-medium text-[#D94F2B] uppercase tracking-wider">
             {post.target_keyword}
           </div>
           <h1 className="mt-2 text-4xl font-bold tracking-tight text-zinc-900">
@@ -183,7 +183,7 @@ export default async function BlogPost({ params }: Props) {
 
         {/* Content */}
         <article
-          className="prose prose-zinc prose-lg max-w-none prose-headings:font-bold prose-h2:text-2xl prose-h2:mt-10 prose-h2:mb-4 prose-p:leading-relaxed prose-a:text-emerald-600 prose-a:no-underline hover:prose-a:underline prose-li:leading-relaxed"
+          className="prose prose-zinc prose-lg max-w-none prose-headings:font-bold prose-h2:text-2xl prose-h2:mt-10 prose-h2:mb-4 prose-p:leading-relaxed prose-a:text-[#D94F2B] prose-a:no-underline hover:prose-a:underline prose-li:leading-relaxed"
           dangerouslySetInnerHTML={{ __html: contentHtml }}
         />
 
@@ -198,7 +198,7 @@ export default async function BlogPost({ params }: Props) {
           </p>
           <Link
             href="/trips/new"
-            className="mt-4 inline-block rounded-lg bg-emerald-600 px-6 py-3 text-sm font-semibold text-white hover:bg-emerald-700 transition-colors"
+            className="mt-4 inline-block rounded-lg bg-[#D94F2B] px-6 py-3 text-sm font-semibold text-white hover:bg-[#B83D25] transition-colors"
           >
             Start planning your trip
           </Link>
