@@ -303,6 +303,7 @@ export default function MarketingDashboard() {
         {tab === "partnerships" && (
           <PartnershipsTab
             partnerships={partnerships}
+            setPartnerships={setPartnerships}
             templates={templates}
             onRunOutreach={(ids: string[]) =>
               runAgent("partnerships", {
@@ -703,12 +704,14 @@ function ScoutTab({
 
 function PartnershipsTab({
   partnerships,
+  setPartnerships,
   templates,
   onRunOutreach,
   agentRunning,
   onRefresh,
 }: {
   partnerships: PartnershipItem[];
+  setPartnerships: (p: PartnershipItem[]) => void;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   templates: any[];
   onRunOutreach: (ids: string[]) => void;
@@ -717,9 +720,101 @@ function PartnershipsTab({
 }) {
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [showTemplates, setShowTemplates] = useState(false);
+  const [researchingId, setResearchingId] = useState<string | null>(null);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [researchResults, setResearchResults] = useState<Record<string, any>>({});
+  const [savingId, setSavingId] = useState<string | null>(null);
+  const [sendingId, setSendingId] = useState<string | null>(null);
+  const [expandedId, setExpandedId] = useState<string | null>(null);
+
+  async function researchContact(courseId: string) {
+    setResearchingId(courseId);
+    try {
+      const res = await fetch("/api/admin/marketing/partnerships", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "research_contact", courseId }),
+      });
+      if (!res.ok) throw new Error("Research failed");
+      const data = await res.json();
+      setResearchResults((prev) => ({ ...prev, [courseId]: data.result }));
+      setExpandedId(courseId);
+    } catch (err) {
+      console.error("Research error:", err);
+    } finally {
+      setResearchingId(null);
+    }
+  }
+
+  async function saveContact(courseId: string) {
+    const contactData = researchResults[courseId];
+    if (!contactData) return;
+    setSavingId(courseId);
+    try {
+      const res = await fetch("/api/admin/marketing/partnerships", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "save_contact", courseId, contactData }),
+      });
+      if (!res.ok) throw new Error("Save failed");
+      const updated = await res.json();
+      // Optimistically update local state
+      setPartnerships(
+        partnerships.map((p: PartnershipItem) =>
+          p.id === courseId ? { ...p, ...updated } : p
+        )
+      );
+      // Clear research results for this course
+      setResearchResults((prev) => {
+        const next = { ...prev };
+        delete next[courseId];
+        return next;
+      });
+      setExpandedId(null);
+    } catch (err) {
+      console.error("Save error:", err);
+    } finally {
+      setSavingId(null);
+    }
+  }
+
+  async function sendOutreach(courseId: string) {
+    setSendingId(courseId);
+    try {
+      const res = await fetch("/api/admin/marketing/partnerships", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "send_outreach", courseId }),
+      });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.error || "Send failed");
+      }
+      const result = await res.json();
+      // Optimistically update outreach status
+      setPartnerships(
+        partnerships.map((p: PartnershipItem) =>
+          p.id === courseId
+            ? {
+                ...p,
+                outreach_status:
+                  result.status === "queued_for_review"
+                    ? "email_1_queued"
+                    : "email_1_sent",
+              }
+            : p
+        )
+      );
+    } catch (err) {
+      console.error("Send outreach error:", err);
+    } finally {
+      setSendingId(null);
+    }
+  }
 
   const PARTNERSHIP_STATUSES = [
     "not_contacted",
+    "email_1_queued",
     "email_1_sent",
     "email_2_sent",
     "email_3_sent",
@@ -808,7 +903,7 @@ function PartnershipsTab({
           );
           if (items.length === 0 && !["not_contacted", "replied", "active"].includes(status)) return null;
           return (
-            <div key={status} className="min-w-[200px] flex-shrink-0">
+            <div key={status} className="min-w-[240px] flex-shrink-0">
               <div className="mb-2 flex items-center justify-between">
                 <span className="text-xs font-semibold uppercase tracking-wider text-zinc-400">
                   {status.replace(/_/g, " ")}
@@ -818,42 +913,193 @@ function PartnershipsTab({
                 </span>
               </div>
               <div className="space-y-2">
-                {items.map((p: PartnershipItem) => (
-                  <div
-                    key={p.id}
-                    className="rounded-lg border border-zinc-200 bg-white p-3 shadow-sm"
-                  >
-                    <div className="flex items-start gap-2">
-                      <input
-                        type="checkbox"
-                        checked={selectedIds.includes(p.id)}
-                        onChange={(e) => {
-                          if (e.target.checked) {
-                            setSelectedIds([...selectedIds, p.id]);
-                          } else {
-                            setSelectedIds(
-                              selectedIds.filter((id) => id !== p.id)
-                            );
-                          }
-                        }}
-                        className="mt-0.5 h-3.5 w-3.5 rounded border-zinc-300"
-                      />
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium text-zinc-900 truncate">
-                          {p.course_name}
-                        </p>
-                        <p className="text-xs text-zinc-500">{p.destination}</p>
-                        <span
-                          className={`mt-1 inline-block rounded-full border px-2 py-0.5 text-[10px] font-medium ${
-                            TIER_BADGES[p.tier] || TIER_BADGES.standard
-                          }`}
-                        >
-                          {p.tier}
-                        </span>
+                {items.map((p: PartnershipItem) => {
+                  const hasEmail = p.marketing_contact_email || p.booking_email;
+                  const research = researchResults[p.id];
+                  const isExpanded = expandedId === p.id;
+                  return (
+                    <div
+                      key={p.id}
+                      className="rounded-lg border border-zinc-200 bg-white p-3 shadow-sm"
+                    >
+                      <div className="flex items-start gap-2">
+                        <input
+                          type="checkbox"
+                          checked={selectedIds.includes(p.id)}
+                          onChange={(e) => {
+                            if (e.target.checked) {
+                              setSelectedIds([...selectedIds, p.id]);
+                            } else {
+                              setSelectedIds(
+                                selectedIds.filter((id) => id !== p.id)
+                              );
+                            }
+                          }}
+                          className="mt-0.5 h-3.5 w-3.5 rounded border-zinc-300"
+                        />
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-medium text-zinc-900 truncate">
+                            {p.course_name}
+                          </p>
+                          <p className="text-xs text-zinc-500">{p.destination}</p>
+                          <div className="mt-1 flex items-center gap-1.5 flex-wrap">
+                            <span
+                              className={`inline-block rounded-full border px-2 py-0.5 text-[10px] font-medium ${
+                                TIER_BADGES[p.tier] || TIER_BADGES.standard
+                              }`}
+                            >
+                              {p.tier}
+                            </span>
+                            {hasEmail && (
+                              <span className="inline-block rounded-full bg-emerald-50 border border-emerald-200 px-2 py-0.5 text-[10px] font-medium text-emerald-700">
+                                {p.marketing_contact_email || p.booking_email}
+                              </span>
+                            )}
+                          </div>
+                          {p.marketing_contact_name && (
+                            <p className="mt-1 text-[11px] text-zinc-500">
+                              {p.marketing_contact_name}
+                            </p>
+                          )}
+
+                          {/* Action buttons */}
+                          <div className="mt-2 flex gap-1.5 flex-wrap">
+                            {!hasEmail && !research && (
+                              <button
+                                onClick={() => researchContact(p.id)}
+                                disabled={researchingId !== null}
+                                className="inline-flex items-center gap-1 rounded bg-zinc-100 px-2 py-1 text-[11px] font-medium text-zinc-600 hover:bg-zinc-200 disabled:opacity-50"
+                              >
+                                {researchingId === p.id ? (
+                                  <Loader2 className="h-3 w-3 animate-spin" />
+                                ) : (
+                                  <Search className="h-3 w-3" />
+                                )}
+                                Research
+                              </button>
+                            )}
+                            {hasEmail && status === "not_contacted" && (
+                              <button
+                                onClick={() => sendOutreach(p.id)}
+                                disabled={sendingId !== null}
+                                className="inline-flex items-center gap-1 rounded bg-emerald-100 px-2 py-1 text-[11px] font-medium text-emerald-700 hover:bg-emerald-200 disabled:opacity-50"
+                              >
+                                {sendingId === p.id ? (
+                                  <Loader2 className="h-3 w-3 animate-spin" />
+                                ) : (
+                                  <Send className="h-3 w-3" />
+                                )}
+                                Send Outreach
+                              </button>
+                            )}
+                            {hasEmail && !research && (
+                              <button
+                                onClick={() => researchContact(p.id)}
+                                disabled={researchingId !== null}
+                                className="inline-flex items-center gap-1 rounded bg-zinc-100 px-2 py-1 text-[11px] font-medium text-zinc-500 hover:bg-zinc-200 disabled:opacity-50"
+                              >
+                                {researchingId === p.id ? (
+                                  <Loader2 className="h-3 w-3 animate-spin" />
+                                ) : (
+                                  <RefreshCw className="h-3 w-3" />
+                                )}
+                                Re-research
+                              </button>
+                            )}
+                          </div>
+
+                          {/* Research results panel */}
+                          {research && isExpanded && (
+                            <div className="mt-2 rounded border border-blue-200 bg-blue-50 p-2 text-[11px]">
+                              <div className="space-y-1">
+                                {research.marketing_contact_name && (
+                                  <p>
+                                    <span className="font-medium text-zinc-600">Contact:</span>{" "}
+                                    {research.marketing_contact_name}
+                                    {research.marketing_contact_title && (
+                                      <span className="text-zinc-400"> — {research.marketing_contact_title}</span>
+                                    )}
+                                  </p>
+                                )}
+                                {research.marketing_contact_email && (
+                                  <p>
+                                    <span className="font-medium text-zinc-600">Email:</span>{" "}
+                                    {research.marketing_contact_email}
+                                  </p>
+                                )}
+                                {research.booking_email && (
+                                  <p>
+                                    <span className="font-medium text-zinc-600">Booking:</span>{" "}
+                                    {research.booking_email}
+                                  </p>
+                                )}
+                                {research.website_url && (
+                                  <p>
+                                    <span className="font-medium text-zinc-600">Website:</span>{" "}
+                                    {research.website_url}
+                                  </p>
+                                )}
+                                {research.confidence && (
+                                  <p>
+                                    <span className="font-medium text-zinc-600">Confidence:</span>{" "}
+                                    <span className={
+                                      research.confidence === "high"
+                                        ? "text-emerald-600"
+                                        : research.confidence === "medium"
+                                        ? "text-amber-600"
+                                        : "text-red-500"
+                                    }>
+                                      {research.confidence}
+                                    </span>
+                                  </p>
+                                )}
+                                {research.notes && (
+                                  <p className="text-zinc-400 italic">{research.notes}</p>
+                                )}
+                              </div>
+                              <div className="mt-2 flex gap-1.5">
+                                <button
+                                  onClick={() => saveContact(p.id)}
+                                  disabled={savingId !== null}
+                                  className="inline-flex items-center gap-1 rounded bg-emerald-600 px-2 py-1 text-[11px] font-semibold text-white hover:bg-emerald-700 disabled:opacity-50"
+                                >
+                                  {savingId === p.id ? (
+                                    <Loader2 className="h-3 w-3 animate-spin" />
+                                  ) : (
+                                    <Check className="h-3 w-3" />
+                                  )}
+                                  Confirm & Save
+                                </button>
+                                <button
+                                  onClick={() => {
+                                    setResearchResults((prev) => {
+                                      const next = { ...prev };
+                                      delete next[p.id];
+                                      return next;
+                                    });
+                                    setExpandedId(null);
+                                  }}
+                                  className="inline-flex items-center gap-1 rounded bg-zinc-200 px-2 py-1 text-[11px] font-medium text-zinc-600 hover:bg-zinc-300"
+                                >
+                                  <X className="h-3 w-3" />
+                                  Dismiss
+                                </button>
+                              </div>
+                            </div>
+                          )}
+                          {research && !isExpanded && (
+                            <button
+                              onClick={() => setExpandedId(p.id)}
+                              className="mt-1 text-[11px] text-blue-600 hover:text-blue-700"
+                            >
+                              View research results
+                            </button>
+                          )}
+                        </div>
                       </div>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </div>
           );
