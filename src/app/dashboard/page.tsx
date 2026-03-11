@@ -78,7 +78,16 @@ interface DashboardData {
     roundsThisMonth: number;
     scoringAvg: number | null;
   };
+  _errors?: string[];
 }
+
+const EMPTY_DASHBOARD: DashboardData = {
+  user: { firstName: "Golfer", venmoUsername: null },
+  upcomingRound: null,
+  recentScores: [],
+  settlements: { owed: [], owing: [], totalOwed: 0, totalOwing: 0 },
+  seasonStats: { totalMoneyNet: 0, roundsThisMonth: 0, scoringAvg: null },
+};
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -181,15 +190,26 @@ export default function DashboardPage() {
         return;
       }
 
-      const [dashRes, t] = await Promise.all([
-        fetch("/api/dashboard"),
-        getTrips(),
-      ]);
+      let dashData: DashboardData = EMPTY_DASHBOARD;
+      let tripsData: Trip[] = [];
 
-      if (dashRes.ok) {
-        setData(await dashRes.json());
+      try {
+        const [dashRes, t] = await Promise.all([
+          fetch("/api/dashboard"),
+          getTrips().catch(() => [] as Trip[]),
+        ]);
+        tripsData = t;
+
+        if (dashRes.ok) {
+          dashData = await dashRes.json();
+        }
+      } catch {
+        // Network failure — show empty dashboard, not an error screen
+        console.error("[Dashboard] Failed to fetch dashboard data");
       }
-      setTrips(t);
+
+      setData(dashData);
+      setTrips(tripsData);
       setLoading(false);
     });
   }, [router]);
@@ -230,7 +250,7 @@ export default function DashboardPage() {
   // --- Derived values ---
   const greeting = getGreeting();
   const seasonLine = (() => {
-    if (!data) return null;
+    if (!data?.seasonStats) return null;
     const { totalMoneyNet, roundsThisMonth } = data.seasonStats;
     if (totalMoneyNet > 0)
       return {
@@ -252,7 +272,8 @@ export default function DashboardPage() {
 
   const hasSettlements =
     data &&
-    (data.settlements.owed.length > 0 || data.settlements.owing.length > 0);
+    ((data.settlements?.owed?.length ?? 0) > 0 ||
+      (data.settlements?.owing?.length ?? 0) > 0);
 
   // --- Render ---
   return (
@@ -328,8 +349,16 @@ export default function DashboardPage() {
               </Link>
             )}
 
+            {/* ── Partial load warning ──────────────────────── */}
+            {data._errors && data._errors.length > 0 && (
+              <div className="flex items-center gap-2 rounded-lg border border-yellow-800/50 bg-yellow-950/30 px-4 py-2.5 text-xs text-yellow-400/80">
+                <AlertCircle className="h-3.5 w-3.5 shrink-0" />
+                Some data couldn&apos;t load. Pull to refresh.
+              </div>
+            )}
+
             {/* ── Section 4: Recent Scores ────────────────────── */}
-            {data.recentScores.length > 0 && (
+            {(data.recentScores?.length ?? 0) > 0 && (
               <div>
                 <h2 className="mb-3 text-sm font-semibold uppercase tracking-wider text-zinc-400">
                   Recent Scores
@@ -384,13 +413,13 @@ export default function DashboardPage() {
             {hasSettlements && (
               <div className="rounded-xl border border-zinc-800 bg-[#242424] p-5">
                 <div className="space-y-3">
-                  {data.settlements.totalOwed > 0 && (
+                  {(data.settlements?.totalOwed ?? 0) > 0 && (
                     <div>
                       <p className="text-sm font-semibold text-emerald-400">
-                        You&apos;re owed ${data.settlements.totalOwed.toFixed(0)}
+                        You&apos;re owed ${(data.settlements?.totalOwed ?? 0).toFixed(0)}
                       </p>
                       <div className="mt-1 space-y-0.5">
-                        {data.settlements.owed.map((s, i) => (
+                        {(data.settlements?.owed ?? []).map((s, i) => (
                           <p key={i} className="text-xs text-zinc-400">
                             {s.fromUser} owes you ${s.amount.toFixed(0)}
                             {s.roundNote ? ` - ${s.roundNote}` : ""}
@@ -399,13 +428,13 @@ export default function DashboardPage() {
                       </div>
                     </div>
                   )}
-                  {data.settlements.totalOwing > 0 && (
+                  {(data.settlements?.totalOwing ?? 0) > 0 && (
                     <div>
                       <p className="text-sm font-semibold text-red-400">
-                        You owe ${data.settlements.totalOwing.toFixed(0)}
+                        You owe ${(data.settlements?.totalOwing ?? 0).toFixed(0)}
                       </p>
                       <div className="mt-1 space-y-0.5">
-                        {data.settlements.owing.map((s, i) => (
+                        {(data.settlements?.owing ?? []).map((s, i) => (
                           <p key={i} className="text-xs text-zinc-400">
                             You owe {s.toUser} ${s.amount.toFixed(0)}
                             {s.roundNote ? ` - ${s.roundNote}` : ""}
