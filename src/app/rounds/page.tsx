@@ -8,6 +8,24 @@ import { getGameRounds } from "@/lib/game-store";
 import { GameRound } from "@/lib/types";
 import { Plus, MapPin, Users, Calendar, Trophy, DollarSign } from "lucide-react";
 
+const FOUR_HOURS_MS = 4 * 60 * 60 * 1000;
+
+/** True if the round's tee time is more than 4 hours in the past. */
+function isRoundPastDue(round: GameRound): boolean {
+  return new Date(round.teeTime).getTime() < Date.now() - FOUR_HOURS_MS;
+}
+
+/** Returns the effective status, treating past-due active/in_progress rounds as completed. */
+function effectiveStatus(round: GameRound): string {
+  if (
+    (round.status === "upcoming" || round.status === "in_progress") &&
+    isRoundPastDue(round)
+  ) {
+    return "completed";
+  }
+  return round.status;
+}
+
 function formatDateTime(dateStr: string): string {
   const d = new Date(dateStr);
   return d.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" }) + " · " + d.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" });

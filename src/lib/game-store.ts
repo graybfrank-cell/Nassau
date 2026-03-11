@@ -37,8 +37,11 @@ export async function createGameRound(data: {
   courseName: string;
   courseId?: string;
   courseLocation?: string;
+  courseLayout?: string;
   courseLat?: number;
   courseLng?: number;
+  coursePhotoUrl?: string;
+  courseAddress?: string;
   teeTime: string;
   notes?: string;
   startingHole?: number;
@@ -301,8 +304,13 @@ function mapGameRound(row: any): GameRound {
     courseName: row.course_name || "",
     courseId: row.course_id || undefined,
     courseLocation: row.course_location || undefined,
+    courseLayout: row.course_layout || undefined,
     courseLat: row.course_lat ?? undefined,
     courseLng: row.course_lng ?? undefined,
+    coursePhotoUrl: row.course_photo_url || undefined,
+    courseAddress: row.course_address || undefined,
+    weatherData: row.weather_data || undefined,
+    awards: row.awards || undefined,
     teeTime: row.tee_time,
     status: row.status || "upcoming",
     shareCode: row.share_code,
@@ -328,6 +336,7 @@ function mapGamePlayer(row: any): GamePlayer {
     email: row.email || undefined,
     status: row.status || "invited",
     role: row.role || "PLAYER",
+    isPersonalBest: row.is_personal_best || false,
     joinedAt: row.joined_at,
   };
 }

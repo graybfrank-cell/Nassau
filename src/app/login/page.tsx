@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 
 export default function LoginPage() {
@@ -8,6 +9,16 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [sent, setSent] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const searchParams = useSearchParams();
+
+  // Show error from auth callback redirect
+  useEffect(() => {
+    const authError = searchParams.get("error");
+    const message = searchParams.get("message");
+    if (authError) {
+      setError(message || "Sign-in failed. Please try again.");
+    }
+  }, [searchParams]);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
