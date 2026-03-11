@@ -27,6 +27,11 @@ export async function POST() {
       ALTER TABLE trip_members ADD COLUMN IF NOT EXISTS rsvp_at TIMESTAMPTZ;
     `);
 
+    // Add course_layout column to game_rounds table
+    await prisma.$executeRawUnsafe(`
+      ALTER TABLE game_rounds ADD COLUMN IF NOT EXISTS course_layout TEXT;
+    `);
+
     // Add new columns to scorecards table
     await prisma.$executeRawUnsafe(`
       ALTER TABLE scorecards ADD COLUMN IF NOT EXISTS course_api_id INTEGER;

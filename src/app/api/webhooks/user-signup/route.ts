@@ -57,7 +57,8 @@ export async function POST(req: NextRequest) {
         if (referrerProfile?.email) {
           try {
             await resend.emails.send({
-              from: "Nassau <hey@nassau.golf>",
+              from: "Grayson at Nassau <grayson@nassau.golf>",
+              replyTo: "grayson@nassau.golf",
               to: referrerProfile.email,
               subject: "Your friend just joined Nassau!",
               html: renderBaseEmail({
@@ -120,7 +121,8 @@ export async function POST(req: NextRequest) {
     // Send Day 0 email
     try {
       await resend.emails.send({
-        from: "Nassau <hey@nassau.golf>",
+        from: "Grayson at Nassau <grayson@nassau.golf>",
+        replyTo: "grayson@nassau.golf",
         to: email,
         subject: emailContent.subject,
         html: renderBaseEmail({

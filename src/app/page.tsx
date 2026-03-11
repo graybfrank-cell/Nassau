@@ -15,6 +15,7 @@ import {
   Target,
 } from "lucide-react";
 import AuthRedirect from "./auth-redirect";
+import { createServiceClient } from "@/lib/supabase/admin";
 
 /* ─── Fake interactive data for product previews ─── */
 
@@ -46,7 +47,67 @@ const sampleExpenses = [
   { item: "Uber rides", amount: "$120", split: "$30/person", by: "Marcus" },
 ];
 
-export default function Home() {
+async function RecentArticles() {
+  const supabase = createServiceClient();
+  const { data: posts } = await supabase
+    .from("seo_blog_posts")
+    .select("id, title, slug, meta_description, featured_image_url, reading_time_minutes, word_count, tags, published_at")
+    .eq("status", "published")
+    .order("published_at", { ascending: false })
+    .limit(3);
+
+  if (!posts || posts.length === 0) {
+    return (
+      <p className="text-center text-zinc-400 py-8">
+        Articles coming soon.
+      </p>
+    );
+  }
+
+  return (
+    <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      {posts.map((post) => (
+        <Link
+          key={post.id}
+          href={`/blog/${post.slug}`}
+          className="group overflow-hidden rounded-xl border border-zinc-200 transition-shadow hover:shadow-md"
+        >
+          {post.featured_image_url ? (
+            <div className="aspect-video overflow-hidden bg-zinc-100">
+              <img
+                src={post.featured_image_url}
+                alt={post.title}
+                className="h-full w-full object-cover transition-transform group-hover:scale-105"
+              />
+            </div>
+          ) : (
+            <div className="flex aspect-video items-center justify-center bg-gradient-to-br from-emerald-800 to-slate-900">
+              <span className="text-4xl font-extrabold text-emerald-500/20">N</span>
+            </div>
+          )}
+          <div className="p-5">
+            {post.tags?.[0] && (
+              <span className="rounded-full bg-emerald-100 px-2.5 py-0.5 text-xs font-medium text-emerald-700">
+                {post.tags[0]}
+              </span>
+            )}
+            <h3 className="mt-2 font-semibold text-zinc-900 group-hover:text-emerald-700 transition-colors line-clamp-2">
+              {post.title}
+            </h3>
+            <p className="mt-1 text-sm text-zinc-500 line-clamp-2">
+              {post.meta_description}
+            </p>
+            <div className="mt-3 text-xs text-zinc-400">
+              {post.reading_time_minutes || Math.ceil((post.word_count || 0) / 200)} min read
+            </div>
+          </div>
+        </Link>
+      ))}
+    </div>
+  );
+}
+
+export default async function Home() {
   return (
     <div className="relative min-h-[calc(100vh-64px)] bg-[#F3EDE4]">
       {/* Course texture watermark */}

@@ -83,8 +83,11 @@ export async function POST(req: NextRequest) {
         course_name: body.courseName,
         course_id: body.courseId || null,
         course_location: body.courseLocation || null,
+        course_layout: body.courseLayout || null,
         course_lat: body.courseLat ?? null,
         course_lng: body.courseLng ?? null,
+        course_photo_url: body.coursePhotoUrl || null,
+        course_address: body.courseAddress || null,
         tee_time: teeTime,
         notes: body.notes || null,
         starting_hole: body.startingHole === 10 ? 10 : 1,
@@ -146,7 +149,8 @@ export async function POST(req: NextRequest) {
         if (!player.email) continue;
         try {
           await resend.emails.send({
-            from: "Nassau <noreply@nassau.golf>",
+            from: "Grayson at Nassau <grayson@nassau.golf>",
+            replyTo: "grayson@nassau.golf",
             to: player.email.trim().toLowerCase(),
             subject: `\u26F3 You're invited to a round at ${body.courseName}`,
             html: buildRoundInviteEmail({

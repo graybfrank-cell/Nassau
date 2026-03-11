@@ -59,7 +59,8 @@ export async function POST(
       });
 
       await resend.emails.send({
-        from: "Nassau <noreply@nassau.golf>",
+        from: "Grayson at Nassau <grayson@nassau.golf>",
+        replyTo: "grayson@nassau.golf",
         to: body.email.trim().toLowerCase(),
         subject: `\u26F3 You're invited to a round at ${round.course_name}`,
         html: `<!DOCTYPE html>
