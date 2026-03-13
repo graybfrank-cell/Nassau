@@ -31,7 +31,7 @@ export async function POST() {
       return NextResponse.json({ completed: 0, roundIds: [] });
     }
 
-    const ids = staleRounds.map((r) => r.id);
+    const ids = staleRounds.map((r: { id: string }) => r.id);
 
     await prisma.gameRounds.updateMany({
       where: { id: { in: ids } },
