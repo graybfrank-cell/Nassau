@@ -6,7 +6,8 @@ import Link from "next/link";
 import Image from "next/image";
 import { createClient } from "@/lib/supabase/client";
 import { getTrips, createTrip, deleteTrip } from "@/lib/store";
-import { Trip } from "@/lib/types";
+import { getGameRounds } from "@/lib/game-store";
+import { Trip, GameRound } from "@/lib/types";
 import {
   MapPin,
   Trophy,
@@ -164,6 +165,7 @@ export default function DashboardPage() {
   const router = useRouter();
   const [data, setData] = useState<DashboardData | null>(null);
   const [trips, setTrips] = useState<Trip[]>([]);
+  const [recentRounds, setRecentRounds] = useState<GameRound[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -286,7 +288,7 @@ export default function DashboardPage() {
         </div>
 
         {showForm && (
-          <form onSubmit={handleCreate} className="mt-6 rounded-xl border border-zinc-800 bg-zinc-900 p-6">
+          <form onSubmit={handleCreateTrip} className="mt-6 rounded-xl border border-zinc-800 bg-zinc-900 p-6">
             <h2 className="text-lg font-semibold text-white">Create a New Trip</h2>
             <div className="mt-4 grid gap-4 sm:grid-cols-2">
               {[
@@ -318,6 +320,8 @@ export default function DashboardPage() {
                 Cancel
               </button>
             </div>
+          </form>
+        )}
 
         {recentRounds.length > 0 && (
           <div className="mt-8">
@@ -350,61 +354,6 @@ export default function DashboardPage() {
         )}
 
         {trips.length === 0 ? (
-          <div className="mt-16 text-center">
-            <MapPin className="mx-auto h-12 w-12 text-zinc-700" />
-            <h2 className="mt-4 text-lg font-semibold text-white">No trips yet</h2>
-            <p className="mt-2 text-sm text-zinc-400">Create your first golf trip to get started.</p>
-            <button onClick={() => setShowForm(true)}
-              className="mt-6 inline-flex items-center gap-2 rounded-lg px-5 py-2.5 text-sm font-semibold text-white" style={{ backgroundColor: "#D94F2B" }}>
-              <Plus className="h-4 w-4" />
-              New Trip
-            </button>
-          </div>
-        ) : (
-          <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {trips.map((trip) => (
-              <div key={trip.id} className="group relative rounded-xl border border-zinc-800 bg-zinc-900 p-5 transition-all hover:border-zinc-700 hover:shadow-lg">
-                <button onClick={() => handleDelete(trip.id)}
-                  className="absolute right-3 top-3 rounded-md p-1.5 text-zinc-600 opacity-0 transition-all hover:bg-red-950 hover:text-red-500 group-hover:opacity-100">
-                  <Trash2 className="h-4 w-4" />
-                </button>
-                <Link href={`/trips/${trip.id}`} className="block">
-                  <h3 className="font-semibold text-white">{trip.name}</h3>
-                  {trip.destination && (
-                    <div className="mt-2 flex items-center gap-1.5 text-sm text-zinc-400">
-                      <MapPin className="h-3.5 w-3.5" />
-                      {trip.destination}
-                    </div>
-                  )}
-                  {(trip.startDate || trip.endDate) && (
-                    <div className="mt-1 flex items-center gap-1.5 text-sm text-zinc-400">
-                      <Calendar className="h-3.5 w-3.5" />
-                      {trip.startDate && trip.endDate ? `${trip.startDate} — ${trip.endDate}` : trip.startDate || trip.endDate}
-                    </div>
-                  )}
-                  <div className="mt-3 flex items-center gap-1.5 text-xs text-zinc-500">
-                    <Users className="h-3.5 w-3.5" />
-                    {trip.members.length} member{trip.members.length !== 1 ? "s" : ""}
-                  </div>
-                  <div className="mt-4 flex gap-3">
-                    <button
-                      type="submit"
-                      className="rounded-lg bg-[#D94F2B] px-5 py-2 text-sm font-semibold text-white transition-opacity hover:opacity-90"
-                    >
-                      Create Trip
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setShowForm(false)}
-                      className="rounded-lg border border-zinc-700 px-5 py-2 text-sm font-medium text-zinc-400 transition-colors hover:border-zinc-600"
-                    >
-                      Cancel
-                    </button>
-                  </div>
-                </form>
-              )}
-
-              {trips.length === 0 ? (
                 <div className="rounded-xl border border-zinc-800 bg-[#242424] px-5 py-10 text-center">
                   <MapPin className="mx-auto h-10 w-10 text-zinc-600" />
                   <p className="mt-3 text-sm font-medium text-zinc-400">
@@ -456,9 +405,6 @@ export default function DashboardPage() {
                   ))}
                 </div>
               )}
-            </div>
-          </>
-        )}
       </div>
     </div>
   );
