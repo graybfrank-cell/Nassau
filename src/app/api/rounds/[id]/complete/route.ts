@@ -4,6 +4,8 @@ import { getUser, unauthorized, forbidden } from "@/lib/auth";
 import { computeAwards } from "@/lib/round-awards";
 import { calculateNassauBet } from "@/components/shared/NassauBetCalculator";
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 export const maxDuration = 60;
 export const dynamic = "force-dynamic";
 
@@ -44,11 +46,11 @@ export async function POST(
 
   // 3. Recalculate settlements (inline, mirroring recalculate/route.ts logic)
   const confirmedPlayerIds = round.players
-    .filter((p) => p.status === "confirmed" || p.role === "COMMISSIONER")
-    .map((p) => p.id);
+    .filter((p: any) => p.status === "confirmed" || p.role === "COMMISSIONER")
+    .map((p: any) => p.id);
 
   const balances: Record<string, number> = {};
-  confirmedPlayerIds.forEach((id) => {
+  confirmedPlayerIds.forEach((id: string) => {
     balances[id] = 0;
   });
 
@@ -97,7 +99,7 @@ export async function POST(
         const skinsValue = 1 + carryover;
         balances[winnerId] = (balances[winnerId] || 0) + skinsValue * buyIn;
 
-        const losers = confirmedPlayerIds.filter((id) => id !== winnerId);
+        const losers = confirmedPlayerIds.filter((id: string) => id !== winnerId);
         const perLoser = (skinsValue * buyIn) / losers.length;
         for (const loserId of losers) {
           balances[loserId] = (balances[loserId] || 0) - perLoser;
@@ -113,8 +115,8 @@ export async function POST(
   if (round.nassau_bet) {
     const betAmount = Number(round.nassau_bet.bet_amount);
     const nassauScorecards = round.scorecards
-      .filter((sc) => confirmedPlayerIds.includes(sc.player_id))
-      .map((sc) => ({
+      .filter((sc: any) => confirmedPlayerIds.includes(sc.player_id))
+      .map((sc: any) => ({
         playerId: sc.player_id,
         holes: sc.holes as number[],
       }));
@@ -125,7 +127,7 @@ export async function POST(
       round.starting_hole
     );
     for (const [playerId, net] of Object.entries(nassauResults.payouts)) {
-      balances[playerId] = (balances[playerId] || 0) + net;
+      balances[playerId] = (balances[playerId] || 0) + (net as number);
     }
 
     await prisma.gameNassauBets.update({
@@ -196,7 +198,7 @@ export async function POST(
   }
 
   // 4. Detect personal bests
-  const playerMap = new Map(round.players.map((p) => [p.id, p]));
+  const playerMap = new Map<string, any>(round.players.map((p: any) => [p.id, p]));
 
   for (const scorecard of round.scorecards) {
     if (!scorecard.total || scorecard.total <= 0) continue;
@@ -217,7 +219,7 @@ export async function POST(
               where: { user_id: player.user_id },
               select: { id: true },
             })
-          ).map((p) => p.id),
+          ).map((p: { id: string }) => p.id),
         },
         total: { gt: 0 },
       },
@@ -227,7 +229,7 @@ export async function POST(
     if (previousScorecards.length === 0) continue;
 
     const previousBest = Math.min(
-      ...previousScorecards.map((sc) => sc.total!)
+      ...previousScorecards.map((sc: { total: number | null }) => sc.total!)
     );
 
     if (scorecard.total < previousBest) {
@@ -244,12 +246,12 @@ export async function POST(
   });
 
   const awards = computeAwards({
-    players: round.players.map((p) => ({
+    players: round.players.map((p: any) => ({
       id: p.id,
       name: p.name,
       role: p.role,
     })),
-    scorecards: round.scorecards.map((sc) => ({
+    scorecards: round.scorecards.map((sc: any) => ({
       playerId: sc.player_id,
       holes: sc.holes as number[],
       total: sc.total ?? undefined,
@@ -263,7 +265,7 @@ export async function POST(
             | undefined,
         }
       : null,
-    settlements: allSettlements.map((s) => ({
+    settlements: allSettlements.map((s: any) => ({
       fromPlayer: s.from_player,
       toPlayer: s.to_player,
       amount: Number(s.amount),

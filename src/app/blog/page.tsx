@@ -106,19 +106,19 @@ export default async function BlogIndex() {
                 className="group mb-12 block overflow-hidden rounded-2xl border border-zinc-200 transition-shadow hover:shadow-lg"
               >
                 <div className="text-xs font-medium text-[#D94F2B] uppercase tracking-wider">
-                  {post.target_keyword}
+                  {featured.target_keyword}
                 </div>
                 <h2 className="mt-2 text-lg font-semibold text-zinc-900 group-hover:text-[#D94F2B] transition-colors line-clamp-2">
-                  {post.title}
+                  {featured.title}
                 </h2>
                 <p className="mt-2 text-sm text-zinc-500 line-clamp-3">
-                  {post.meta_description}
+                  {featured.meta_description}
                 </p>
                 <div className="mt-4 flex items-center gap-3 text-xs text-zinc-400">
-                  <span>{post.word_count} words</span>
+                  <span>{featured.word_count} words</span>
                   <span>&bull;</span>
                   <span>
-                    {new Date(post.published_at).toLocaleDateString("en-US", {
+                    {new Date(featured.published_at).toLocaleDateString("en-US", {
                       month: "short",
                       day: "numeric",
                       year: "numeric",
