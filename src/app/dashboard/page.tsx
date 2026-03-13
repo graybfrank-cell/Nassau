@@ -11,6 +11,7 @@ import { Trip, GameRound } from "@/lib/types";
 import {
   MapPin,
   Trophy,
+  Plus,
   Users,
   Calendar,
   Trash2,
