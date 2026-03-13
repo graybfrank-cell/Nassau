@@ -101,7 +101,7 @@ function markdownToHtml(md: string): string {
   return html;
 }
 
-export default async function BlogPost({ params }: Props) {
+export default async function BlogPost({ params, searchParams }: Props) {
   const { slug } = await params;
   const sp = await searchParams;
   const isPreview = sp.preview === "true";
@@ -169,6 +169,8 @@ export default async function BlogPost({ params }: Props) {
 
   const readingTime =
     post.reading_time_minutes || Math.ceil((post.word_count || 0) / 200);
+
+  const contentHtml = markdownToHtml(post.content_markdown ?? "");
 
   const articleSchema = {
     "@context": "https://schema.org",
@@ -250,6 +252,9 @@ export default async function BlogPost({ params }: Props) {
         </div>
       )}
 
+      <div className="mx-auto max-w-5xl px-6 py-12">
+        <div className="grid grid-cols-1 lg:grid-cols-[1fr_280px] gap-10">
+          <div>
         {/* Header */}
         <header className="mb-10">
           <div className="text-xs font-medium text-[#D94F2B] uppercase tracking-wider">
@@ -294,6 +299,7 @@ export default async function BlogPost({ params }: Props) {
           </Link>
         </div>
 
+          </div>
           {/* Sidebar */}
           <aside className="hidden lg:block">
             <div className="sticky top-6 space-y-6">
