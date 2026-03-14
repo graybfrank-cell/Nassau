@@ -54,7 +54,7 @@ async function getUpcomingRound(userId: string) {
           courseLocation: upcomingRoundRaw.course_location ?? null,
           teeTime: upcomingRoundRaw.tee_time.toISOString(),
           weather: upcomingRoundRaw.weather_data ?? null,
-          players: (upcomingRoundRaw.players ?? []).map((p) => ({
+          players: (upcomingRoundRaw.players ?? []).map((p: { id: string; name: string; user_id: string | null }) => ({
             id: p.id,
             name: p.name,
             avatarUrl: null as string | null,
