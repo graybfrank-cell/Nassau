@@ -21,6 +21,7 @@ import {
   DollarSign,
   Clock,
   CloudSun,
+  Plus,
 } from "lucide-react";
 
 // ---------------------------------------------------------------------------
