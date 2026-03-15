@@ -371,6 +371,22 @@ export async function GET() {
         getSeasonStats(userId),
       ]);
 
+    // Check subscription status
+    let subscriptionActive = false;
+    try {
+      const sub = await prisma.profiles.findUnique({
+        where: { id: userId },
+        select: { subscription_status: true, subscription_expires_at: true },
+      });
+      const activeStatuses = ["active", "trialing"];
+      subscriptionActive =
+        !!sub?.subscription_status &&
+        activeStatuses.includes(sub.subscription_status) &&
+        (!sub.subscription_expires_at || sub.subscription_expires_at > new Date());
+    } catch {
+      // Non-critical — default to false
+    }
+
     // ALWAYS return 200 with whatever data we have
     const errors = [
       profile.error,
@@ -382,6 +398,7 @@ export async function GET() {
 
     return NextResponse.json({
       user: profile.data,
+      subscriptionActive,
       upcomingRound: upcomingRound.data,
       recentScores: recentScores.data,
       settlements: settlements.data,
