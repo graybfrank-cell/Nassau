@@ -67,6 +67,7 @@ interface SettlementItem {
 
 interface DashboardData {
   user: { firstName: string; venmoUsername: string | null };
+  subscriptionActive?: boolean;
   upcomingRound: UpcomingRound | null;
   recentScores: RecentScore[];
   settlements: {
@@ -264,6 +265,22 @@ export default function DashboardPage() {
   return (
     <div className="min-h-[calc(100vh-64px)] bg-zinc-950 px-6 py-10">
       <div className="mx-auto max-w-5xl">
+        {/* Subscription upsell banner */}
+        {data && !data.subscriptionActive && (
+          <div className="mb-6 flex flex-col items-start gap-3 rounded-xl border border-zinc-800 bg-zinc-900 px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
+            <p className="text-sm text-zinc-300">
+              Your one free trip is active &mdash; upgrade anytime for unlimited trips.
+            </p>
+            <Link
+              href="/pricing"
+              className="shrink-0 rounded-lg px-4 py-2 text-sm font-semibold text-white transition-colors"
+              style={{ backgroundColor: "#D94F2B" }}
+            >
+              View Plans
+            </Link>
+          </div>
+        )}
+
         {error && (
           <div className="mb-4 flex items-center gap-2 rounded-lg border border-red-800 bg-red-950 px-4 py-3 text-sm text-red-400">
             <AlertCircle className="h-4 w-4 shrink-0" />
