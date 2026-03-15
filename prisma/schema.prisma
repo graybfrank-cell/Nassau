@@ -18,9 +18,10 @@ model Profiles {
 
   // Payment & subscription
   venmo_username      String?
-  stripe_customer_id  String?  @unique
-  subscription_status String?  @default("free") // free | trialing | active | past_due | canceled
-  subscription_tier   String?  // pro | premium
+  stripe_customer_id      String?  @unique
+  stripe_subscription_id  String?  @unique
+  subscription_status     String?  @default("free") // free | trialing | active | past_due | canceled
+  subscription_tier       String?  // pro | premium
   subscription_expires_at DateTime? @db.Timestamptz()
 
   trips       Trips[]
