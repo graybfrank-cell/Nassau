@@ -68,7 +68,7 @@ export async function POST(req: NextRequest) {
     const commEmail = user.email?.toLowerCase();
     const seenEmails = new Set<string>();
     if (commEmail) seenEmails.add(commEmail);
-    const dedupedPlayers = rawPlayers.filter((p) => {
+    const dedupedPlayers = rawPlayers.filter((p: { name: string; email?: string }) => {
       if (!p.email) return true;
       const lower = p.email.toLowerCase();
       if (seenEmails.has(lower)) return false;
@@ -100,7 +100,7 @@ export async function POST(req: NextRequest) {
               status: "confirmed",
               role: "COMMISSIONER",
             },
-            ...dedupedPlayers.map((p) => ({
+            ...dedupedPlayers.map((p: { name: string; email?: string }) => ({
               name: p.name,
               email: p.email || null,
               status: "invited" as const,

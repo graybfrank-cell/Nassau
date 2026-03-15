@@ -19,13 +19,13 @@ export async function GET() {
     const all = sequences || [];
     const stats = {
       totalInSequence: all.length,
-      day0Sent: all.filter((s) => s.day_0_sent).length,
-      day3Sent: all.filter((s) => s.day_3_sent).length,
-      day7Sent: all.filter((s) => s.day_7_sent).length,
+      day0Sent: all.filter((s: Record<string, unknown>) => s.day_0_sent).length,
+      day3Sent: all.filter((s: Record<string, unknown>) => s.day_3_sent).length,
+      day7Sent: all.filter((s: Record<string, unknown>) => s.day_7_sent).length,
       completionRate:
         all.length > 0
           ? Math.round(
-              (all.filter((s) => s.day_7_sent).length / all.length) * 100
+              (all.filter((s: Record<string, unknown>) => s.day_7_sent).length / all.length) * 100
             )
           : 0,
     };

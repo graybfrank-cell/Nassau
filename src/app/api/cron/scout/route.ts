@@ -176,7 +176,7 @@ export async function POST() {
 
     // ── Step 4: Map to correct DB columns and insert ──
     const now = new Date().toISOString();
-    const rows = alerts.map((alert) => ({
+    const rows = alerts.map((alert: Record<string, unknown>) => ({
       source: String(alert.source || "Scout Agent"),
       url: alert.url || alert.source_url || null,
       summary: String(alert.summary || alert.description || ""),
@@ -187,7 +187,7 @@ export async function POST() {
       created_at: now,
     }));
 
-    const validRows = rows.filter((r) => r.summary && r.summary.length > 5);
+    const validRows = rows.filter((r: { summary: string }) => r.summary && r.summary.length > 5);
 
     if (validRows.length === 0) {
       return NextResponse.json({

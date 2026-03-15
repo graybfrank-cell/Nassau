@@ -17,8 +17,8 @@ export async function GET() {
 
     const all = logs || [];
     const now = Date.now();
-    const thisMonth = all.filter((l) => {
-      const d = new Date(l.sent_at || l.created_at);
+    const thisMonth = all.filter((l: Record<string, unknown>) => {
+      const d = new Date((l.sent_at || l.created_at) as string);
       return (
         d.getMonth() === new Date().getMonth() &&
         d.getFullYear() === new Date().getFullYear()
@@ -26,17 +26,17 @@ export async function GET() {
     });
 
     const stats = {
-      dormantUsers: all.filter((l) => l.status === "dormant").length,
+      dormantUsers: all.filter((l: Record<string, unknown>) => l.status === "dormant").length,
       emailsSentThisMonth: thisMonth.length,
       reactivationRate:
         all.length > 0
           ? Math.round(
-              (all.filter((l) => l.status === "reactivated").length /
+              (all.filter((l: Record<string, unknown>) => l.status === "reactivated").length /
                 Math.max(all.length, 1)) *
                 100
             )
           : 0,
-      churnedUsers: all.filter((l) => l.status === "churned").length,
+      churnedUsers: all.filter((l: Record<string, unknown>) => l.status === "churned").length,
     };
 
     // Fetch reactivation email template

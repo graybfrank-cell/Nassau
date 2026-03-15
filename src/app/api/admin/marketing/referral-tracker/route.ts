@@ -76,8 +76,8 @@ export async function POST() {
     }
 
     // Log summary to marketing_performance
-    const totalReferrals = stats.reduce((sum, s) => sum + s.total_referrals, 0);
-    const totalActive = stats.reduce((sum, s) => sum + s.active_referrals, 0);
+    const totalReferrals = stats.reduce((sum: number, s: { total_referrals: number }) => sum + s.total_referrals, 0);
+    const totalActive = stats.reduce((sum: number, s: { active_referrals: number }) => sum + s.active_referrals, 0);
 
     await supabase.from("marketing_performance").insert({
       metric_date: new Date().toISOString().split("T")[0],
@@ -87,9 +87,9 @@ export async function POST() {
       impressions: stats.length,
       likes: totalReferrals,
       comments: totalActive,
-      shares: Object.values(weeklyByCode).reduce((a, b) => a + b, 0),
+      shares: Object.values(weeklyByCode).reduce((a: number, b: number) => a + b, 0),
       saves: 0,
-      link_clicks: codes?.reduce((sum, c) => sum + (c.clicks || 0), 0) || 0,
+      link_clicks: codes?.reduce((sum: number, c: { clicks?: number }) => sum + (c.clicks || 0), 0) || 0,
     });
 
     return NextResponse.json({
@@ -98,7 +98,7 @@ export async function POST() {
       total_referrers: stats.length,
       total_referrals: totalReferrals,
       active_referrals: totalActive,
-      weekly_referrals: Object.values(weeklyByCode).reduce((a, b) => a + b, 0),
+      weekly_referrals: Object.values(weeklyByCode).reduce((a: number, b: number) => a + b, 0),
     });
   } catch (error) {
     console.error("[referral-tracker] Error:", error);

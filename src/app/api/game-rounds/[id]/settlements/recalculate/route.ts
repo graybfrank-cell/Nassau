@@ -169,7 +169,7 @@ export async function POST(
   // 7. Create new settlement records
   if (newSettlements.length > 0) {
     await prisma.gameSettlements.createMany({
-      data: newSettlements.map((s) => ({
+      data: newSettlements.map((s: { from_player: string; to_player: string; amount: number }) => ({
         round_id: roundId,
         from_player: s.from_player,
         to_player: s.to_player,

@@ -505,12 +505,12 @@ Return exactly 3 distinct trip concepts.`;
       }
 
       // Find full destination data for selected concepts
-      const selectedIds = selected_concepts.map((c) => c.destination_id);
+      const selectedIds = selected_concepts.map((c: Record<string, unknown>) => c.destination_id);
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const selectedDests = knowledgeBase.destinations.filter((d: any) => selectedIds.includes(d.id)).map(fullDestinationForPrompt);
       const knowledgeContext = JSON.stringify({ destinations: selectedDests }, null, 0);
 
-      const conceptSummary = selected_concepts.map((c) => `- ${c.concept_name} (${c.destination})`).join("\n");
+      const conceptSummary = selected_concepts.map((c: Record<string, unknown>) => `- ${c.concept_name} (${c.destination})`).join("\n");
       const userPrompt = `The user is planning a golf trip and liked these concepts:
 ${conceptSummary}
 
@@ -520,7 +520,7 @@ Their preferences:
 - Budget: ${prefs.budget_tier}
 - Dates: ${buildDatesDescription(prefs.dates)}
 
-Generate 3-4 smart follow-up questions to help narrow down the perfect trip. Make options specific to ${selected_concepts.map(c => c.destination).join(" and ")} with real venue names and prices.`;
+Generate 3-4 smart follow-up questions to help narrow down the perfect trip. Make options specific to ${selected_concepts.map((c: Record<string, unknown>) => c.destination).join(" and ")} with real venue names and prices.`;
 
       const result = await callClaude(apiKey, followupSystemPrompt(knowledgeContext), userPrompt, 2000);
       if ("error" in result) return NextResponse.json({ error: result.error }, { status: result.status });

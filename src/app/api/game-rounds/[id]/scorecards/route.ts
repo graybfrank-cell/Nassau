@@ -48,8 +48,8 @@ export async function POST(
 
   const body = await req.json();
   const holes: number[] = body.holes || [];
-  const frontNine = holes.slice(0, 9).reduce((a, b) => a + (b || 0), 0);
-  const backNine = holes.slice(9, 18).reduce((a, b) => a + (b || 0), 0);
+  const frontNine = holes.slice(0, 9).reduce((a: number, b: number) => a + (b || 0), 0);
+  const backNine = holes.slice(9, 18).reduce((a: number, b: number) => a + (b || 0), 0);
   const total = frontNine + backNine;
 
   const scorecard = await prisma.gameScorecards.upsert({

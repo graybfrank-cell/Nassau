@@ -20,8 +20,8 @@ export async function GET() {
     const allReferrals = referrals || [];
 
     const now = new Date();
-    const thisMonthReferrals = allReferrals.filter((r) => {
-      const d = new Date(r.created_at);
+    const thisMonthReferrals = allReferrals.filter((r: Record<string, unknown>) => {
+      const d = new Date(r.created_at as string);
       return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
     });
 
@@ -37,7 +37,7 @@ export async function GET() {
 
     const topReferrer = topReferrerCode
       ? allCodes.find(
-          (c) => c.code === topReferrerCode[0]
+          (c: Record<string, unknown>) => c.code === topReferrerCode[0]
         )
       : null;
 

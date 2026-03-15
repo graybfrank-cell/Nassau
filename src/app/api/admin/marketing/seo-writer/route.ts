@@ -45,8 +45,8 @@ export async function POST(req: NextRequest) {
         .from("seo_blog_posts")
         .select("target_keyword");
 
-      const used = new Set((usedKeywords || []).map((k) => k.target_keyword));
-      const available = SEED_KEYWORDS.filter((k) => !used.has(k));
+      const used = new Set((usedKeywords || []).map((k: Record<string, unknown>) => k.target_keyword as string));
+      const available = SEED_KEYWORDS.filter((k: string) => !used.has(k));
       keyword = available.length > 0 ? available[0] : SEED_KEYWORDS[Math.floor(Math.random() * SEED_KEYWORDS.length)];
     }
 

@@ -183,15 +183,15 @@ export async function POST() {
 function buildPerformanceSummary(content: Record<string, unknown>[]): string {
   if (content.length === 0) return "No content performance data from last week.";
 
-  const totalImpressions = content.reduce((sum, c) => sum + (Number(c.impressions) || 0), 0);
-  const totalLikes = content.reduce((sum, c) => sum + (Number(c.likes) || 0), 0);
-  const totalComments = content.reduce((sum, c) => sum + (Number(c.comments) || 0), 0);
-  const totalShares = content.reduce((sum, c) => sum + (Number(c.shares) || 0), 0);
-  const totalClicks = content.reduce((sum, c) => sum + (Number(c.link_clicks) || 0), 0);
+  const totalImpressions = content.reduce((sum: number, c: Record<string, unknown>) => sum + (Number(c.impressions) || 0), 0);
+  const totalLikes = content.reduce((sum: number, c: Record<string, unknown>) => sum + (Number(c.likes) || 0), 0);
+  const totalComments = content.reduce((sum: number, c: Record<string, unknown>) => sum + (Number(c.comments) || 0), 0);
+  const totalShares = content.reduce((sum: number, c: Record<string, unknown>) => sum + (Number(c.shares) || 0), 0);
+  const totalClicks = content.reduce((sum: number, c: Record<string, unknown>) => sum + (Number(c.link_clicks) || 0), 0);
 
   const top3 = content.slice(0, 3);
   const topPerformers = top3
-    .map((c, i) => `  ${i + 1}. "${c.title}" (${c.scheduled_platform || c.type}) — ${c.impressions || 0} impressions, ${c.likes || 0} likes, ${c.shares || 0} shares`)
+    .map((c: Record<string, unknown>, i: number) => `  ${i + 1}. "${c.title}" (${c.scheduled_platform || c.type}) — ${c.impressions || 0} impressions, ${c.likes || 0} likes, ${c.shares || 0} shares`)
     .join("\n");
 
   // Pillar distribution
@@ -201,7 +201,7 @@ function buildPerformanceSummary(content: Record<string, unknown>[]): string {
     pillarCounts[p] = (pillarCounts[p] || 0) + 1;
   });
   const pillarBreakdown = Object.entries(pillarCounts)
-    .map(([pillar, count]) => `  ${pillar}: ${count} posts`)
+    .map(([pillar, count]: [string, number]) => `  ${pillar}: ${count} posts`)
     .join("\n");
 
   // Platform distribution
@@ -211,7 +211,7 @@ function buildPerformanceSummary(content: Record<string, unknown>[]): string {
     platformCounts[p] = (platformCounts[p] || 0) + 1;
   });
   const platformBreakdown = Object.entries(platformCounts)
-    .map(([platform, count]) => `  ${platform}: ${count} posts`)
+    .map(([platform, count]: [string, number]) => `  ${platform}: ${count} posts`)
     .join("\n");
 
   return `LAST WEEK'S PERFORMANCE:

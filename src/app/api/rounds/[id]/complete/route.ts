@@ -44,8 +44,8 @@ export async function POST(
 
   // 3. Recalculate settlements (inline, mirroring recalculate/route.ts logic)
   const confirmedPlayerIds = round.players
-    .filter((p) => p.status === "confirmed" || p.role === "COMMISSIONER")
-    .map((p) => p.id);
+    .filter((p: { status: string; role: string }) => p.status === "confirmed" || p.role === "COMMISSIONER")
+    .map((p: { id: string }) => p.id);
 
   const balances: Record<string, number> = {};
   confirmedPlayerIds.forEach((id) => {
@@ -97,7 +97,7 @@ export async function POST(
         const skinsValue = 1 + carryover;
         balances[winnerId] = (balances[winnerId] || 0) + skinsValue * buyIn;
 
-        const losers = confirmedPlayerIds.filter((id) => id !== winnerId);
+        const losers = confirmedPlayerIds.filter((id: string) => id !== winnerId);
         const perLoser = (skinsValue * buyIn) / losers.length;
         for (const loserId of losers) {
           balances[loserId] = (balances[loserId] || 0) - perLoser;
@@ -113,8 +113,8 @@ export async function POST(
   if (round.nassau_bet) {
     const betAmount = Number(round.nassau_bet.bet_amount);
     const nassauScorecards = round.scorecards
-      .filter((sc) => confirmedPlayerIds.includes(sc.player_id))
-      .map((sc) => ({
+      .filter((sc: { player_id: string }) => confirmedPlayerIds.includes(sc.player_id))
+      .map((sc: { player_id: string; holes: unknown }) => ({
         playerId: sc.player_id,
         holes: sc.holes as number[],
       }));
@@ -185,7 +185,7 @@ export async function POST(
 
   if (newSettlements.length > 0) {
     await prisma.gameSettlements.createMany({
-      data: newSettlements.map((s) => ({
+      data: newSettlements.map((s: { from_player: string; to_player: string; amount: number }) => ({
         round_id: roundId,
         from_player: s.from_player,
         to_player: s.to_player,
@@ -196,7 +196,7 @@ export async function POST(
   }
 
   // 4. Detect personal bests
-  const playerMap = new Map(round.players.map((p) => [p.id, p]));
+  const playerMap = new Map(round.players.map((p: { id: string; user_id: string | null; name: string; role: string; status: string; is_personal_best: boolean }) => [p.id, p]));
 
   for (const scorecard of round.scorecards) {
     if (!scorecard.total || scorecard.total <= 0) continue;
@@ -217,7 +217,7 @@ export async function POST(
               where: { user_id: player.user_id },
               select: { id: true },
             })
-          ).map((p) => p.id),
+          ).map((p: { id: string }) => p.id),
         },
         total: { gt: 0 },
       },
@@ -227,7 +227,7 @@ export async function POST(
     if (previousScorecards.length === 0) continue;
 
     const previousBest = Math.min(
-      ...previousScorecards.map((sc) => sc.total!)
+      ...previousScorecards.map((sc: { total: number | null }) => sc.total!)
     );
 
     if (scorecard.total < previousBest) {
@@ -244,12 +244,12 @@ export async function POST(
   });
 
   const awards = computeAwards({
-    players: round.players.map((p) => ({
+    players: round.players.map((p: { id: string; name: string; role: string }) => ({
       id: p.id,
       name: p.name,
       role: p.role,
     })),
-    scorecards: round.scorecards.map((sc) => ({
+    scorecards: round.scorecards.map((sc: { player_id: string; holes: unknown; total: number | null; front_nine: number | null; back_nine: number | null }) => ({
       playerId: sc.player_id,
       holes: sc.holes as number[],
       total: sc.total ?? undefined,
@@ -263,7 +263,7 @@ export async function POST(
             | undefined,
         }
       : null,
-    settlements: allSettlements.map((s) => ({
+    settlements: allSettlements.map((s: { from_player: string; to_player: string; amount: unknown }) => ({
       fromPlayer: s.from_player,
       toPlayer: s.to_player,
       amount: Number(s.amount),
