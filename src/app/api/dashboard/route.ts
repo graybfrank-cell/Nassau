@@ -86,7 +86,7 @@ async function getRecentScores(userId: string) {
       });
     }
 
-    const playerIds = myPlayers.map((p) => p.id);
+    const playerIds = myPlayers.map((p: { id: string }) => p.id);
     const scorecards = await prisma.gameScorecards.findMany({
       where: {
         player_id: { in: playerIds },
