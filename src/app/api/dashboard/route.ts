@@ -99,7 +99,7 @@ async function getRecentScores(userId: string) {
       scorecardByRound.set(sc.round_id, sc.total!);
     }
 
-    const roundsWithScores = scorecards.map((sc) => sc.round_id);
+    const roundsWithScores = scorecards.map((sc: { round_id: string }) => sc.round_id);
     const recentRoundsRaw = await prisma.gameRounds.findMany({
       where: { id: { in: roundsWithScores } },
       orderBy: { tee_time: "desc" },
@@ -107,7 +107,7 @@ async function getRecentScores(userId: string) {
       select: { id: true, course_name: true, tee_time: true },
     });
 
-    const recentRoundIds = recentRoundsRaw.map((r) => r.id);
+    const recentRoundIds = recentRoundsRaw.map((r: { id: string }) => r.id);
     const roundSettlements = await prisma.gameSettlements.findMany({
       where: { round_id: { in: recentRoundIds } },
       select: {
@@ -118,7 +118,7 @@ async function getRecentScores(userId: string) {
       },
     });
 
-    const recentScores = recentRoundsRaw.map((round) => {
+    const recentScores = recentRoundsRaw.map((round: { id: string; course_name: string | null; tee_time: Date | null }) => {
       const playerInfo = playerIdsByRound.get(round.id);
       const playerId = playerInfo?.playerId;
       const score = scorecardByRound.get(round.id) ?? 0;
@@ -162,7 +162,7 @@ async function getSettlements(userId: string) {
       where: { user_id: userId },
       select: { id: true },
     });
-    const playerIds = myPlayers.map((p) => p.id);
+    const playerIds = myPlayers.map((p: { id: string }) => p.id);
     const myPlayerIdSet = new Set(playerIds);
 
     // Game-level unsettled settlements
@@ -292,7 +292,7 @@ async function getSeasonStats(userId: string) {
       select: { id: true, tee_time: true },
     });
 
-    const completedRoundIds = completedRoundsThisYear.map((r) => r.id);
+    const completedRoundIds = completedRoundsThisYear.map((r: { id: string }) => r.id);
 
     const yearSettlements = await prisma.gameSettlements.findMany({
       where: { round_id: { in: completedRoundIds } },
@@ -309,7 +309,7 @@ async function getSeasonStats(userId: string) {
       select: { id: true, round_id: true },
     });
     const myCompletedPlayerIds = new Set(
-      myPlayersInCompletedRounds.map((p) => p.id)
+      myPlayersInCompletedRounds.map((p: { id: string }) => p.id)
     );
 
     let totalMoneyNet = 0;
@@ -321,10 +321,10 @@ async function getSeasonStats(userId: string) {
     totalMoneyNet = Math.round(totalMoneyNet * 100) / 100;
 
     const roundsThisMonth = completedRoundsThisYear.filter(
-      (r) => r.tee_time && r.tee_time >= monthStart
+      (r: { id: string; tee_time: Date | null }) => r.tee_time && r.tee_time >= monthStart
     ).length;
 
-    const yearPlayerIds = myPlayersInCompletedRounds.map((p) => p.id);
+    const yearPlayerIds = myPlayersInCompletedRounds.map((p: { id: string }) => p.id);
     const yearScorecards = await prisma.gameScorecards.findMany({
       where: { player_id: { in: yearPlayerIds }, total: { gt: 0 } },
       select: { total: true },
@@ -333,7 +333,7 @@ async function getSeasonStats(userId: string) {
     let scoringAvg: number | null = null;
     if (yearScorecards.length > 0) {
       const sum = yearScorecards.reduce(
-        (acc, sc) => acc + (sc.total ?? 0),
+        (acc: number, sc: { total: number | null }) => acc + (sc.total ?? 0),
         0
       );
       scoringAvg = Math.round((sum / yearScorecards.length) * 10) / 10;
