@@ -196,7 +196,7 @@ export async function POST(
   }
 
   // 4. Detect personal bests
-  const playerMap = new Map(round.players.map((p: { id: string; user_id: string | null; name: string; role: string; status: string; is_personal_best: boolean }) => [p.id, p]));
+  const playerMap = new Map(round.players.map((p: any) => [p.id as string, p as { id: string; user_id: string | null; name: string; role: string; status: string; is_personal_best: boolean }]));
 
   for (const scorecard of round.scorecards) {
     if (!scorecard.total || scorecard.total <= 0) continue;
