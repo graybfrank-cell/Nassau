@@ -237,7 +237,7 @@ function buildFeedbackContext(
   if (engaged.length > 0) {
     sections.push(
       `## ALERTS THE TEAM ENGAGED WITH (find MORE like these):\n${engaged
-        .map((a, i) => `${i + 1}. [${a.opportunity_type}] ${a.summary}${a.suggested_content_topic ? ` → "${a.suggested_content_topic}"` : ""}`)
+        .map((a: Record<string, unknown>, i: number) => `${i + 1}. [${a.opportunity_type}] ${a.summary}${a.suggested_content_topic ? ` → "${a.suggested_content_topic}"` : ""}`)
         .join("\n")}`
     );
   }
@@ -245,7 +245,7 @@ function buildFeedbackContext(
   if (dismissed.length > 0) {
     sections.push(
       `## ALERTS THE TEAM DISMISSED (find FEWER like these):\n${dismissed
-        .map((a, i) => `${i + 1}. [${a.opportunity_type}] ${a.summary}`)
+        .map((a: Record<string, unknown>, i: number) => `${i + 1}. [${a.opportunity_type}] ${a.summary}`)
         .join("\n")}`
     );
   }
@@ -253,7 +253,7 @@ function buildFeedbackContext(
   if (topContent.length > 0) {
     sections.push(
       `## TOP PERFORMING CONTENT (scout for similar opportunities):\n${topContent
-        .map((c, i) => `${i + 1}. "${c.title}" (${c.type}) — ${c.impressions || 0} imp, ${c.likes || 0} likes, ${c.shares || 0} shares`)
+        .map((c: Record<string, unknown>, i: number) => `${i + 1}. "${c.title}" (${c.type}) — ${c.impressions || 0} imp, ${c.likes || 0} likes, ${c.shares || 0} shares`)
         .join("\n")}`
     );
   }

@@ -196,7 +196,7 @@ function buildPerformanceSummary(content: Record<string, unknown>[]): string {
 
   // Pillar distribution
   const pillarCounts: Record<string, number> = {};
-  content.forEach((c) => {
+  content.forEach((c: Record<string, unknown>) => {
     const p = String(c.pillar || "uncategorized");
     pillarCounts[p] = (pillarCounts[p] || 0) + 1;
   });
@@ -206,7 +206,7 @@ function buildPerformanceSummary(content: Record<string, unknown>[]): string {
 
   // Platform distribution
   const platformCounts: Record<string, number> = {};
-  content.forEach((c) => {
+  content.forEach((c: Record<string, unknown>) => {
     const p = String(c.scheduled_platform || "unknown");
     platformCounts[p] = (platformCounts[p] || 0) + 1;
   });
@@ -239,13 +239,13 @@ function buildStrategistPrompt(ctx: {
 }): string {
   const scoutSection = ctx.scoutAlerts.length > 0
     ? `\n## CURRENT SCOUT ALERTS (incorporate these into this week's plan):\n${ctx.scoutAlerts
-        .map((a, i) => `${i + 1}. [${a.opportunity_type}] ${a.summary}\n   Suggested content: "${a.suggested_content_topic}"`)
+        .map((a: Record<string, unknown>, i: number) => `${i + 1}. [${a.opportunity_type}] ${a.summary}\n   Suggested content: "${a.suggested_content_topic}"`)
         .join("\n")}`
     : "";
 
   const engagedSection = ctx.engagedAlerts.length > 0
     ? `\n## TOPICS THAT RESONATED (create more content in these veins):\n${ctx.engagedAlerts
-        .map((a, i) => `${i + 1}. [${a.opportunity_type}] ${a.suggested_content_topic || a.summary}`)
+        .map((a: Record<string, unknown>, i: number) => `${i + 1}. [${a.opportunity_type}] ${a.suggested_content_topic || a.summary}`)
         .join("\n")}`
     : "";
 

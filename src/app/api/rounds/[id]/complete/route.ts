@@ -48,7 +48,7 @@ export async function POST(
     .map((p: { id: string }) => p.id);
 
   const balances: Record<string, number> = {};
-  confirmedPlayerIds.forEach((id) => {
+  confirmedPlayerIds.forEach((id: string) => {
     balances[id] = 0;
   });
 

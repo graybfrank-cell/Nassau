@@ -111,7 +111,7 @@ function calculateSkinsResults(
   const holeOrder = getHoleOrder(startingHole);
   const holes: { hole: number; winnerId: string | null; carryover: boolean }[] = [];
   const payouts: Record<string, number> = {};
-  playerIds.forEach((id) => { payouts[id] = 0; });
+  playerIds.forEach((id: string) => { payouts[id] = 0; });
 
   let carryover = 0;
 
