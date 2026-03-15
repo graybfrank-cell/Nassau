@@ -125,7 +125,7 @@ export async function POST(
       round.starting_hole
     );
     for (const [playerId, net] of Object.entries(nassauResults.payouts)) {
-      balances[playerId] = (balances[playerId] || 0) + net;
+      balances[playerId] = (balances[playerId] || 0) + (net as number);
     }
 
     await prisma.gameNassauBets.update({

@@ -546,7 +546,7 @@ Generate 3-4 smart follow-up questions to help narrow down the perfect trip. Mak
         destination: destData,
       }, null, 0);
 
-      const answersStr = Object.entries(followup_answers).map(([q, a]) => `- ${q}: ${a}`).join("\n");
+      const answersStr = Object.entries(followup_answers).map(([q, a]: [string, unknown]) => `- ${q}: ${a}`).join("\n");
       const userPrompt = `Build a complete trip itinerary for this golf trip:
 
 Selected destination: ${selected_concept.concept_name} — ${selected_concept.destination}
