@@ -14,6 +14,7 @@ async function getProfile(userId: string, email?: string | null) {
     const fullName = profile?.full_name || email?.split("@")[0] || "Golfer";
     return {
       data: {
+        fullName,
         firstName: fullName.split(" ")[0],
         venmoUsername: profile?.venmo_username ?? null,
       },
@@ -22,7 +23,7 @@ async function getProfile(userId: string, email?: string | null) {
   } catch (error) {
     console.error("[Dashboard] Failed to fetch profile:", error);
     return {
-      data: { firstName: "Golfer", venmoUsername: null as string | null },
+      data: { fullName: "Golfer", firstName: "Golfer", venmoUsername: null as string | null },
       error: "Failed to load profile",
     };
   }
@@ -410,7 +411,7 @@ export async function GET() {
     console.error("[Dashboard] Critical error:", error);
     return NextResponse.json(
       {
-        user: { firstName: "Golfer", venmoUsername: null },
+        user: { fullName: "Golfer", firstName: "Golfer", venmoUsername: null },
         upcomingRound: null,
         recentScores: [],
         settlements: { owed: [], owing: [], totalOwed: 0, totalOwing: 0 },
