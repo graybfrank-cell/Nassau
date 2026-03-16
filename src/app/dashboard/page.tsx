@@ -5,16 +5,12 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { createClient } from "@/lib/supabase/client";
-import { getTrips, createTrip, deleteTrip } from "@/lib/store";
-import { getGameRounds } from "@/lib/game-store";
-import { Trip, GameRound } from "@/lib/types";
 import {
   MapPin,
   Trophy,
   Plus,
   Users,
   Calendar,
-  Trash2,
   AlertCircle,
   Wind,
   ChevronRight,
@@ -22,6 +18,11 @@ import {
   DollarSign,
   Clock,
   CloudSun,
+  TrendingUp,
+  TrendingDown,
+  Flame,
+  Target,
+  Zap,
 } from "lucide-react";
 
 // ---------------------------------------------------------------------------
@@ -102,6 +103,19 @@ function getGreeting(): string {
   return "Good evening";
 }
 
+function getTagline(): string {
+  const lines = [
+    "Ready to run it?",
+    "Let's get after it.",
+    "Time to collect.",
+    "Who owes you money?",
+    "Fairways and paydays.",
+  ];
+  // Rotate daily so it feels fresh but not random per render
+  const day = Math.floor(Date.now() / 86400000);
+  return lines[day % lines.length];
+}
+
 function formatTeeTime(iso: string): string {
   const d = new Date(iso);
   return d.toLocaleString("en-US", {
@@ -123,13 +137,24 @@ function moneyStr(n: number): string {
   return `${sign}$${Math.abs(n).toFixed(0)}`;
 }
 
+function getCountdown(iso: string): string {
+  const diff = new Date(iso).getTime() - Date.now();
+  if (diff < 0) return "Tee time passed";
+  const hours = Math.floor(diff / (1000 * 60 * 60));
+  const days = Math.floor(hours / 24);
+  if (days > 0) return `Tee time in ${days} day${days !== 1 ? "s" : ""}`;
+  if (hours > 0) return `Tee time in ${hours} hour${hours !== 1 ? "s" : ""}`;
+  const mins = Math.floor(diff / (1000 * 60));
+  return `Tee time in ${mins} min`;
+}
+
 // ---------------------------------------------------------------------------
-// Skeleton components
+// Skeleton
 // ---------------------------------------------------------------------------
 function SkeletonBlock({ className }: { className?: string }) {
   return (
     <div
-      className={`animate-pulse rounded-xl bg-[#242424] ${className ?? ""}`}
+      className={`animate-pulse rounded-xl bg-zinc-800/50 ${className ?? ""}`}
     />
   );
 }
@@ -137,24 +162,21 @@ function SkeletonBlock({ className }: { className?: string }) {
 function DashboardSkeleton() {
   return (
     <div className="space-y-6">
-      {/* Greeting */}
       <div className="space-y-2">
-        <SkeletonBlock className="h-8 w-56" />
+        <SkeletonBlock className="h-8 w-64" />
         <SkeletonBlock className="h-5 w-40" />
       </div>
-      {/* CTA cards */}
-      <div className="flex gap-4 overflow-x-auto">
-        <SkeletonBlock className="h-24 w-full min-w-[160px] shrink-0 sm:w-1/2" />
-        <SkeletonBlock className="h-24 w-full min-w-[160px] shrink-0 sm:w-1/2" />
+      <SkeletonBlock className="h-52 w-full" />
+      <div className="grid gap-3 sm:grid-cols-3">
+        <SkeletonBlock className="h-24" />
+        <SkeletonBlock className="h-24" />
+        <SkeletonBlock className="h-24" />
       </div>
-      {/* Upcoming */}
-      <SkeletonBlock className="h-48 w-full" />
-      {/* Recent scores */}
+      <SkeletonBlock className="h-16 w-full" />
       <div className="space-y-3">
         <SkeletonBlock className="h-5 w-32" />
-        <SkeletonBlock className="h-16 w-full" />
-        <SkeletonBlock className="h-16 w-full" />
-        <SkeletonBlock className="h-16 w-full" />
+        <SkeletonBlock className="h-20 w-full" />
+        <SkeletonBlock className="h-20 w-full" />
       </div>
     </div>
   );
@@ -166,32 +188,12 @@ function DashboardSkeleton() {
 export default function DashboardPage() {
   const router = useRouter();
   const [data, setData] = useState<DashboardData | null>(null);
-  const [trips, setTrips] = useState<Trip[]>([]);
-  const [recentRounds, setRecentRounds] = useState<GameRound[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  // Trip creation form state
-  const [showForm, setShowForm] = useState(false);
-  const [name, setName] = useState("");
-  const [destination, setDestination] = useState("");
-  const [startDate, setStartDate] = useState("");
-  const [endDate, setEndDate] = useState("");
 
   useEffect(() => {
     const supabase = createClient();
     supabase.auth.getUser().then(async ({ data: { user } }) => {
-      if (user) {
-        const pendingInvite = sessionStorage.getItem("pendingInvite");
-        if (pendingInvite) {
-          sessionStorage.removeItem("pendingInvite");
-          router.push(`/invite/${pendingInvite}`);
-          return;
-        }
-        const [t, r] = await Promise.all([getTrips(), getGameRounds()]);
-        setTrips(t);
-        setRecentRounds(r.slice(0, 3));
-      } else {
+      if (!user) {
         router.push("/login");
         return;
       }
@@ -205,231 +207,183 @@ export default function DashboardPage() {
       }
 
       let dashData: DashboardData = EMPTY_DASHBOARD;
-      let tripsData: Trip[] = [];
-
       try {
-        const [dashRes, t] = await Promise.all([
-          fetch("/api/dashboard"),
-          getTrips().catch(() => [] as Trip[]),
-        ]);
-        tripsData = t;
-
-        if (dashRes.ok) {
-          dashData = await dashRes.json();
+        const res = await fetch("/api/dashboard");
+        if (res.ok) {
+          dashData = await res.json();
         }
       } catch {
-        // Network failure — show empty dashboard, not an error screen
         console.error("[Dashboard] Failed to fetch dashboard data");
       }
 
       setData(dashData);
-      setTrips(tripsData);
       setLoading(false);
     });
   }, [router]);
 
-  // --- Trip CRUD ---
-  async function handleCreateTrip(e: React.FormEvent) {
-    e.preventDefault();
-    if (!name.trim()) return;
-    setError(null);
-    try {
-      await createTrip({ name: name.trim(), destination: destination.trim(), startDate, endDate });
-      setName(""); setDestination(""); setStartDate(""); setEndDate("");
-      setShowForm(false);
-      setTrips(await getTrips());
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to create trip");
-    }
-  }
-
-  async function handleDeleteTrip(tripId: string) {
-    setError(null);
-    try {
-      await deleteTrip(tripId);
-      setTrips(await getTrips());
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to delete trip");
-    }
-  }
-
-  if (loading) {
+  if (loading || !data) {
     return (
-      <div className="flex min-h-[calc(100vh-64px)] items-center justify-center bg-zinc-950">
-        <p className="text-sm text-zinc-400">Loading...</p>
+      <div className="min-h-[calc(100vh-64px)] bg-zinc-950 px-4 py-10 sm:px-6">
+        <div className="mx-auto max-w-4xl">
+          <DashboardSkeleton />
+        </div>
       </div>
     );
   }
 
-  // --- Render ---
+  const netBalance = data.settlements.totalOwed - data.settlements.totalOwing;
+  const hasSettlements =
+    data.settlements.totalOwed > 0 || data.settlements.totalOwing > 0;
+
   return (
-    <div className="min-h-[calc(100vh-64px)] bg-zinc-950 px-6 py-10">
-      <div className="mx-auto max-w-5xl">
-        {/* Subscription upsell banner */}
-        {data && !data.subscriptionActive && (
-          <div className="mb-6 flex flex-col items-start gap-3 rounded-xl border border-zinc-800 bg-zinc-900 px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
-            <p className="text-sm text-zinc-300">
-              Your one free trip is active &mdash; upgrade anytime for unlimited trips.
+    <div className="min-h-[calc(100vh-64px)] bg-zinc-950 px-4 py-10 sm:px-6">
+      <div className="mx-auto max-w-4xl">
+        {/* ── Personalized Greeting ── */}
+        <div className="flex items-start justify-between">
+          <div>
+            <h1 className="text-2xl font-bold tracking-tight text-white sm:text-3xl">
+              {getGreeting()}, {data.user.firstName}.
+            </h1>
+            <p className="mt-1 text-sm text-zinc-400">{getTagline()}</p>
+          </div>
+          <div className="flex items-center gap-2">
+            <Link
+              href="/rounds/new"
+              className="inline-flex items-center gap-1.5 rounded-lg border border-zinc-700 bg-zinc-900 px-3 py-2 text-sm font-semibold text-zinc-300 transition-colors hover:bg-zinc-800"
+            >
+              <Trophy className="h-4 w-4" />
+              <span className="hidden sm:inline">Quick Round</span>
+            </Link>
+            <Link
+              href="/trips/new"
+              className="inline-flex items-center gap-1.5 rounded-lg bg-[#D94F2B] px-3 py-2 text-sm font-semibold text-white transition-colors hover:bg-[#c4442a]"
+            >
+              <Plus className="h-4 w-4" />
+              <span className="hidden sm:inline">New Trip</span>
+            </Link>
+          </div>
+        </div>
+
+        {/* ── Subscription upsell ── */}
+        {!data.subscriptionActive && (
+          <div className="mt-6 flex items-center justify-between rounded-lg border border-zinc-800 bg-zinc-900/60 px-4 py-3">
+            <p className="text-sm text-zinc-400">
+              Your one free trip is active &mdash; upgrade for unlimited.
             </p>
             <Link
               href="/pricing"
-              className="shrink-0 rounded-lg px-4 py-2 text-sm font-semibold text-white transition-colors"
-              style={{ backgroundColor: "#D94F2B" }}
+              className="shrink-0 rounded-md bg-[#D94F2B] px-3 py-1.5 text-xs font-semibold text-white hover:bg-[#c4442a]"
             >
               View Plans
             </Link>
           </div>
         )}
 
-        {error && (
-          <div className="mb-4 flex items-center gap-2 rounded-lg border border-red-800 bg-red-950 px-4 py-3 text-sm text-red-400">
-            <AlertCircle className="h-4 w-4 shrink-0" />
-            {error}
-          </div>
+        {/* ── Upcoming Round ── */}
+        {data.upcomingRound && (
+          <UpcomingRoundCard round={data.upcomingRound} />
         )}
 
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold tracking-tight text-white">My Trips</h1>
-            <p className="mt-1 text-sm text-zinc-400">Plan and manage your golf getaways.</p>
-          </div>
-          <div className="flex items-center gap-3">
-            <Link href="/rounds/new" className="inline-flex items-center gap-2 rounded-lg border border-zinc-700 bg-zinc-900 px-4 py-2.5 text-sm font-semibold text-zinc-300 transition-colors hover:bg-zinc-800">
-              <Trophy className="h-4 w-4" />
-              Quick Round
-            </Link>
-            <Link href="/trips/new" className="inline-flex items-center gap-2 rounded-lg px-4 py-2.5 text-sm font-semibold text-white transition-colors" style={{ backgroundColor: "#D94F2B" }}>
-              <Plus className="h-4 w-4" />
-              New Trip
-            </Link>
-          </div>
+        {/* ── Season Stats Row ── */}
+        <div className="mt-6 grid grid-cols-3 gap-3">
+          <StatCard
+            label="Season P&L"
+            value={moneyStr(data.seasonStats.totalMoneyNet)}
+            positive={data.seasonStats.totalMoneyNet >= 0}
+            icon={
+              data.seasonStats.totalMoneyNet >= 0 ? (
+                <TrendingUp className="h-4 w-4 text-emerald-400" />
+              ) : (
+                <TrendingDown className="h-4 w-4 text-red-400" />
+              )
+            }
+          />
+          <StatCard
+            label="Scoring Avg"
+            value={
+              data.seasonStats.scoringAvg
+                ? data.seasonStats.scoringAvg.toFixed(1)
+                : "—"
+            }
+            icon={<Target className="h-4 w-4 text-zinc-500" />}
+          />
+          <StatCard
+            label="Rounds This Month"
+            value={String(data.seasonStats.roundsThisMonth)}
+            icon={<Flame className="h-4 w-4 text-[#D94F2B]" />}
+          />
         </div>
 
-        {showForm && (
-          <form onSubmit={handleCreateTrip} className="mt-6 rounded-xl border border-zinc-800 bg-zinc-900 p-6">
-            <h2 className="text-lg font-semibold text-white">Create a New Trip</h2>
-            <div className="mt-4 grid gap-4 sm:grid-cols-2">
-              {[
-                { label: "Trip Name *", value: name, setter: setName, placeholder: "Scottsdale 2026", required: true },
-                { label: "Destination", value: destination, setter: setDestination, placeholder: "Scottsdale, AZ", required: false },
-              ].map((field) => (
-                <div key={field.label}>
-                  <label className="block text-sm font-medium text-zinc-300">{field.label}</label>
-                  <input type="text" required={field.required} value={field.value} onChange={(e) => field.setter(e.target.value)} placeholder={field.placeholder}
-                    className="mt-1 block w-full rounded-lg border border-zinc-700 bg-zinc-800 px-3 py-2 text-sm text-white placeholder:text-zinc-500 focus:border-[#D94F2B] focus:outline-none focus:ring-2 focus:ring-[#D94F2B]/20" />
-                </div>
-              ))}
-              {[
-                { label: "Start Date", value: startDate, setter: setStartDate },
-                { label: "End Date", value: endDate, setter: setEndDate },
-              ].map((field) => (
-                <div key={field.label}>
-                  <label className="block text-sm font-medium text-zinc-300">{field.label}</label>
-                  <input type="date" value={field.value} onChange={(e) => field.setter(e.target.value)}
-                    className="mt-1 block w-full rounded-lg border border-zinc-700 bg-zinc-800 px-3 py-2 text-sm text-white focus:border-[#D94F2B] focus:outline-none focus:ring-2 focus:ring-[#D94F2B]/20" />
-                </div>
-              ))}
-            </div>
-            <div className="mt-6 flex gap-3">
-              <button type="submit" className="rounded-lg px-5 py-2 text-sm font-semibold text-white transition-colors" style={{ backgroundColor: "#D94F2B" }}>
-                Create Trip
-              </button>
-              <button type="button" onClick={() => setShowForm(false)} className="rounded-lg border border-zinc-700 px-5 py-2 text-sm font-medium text-zinc-400 transition-colors hover:bg-zinc-800">
-                Cancel
-              </button>
-            </div>
-          </form>
+        {/* ── Settlement Banner ── */}
+        {hasSettlements && (
+          <SettlementBanner
+            settlements={data.settlements}
+            venmoUsername={data.user.venmoUsername}
+          />
         )}
 
-        {recentRounds.length > 0 && (
+        {/* ── Recent Rounds ── */}
+        {data.recentScores.length > 0 && (
           <div className="mt-8">
             <div className="flex items-center justify-between">
-              <h2 className="text-lg font-semibold text-white">Recent Rounds</h2>
-              <Link href="/rounds" className="text-sm font-medium text-[#D94F2B] hover:text-[#B83D25]">
-                View All &rarr;
+              <h2 className="text-lg font-semibold text-white">
+                Recent Rounds
+              </h2>
+              <Link
+                href="/rounds"
+                className="text-sm font-medium text-[#D94F2B] hover:text-[#c4442a]"
+              >
+                View All <ChevronRight className="inline h-3.5 w-3.5" />
               </Link>
             </div>
-            <div className="mt-3 grid gap-3 sm:grid-cols-3">
-              {recentRounds.map((round) => {
-                const bestScore = round.scorecards
-                  .filter((sc: any) => sc.total && sc.total > 0)
-                  .sort((a: any, b: any) => (a.total || 999) - (b.total || 999))[0];
-                return (
-                  <Link key={round.id} href={`/rounds/${round.id}`}
-                    className="rounded-lg border border-zinc-800 bg-zinc-900 p-4 transition-shadow hover:border-zinc-700">
-                    <p className="text-sm font-semibold text-white">{round.courseName}</p>
-                    <p className="mt-1 text-xs text-zinc-500">
-                      {new Date(round.teeTime).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
-                    </p>
-                    {bestScore && (
-                      <p className="mt-1 text-xs text-[#D94F2B]">Low: {bestScore.total}</p>
-                    )}
-                  </Link>
-                );
-              })}
+            <div className="mt-3 space-y-2">
+              {data.recentScores.map((score) => (
+                <RecentRoundRow key={score.roundId} score={score} />
+              ))}
             </div>
           </div>
         )}
 
-        {trips.length === 0 ? (
-                <div className="rounded-xl border border-zinc-800 bg-[#242424] px-5 py-10 text-center">
-                  <MapPin className="mx-auto h-10 w-10 text-zinc-600" />
-                  <p className="mt-3 text-sm font-medium text-zinc-400">
-                    No trips yet
-                  </p>
-                  <p className="mt-1 text-xs text-zinc-500">
-                    Create your first golf trip to get started.
-                  </p>
-                </div>
-              ) : (
-                <div className="grid gap-3 sm:grid-cols-2">
-                  {trips.map((trip) => (
-                    <div
-                      key={trip.id}
-                      className="group relative rounded-xl border border-zinc-800 bg-[#242424] p-4 transition-colors hover:border-zinc-700"
-                    >
-                      <button
-                        onClick={() => handleDeleteTrip(trip.id)}
-                        className="absolute right-3 top-3 rounded-md p-1.5 text-zinc-600 opacity-0 transition-all hover:bg-red-950/50 hover:text-red-400 group-hover:opacity-100"
-                        title="Delete trip"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </button>
-                      <Link href={`/trips/${trip.id}`} className="block">
-                        <h3 className="font-semibold text-[#F3EDE4]">
-                          {trip.name}
-                        </h3>
-                        {trip.destination && (
-                          <div className="mt-1.5 flex items-center gap-1.5 text-sm text-zinc-400">
-                            <MapPin className="h-3.5 w-3.5" />
-                            {trip.destination}
-                          </div>
-                        )}
-                        {(trip.startDate || trip.endDate) && (
-                          <div className="mt-1 flex items-center gap-1.5 text-sm text-zinc-400">
-                            <Calendar className="h-3.5 w-3.5" />
-                            {trip.startDate && trip.endDate
-                              ? `${trip.startDate} \u2014 ${trip.endDate}`
-                              : trip.startDate || trip.endDate}
-                          </div>
-                        )}
-                        <div className="mt-2 flex items-center gap-1.5 text-xs text-zinc-500">
-                          <Users className="h-3.5 w-3.5" />
-                          {trip.members.length} member
-                          {trip.members.length !== 1 ? "s" : ""}
-                        </div>
-                      </Link>
-                    </div>
-                  ))}
-                </div>
-              )}
+        {/* ── Quick Links ── */}
+        <div className="mt-8 grid gap-3 sm:grid-cols-2">
+          <Link
+            href="/trips"
+            className="group flex items-center gap-3 rounded-xl border border-zinc-800 bg-zinc-900/50 p-4 transition-colors hover:border-zinc-700"
+          >
+            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-zinc-800 text-zinc-400 group-hover:text-white">
+              <MapPin className="h-5 w-5" />
+            </div>
+            <div>
+              <p className="text-sm font-semibold text-white">My Trips</p>
+              <p className="text-xs text-zinc-500">
+                Plan and manage your golf getaways
+              </p>
+            </div>
+            <ChevronRight className="ml-auto h-4 w-4 text-zinc-600 group-hover:text-zinc-400" />
+          </Link>
+          <Link
+            href="/rounds"
+            className="group flex items-center gap-3 rounded-xl border border-zinc-800 bg-zinc-900/50 p-4 transition-colors hover:border-zinc-700"
+          >
+            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-zinc-800 text-zinc-400 group-hover:text-white">
+              <Trophy className="h-5 w-5" />
+            </div>
+            <div>
+              <p className="text-sm font-semibold text-white">All Rounds</p>
+              <p className="text-xs text-zinc-500">
+                Scores, skins, and Nassau bets
+              </p>
+            </div>
+            <ChevronRight className="ml-auto h-4 w-4 text-zinc-600 group-hover:text-zinc-400" />
+          </Link>
+        </div>
       </div>
     </div>
   );
 }
 
 // ---------------------------------------------------------------------------
-// Upcoming Round Card (extracted for clarity)
+// Upcoming Round Card
 // ---------------------------------------------------------------------------
 function UpcomingRoundCard({ round }: { round: UpcomingRound }) {
   const maxVisible = 4;
@@ -439,49 +393,61 @@ function UpcomingRoundCard({ round }: { round: UpcomingRound }) {
   return (
     <Link
       href={`/rounds/${round.id}`}
-      className="block overflow-hidden rounded-xl border border-zinc-800 transition-colors hover:border-zinc-700"
+      className="mt-6 block overflow-hidden rounded-xl border border-zinc-800 transition-colors hover:border-zinc-700"
     >
-      {/* Banner */}
+      {/* Banner image */}
       {round.coursePhotoUrl ? (
-        <div className="relative h-32 w-full">
+        <div className="relative h-36 w-full sm:h-44">
           <Image
             src={round.coursePhotoUrl}
             alt={round.courseName}
             fill
             className="object-cover"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-[#242424] to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/40 to-transparent" />
         </div>
       ) : (
-        <div className="h-24 w-full bg-gradient-to-r from-emerald-900 to-emerald-700" />
+        <div className="h-28 w-full bg-gradient-to-r from-emerald-900 to-emerald-700" />
       )}
 
       {/* Content */}
-      <div className="bg-[#242424] px-5 pb-4 pt-3 -mt-6 relative">
-        <p className="text-base font-bold text-[#F3EDE4]">
-          {round.courseName}
-        </p>
-        {round.courseLocation && (
-          <p className="mt-0.5 flex items-center gap-1 text-xs text-zinc-400">
-            <MapPin className="h-3 w-3" />
-            {round.courseLocation}
-          </p>
-        )}
+      <div className="relative -mt-10 bg-gradient-to-t from-zinc-900 to-transparent px-5 pb-5 pt-12">
+        <div className="flex items-start justify-between">
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-wider text-[#D94F2B]">
+              Next Up
+            </p>
+            <h3 className="mt-1 text-lg font-bold text-white">
+              {round.courseName}
+            </h3>
+            {round.courseLocation && (
+              <p className="mt-0.5 flex items-center gap-1 text-xs text-zinc-400">
+                <MapPin className="h-3 w-3" />
+                {round.courseLocation}
+              </p>
+            )}
+          </div>
+          <div className="text-right">
+            <p className="text-xs font-medium text-zinc-400">
+              {formatTeeTime(round.teeTime)}
+            </p>
+            <p className="mt-0.5 text-xs font-semibold text-[#D94F2B]">
+              {getCountdown(round.teeTime)}
+            </p>
+          </div>
+        </div>
 
-        <div className="mt-2 flex items-center gap-4">
-          <span className="flex items-center gap-1 text-xs text-zinc-400">
-            <Clock className="h-3 w-3" />
-            {formatTeeTime(round.teeTime)}
-          </span>
-
+        <div className="mt-3 flex items-center gap-4">
           {/* Weather */}
           {round.weather && round.weather.temp !== undefined && (
-            <span className="flex items-center gap-1 text-xs text-zinc-400">
-              <CloudSun className="h-3 w-3" />
-              {Math.round(round.weather.temp)}&deg;
+            <span className="flex items-center gap-1.5 text-xs text-zinc-400">
+              <CloudSun className="h-3.5 w-3.5" />
+              {Math.round(round.weather.temp)}&deg;F
               {round.weather.wind !== undefined && (
                 <>
-                  <Wind className="ml-1 h-3 w-3" />
+                  {" "}
+                  &middot;{" "}
+                  <Wind className="h-3 w-3" />
                   {Math.round(round.weather.wind)} mph
                 </>
               )}
@@ -489,24 +455,218 @@ function UpcomingRoundCard({ round }: { round: UpcomingRound }) {
           )}
         </div>
 
-        {/* Player pills */}
+        {/* Player avatars */}
         {round.players.length > 0 && (
-          <div className="mt-3 flex flex-wrap gap-1.5">
+          <div className="mt-3 flex items-center gap-1.5">
             {visiblePlayers.map((p) => (
               <span
                 key={p.id}
-                className="rounded-full bg-[#1A1A1A] px-2.5 py-0.5 text-xs font-medium text-zinc-300"
+                className="flex h-7 w-7 items-center justify-center rounded-full bg-zinc-800 text-[10px] font-bold uppercase text-zinc-300 ring-2 ring-zinc-900"
+                title={p.name}
               >
-                {p.name}
+                {p.name
+                  .split(" ")
+                  .map((n) => n[0])
+                  .join("")
+                  .slice(0, 2)}
               </span>
             ))}
             {overflow > 0 && (
-              <span className="rounded-full bg-[#1A1A1A] px-2.5 py-0.5 text-xs font-medium text-zinc-500">
+              <span className="flex h-7 w-7 items-center justify-center rounded-full bg-zinc-800 text-[10px] font-medium text-zinc-500 ring-2 ring-zinc-900">
                 +{overflow}
               </span>
             )}
+            <span className="ml-2 text-xs text-zinc-500">
+              {round.players.length} player
+              {round.players.length !== 1 ? "s" : ""}
+            </span>
           </div>
         )}
+      </div>
+    </Link>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Stat Card
+// ---------------------------------------------------------------------------
+function StatCard({
+  label,
+  value,
+  icon,
+  positive,
+}: {
+  label: string;
+  value: string;
+  icon: React.ReactNode;
+  positive?: boolean;
+}) {
+  return (
+    <div className="rounded-xl border border-zinc-800 bg-zinc-900/50 p-4">
+      <div className="flex items-center gap-1.5">
+        {icon}
+        <span className="text-xs font-medium text-zinc-500">{label}</span>
+      </div>
+      <p
+        className={`mt-1 text-xl font-bold tracking-tight ${
+          positive === true
+            ? "text-emerald-400"
+            : positive === false
+              ? "text-red-400"
+              : "text-white"
+        }`}
+      >
+        {value}
+      </p>
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Settlement Banner
+// ---------------------------------------------------------------------------
+function SettlementBanner({
+  settlements,
+  venmoUsername,
+}: {
+  settlements: DashboardData["settlements"];
+  venmoUsername: string | null;
+}) {
+  const net = settlements.totalOwed - settlements.totalOwing;
+  const isPositive = net >= 0;
+
+  return (
+    <div className="mt-6 rounded-xl border border-zinc-800 bg-zinc-900/60 p-4">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <div
+            className={`flex h-9 w-9 items-center justify-center rounded-lg ${
+              isPositive ? "bg-emerald-950 text-emerald-400" : "bg-red-950 text-red-400"
+            }`}
+          >
+            <DollarSign className="h-5 w-5" />
+          </div>
+          <div>
+            <p className="text-xs font-medium text-zinc-500">
+              Outstanding Balance
+            </p>
+            <p
+              className={`text-lg font-bold ${
+                isPositive ? "text-emerald-400" : "text-red-400"
+              }`}
+            >
+              {isPositive ? "+" : "-"}${Math.abs(net).toFixed(2)}
+            </p>
+          </div>
+        </div>
+        <div className="flex items-center gap-2">
+          {settlements.totalOwed > 0 && (
+            <span className="text-xs text-zinc-500">
+              Owed to you: ${settlements.totalOwed.toFixed(2)}
+            </span>
+          )}
+          {settlements.totalOwing > 0 && (
+            <span className="text-xs text-zinc-500">
+              You owe: ${settlements.totalOwing.toFixed(2)}
+            </span>
+          )}
+        </div>
+      </div>
+      {/* Settlement details */}
+      {(settlements.owed.length > 0 || settlements.owing.length > 0) && (
+        <div className="mt-3 space-y-1.5">
+          {settlements.owing.map((s, i) => (
+            <div
+              key={`owing-${i}`}
+              className="flex items-center justify-between rounded-lg bg-zinc-800/50 px-3 py-2"
+            >
+              <span className="text-xs text-zinc-400">
+                You owe <span className="font-medium text-zinc-300">{s.toUser}</span>
+                {s.roundNote && (
+                  <span className="text-zinc-600"> &middot; {s.roundNote}</span>
+                )}
+              </span>
+              <div className="flex items-center gap-2">
+                <span className="text-xs font-semibold text-red-400">
+                  ${s.amount.toFixed(2)}
+                </span>
+                {venmoUsername && (
+                  <a
+                    href={`venmo://paycharge?txn=pay&amount=${s.amount.toFixed(2)}`}
+                    className="rounded-md bg-[#D94F2B] px-2 py-0.5 text-[10px] font-bold text-white hover:bg-[#c4442a]"
+                  >
+                    Pay
+                  </a>
+                )}
+              </div>
+            </div>
+          ))}
+          {settlements.owed.map((s, i) => (
+            <div
+              key={`owed-${i}`}
+              className="flex items-center justify-between rounded-lg bg-zinc-800/50 px-3 py-2"
+            >
+              <span className="text-xs text-zinc-400">
+                <span className="font-medium text-zinc-300">{s.fromUser}</span>{" "}
+                owes you
+                {s.roundNote && (
+                  <span className="text-zinc-600"> &middot; {s.roundNote}</span>
+                )}
+              </span>
+              <span className="text-xs font-semibold text-emerald-400">
+                ${s.amount.toFixed(2)}
+              </span>
+            </div>
+          ))}
+        </div>
+      )}
+      <Link
+        href="/settlements"
+        className="mt-3 inline-flex items-center gap-1 text-xs font-medium text-[#D94F2B] hover:text-[#c4442a]"
+      >
+        View all settlements
+        <ChevronRight className="h-3 w-3" />
+      </Link>
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Recent Round Row
+// ---------------------------------------------------------------------------
+function RecentRoundRow({ score }: { score: RecentScore }) {
+  return (
+    <Link
+      href={`/rounds/${score.roundId}`}
+      className="flex items-center justify-between rounded-lg border border-zinc-800 bg-zinc-900/40 px-4 py-3 transition-colors hover:border-zinc-700"
+    >
+      <div className="flex items-center gap-3">
+        <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-zinc-800">
+          <span className="text-sm font-bold text-white">{score.score}</span>
+        </div>
+        <div>
+          <p className="text-sm font-medium text-white">{score.courseName}</p>
+          <p className="text-xs text-zinc-500">{formatShortDate(score.date)}</p>
+        </div>
+      </div>
+      <div className="flex items-center gap-3">
+        {score.isPersonalBest && (
+          <span className="flex items-center gap-1 rounded-full bg-amber-950/50 px-2 py-0.5 text-[10px] font-bold text-amber-400">
+            <Star className="h-3 w-3" /> PB
+          </span>
+        )}
+        <span
+          className={`text-sm font-bold ${
+            score.moneyNet > 0
+              ? "text-emerald-400"
+              : score.moneyNet < 0
+                ? "text-red-400"
+                : "text-zinc-500"
+          }`}
+        >
+          {score.moneyNet !== 0 ? moneyStr(score.moneyNet) : "—"}
+        </span>
+        <ChevronRight className="h-4 w-4 text-zinc-600" />
       </div>
     </Link>
   );
