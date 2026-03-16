@@ -152,6 +152,10 @@ export default function RoundDashboardPage() {
   const [showAddNassau, setShowAddNassau] = useState(false);
   const [nassauBetAmount, setNassauBetAmount] = useState("10");
 
+  // Start Round overlay state
+  const [showStartOverlay, setShowStartOverlay] = useState(false);
+  const [overlayPhase, setOverlayPhase] = useState<"in" | "hold" | "out">("in");
+
   const refresh = useCallback(async () => {
     const r = await getGameRound(roundId);
     if (r) {
@@ -521,6 +525,25 @@ export default function RoundDashboardPage() {
     }
   }
 
+  async function handleStartRound() {
+    try {
+      if (navigator?.vibrate) navigator.vibrate([100, 50, 100]);
+    } catch { /* not supported */ }
+
+    setShowStartOverlay(true);
+    setOverlayPhase("in");
+
+    // Hold phase after fade-in
+    setTimeout(() => setOverlayPhase("hold"), 200);
+    // Fade out
+    setTimeout(() => setOverlayPhase("out"), 1200);
+    // Dismiss and trigger status change
+    setTimeout(async () => {
+      setShowStartOverlay(false);
+      await handleStatusChange("in_progress");
+    }, 1500);
+  }
+
   async function handleStartingHoleChange(hole: number) {
     setError(null);
     try {
@@ -674,7 +697,7 @@ export default function RoundDashboardPage() {
             <div className="flex items-center gap-2">
               {isCommissioner && round.status === "upcoming" && (
                 <button
-                  onClick={() => handleStatusChange("in_progress")}
+                  onClick={handleStartRound}
                   className="rounded-lg bg-[#D94F2B] px-3 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-[#B83D25]"
                 >
                   Start Round
@@ -803,6 +826,45 @@ export default function RoundDashboardPage() {
             ))}
           </div>
         </div>
+
+        {/* Ready to Tee Off CTA */}
+        {isCommissioner && round.status === "upcoming" && (
+          <div className="mt-6 rounded-xl border border-zinc-200 bg-white p-6 shadow-sm text-center">
+            <p className="text-sm font-medium text-zinc-500">Ready to tee off?</p>
+            <button
+              onClick={handleStartRound}
+              className="mt-3 w-full rounded-xl bg-[#D94F2B] py-5 text-lg font-bold text-white transition-colors hover:bg-[#B83D25] active:scale-[0.98]"
+            >
+              Start Round 🏌️
+            </button>
+          </div>
+        )}
+
+        {/* Start Round Overlay */}
+        {showStartOverlay && (
+          <div
+            className="fixed inset-0 z-50 flex flex-col items-center justify-center"
+            style={{
+              backgroundColor: "#0A0A0A",
+              opacity: overlayPhase === "in" ? 0 : overlayPhase === "out" ? 0 : 1,
+              transition: "opacity 200ms ease-in-out",
+            }}
+          >
+            <div
+              className="text-7xl font-extrabold"
+              style={{
+                color: "#D94F2B",
+                animation: "pulse 0.6s ease-in-out infinite",
+              }}
+            >
+              N
+            </div>
+            <p className="mt-4 text-lg font-bold" style={{ color: "#F3EDE4" }}>
+              Round Started
+            </p>
+            <style>{`@keyframes pulse { 0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.1); opacity: 0.85; } }`}</style>
+          </div>
+        )}
 
         {/* Scorecard */}
         <div className="mt-6 rounded-xl border border-zinc-200 bg-white p-6 shadow-sm">
