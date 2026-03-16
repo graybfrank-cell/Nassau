@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useCallback, useEffect } from "react";
+import React, { useState, useRef, useCallback, useEffect } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
 interface MobileScorecardProps {
@@ -38,11 +38,33 @@ function getScoreLabel(score: number, par: number): string {
 function getScoreColor(score: number, par: number): string {
   if (!score || !par) return "border-zinc-700 bg-zinc-800 text-zinc-400";
   const diff = score - par;
-  if (diff <= -2) return "border-amber-500 bg-amber-950/50 text-amber-400";
-  if (diff === -1) return "border-emerald-500 bg-emerald-950/50 text-emerald-400";
-  if (diff === 0) return "border-zinc-600 bg-zinc-800 text-white";
-  if (diff === 1) return "border-red-700 bg-red-950/50 text-red-400";
-  return "border-red-500 bg-red-950/50 text-red-300";
+  if (diff <= -2) return "border-amber-500 bg-amber-950/50";
+  if (diff === -1) return "border-emerald-500 bg-emerald-950/50";
+  if (diff === 0) return "border-zinc-600 bg-zinc-800";
+  if (diff === 1) return "border-red-700 bg-red-950/50";
+  if (diff === 2) return "border-red-500 bg-red-950/50";
+  return "border-red-800 bg-red-950/50";
+}
+
+function getScoreTextStyle(score: number, par: number): React.CSSProperties {
+  if (!score || !par) return { color: "#9ca3af" };
+  const diff = score - par;
+  if (diff <= -2) return { color: "#FFD700", filter: "drop-shadow(0 0 6px #FFD700)" };
+  if (diff === -1) return { color: "#22C55E" };
+  if (diff === 0) return { color: "#F3EDE4" };
+  if (diff === 1) return { color: "#FCA5A5" };
+  if (diff === 2) return { color: "#EF4444" };
+  return { color: "#991B1B" };
+}
+
+function triggerHaptic(pattern: number | number[]) {
+  try {
+    if (navigator?.vibrate) {
+      navigator.vibrate(pattern);
+    }
+  } catch {
+    // Not supported
+  }
 }
 
 function getHoleOrder(startingHole: number): number[] {
@@ -68,10 +90,12 @@ export default function MobileScorecard({
   nassauStatus,
 }: MobileScorecardProps) {
   const [currentHolePosition, setCurrentHolePosition] = useState(0);
+  const [autoAdvanceCountdown, setAutoAdvanceCountdown] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const touchStartX = useRef<number>(0);
   const touchDeltaX = useRef<number>(0);
   const saveTimers = useRef<Record<string, NodeJS.Timeout>>({});
+  const autoAdvanceTimer = useRef<NodeJS.Timeout | null>(null);
 
   const defaultPars = pars || [4, 4, 4, 3, 5, 4, 3, 4, 5, 4, 4, 3, 5, 4, 4, 3, 4, 5];
   const holeOrder = getHoleOrder(startingHole);
@@ -87,8 +111,38 @@ export default function MobileScorecard({
     [scorecards]
   );
 
+  // Auto-advance: when all players have a score for the current hole, advance after 800ms
+  useEffect(() => {
+    if (autoAdvanceTimer.current) {
+      clearTimeout(autoAdvanceTimer.current);
+      autoAdvanceTimer.current = null;
+    }
+    setAutoAdvanceCountdown(false);
+
+    const allScored = players.every((p) => {
+      const sc = scorecards.find((s) => s.playerId === p.id);
+      return (sc?.holes[currentHoleIndex] || 0) > 0;
+    });
+
+    if (allScored && currentHolePosition < 17) {
+      setAutoAdvanceCountdown(true);
+      autoAdvanceTimer.current = setTimeout(() => {
+        setAutoAdvanceCountdown(false);
+        setCurrentHolePosition((prev) => Math.min(prev + 1, 17));
+      }, 800);
+    }
+
+    return () => {
+      if (autoAdvanceTimer.current) {
+        clearTimeout(autoAdvanceTimer.current);
+      }
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [scorecards, currentHoleIndex, currentHolePosition, players]);
+
   function handleScoreInput(playerId: string, value: number) {
     if (readOnly && !canEditAll) return;
+    triggerHaptic(30);
     onScoreChange(playerId, currentHoleIndex, value);
 
     // Debounced save
@@ -98,6 +152,7 @@ export default function MobileScorecard({
     saveTimers.current[playerId] = setTimeout(() => {
       const holes = [...getPlayerScores(playerId)];
       holes[currentHoleIndex] = value;
+      triggerHaptic([50, 30, 50]);
       onSave(playerId, holes);
     }, 600);
   }
@@ -283,6 +338,7 @@ export default function MobileScorecard({
                   {/* Score display */}
                   <div
                     className={`flex h-12 w-12 items-center justify-center rounded-xl border-2 text-lg font-bold ${getScoreColor(currentScore, currentPar)}`}
+                    style={getScoreTextStyle(currentScore, currentPar)}
                   >
                     {currentScore || "—"}
                   </div>
@@ -322,6 +378,20 @@ export default function MobileScorecard({
             );
           })}
         </div>
+
+        {/* Auto-advance countdown bar */}
+        {autoAdvanceCountdown && (
+          <div className="mt-3 h-1 w-full overflow-hidden rounded-full bg-zinc-800">
+            <div
+              className="h-full rounded-full"
+              style={{
+                backgroundColor: "#D94F2B",
+                animation: "shrinkBar 800ms linear forwards",
+              }}
+            />
+            <style>{`@keyframes shrinkBar { from { width: 100%; } to { width: 0%; } }`}</style>
+          </div>
+        )}
 
         {/* Nassau status */}
         {nassauStatus && (
