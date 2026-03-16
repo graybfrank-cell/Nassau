@@ -31,7 +31,8 @@ export async function generateMetadata({
     }
 
     const confirmedPlayers = round.players.filter(
-      (p) => p.status === "confirmed" || p.role === "COMMISSIONER"
+      (p: { status: string; role: string }) =>
+        p.status === "confirmed" || p.role === "COMMISSIONER"
     );
 
     const isRecap = round.status === "completed";
