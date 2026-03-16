@@ -67,7 +67,7 @@ interface SettlementItem {
 }
 
 interface DashboardData {
-  user: { firstName: string; venmoUsername: string | null };
+  user: { fullName: string; firstName: string; venmoUsername: string | null };
   subscriptionActive?: boolean;
   upcomingRound: UpcomingRound | null;
   recentScores: RecentScore[];
@@ -86,7 +86,7 @@ interface DashboardData {
 }
 
 const EMPTY_DASHBOARD: DashboardData = {
-  user: { firstName: "Golfer", venmoUsername: null },
+  user: { fullName: "Golfer", firstName: "Golfer", venmoUsername: null },
   upcomingRound: null,
   recentScores: [],
   settlements: { owed: [], owing: [], totalOwed: 0, totalOwing: 0 },
@@ -242,7 +242,7 @@ export default function DashboardPage() {
         <div className="flex items-start justify-between">
           <div>
             <h1 className="text-2xl font-bold tracking-tight text-white sm:text-3xl">
-              {getGreeting()}, {data.user.firstName}.
+              {getGreeting()}, {data.user.fullName}.
             </h1>
             <p className="mt-1 text-sm text-zinc-400">{getTagline()}</p>
           </div>
