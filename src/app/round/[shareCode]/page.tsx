@@ -629,8 +629,17 @@ export default function RoundSharePage() {
               </div>
             )}
 
+            {/* View Full Recap link */}
+            <Link
+              href={`/round/${shareCode}/recap`}
+              className="mt-4 flex items-center justify-center gap-1.5 rounded-xl border border-[#D94F2B] bg-white py-3 text-sm font-bold text-[#D94F2B] transition-colors hover:bg-[#D94F2B]/5 active:scale-[0.98]"
+            >
+              View Full Recap
+              <ChevronRight className="h-4 w-4" />
+            </Link>
+
             {/* CTAs */}
-            <div className="mt-6 flex gap-3">
+            <div className="mt-3 flex gap-3">
               <button
                 onClick={handleShare}
                 className="flex-1 rounded-xl border border-[#E2D9CC] bg-white py-3 text-sm font-bold text-[#1A1A1A] transition-colors hover:bg-[#F3EDE4] active:scale-[0.98]"

@@ -13,7 +13,7 @@ export async function GET(
       include: {
         players: { select: { id: true, name: true, status: true, role: true } },
         skins_game: { select: { buy_in: true, results: true } },
-        nassau_bet: { select: { bet_amount: true } },
+        nassau_bet: { select: { bet_amount: true, results: true } },
         commissioner: { select: { full_name: true, email: true } },
         scorecards: { select: { player_id: true, holes: true, total: true } },
         settlements: {
@@ -73,6 +73,7 @@ export async function GET(
       nassau_bet_amount: round.nassau_bet
         ? Number(round.nassau_bet.bet_amount)
         : null,
+      nassau_results: round.nassau_bet?.results ?? null,
       awards: round.awards ?? [],
     });
   } catch {
