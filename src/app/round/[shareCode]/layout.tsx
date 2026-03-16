@@ -31,7 +31,7 @@ export async function generateMetadata({
     }
 
     const confirmedPlayers = round.players.filter(
-      (p: { status: string; role: string }) =>
+      (p: { id: string; name: string; status: string; role: string }) =>
         p.status === "confirmed" || p.role === "COMMISSIONER"
     );
 
@@ -43,7 +43,7 @@ export async function generateMetadata({
     const title = `${round.course_name} — ${statusLabel} | Nassau`;
 
     // Build description
-    const playerNames = confirmedPlayers.map((p) => p.name).join(", ");
+    const playerNames = confirmedPlayers.map((p: { name: string }) => p.name).join(", ");
     const teeDate = round.tee_time
       ? new Date(round.tee_time).toLocaleDateString("en-US", {
           weekday: "short",
@@ -67,8 +67,8 @@ export async function generateMetadata({
 
     // Players + scores sorted by total
     const playerScores = confirmedPlayers
-      .map((p) => {
-        const sc = round.scorecards.find((s) => s.player_id === p.id);
+      .map((p: { id: string; name: string }) => {
+        const sc = round.scorecards.find((s: { player_id: string; total: number }) => s.player_id === p.id);
         return { name: p.name, id: p.id, total: sc?.total ?? 0 };
       })
       .sort((a, b) => {
@@ -101,7 +101,7 @@ export async function generateMetadata({
         const [topId] = payoutEntries.reduce((best, curr) =>
           (curr[1] as number) > (best[1] as number) ? curr : best
         );
-        const skinsWinner = confirmedPlayers.find((p) => p.id === topId)?.name;
+        const skinsWinner = confirmedPlayers.find((p: { id: string; name: string }) => p.id === topId)?.name;
         if (skinsWinner) ogParams.set("skinsWinner", skinsWinner);
       }
     }
