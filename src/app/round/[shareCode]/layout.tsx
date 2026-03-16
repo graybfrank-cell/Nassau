@@ -71,7 +71,7 @@ export async function generateMetadata({
         const sc = round.scorecards.find((s: { player_id: string; total: number }) => s.player_id === p.id);
         return { name: p.name, id: p.id, total: sc?.total ?? 0 };
       })
-      .sort((a, b) => {
+      .sort((a: { total: number }, b: { total: number }) => {
         if (a.total === 0 && b.total === 0) return 0;
         if (a.total === 0) return 1;
         if (b.total === 0) return -1;
@@ -79,10 +79,10 @@ export async function generateMetadata({
       })
       .slice(0, 6);
 
-    ogParams.set("players", playerScores.map((p) => p.name).join(","));
+    ogParams.set("players", playerScores.map((p: { name: string }) => p.name).join(","));
     ogParams.set(
       "scores",
-      playerScores.map((p) => (p.total > 0 ? String(p.total) : "—")).join(",")
+      playerScores.map((p: { total: number }) => (p.total > 0 ? String(p.total) : "—")).join(",")
     );
 
     // Winner
