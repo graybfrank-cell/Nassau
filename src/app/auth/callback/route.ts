@@ -56,6 +56,12 @@ export async function GET(request: Request) {
     requestUrl.pathname + requestUrl.search
   );
 
+  // Check for a `next` redirect param (e.g. /round/[shareCode])
+  const next = searchParams.get("next");
+  // Validate: only allow /round/ or /rounds/ paths to prevent open redirect
+  const isValidNext =
+    next && (next.startsWith("/round/") || next.startsWith("/rounds/"));
+
   try {
     const supabase = await createClient();
 
@@ -67,6 +73,9 @@ export async function GET(request: Request) {
         return NextResponse.redirect(
           `${baseUrl}/login?error=auth_failed&message=${encodeURIComponent(error.message)}`
         );
+      }
+      if (isValidNext) {
+        return NextResponse.redirect(`${baseUrl}${next}`);
       }
       return NextResponse.redirect(await getPostLoginRedirect(baseUrl));
     }
@@ -82,6 +91,9 @@ export async function GET(request: Request) {
         return NextResponse.redirect(
           `${baseUrl}/login?error=auth_failed&message=${encodeURIComponent(error.message)}`
         );
+      }
+      if (isValidNext) {
+        return NextResponse.redirect(`${baseUrl}${next}`);
       }
       return NextResponse.redirect(await getPostLoginRedirect(baseUrl));
     }
