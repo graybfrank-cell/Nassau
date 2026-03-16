@@ -151,7 +151,16 @@ export default function RoundSharePage() {
       const {
         data: { user },
       } = await supabase.auth.getUser();
-      if (user) setUserId(user.id);
+      if (user) {
+        setUserId(user.id);
+        // Clear pending invite if it matches this round
+        if (typeof window !== "undefined") {
+          const pending = sessionStorage.getItem("pendingRoundInvite");
+          if (pending === shareCode) {
+            sessionStorage.removeItem("pendingRoundInvite");
+          }
+        }
+      }
     }
     init();
     // eslint-disable-next-line react-hooks/exhaustive-deps
