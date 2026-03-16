@@ -74,6 +74,7 @@ export default function NavBar({ user }: { user: User }) {
             <a href="https://x.com/UseNassauGolf" target="_blank" rel="noopener noreferrer" className={`transition-colors ${nav.icon}`} aria-label="X/Twitter">
               <XIcon />
             </a>
+            <Link href="/pricing" className={`text-sm font-medium transition-colors ${nav.link}`}>Pricing</Link>
             <Link href="/login" className="rounded-md bg-[#D94F2B] px-4 py-1.5 text-sm font-medium text-white transition-colors hover:bg-[#c4442a]">
               Sign In
             </Link>

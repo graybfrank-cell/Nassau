@@ -1,5 +1,29 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { createServiceClient } from "@/lib/supabase/admin";
+
+async function getPostLoginRedirect(baseUrl: string): Promise<string> {
+  try {
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return `${baseUrl}/dashboard`;
+
+    const admin = createServiceClient();
+    const { data: profile } = await admin
+      .from("profiles")
+      .select("subscription_status")
+      .eq("id", user.id)
+      .single();
+
+    const status = profile?.subscription_status;
+    if (status === "active" || status === "trialing") {
+      return `${baseUrl}/dashboard`;
+    }
+    return `${baseUrl}/pricing`;
+  } catch {
+    return `${baseUrl}/dashboard`;
+  }
+}
 
 function getBaseUrl(request: Request): string {
   // On Vercel, request.url origin can be internal. Use x-forwarded-host
@@ -44,7 +68,7 @@ export async function GET(request: Request) {
           `${baseUrl}/login?error=auth_failed&message=${encodeURIComponent(error.message)}`
         );
       }
-      return NextResponse.redirect(`${baseUrl}/dashboard`);
+      return NextResponse.redirect(await getPostLoginRedirect(baseUrl));
     }
 
     if (token_hash && type) {
@@ -59,7 +83,7 @@ export async function GET(request: Request) {
           `${baseUrl}/login?error=auth_failed&message=${encodeURIComponent(error.message)}`
         );
       }
-      return NextResponse.redirect(`${baseUrl}/dashboard`);
+      return NextResponse.redirect(await getPostLoginRedirect(baseUrl));
     }
 
     console.error(
