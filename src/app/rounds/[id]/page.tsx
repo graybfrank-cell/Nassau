@@ -22,6 +22,7 @@ import {
 import { GameRound } from "@/lib/types";
 import { generateRoundSummary } from "@/lib/round-summary";
 import ScorecardGrid from "@/components/shared/ScorecardGrid";
+import MobileScorecard from "@/components/shared/MobileScorecard";
 import SkinsCalculator from "@/components/shared/SkinsCalculator";
 import NassauBetCalculator from "@/components/shared/NassauBetCalculator";
 import ExpenseList from "@/components/shared/ExpenseList";
@@ -823,17 +824,34 @@ export default function RoundDashboardPage() {
               No confirmed players yet. Add players to start entering scores.
             </p>
           ) : (
-            <ScorecardGrid
-              players={confirmedPlayers.map((p: any) => ({
-                id: p.id,
-                name: p.name,
-              }))}
-              scorecards={gridScorecards}
-              onScoreChange={handleScoreChange}
-              onSave={handleSaveScorecard}
-              canEditAll={isCommissioner}
-              startingHole={round.startingHole}
-            />
+            <>
+              {/* Mobile: hole-by-hole swipeable scorecard */}
+              <MobileScorecard
+                players={confirmedPlayers.map((p: any) => ({
+                  id: p.id,
+                  name: p.name,
+                }))}
+                scorecards={gridScorecards}
+                onScoreChange={handleScoreChange}
+                onSave={handleSaveScorecard}
+                canEditAll={isCommissioner}
+                startingHole={round.startingHole}
+              />
+              {/* Desktop: full 18-hole grid */}
+              <div className="hidden sm:block">
+                <ScorecardGrid
+                  players={confirmedPlayers.map((p: any) => ({
+                    id: p.id,
+                    name: p.name,
+                  }))}
+                  scorecards={gridScorecards}
+                  onScoreChange={handleScoreChange}
+                  onSave={handleSaveScorecard}
+                  canEditAll={isCommissioner}
+                  startingHole={round.startingHole}
+                />
+              </div>
+            </>
           )}
         </div>
 
