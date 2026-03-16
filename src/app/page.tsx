@@ -148,18 +148,18 @@ export default async function Home() {
 
             <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
               <Link
-                href="/login"
+                href="/pricing"
                 className="group inline-flex items-center gap-2 rounded-xl bg-[#D94F2B] px-8 py-4 text-base font-bold text-white shadow-lg shadow-[#D94F2B]/20 transition-all hover:bg-[#D94F2B] hover:shadow-[#D94F2B]/20 hover:-translate-y-0.5"
               >
                 Start Free — No Card Required
                 <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
               </Link>
-              <a
-                href="#trip-planner"
+              <Link
+                href="/pricing"
                 className="inline-flex items-center gap-2 rounded-xl border border-zinc-700 px-8 py-4 text-base font-semibold text-zinc-300 transition-colors hover:bg-zinc-800 hover:text-white"
               >
-                See How It Works
-              </a>
+                View Pricing
+              </Link>
             </div>
 
             {/* Social proof */}
