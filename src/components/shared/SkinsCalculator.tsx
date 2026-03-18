@@ -39,19 +39,34 @@ function calculateSkins(
   let carryover = 0;
 
   for (let i = 0; i < 18; i++) {
-    const idx = holeOrder[i];
+    const idx = holeOrder[i];       // array index (0-17) for score lookup
+    const displayHole = idx + 1;    // actual golf hole number (1-18)
+
+    // Only award/carry if ALL players have posted a score for this hole
+    const allPlayersPosted = playerIds.every((id) => {
+      const sc = scorecards.find((s) => s.playerId === id);
+      return sc && sc.holes[idx] != null && sc.holes[idx] > 0;
+    });
+
+    if (!allPlayersPosted) {
+      holeResults.push({
+        hole: displayHole,
+        holeIndex: idx,
+        winnerId: null,
+        skinsValue: 0,
+        carryover: false,
+      });
+      continue;
+    }
+
     const scores: { playerId: string; score: number }[] = [];
 
     for (const sc of scorecards) {
       if (!playerIds.includes(sc.playerId)) continue;
-      if (sc.holes[idx] && sc.holes[idx] > 0) {
-        scores.push({ playerId: sc.playerId, score: sc.holes[idx] });
+      const score = sc.holes[idx];
+      if (score != null && score > 0) {
+        scores.push({ playerId: sc.playerId, score });
       }
-    }
-
-    if (scores.length === 0) {
-      holeResults.push({ hole: idx + 1, holeIndex: idx, winnerId: null, skinsValue: 0, carryover: false });
-      continue;
     }
 
     const minScore = Math.min(...scores.map((s) => s.score));
@@ -60,13 +75,26 @@ function calculateSkins(
     if (winners.length === 1) {
       const winnerId = winners[0].playerId;
       const skinsValue = 1 + carryover;
-      holeResults.push({ hole: idx + 1, holeIndex: idx, winnerId, skinsValue, carryover: false });
+      holeResults.push({
+        hole: displayHole,
+        holeIndex: idx,
+        winnerId,
+        skinsValue,
+        carryover: false,
+      });
       totals[winnerId].skins += skinsValue;
       totals[winnerId].winnings += skinsValue * buyIn;
       carryover = 0;
     } else {
+      // Tie — carry over to next hole
       carryover += 1;
-      holeResults.push({ hole: idx + 1, holeIndex: idx, winnerId: null, skinsValue: 0, carryover: true });
+      holeResults.push({
+        hole: displayHole,
+        holeIndex: idx,
+        winnerId: null,
+        skinsValue: 0,
+        carryover: true,
+      });
     }
   }
 
