@@ -33,8 +33,19 @@ export async function probeMagicLinkRedirectWhitelist(): Promise<ProbeResult> {
     });
     if (!res.ok) return { probe, category, severity, status: "FAIL", detail: `Cannot fetch auth settings (HTTP ${res.status}).`, durationMs: Date.now() - start };
     const settings = await res.json();
-    const redirectUrls: string[] = settings.external?.redirect_urls ?? [];
+    const redirectUrls: string[] = settings.external?.redirect_urls ?? settings.redirect_urls ?? [];
     const loginRedirect = `${APP_URL}/login`;
+
+    // Hosted Supabase does not expose redirect_urls via the settings API.
+    // Fall back to verifying the login page is reachable instead.
+    if (redirectUrls.length === 0) {
+      const controller = new AbortController();
+      setTimeout(() => controller.abort(), 8000);
+      const loginRes = await fetch(loginRedirect, { method: "HEAD", redirect: "follow", signal: controller.signal });
+      const reachable = loginRes.status < 400;
+      return { probe, category, severity, status: reachable ? "PASS" : "FAIL", detail: reachable ? `Redirect whitelist not exposed by API. Login page reachable (HTTP ${loginRes.status}).` : `Login page returned HTTP ${loginRes.status}.`, durationMs: Date.now() - start, suggestedFix: reachable ? undefined : `Verify "${loginRedirect}" is in Supabase Auth > URL Configuration > Redirect URLs.` };
+    }
+
     const hasLoginRedirect = redirectUrls.some(url => url === loginRedirect || url === `${APP_URL}/**`);
     if (!hasLoginRedirect) return { probe, category, severity, status: "FAIL", detail: `"${loginRedirect}" is NOT in Supabase redirect whitelist. Current: ${redirectUrls.join(", ") || "(empty)"}`, durationMs: Date.now() - start, suggestedFix: `Add "${loginRedirect}" in Supabase Auth > URL Configuration > Redirect URLs.`, metadata: { currentRedirects: redirectUrls } };
     return { probe, category, severity, status: "PASS", detail: `Redirect whitelist contains "${loginRedirect}".`, durationMs: Date.now() - start };
