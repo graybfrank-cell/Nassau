@@ -126,6 +126,9 @@ export default function RoundSharePage() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [copied, setCopied] = useState(false);
+  const [requiresVenmo, setRequiresVenmo] = useState(false);
+  const [venmoInput, setVenmoInput] = useState("");
+  const [savingVenmo, setSavingVenmo] = useState(false);
 
   async function fetchRound() {
     try {
@@ -182,20 +185,54 @@ export default function RoundSharePage() {
     }
     setJoining(true);
     setError(null);
+    setRequiresVenmo(false);
     try {
       const res = await fetch(
         `/api/game-rounds/invite/${shareCode}/join`,
         { method: "POST" }
       );
+      const d: { roundId?: string; requiresVenmo?: boolean; message?: string; error?: string } = await res.json();
+
+      if (d.requiresVenmo) {
+        setRequiresVenmo(true);
+        setJoining(false);
+        return;
+      }
+
       if (!res.ok) {
-        const d = await res.json();
         throw new Error(d.error || "Failed to join");
       }
-      const d = await res.json();
+
       router.push(`/rounds/${d.roundId}`);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to join round");
       setJoining(false);
+    }
+  }
+
+  async function handleSaveVenmoAndJoin() {
+    if (!venmoInput.trim()) {
+      setError("Please enter your Venmo username");
+      return;
+    }
+    setSavingVenmo(true);
+    setError(null);
+    try {
+      const venmoRes = await fetch("/api/profile/venmo", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ venmoUsername: venmoInput.trim() }),
+      });
+      if (!venmoRes.ok) {
+        throw new Error("Failed to save Venmo username");
+      }
+      setRequiresVenmo(false);
+      setSavingVenmo(false);
+      // Retry join
+      await handleJoin();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to save Venmo");
+      setSavingVenmo(false);
     }
   }
 
@@ -374,17 +411,50 @@ export default function RoundSharePage() {
               <p className="mt-3 text-sm italic text-[#8A8078]">{data.notes}</p>
             )}
 
-            <button
-              onClick={handleJoin}
-              disabled={joining}
-              className="mt-6 w-full rounded-xl bg-[#D94F2B] py-3.5 text-sm font-bold text-white transition-colors hover:bg-[#c4442a] disabled:opacity-50 active:scale-[0.98]"
-            >
-              {joining
-                ? "Joining..."
-                : userId
-                  ? "Join This Round"
-                  : "Sign Up to Join"}
-            </button>
+            {/* Venmo required inline prompt */}
+            {requiresVenmo && (
+              <div className="mt-4 rounded-xl border border-amber-200 bg-amber-50 p-4">
+                <p className="text-sm font-semibold text-[#1A1A1A]">
+                  Add your Venmo username to join
+                </p>
+                <p className="mt-1 text-xs text-[#6A6058]">
+                  Required to settle bets with your group after the round.
+                </p>
+                <div className="mt-3 flex items-center gap-2">
+                  <span className="text-sm text-[#8A8078]">@</span>
+                  <input
+                    type="text"
+                    value={venmoInput}
+                    onChange={(e) => setVenmoInput(e.target.value)}
+                    onKeyDown={(e) => e.key === "Enter" && handleSaveVenmoAndJoin()}
+                    placeholder="username"
+                    className="flex-1 rounded-lg border border-[#E2D9CC] bg-white px-3 py-2 text-sm text-[#1A1A1A] placeholder-[#8A8078] outline-none focus:border-[#D94F2B]"
+                    autoFocus
+                  />
+                  <button
+                    onClick={handleSaveVenmoAndJoin}
+                    disabled={savingVenmo}
+                    className="rounded-lg bg-[#D94F2B] px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-[#c4442a] disabled:opacity-50"
+                  >
+                    {savingVenmo ? "..." : "Save & Join"}
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {!requiresVenmo && (
+              <button
+                onClick={handleJoin}
+                disabled={joining}
+                className="mt-6 w-full rounded-xl bg-[#D94F2B] py-3.5 text-sm font-bold text-white transition-colors hover:bg-[#c4442a] disabled:opacity-50 active:scale-[0.98]"
+              >
+                {joining
+                  ? "Joining..."
+                  : userId
+                    ? "Join This Round"
+                    : "Sign Up to Join"}
+              </button>
+            )}
           </>
         )}
 

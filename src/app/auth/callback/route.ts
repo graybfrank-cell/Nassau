@@ -18,9 +18,14 @@ async function getPostLoginRedirect(baseUrl: string): Promise<string> {
     const admin = createServiceClient();
     const { data: profile } = await admin
       .from("profiles")
-      .select("subscription_status")
+      .select("subscription_status, onboarding_complete")
       .eq("id", user.id)
       .single();
+
+    // Check if onboarding is complete — gate all users behind this
+    if (!profile?.onboarding_complete) {
+      return `${baseUrl}/onboarding`;
+    }
 
     const status = profile?.subscription_status;
     if (status === "active" || status === "trialing") {
