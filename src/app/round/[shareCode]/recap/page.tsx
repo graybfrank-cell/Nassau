@@ -30,11 +30,13 @@ interface Scorecard {
 }
 
 interface Settlement {
+  id: string;
   fromPlayer: string;
   toPlayer: string;
   amount: number;
   reason: string | null;
   settled: boolean;
+  toPlayerVenmo?: string | null;
 }
 
 interface Award {
@@ -109,6 +111,8 @@ export default function RecapPage() {
   const [data, setData] = useState<RoundRecap | null>(null);
   const [loading, setLoading] = useState(true);
   const [copied, setCopied] = useState(false);
+  const [settlingId, setSettlingId] = useState<string | null>(null);
+  const [settledIds, setSettledIds] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     fetch(`/api/game-rounds/invite/${shareCode}`)
@@ -189,6 +193,27 @@ export default function RecapPage() {
     overall?: { winnerId: string | null; scores: Record<string, number> };
     payouts?: Record<string, number>;
   } | null;
+
+  const isMobile = typeof navigator !== "undefined" && /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+
+  async function handleSettle(settlementId: string) {
+    if (!data) return;
+    setSettlingId(settlementId);
+    try {
+      const res = await fetch(`/api/rounds/${data.id}/settle`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ settlementId }),
+      });
+      if (res.ok) {
+        setSettledIds((prev) => new Set([...prev, settlementId]));
+      }
+    } catch (err) {
+      console.error("Failed to settle:", err);
+    } finally {
+      setSettlingId(null);
+    }
+  }
 
   function handleShare() {
     navigator.clipboard.writeText(window.location.href);
@@ -477,40 +502,67 @@ export default function RecapPage() {
               Settlements
             </p>
             <div className="space-y-2">
-              {data.settlements.map((s, idx) => (
-                <div
-                  key={idx}
-                  className="flex items-center justify-between rounded-lg bg-[#F3EDE4] px-3 py-2.5"
-                >
-                  <div className="text-sm">
-                    <span className="font-medium text-[#1A1A1A]">
-                      {getPlayerName(data.players, s.fromPlayer)}
-                    </span>
-                    <span className="text-[#8A8078]"> → </span>
-                    <span className="font-medium text-[#1A1A1A]">
-                      {getPlayerName(data.players, s.toPlayer)}
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm font-bold text-[#1A1A1A]">
-                      ${s.amount.toFixed(2)}
-                    </span>
-                    {s.settled ? (
-                      <span className="rounded-full bg-emerald-100 px-1.5 py-0.5 text-[10px] font-bold text-emerald-700">
-                        Paid
+              {data.settlements.map((s) => {
+                const isSettled = s.settled || settledIds.has(s.id);
+                const venmoNote = `Nassau - ${data.course_name}`;
+                const venmoLink = s.toPlayerVenmo
+                  ? isMobile
+                    ? `venmo://paycharge?txn=pay&recipients=${encodeURIComponent(s.toPlayerVenmo)}&amount=${s.amount.toFixed(2)}&note=${encodeURIComponent(venmoNote)}`
+                    : `https://venmo.com/${encodeURIComponent(s.toPlayerVenmo)}?txn=pay&amount=${s.amount.toFixed(2)}&note=${encodeURIComponent(venmoNote)}`
+                  : null;
+
+                return (
+                  <div
+                    key={s.id}
+                    className={`flex items-center justify-between rounded-lg px-3 py-2.5 ${
+                      isSettled ? "bg-emerald-50" : "bg-[#F3EDE4]"
+                    }`}
+                  >
+                    <div className="text-sm">
+                      <span className={`font-medium ${isSettled ? "text-[#8A8078] line-through" : "text-[#1A1A1A]"}`}>
+                        {getPlayerName(data.players, s.fromPlayer)}
                       </span>
-                    ) : (
-                      <a
-                        href={`venmo://paycharge?txn=pay&amount=${s.amount.toFixed(2)}&note=${encodeURIComponent(`Nassau - ${data.course_name}`)}`}
-                        className="inline-flex items-center gap-1 rounded-full bg-[#008CFF] px-2.5 py-0.5 text-[10px] font-bold text-white"
-                      >
-                        <ExternalLink className="h-2.5 w-2.5" />
-                        Venmo
-                      </a>
-                    )}
+                      <span className="text-[#8A8078]"> → </span>
+                      <span className={`font-medium ${isSettled ? "text-[#8A8078] line-through" : "text-[#1A1A1A]"}`}>
+                        {getPlayerName(data.players, s.toPlayer)}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className={`text-sm font-bold ${isSettled ? "text-[#8A8078] line-through" : "text-[#1A1A1A]"}`}>
+                        ${s.amount.toFixed(2)}
+                      </span>
+                      {isSettled ? (
+                        <span className="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-bold text-emerald-700">
+                          <Check className="h-2.5 w-2.5" />
+                          Paid
+                        </span>
+                      ) : (
+                        <div className="flex items-center gap-1.5">
+                          {venmoLink && (
+                            <a
+                              href={venmoLink}
+                              target={isMobile ? undefined : "_blank"}
+                              rel={isMobile ? undefined : "noopener noreferrer"}
+                              className="inline-flex items-center gap-1 rounded-full bg-[#D94F2B] px-2.5 py-1 text-[10px] font-bold text-white transition-colors hover:bg-[#c4442a]"
+                            >
+                              <DollarSign className="h-2.5 w-2.5" />
+                              Pay ${s.amount.toFixed(0)} on Venmo
+                            </a>
+                          )}
+                          <button
+                            onClick={() => handleSettle(s.id)}
+                            disabled={settlingId === s.id}
+                            className="inline-flex items-center gap-1 rounded-full border border-[#E2D9CC] bg-white px-2 py-0.5 text-[10px] font-bold text-[#6A6058] transition-colors hover:bg-[#F3EDE4] disabled:opacity-50"
+                          >
+                            <Check className="h-2.5 w-2.5" />
+                            {settlingId === s.id ? "..." : "Mark Paid"}
+                          </button>
+                        </div>
+                      )}
+                    </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
         )}

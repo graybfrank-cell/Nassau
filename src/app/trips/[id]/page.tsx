@@ -57,8 +57,10 @@ import {
   Vote,
   Lock,
   Download,
+  Camera,
 } from "lucide-react";
 import RoundHub from "@/components/RoundHub";
+import TripPhotos from "@/components/trips/TripPhotos";
 
 const SCHEDULE_TYPES = [
   { value: "tee_time", label: "Tee Time", emoji: "\u26F3", color: "bg-emerald-100 text-[#D94F2B]", border: "border-l-emerald-500" },
@@ -119,6 +121,13 @@ export default function TripDetailPage() {
   const [eventDesc, setEventDesc] = useState("");
   const [eventType, setEventType] = useState<ScheduleItem["type"]>("tee_time");
   const [error, setError] = useState<string | null>(null);
+  const [tripPhotos, setTripPhotos] = useState<Array<{
+    name: string;
+    path: string;
+    url: string;
+    uploadedBy: string;
+    createdAt: string;
+  }>>([]);
 
   // Edit modal
   const [editingItem, setEditingItem] = useState<ScheduleItem | null>(null);
@@ -195,6 +204,16 @@ export default function TripDetailPage() {
       setSkinsCount(skins.length);
       setScorecardCount(sc.length);
       setScorecards(sc);
+      // Fetch trip photos
+      try {
+        const photosRes = await fetch(`/api/trips/${tripId}/photos`);
+        if (photosRes.ok) {
+          const photosData: { photos: typeof tripPhotos } = await photosRes.json();
+          setTripPhotos(photosData.photos);
+        }
+      } catch {
+        // Non-critical - photos can fail silently on load
+      }
       // Fetch date poll
       try {
         const pollRes = await fetch(`/api/trips/${tripId}/date-poll`);
@@ -2406,6 +2425,21 @@ export default function TripDetailPage() {
               <ChevronRight className="h-4 w-4 text-zinc-300 transition-colors group-hover:text-zinc-500" />
             </Link>
           ))}
+        </div>
+
+        {/* Trip Photos */}
+        <div className="mt-8">
+          <div className="flex items-center gap-2 mb-4">
+            <Camera className="h-5 w-5 text-zinc-400" />
+            <h2 className="text-lg font-semibold text-zinc-900">Trip Photos</h2>
+          </div>
+          <TripPhotos
+            tripId={tripId}
+            currentUserId={currentUserId || ""}
+            isTripCreator={trip?.userId === currentUserId}
+            photos={tripPhotos}
+            onPhotosChange={setTripPhotos}
+          />
         </div>
       </div>
 

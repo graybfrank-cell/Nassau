@@ -23,6 +23,7 @@ import {
   Flame,
   Target,
   Zap,
+  Check,
 } from "lucide-react";
 
 // ---------------------------------------------------------------------------
@@ -344,6 +345,18 @@ export default function DashboardPage() {
           </div>
         )}
 
+        {/* ── Venmo Username ── */}
+        <VenmoUsernameCard
+          venmoUsername={data.user.venmoUsername}
+          onSave={(username) =>
+            setData((prev) =>
+              prev
+                ? { ...prev, user: { ...prev.user, venmoUsername: username } }
+                : prev
+            )
+          }
+        />
+
         {/* ── Quick Links ── */}
         <div className="mt-8 grid gap-3 sm:grid-cols-2">
           <Link
@@ -627,6 +640,120 @@ function SettlementBanner({
         View all settlements
         <ChevronRight className="h-3 w-3" />
       </Link>
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Venmo Username Card
+// ---------------------------------------------------------------------------
+function VenmoUsernameCard({
+  venmoUsername,
+  onSave,
+}: {
+  venmoUsername: string | null;
+  onSave: (username: string | null) => void;
+}) {
+  const [editing, setEditing] = useState(false);
+  const [value, setValue] = useState(venmoUsername || "");
+  const [saving, setSaving] = useState(false);
+
+  async function handleSave() {
+    setSaving(true);
+    try {
+      const res = await fetch("/api/profile/venmo", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ venmoUsername: value }),
+      });
+      if (res.ok) {
+        const data: { venmoUsername: string | null } = await res.json();
+        onSave(data.venmoUsername);
+        setEditing(false);
+      }
+    } catch (err) {
+      console.error("Failed to save Venmo username:", err);
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  if (!venmoUsername && !editing) {
+    return (
+      <button
+        onClick={() => setEditing(true)}
+        className="mt-6 flex w-full items-center gap-3 rounded-xl border border-dashed border-zinc-700 bg-zinc-900/30 p-4 text-left transition-colors hover:border-zinc-600 hover:bg-zinc-900/50"
+      >
+        <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-zinc-800 text-zinc-400">
+          <DollarSign className="h-5 w-5" />
+        </div>
+        <div>
+          <p className="text-sm font-medium text-zinc-300">
+            Add your Venmo @username
+          </p>
+          <p className="text-xs text-zinc-500">
+            Let others pay you directly after rounds
+          </p>
+        </div>
+      </button>
+    );
+  }
+
+  if (editing) {
+    return (
+      <div className="mt-6 rounded-xl border border-zinc-800 bg-zinc-900/60 p-4">
+        <p className="mb-3 text-xs font-medium text-zinc-500">Venmo Username</p>
+        <div className="flex items-center gap-2">
+          <span className="text-sm text-zinc-500">@</span>
+          <input
+            type="text"
+            value={value}
+            onChange={(e) => setValue(e.target.value)}
+            placeholder="username"
+            className="flex-1 rounded-lg border border-zinc-700 bg-zinc-800 px-3 py-2 text-sm text-white placeholder-zinc-600 outline-none focus:border-[#D94F2B]"
+            autoFocus
+          />
+          <button
+            onClick={handleSave}
+            disabled={saving}
+            className="rounded-lg bg-[#D94F2B] px-3 py-2 text-xs font-semibold text-white transition-colors hover:bg-[#c4442a] disabled:opacity-50"
+          >
+            {saving ? "..." : "Save"}
+          </button>
+          <button
+            onClick={() => {
+              setEditing(false);
+              setValue(venmoUsername || "");
+            }}
+            className="rounded-lg border border-zinc-700 px-3 py-2 text-xs font-semibold text-zinc-400 transition-colors hover:bg-zinc-800"
+          >
+            Cancel
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="mt-6 flex items-center justify-between rounded-xl border border-zinc-800 bg-zinc-900/60 p-4">
+      <div className="flex items-center gap-3">
+        <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-emerald-950 text-emerald-400">
+          <Check className="h-5 w-5" />
+        </div>
+        <div>
+          <p className="text-xs font-medium text-zinc-500">Venmo</p>
+          <p className="text-sm font-semibold text-white">@{venmoUsername}</p>
+        </div>
+      </div>
+      <button
+        onClick={() => {
+          setValue(venmoUsername || "");
+          setEditing(true);
+        }}
+        className="text-xs font-medium text-[#D94F2B] hover:text-[#c4442a]"
+      >
+        Edit
+      </button>
     </div>
   );
 }
