@@ -2,11 +2,18 @@ import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { createServiceClient } from "@/lib/supabase/admin";
 
+const ADMIN_EMAIL = "graybfrank@gmail.com";
+
 async function getPostLoginRedirect(baseUrl: string): Promise<string> {
   try {
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return `${baseUrl}/dashboard`;
+
+    // Admin always goes to dashboard
+    if (user.email === ADMIN_EMAIL) {
+      return `${baseUrl}/dashboard`;
+    }
 
     const admin = createServiceClient();
     const { data: profile } = await admin
@@ -56,11 +63,17 @@ export async function GET(request: Request) {
     requestUrl.pathname + requestUrl.search
   );
 
-  // Check for a `next` redirect param (e.g. /round/[shareCode])
+  // Check for a `next` redirect param (e.g. /round/[shareCode], /admin/*)
   const next = searchParams.get("next");
-  // Validate: only allow /round/ or /rounds/ paths to prevent open redirect
+  // Validate: only allow known paths to prevent open redirect
   const isValidNext =
-    next && (next.startsWith("/round/") || next.startsWith("/rounds/"));
+    next &&
+    (next.startsWith("/round/") ||
+      next.startsWith("/rounds/") ||
+      next.startsWith("/admin/") ||
+      next.startsWith("/dashboard") ||
+      next.startsWith("/trips/") ||
+      next.startsWith("/settlements"));
 
   try {
     const supabase = await createClient();
