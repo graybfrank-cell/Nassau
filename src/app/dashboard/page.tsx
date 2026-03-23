@@ -9,82 +9,27 @@ import {
   MapPin,
   Trophy,
   Plus,
-  Users,
-  Calendar,
-  AlertCircle,
   Wind,
   ChevronRight,
   Star,
   DollarSign,
-  Clock,
   CloudSun,
   TrendingUp,
   TrendingDown,
   Flame,
   Target,
-  Zap,
   Check,
+  Award,
+  Flag,
 } from "lucide-react";
-
-// ---------------------------------------------------------------------------
-// Types for dashboard API response
-// ---------------------------------------------------------------------------
-interface DashboardPlayer {
-  id: string;
-  name: string;
-  avatarUrl?: string | null;
-}
-
-interface UpcomingRound {
-  id: string;
-  courseName: string;
-  coursePhotoUrl: string | null;
-  courseLocation: string | null;
-  teeTime: string;
-  weather: {
-    temp?: number;
-    icon?: string;
-    wind?: number;
-    description?: string;
-  } | null;
-  players: DashboardPlayer[];
-}
-
-interface RecentScore {
-  roundId: string;
-  courseName: string;
-  score: number;
-  par: number | null;
-  moneyNet: number;
-  date: string;
-  isPersonalBest: boolean;
-}
-
-interface SettlementItem {
-  fromUser?: string;
-  toUser?: string;
-  amount: number;
-  roundNote: string | null;
-}
-
-interface DashboardData {
-  user: { fullName: string; firstName: string; venmoUsername: string | null };
-  subscriptionActive?: boolean;
-  upcomingRound: UpcomingRound | null;
-  recentScores: RecentScore[];
-  settlements: {
-    owed: SettlementItem[];
-    owing: SettlementItem[];
-    totalOwed: number;
-    totalOwing: number;
-  };
-  seasonStats: {
-    totalMoneyNet: number;
-    roundsThisMonth: number;
-    scoringAvg: number | null;
-  };
-  _errors?: string[];
-}
+import type {
+  DashboardData,
+  UpcomingRound,
+  RecentScore,
+  HeadToHeadOpponent,
+  CourseHistoryEntry,
+  AwardCount,
+} from "@/types/dashboard";
 
 const EMPTY_DASHBOARD: DashboardData = {
   user: { fullName: "Golfer", firstName: "Golfer", venmoUsername: null },
@@ -92,6 +37,19 @@ const EMPTY_DASHBOARD: DashboardData = {
   recentScores: [],
   settlements: { owed: [], owing: [], totalOwed: 0, totalOwing: 0 },
   seasonStats: { totalMoneyNet: 0, roundsThisMonth: 0, scoringAvg: null },
+  lifetimeStats: {
+    totalRounds: 0,
+    allTimePnl: 0,
+    bestScore: null,
+    avgScore: null,
+    totalSkinsWon: 0,
+    totalMoneyWon: 0,
+  },
+  recentRounds: [],
+  headToHead: [],
+  courseHistory: [],
+  upcomingRounds: [],
+  awards: [],
 };
 
 // ---------------------------------------------------------------------------
@@ -356,6 +314,82 @@ export default function DashboardPage() {
             )
           }
         />
+
+        {/* ── Lifetime Stats ── */}
+        <div className="mt-8">
+          <h2 className="text-lg font-semibold text-white">Lifetime Stats</h2>
+          <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-4">
+            <StatCard
+              label="Total Rounds"
+              value={String(data.lifetimeStats.totalRounds)}
+              icon={<Flag className="h-4 w-4 text-zinc-500" />}
+            />
+            <StatCard
+              label="Best Score"
+              value={data.lifetimeStats.bestScore !== null ? String(data.lifetimeStats.bestScore) : "—"}
+              icon={<Star className="h-4 w-4 text-amber-400" />}
+            />
+            <StatCard
+              label="All-Time P&L"
+              value={moneyStr(data.lifetimeStats.allTimePnl)}
+              positive={data.lifetimeStats.allTimePnl >= 0}
+              icon={
+                data.lifetimeStats.allTimePnl >= 0 ? (
+                  <TrendingUp className="h-4 w-4 text-emerald-400" />
+                ) : (
+                  <TrendingDown className="h-4 w-4 text-red-400" />
+                )
+              }
+            />
+            <StatCard
+              label="Skins Won"
+              value={String(data.lifetimeStats.totalSkinsWon)}
+              icon={<DollarSign className="h-4 w-4 text-emerald-400" />}
+            />
+          </div>
+        </div>
+
+        {/* ── Course History ── */}
+        <div className="mt-8">
+          <h2 className="text-lg font-semibold text-white">Your Courses</h2>
+          {data.courseHistory.length > 0 ? (
+            <div className="mt-3 space-y-2">
+              {data.courseHistory.map((course) => (
+                <CourseHistoryRow key={course.courseName} course={course} />
+              ))}
+            </div>
+          ) : (
+            <EmptyState message="Play your first round to start tracking" />
+          )}
+        </div>
+
+        {/* ── Head-to-Head Rivalries ── */}
+        <div className="mt-8">
+          <h2 className="text-lg font-semibold text-white">Your Rivalries</h2>
+          {data.headToHead.length > 0 ? (
+            <div className="mt-3 space-y-2">
+              {data.headToHead.map((opponent) => (
+                <HeadToHeadRow key={opponent.opponentName} opponent={opponent} />
+              ))}
+            </div>
+          ) : (
+            <EmptyState message="Complete rounds to see your rivalries" />
+          )}
+        </div>
+
+        {/* ── Awards Shelf ── */}
+        <div className="mt-8">
+          <h2 className="text-lg font-semibold text-white">Your Awards</h2>
+          {data.awards.length > 0 ? (
+            <div className="mt-3 flex flex-wrap gap-2">
+              {data.awards.map((award) => (
+                <AwardBadge key={award.name} award={award} />
+              ))}
+            </div>
+          ) : (
+            <EmptyState message="Win awards by completing rounds" />
+          )}
+        </div>
 
         {/* ── Quick Links ── */}
         <div className="mt-8 grid gap-3 sm:grid-cols-2">
@@ -796,5 +830,91 @@ function RecentRoundRow({ score }: { score: RecentScore }) {
         <ChevronRight className="h-4 w-4 text-zinc-600" />
       </div>
     </Link>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Empty State
+// ---------------------------------------------------------------------------
+function EmptyState({ message }: { message: string }) {
+  return (
+    <div className="mt-3 rounded-xl border border-dashed border-zinc-800 bg-zinc-900/30 p-6 text-center">
+      <p className="text-sm text-zinc-500">{message}</p>
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Course History Row
+// ---------------------------------------------------------------------------
+function CourseHistoryRow({ course }: { course: CourseHistoryEntry }) {
+  return (
+    <div className="flex items-center justify-between rounded-lg border border-zinc-800 bg-zinc-900/40 px-4 py-3">
+      <div className="flex items-center gap-3">
+        <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-zinc-800">
+          <MapPin className="h-4 w-4 text-zinc-400" />
+        </div>
+        <div>
+          <p className="text-sm font-medium text-white">{course.courseName}</p>
+          <p className="text-xs text-zinc-500">
+            {course.timesPlayed} round{course.timesPlayed !== 1 ? "s" : ""} &middot; Avg {course.avgScore}
+          </p>
+        </div>
+      </div>
+      <div className="text-right">
+        <p className="text-sm font-bold text-white">{course.bestScore}</p>
+        <p className="text-[10px] font-medium text-zinc-500">Best</p>
+      </div>
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Head-to-Head Row
+// ---------------------------------------------------------------------------
+function HeadToHeadRow({ opponent }: { opponent: HeadToHeadOpponent }) {
+  const isUp = opponent.moneyBalance >= 0;
+  const initials = opponent.opponentName
+    .split(" ")
+    .map((n) => n[0])
+    .join("")
+    .slice(0, 2)
+    .toUpperCase();
+
+  return (
+    <div className="flex items-center justify-between rounded-lg border border-zinc-800 bg-zinc-900/40 px-4 py-3">
+      <div className="flex items-center gap-3">
+        <span className="flex h-10 w-10 items-center justify-center rounded-full bg-zinc-800 text-xs font-bold text-zinc-300">
+          {initials}
+        </span>
+        <div>
+          <p className="text-sm font-medium text-white">{opponent.opponentName}</p>
+          <p className="text-xs text-zinc-500">
+            {opponent.roundsTogether} round{opponent.roundsTogether !== 1 ? "s" : ""} &middot;{" "}
+            {opponent.wins}W-{opponent.losses}L
+          </p>
+        </div>
+      </div>
+      <span
+        className={`text-sm font-bold ${isUp ? "text-emerald-400" : "text-red-400"}`}
+      >
+        {moneyStr(opponent.moneyBalance)}
+      </span>
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Award Badge
+// ---------------------------------------------------------------------------
+function AwardBadge({ award }: { award: AwardCount }) {
+  return (
+    <span className="inline-flex items-center gap-1.5 rounded-full border border-zinc-700 bg-zinc-800/60 px-3 py-1.5 text-xs font-medium text-zinc-300">
+      <Award className="h-3.5 w-3.5 text-amber-400" />
+      {award.name}
+      {award.count > 1 && (
+        <span className="font-bold text-[#D94F2B]">x{award.count}</span>
+      )}
+    </span>
   );
 }
