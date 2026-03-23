@@ -70,7 +70,7 @@ export default function IntegrityPage() {
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch("/api/cron/integrity-check", {
+      const res = await fetch("/api/admin/integrity-check", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ trigger: "manual" }),

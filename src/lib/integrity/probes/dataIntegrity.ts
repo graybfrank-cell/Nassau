@@ -11,7 +11,7 @@ const KNOWN_SCORECARD = {
     playerC: [4,4,3,4,4,4,3,5,4,4,4,3,5,4,4,3,5,4],
     playerD: [4,4,3,5,4,4,3,5,4,5,4,3,5,4,4,3,5,4],
   },
-  expectedSkins: { 2: "playerA", 4: "playerC" } as Record<number, string>,
+  expectedSkins: { 2: "playerA", 4: "playerC", 8: "playerA", 15: "playerA" } as Record<number, string>,
 };
 function calculateSkinsFromFixture(): Record<number, string> {
   const { holes, players } = KNOWN_SCORECARD;
