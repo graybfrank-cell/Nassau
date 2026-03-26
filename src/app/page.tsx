@@ -157,7 +157,14 @@ export default async function Home() {
               <p className="mb-8 text-base leading-relaxed text-[#71717A]">
                 Scores, skins, and bets — calculated live as you play.
               </p>
-              <div className="aspect-[4/3] overflow-hidden rounded-xl bg-[#F3EDE4]" />
+              <div className="relative rounded-xl overflow-hidden aspect-[4/3] mt-6">
+                <Image
+                  src="https://images.unsplash.com/photo-1535131749006-b7f58c99034b?w=600"
+                  alt="Live golf scorecard tracking"
+                  fill
+                  className="object-cover"
+                />
+              </div>
             </Link>
             {/* Card 2 — Plan Trips */}
             <Link href="/login?redirect=/trips" className="rounded-2xl border border-gray-100 bg-white p-8 shadow-sm transition-transform duration-300 ease-out hover:scale-[1.03] hover:shadow-md cursor-pointer">
@@ -169,7 +176,14 @@ export default async function Home() {
                 Destinations, deposits, commitments. One link to coordinate your
                 entire crew.
               </p>
-              <div className="aspect-[4/3] overflow-hidden rounded-xl bg-[#F3EDE4]" />
+              <div className="relative rounded-xl overflow-hidden aspect-[4/3] mt-6">
+                <Image
+                  src="https://images.unsplash.com/photo-1587174486073-ae5e5cff23aa?w=600"
+                  alt="Golf trip planning"
+                  fill
+                  className="object-cover"
+                />
+              </div>
             </Link>
             {/* Card 3 — Settle Up */}
             <Link href="/login?redirect=/settlements" className="rounded-2xl border border-gray-100 bg-white p-8 shadow-sm transition-transform duration-300 ease-out hover:scale-[1.03] hover:shadow-md cursor-pointer">
@@ -180,7 +194,14 @@ export default async function Home() {
               <p className="mb-8 text-base leading-relaxed text-[#71717A]">
                 Who owes who. Automated splits. One tap to Venmo.
               </p>
-              <div className="aspect-[4/3] overflow-hidden rounded-xl bg-[#F3EDE4]" />
+              <div className="relative rounded-xl overflow-hidden aspect-[4/3] mt-6">
+                <Image
+                  src="https://images.unsplash.com/photo-1592919505780-303950717480?w=600"
+                  alt="Golf group settling bets"
+                  fill
+                  className="object-cover"
+                />
+              </div>
             </Link>
           </div>
         </div>
