@@ -74,9 +74,11 @@ export async function GET(request: Request) {
   const isValidNext =
     next &&
     (next.startsWith("/round/") ||
+      next === "/rounds" ||
       next.startsWith("/rounds/") ||
       next.startsWith("/admin/") ||
       next.startsWith("/dashboard") ||
+      next === "/trips" ||
       next.startsWith("/trips/") ||
       next.startsWith("/settlements"));
 
