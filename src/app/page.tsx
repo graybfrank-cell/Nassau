@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import { Flag, Map, Wallet } from "lucide-react";
+import { Flag, Map, Wallet, CheckCircle2 } from "lucide-react";
 import AuthRedirect from "./auth-redirect";
 import { createServiceClient } from "@/lib/supabase/admin";
 
@@ -95,7 +95,7 @@ export default async function Home() {
       <section className="relative flex min-h-screen flex-col justify-end overflow-hidden pb-24 px-6 lg:px-16">
         {/* Background image */}
         <Image
-          src="https://images.unsplash.com/photo-1587174486073-ae5e5cff23aa?w=1920"
+          src="https://images.unsplash.com/photo-1535131749006-b7f58c99034b?w=1920"
           alt="Golf course at dawn"
           fill
           priority
@@ -149,7 +149,7 @@ export default async function Home() {
           </h2>
           <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
             {/* Card 1 — Track Rounds */}
-            <div className="rounded-2xl border border-gray-100 bg-white p-8 shadow-sm">
+            <div className="rounded-2xl border border-gray-100 bg-white p-8 shadow-sm transition-transform duration-300 ease-out hover:scale-[1.03] hover:shadow-md cursor-pointer">
               <Flag className="mb-6 h-8 w-8 text-[#0D7377]" />
               <h3 className="mb-3 text-2xl font-black uppercase text-[#18181B]">
                 TRACK ROUNDS
@@ -160,7 +160,7 @@ export default async function Home() {
               <div className="aspect-[4/3] overflow-hidden rounded-xl bg-[#F3EDE4]" />
             </div>
             {/* Card 2 — Plan Trips */}
-            <div className="rounded-2xl border border-gray-100 bg-white p-8 shadow-sm">
+            <div className="rounded-2xl border border-gray-100 bg-white p-8 shadow-sm transition-transform duration-300 ease-out hover:scale-[1.03] hover:shadow-md cursor-pointer">
               <Map className="mb-6 h-8 w-8 text-[#0D7377]" />
               <h3 className="mb-3 text-2xl font-black uppercase text-[#18181B]">
                 PLAN TRIPS
@@ -172,7 +172,7 @@ export default async function Home() {
               <div className="aspect-[4/3] overflow-hidden rounded-xl bg-[#F3EDE4]" />
             </div>
             {/* Card 3 — Settle Up */}
-            <div className="rounded-2xl border border-gray-100 bg-white p-8 shadow-sm">
+            <div className="rounded-2xl border border-gray-100 bg-white p-8 shadow-sm transition-transform duration-300 ease-out hover:scale-[1.03] hover:shadow-md cursor-pointer">
               <Wallet className="mb-6 h-8 w-8 text-[#0D7377]" />
               <h3 className="mb-3 text-2xl font-black uppercase text-[#18181B]">
                 SETTLE UP
@@ -187,7 +187,7 @@ export default async function Home() {
       </section>
 
       {/* ═══ SECTION 5 — LIVE SCORECARD ═══ */}
-      <section className="border-t border-[#18181B]/10 bg-[#F3EDE4] px-6 py-24 lg:px-16">
+      <section className="border-t border-[#18181B]/10 bg-[#F3EDE4] px-6 pt-8 pb-24 lg:px-16">
         <div className="mx-auto grid max-w-6xl items-center gap-16 lg:grid-cols-2">
           {/* Left column */}
           <div>
@@ -296,17 +296,36 @@ export default async function Home() {
               <h3 className="mb-4 text-2xl font-black uppercase text-[#18181B]">
                 FOUNDING MEMBERS
               </h3>
-              <p className="mb-8 text-[#71717A]">
+              <p className="mb-4 text-[#71717A]">
                 First 100 golfers get Pro free for a year. Claim your spot
                 before April 1.
               </p>
+              <div className="mb-6">
+                <span className="text-4xl font-black text-[#18181B]">$49.99</span>
+                <span className="text-sm text-[#71717A]">/year</span>
+                <span className="mt-1 block text-sm text-[#71717A]">Lock in this rate forever.</span>
+              </div>
+              <div className="mb-6 space-y-2">
+                <div className="flex items-center gap-2">
+                  <CheckCircle2 className="h-4 w-4 text-[#0D7377]" />
+                  <span className="text-sm text-[#71717A]">Founding Member badge</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <CheckCircle2 className="h-4 w-4 text-[#0D7377]" />
+                  <span className="text-sm text-[#71717A]">Priority access</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <CheckCircle2 className="h-4 w-4 text-[#0D7377]" />
+                  <span className="text-sm text-[#71717A]">All Pro features</span>
+                </div>
+              </div>
               <p className="mb-2 text-sm text-[#71717A]">
-                87 of 100 spots remaining
+                47 of 100 spots remaining
               </p>
               <div className="h-1.5 rounded-full bg-gray-200">
                 <div
                   className="h-1.5 rounded-full bg-[#0D7377]"
-                  style={{ width: "13%" }}
+                  style={{ width: "53%" }}
                 />
               </div>
               <Link
@@ -326,40 +345,68 @@ export default async function Home() {
                 Pay when money&apos;s on the line.
               </p>
 
-              {/* Commissioner tier */}
-              <div className="mb-3 flex items-center justify-between rounded-xl bg-[#F3EDE4] p-4">
-                <span className="font-black uppercase text-[#18181B]">
-                  COMMISSIONER
-                </span>
-                <div className="text-right">
-                  <span className="font-black text-[#18181B]">$0</span>{" "}
-                  <span className="text-xs text-[#71717A]">forever</span>
+              {/* Tier 1 — Commissioner */}
+              <div className="mb-3 rounded-xl bg-[#F3EDE4] p-4">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm font-black uppercase text-[#18181B]">
+                    COMMISSIONER
+                  </span>
+                  <span className="font-black text-[#18181B]">$0 forever</span>
+                </div>
+                <div className="mt-2 space-y-1">
+                  <p className="text-xs text-[#71717A]">Score rounds, basic skins tracking</p>
+                  <p className="text-xs text-[#71717A]">Shareable recap link</p>
+                  <p className="text-xs text-[#71717A]">No bet tracking, no trips</p>
                 </div>
               </div>
 
-              {/* Nassau Pro tier */}
-              <div className="relative flex items-center justify-between rounded-xl border-2 border-[#D94F2B] bg-[#F3EDE4] p-4">
-                <span className="absolute -top-2.5 left-4 rounded-full bg-[#0D7377] px-2 py-0.5 text-[10px] font-black uppercase tracking-wider text-white">
-                  PRO STATUS
-                </span>
-                <span className="font-black uppercase text-[#D94F2B]">
-                  NASSAU PRO
-                </span>
-                <div className="text-right">
-                  <span className="font-black text-[#18181B]">$6.99</span>{" "}
-                  <span className="text-xs text-[#71717A]">/mo</span>
+              {/* Tier 2 — Nassau Pro */}
+              <div className="mb-3 rounded-xl border border-[#D94F2B] bg-[#F3EDE4] p-4">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm font-black uppercase text-[#D94F2B]">
+                    NASSAU PRO
+                  </span>
+                  <span className="font-black text-[#18181B]">$6.99/mo</span>
+                </div>
+                <div className="mt-2 space-y-1">
+                  <p className="text-xs text-[#71717A]">Bet tracking + settlements</p>
+                  <p className="text-xs text-[#71717A]">Trip planning + expenses</p>
+                  <p className="text-xs text-[#71717A]">Live scorecard</p>
+                </div>
+              </div>
+
+              {/* Tier 3 — Founding Member */}
+              <div className="mb-3 rounded-xl border-2 border-[#C9A54E] bg-[#18181B] p-4">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm font-black uppercase text-[#C9A54E]">
+                    FOUNDING MEMBER
+                  </span>
+                  <div className="flex items-center">
+                    <span className="font-black text-[#F3EDE4]">$49.99/yr</span>
+                    <span className="ml-2 rounded bg-[#C9A54E] px-2 py-0.5 text-xs font-black uppercase text-white">
+                      LIMITED
+                    </span>
+                  </div>
+                </div>
+                <div className="mt-2 space-y-1">
+                  <p className="text-xs text-[#F3EDE4]/60">All Pro features included</p>
+                  <p className="text-xs text-[#F3EDE4]/60">Founding Member badge forever</p>
+                  <p className="text-xs text-[#F3EDE4]/60">Rate locked — never increases</p>
                 </div>
               </div>
 
               <Link
                 href="/login"
-                className="mt-6 block w-full rounded-lg bg-[#D94F2B] py-3 text-center text-sm font-black uppercase text-white transition-colors hover:bg-[#c4442a]"
+                className="mt-4 block w-full rounded-lg bg-[#D94F2B] py-3 text-center text-sm font-black uppercase text-white"
               >
-                START 30-DAY FREE TRIAL
+                START FREE TRIAL
               </Link>
-              <p className="mt-3 text-center text-xs text-[#71717A]">
-                Single trip access — $4.99 per event.
-              </p>
+              <Link
+                href="/login"
+                className="mt-2 block w-full rounded-lg bg-[#C9A54E] py-3 text-center text-sm font-black uppercase text-white"
+              >
+                CLAIM FOUNDING SPOT — $49.99/YR
+              </Link>
             </div>
           </div>
         </div>
