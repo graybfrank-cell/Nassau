@@ -5,7 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { CheckCircle2, ChevronDown } from "lucide-react";
 
-type PlanType = "monthly" | "annual" | "founding";
+type PlanType = "monthly" | "annual" | "trip" | "founding";
 
 const FAQ_ITEMS = [
   {
@@ -74,6 +74,16 @@ export default function PricingPage() {
             )}
           </button>
           <button
+            onClick={() => setPlan("trip")}
+            className={`px-6 py-2 rounded-md font-black text-xs uppercase ${
+              plan === "trip"
+                ? "bg-[#18181B] text-white"
+                : "text-[#71717A] hover:text-[#18181B]"
+            }`}
+          >
+            Trip
+          </button>
+          <button
             onClick={() => setPlan("founding")}
             className={`px-6 py-2 rounded-md font-black text-xs uppercase flex items-center ${
               plan === "founding"
@@ -93,7 +103,49 @@ export default function PricingPage() {
 
       {/* PRICING CARDS */}
       <section className="max-w-xl mx-auto px-6 space-y-6">
-        {plan !== "founding" ? (
+        {plan === "trip" ? (
+          /* PER-TRIP PASS */
+          <div className="bg-white rounded-2xl border-2 border-[#D94F2B] p-8 shadow-xl relative overflow-hidden">
+            <div className="absolute top-0 right-0 bg-[#D94F2B] px-4 py-1.5 rounded-bl-xl">
+              <span className="text-[10px] font-black tracking-widest text-white uppercase">
+                ONE-TIME
+              </span>
+            </div>
+            <p className="text-xs font-black uppercase tracking-widest text-[#D94F2B] mb-4">
+              PER-TRIP PASS
+            </p>
+            <div className="flex items-baseline gap-1">
+              <span className="text-5xl font-black text-[#18181B]">$9.99</span>
+              <span className="text-[#71717A] text-sm">/ trip</span>
+            </div>
+            <p className="text-[#71717A] text-sm mt-2 mb-6">
+              One trip. Full Pro features. No subscription.
+            </p>
+            <ul className="space-y-4">
+              {[
+                "Full trip planning + itinerary",
+                "Nassau bet + skins settlements",
+                "Expense tracking + splits",
+                "Shareable trip invite page",
+                "Round scoring for all players",
+              ].map((feat) => (
+                <li key={feat} className="flex items-center gap-3 text-[#18181B]">
+                  <CheckCircle2 className="w-5 h-5 text-[#D94F2B] fill-[#D94F2B] shrink-0" />
+                  {feat}
+                </li>
+              ))}
+            </ul>
+            <Link
+              href="/login?redirect=/dashboard"
+              className="block w-full py-4 rounded-lg bg-[#D94F2B] text-white font-black uppercase text-sm text-center hover:opacity-90 transition-opacity mt-8"
+            >
+              BUY A TRIP PASS
+            </Link>
+            <p className="text-center text-xs text-[#71717A] mt-3">
+              Perfect for one-time groups. No commitment required.
+            </p>
+          </div>
+        ) : plan !== "founding" ? (
           <>
             {/* COMMISSIONER */}
             <div className="bg-white rounded-2xl border border-gray-200 p-8 shadow-sm">
