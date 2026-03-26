@@ -10,7 +10,7 @@ import knowledgeBase from "@/data/nassau-knowledge-base.json";
 // NASSAU EXPLORE PAGE v4 — Cream Theme + Auth Gate + Paywall
 // All destination data from nassau-knowledge-base.json (zero API calls)
 // Auth: Supabase client session check before any trip creation
-// Paywall: 1 free trip → $4.99/trip or $6.99/mo
+// Paywall: 1 free trip → $9.99/trip or $6.99/mo
 // ============================================
 
 // ─── KB Types ────────────────────────────────────────────────
@@ -315,7 +315,7 @@ function PaywallModal({ tripTitle, onClose, onPerTrip }: {
           className="w-full rounded-xl border-2 border-[#E2D9CC] hover:border-[#D94F2B]/50 bg-white p-4 text-left mb-3 transition-all">
           <div className="flex items-center justify-between mb-0.5">
             <span className="font-bold text-[#1A1A1A] text-sm">Per-Trip Pass</span>
-            <span className="text-lg font-black text-[#1A1A1A]">$4.99</span>
+            <span className="text-lg font-black text-[#1A1A1A]">$9.99</span>
           </div>
           <p className="text-xs text-[#5A4F45]">One trip, full access. No subscription needed.</p>
         </button>
