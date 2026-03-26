@@ -16,7 +16,7 @@ const FAQ_ITEMS = [
   {
     question: "Can I use Nassau for just one trip?",
     answer:
-      "Yes — grab a Per-Trip Pass for $4.99. One trip, full Pro features, no subscription needed.",
+      "Yes — grab a Per-Trip Pass for $9.99. One trip, full Pro features, no subscription needed.",
   },
   {
     question: "What happens after my trial ends?",
