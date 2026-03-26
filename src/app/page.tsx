@@ -149,7 +149,7 @@ export default async function Home() {
           </h2>
           <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
             {/* Card 1 — Track Rounds */}
-            <div className="rounded-2xl border border-gray-100 bg-white p-8 shadow-sm transition-transform duration-300 ease-out hover:scale-[1.03] hover:shadow-md cursor-pointer">
+            <Link href="/login?redirect=/rounds" className="rounded-2xl border border-gray-100 bg-white p-8 shadow-sm transition-transform duration-300 ease-out hover:scale-[1.03] hover:shadow-md cursor-pointer">
               <Flag className="mb-6 h-8 w-8 text-[#0D7377]" />
               <h3 className="mb-3 text-2xl font-black uppercase text-[#18181B]">
                 TRACK ROUNDS
@@ -158,9 +158,9 @@ export default async function Home() {
                 Scores, skins, and bets — calculated live as you play.
               </p>
               <div className="aspect-[4/3] overflow-hidden rounded-xl bg-[#F3EDE4]" />
-            </div>
+            </Link>
             {/* Card 2 — Plan Trips */}
-            <div className="rounded-2xl border border-gray-100 bg-white p-8 shadow-sm transition-transform duration-300 ease-out hover:scale-[1.03] hover:shadow-md cursor-pointer">
+            <Link href="/login?redirect=/trips" className="rounded-2xl border border-gray-100 bg-white p-8 shadow-sm transition-transform duration-300 ease-out hover:scale-[1.03] hover:shadow-md cursor-pointer">
               <Map className="mb-6 h-8 w-8 text-[#0D7377]" />
               <h3 className="mb-3 text-2xl font-black uppercase text-[#18181B]">
                 PLAN TRIPS
@@ -170,9 +170,9 @@ export default async function Home() {
                 entire crew.
               </p>
               <div className="aspect-[4/3] overflow-hidden rounded-xl bg-[#F3EDE4]" />
-            </div>
+            </Link>
             {/* Card 3 — Settle Up */}
-            <div className="rounded-2xl border border-gray-100 bg-white p-8 shadow-sm transition-transform duration-300 ease-out hover:scale-[1.03] hover:shadow-md cursor-pointer">
+            <Link href="/login?redirect=/settlements" className="rounded-2xl border border-gray-100 bg-white p-8 shadow-sm transition-transform duration-300 ease-out hover:scale-[1.03] hover:shadow-md cursor-pointer">
               <Wallet className="mb-6 h-8 w-8 text-[#0D7377]" />
               <h3 className="mb-3 text-2xl font-black uppercase text-[#18181B]">
                 SETTLE UP
@@ -181,7 +181,7 @@ export default async function Home() {
                 Who owes who. Automated splits. One tap to Venmo.
               </p>
               <div className="aspect-[4/3] overflow-hidden rounded-xl bg-[#F3EDE4]" />
-            </div>
+            </Link>
           </div>
         </div>
       </section>
