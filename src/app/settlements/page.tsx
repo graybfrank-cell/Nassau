@@ -84,10 +84,24 @@ export default function SettlementsPage() {
 
   useEffect(() => {
     const supabase = createClient();
-    supabase.auth.getUser().then(({ data: { user } }) => {
+    supabase.auth.getUser().then(async ({ data: { user } }) => {
       if (!user) {
-        router.push("/login");
+        router.push("/login?redirect=/settlements");
         return;
+      }
+      // Check subscription status
+      try {
+        const profileRes = await fetch("/api/profile");
+        if (profileRes.ok) {
+          const profile = await profileRes.json();
+          const status = profile.subscription_status;
+          if (status !== "active" && status !== "trialing") {
+            router.push("/pricing");
+            return;
+          }
+        }
+      } catch {
+        // Non-critical — allow access on error
       }
       setUserId(user.id);
     });
