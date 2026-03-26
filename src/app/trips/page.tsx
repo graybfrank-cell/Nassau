@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
-import { Plus, MapPin, Users, Calendar, ArrowLeft } from "lucide-react";
+import { Plus, MapPin, Users, Calendar } from "lucide-react";
 
 interface TripMember {
   user_id: string;
