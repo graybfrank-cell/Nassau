@@ -1,66 +1,41 @@
 import Link from "next/link";
-import {
-  MapPin,
-  DollarSign,
-  Users,
-  Trophy,
-  ArrowRight,
-  Calendar,
-  CheckCircle2,
-  CreditCard,
-  Zap,
-  Star,
-  ChevronRight,
-  Clock,
-  Target,
-} from "lucide-react";
+import Image from "next/image";
+import { Flag, Map, Wallet } from "lucide-react";
 import AuthRedirect from "./auth-redirect";
 import { createServiceClient } from "@/lib/supabase/admin";
 
-/* ─── Fake interactive data for product previews ─── */
+/* ─── Sample data for live scorecard demo ─── */
 
-const tripDestinations = [
-  { name: "Scottsdale, AZ", courses: 12, avgCost: "$1,950", temp: "78°", img: "🌵" },
-  { name: "Myrtle Beach, SC", courses: 18, avgCost: "$1,400", temp: "72°", img: "🏖️" },
-  { name: "Pinehurst, NC", courses: 8, avgCost: "$2,200", temp: "68°", img: "🌲" },
-  { name: "Bandon Dunes, OR", courses: 5, avgCost: "$2,800", temp: "58°", img: "🌊" },
-];
-
-const sampleItinerary = [
-  { day: "Thu", date: "Mar 12", items: ["✈️ Arrive PHX 11:30am", "🏨 Check in Scottsdale Resort", "🍺 Dinner at Jade Bar"] },
-  { day: "Fri", date: "Mar 13", items: ["⛳ TPC Stadium 8:15am", "🌮 Lunch at Rehab Burger", "⛳ Grayhawk Raptor 2:00pm"] },
-  { day: "Sat", date: "Mar 14", items: ["⛳ We-Ko-Pa Saguaro 7:30am", "🏊 Pool day", "🥩 Steak dinner — Mastro's"] },
-  { day: "Sun", date: "Mar 15", items: ["⛳ Troon North Monument 8:00am", "✈️ Depart PHX 4:30pm"] },
-];
-
-const sampleScorecard = [
+const sampleScorecard: {
+  name: string;
+  front: number;
+  back: number;
+  total: number;
+  skins: number;
+  money: string;
+}[] = [
   { name: "Grayson", front: 38, back: 41, total: 79, skins: 3, money: "+$45" },
   { name: "Tyler", front: 42, back: 39, total: 81, skins: 2, money: "+$15" },
   { name: "Jake", front: 44, back: 43, total: 87, skins: 1, money: "-$20" },
   { name: "Marcus", front: 40, back: 45, total: 85, skins: 0, money: "-$40" },
 ];
 
-const sampleExpenses = [
-  { item: "Airbnb (4 nights)", amount: "$1,920", split: "$480/person", by: "Grayson" },
-  { item: "TPC Scottsdale", amount: "$740", split: "$185/person", by: "Tyler" },
-  { item: "Dinner — Mastro's", amount: "$340", split: "$85/person", by: "Jake" },
-  { item: "Uber rides", amount: "$120", split: "$30/person", by: "Marcus" },
-];
+/* ─── RecentArticles (preserved) ─── */
 
 async function RecentArticles() {
   const supabase = createServiceClient();
   const { data: posts } = await supabase
     .from("seo_blog_posts")
-    .select("id, title, slug, meta_description, featured_image_url, reading_time_minutes, word_count, tags, published_at")
+    .select(
+      "id, title, slug, meta_description, featured_image_url, reading_time_minutes, word_count, tags, published_at"
+    )
     .eq("status", "published")
     .order("published_at", { ascending: false })
     .limit(3);
 
   if (!posts || posts.length === 0) {
     return (
-      <p className="text-center text-zinc-400 py-8">
-        Articles coming soon.
-      </p>
+      <p className="py-8 text-center text-[#71717A]">Articles coming soon.</p>
     );
   }
 
@@ -70,10 +45,10 @@ async function RecentArticles() {
         <Link
           key={post.id}
           href={`/blog/${post.slug}`}
-          className="group overflow-hidden rounded-xl border border-zinc-200 transition-shadow hover:shadow-md"
+          className="group overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm transition-shadow hover:shadow-md"
         >
           {post.featured_image_url ? (
-            <div className="aspect-video overflow-hidden bg-zinc-100">
+            <div className="aspect-video overflow-hidden bg-gray-100">
               <img
                 src={post.featured_image_url}
                 alt={post.title}
@@ -81,24 +56,26 @@ async function RecentArticles() {
               />
             </div>
           ) : (
-            <div className="flex aspect-video items-center justify-center bg-gradient-to-br from-emerald-800 to-slate-900">
-              <span className="text-4xl font-extrabold text-emerald-500/20">N</span>
+            <div className="flex aspect-video items-center justify-center bg-[#18181B]">
+              <span className="text-4xl font-black text-[#D94F2B]/20">N</span>
             </div>
           )}
           <div className="p-5">
             {post.tags?.[0] && (
-              <span className="rounded-full bg-emerald-100 px-2.5 py-0.5 text-xs font-medium text-emerald-700">
+              <span className="rounded-full bg-[#0D7377]/10 px-2.5 py-0.5 text-xs font-medium text-[#0D7377]">
                 {post.tags[0]}
               </span>
             )}
-            <h3 className="mt-2 font-semibold text-zinc-900 group-hover:text-emerald-700 transition-colors line-clamp-2">
+            <h3 className="mt-2 font-black text-[#18181B] transition-colors group-hover:text-[#D94F2B] line-clamp-2">
               {post.title}
             </h3>
-            <p className="mt-1 text-sm text-zinc-500 line-clamp-2">
+            <p className="mt-1 text-sm text-[#71717A] line-clamp-2">
               {post.meta_description}
             </p>
-            <div className="mt-3 text-xs text-zinc-400">
-              {post.reading_time_minutes || Math.ceil((post.word_count || 0) / 200)} min read
+            <div className="mt-3 text-xs text-[#71717A]">
+              {post.reading_time_minutes ||
+                Math.ceil((post.word_count || 0) / 200)}{" "}
+              min read
             </div>
           </div>
         </Link>
@@ -107,545 +84,332 @@ async function RecentArticles() {
   );
 }
 
+/* ─── Home Page ─── */
+
 export default async function Home() {
   return (
-    <div className="relative min-h-[calc(100vh-64px)] bg-[#F3EDE4]">
-      {/* Course texture watermark */}
-      <div className="pointer-events-none fixed inset-0 z-0 flex items-center justify-center opacity-[0.04]">
-        <img src="/course-texture.png" alt="" className="w-[90%] max-w-[1200px]" />
-      </div>
+    <div className="relative">
       <AuthRedirect />
 
-      {/* ═══ HERO ═══ */}
-      <section className="relative z-10 overflow-hidden px-6 py-20 sm:py-28">
+      {/* ═══ SECTION 2 — HERO ═══ */}
+      <section className="relative flex min-h-screen flex-col justify-end overflow-hidden pb-24 px-6 lg:px-16">
         {/* Background image */}
-        <div className="absolute inset-0">
-          <img src="/hero-bg.jpg" alt="" className="h-full w-full object-cover" />
-          <div className="absolute inset-0 bg-gradient-to-b from-zinc-950/70 via-zinc-950/80 to-zinc-950" />
+        <Image
+          src="https://images.unsplash.com/photo-1587174486073-ae5e5cff23aa?w=1920"
+          alt="Golf course at dawn"
+          fill
+          priority
+          className="object-cover"
+        />
+        {/* Overlay */}
+        <div className="absolute inset-0 bg-gradient-to-t from-[#18181B] via-[#18181B]/50 to-transparent" />
+
+        {/* Content */}
+        <div className="relative z-10 max-w-6xl">
+          <h1 className="text-6xl font-black uppercase leading-none tracking-tighter text-[#F3EDE4] md:text-8xl lg:text-[120px]">
+            PLAN TRIPS.
+          </h1>
+          <h1 className="text-6xl font-black uppercase leading-none tracking-tighter text-[#F3EDE4] md:text-8xl lg:text-[120px]">
+            TRACK ROUNDS.
+          </h1>
+          <h1 className="text-6xl font-black uppercase leading-none tracking-tighter text-[#D94F2B] md:text-8xl lg:text-[120px]">
+            SETTLE BETS.
+          </h1>
+          <p className="mt-4 max-w-lg text-lg text-[#F3EDE4]/70">
+            The app for groups who actually play. Any flight, any game, any bet.
+          </p>
+          <div className="mt-8 flex flex-col gap-4 sm:flex-row">
+            <Link
+              href="/login"
+              className="rounded-lg bg-[#D94F2B] px-8 py-4 text-center text-sm font-black uppercase tracking-widest text-white transition-colors hover:bg-[#c4442a]"
+            >
+              GET STARTED FREE
+            </Link>
+            <Link
+              href="#features"
+              className="rounded-lg border border-[#F3EDE4] px-8 py-4 text-center text-sm font-black uppercase tracking-widest text-[#F3EDE4] transition-colors hover:bg-[#F3EDE4]/10"
+            >
+              SEE HOW IT WORKS
+            </Link>
+          </div>
+          <p className="mt-4 text-xs uppercase tracking-widest text-[#F3EDE4]/30">
+            100 founding member spots · Free for a year
+          </p>
         </div>
-        {/* Glow effect */}
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-[#D94F2B]/15 via-zinc-950 to-zinc-950" />
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[800px] bg-[#D94F2B]/8 rounded-full blur-3xl" />
-        
-        <div className="relative mx-auto max-w-5xl">
-          <div className="text-center">
-            {/* Badge */}
-            <div className="inline-flex items-center gap-2 rounded-full border border-[#E2D9CC] bg-[#FDFAF5] px-4 py-1.5 mb-8">
-              <Zap className="h-3.5 w-3.5 text-[#D94F2B]" />
-              <span className="text-xs font-medium text-[#e8785e]">Launching April 1, 2026</span>
+      </section>
+
+      {/* ═══ SECTION 3 — TRANSITION ═══ */}
+      <div className="h-32 bg-gradient-to-b from-[#18181B] to-[#F3EDE4]" />
+
+      {/* ═══ SECTION 4 — FEATURE CARDS ═══ */}
+      <section id="features" className="bg-[#F3EDE4] px-6 py-24 lg:px-16">
+        <div className="mx-auto max-w-6xl">
+          <h2 className="mb-16 text-4xl font-black uppercase tracking-tighter text-[#18181B] md:text-6xl">
+            THE WHOLE GAME. ONE APP.
+          </h2>
+          <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
+            {/* Card 1 — Track Rounds */}
+            <div className="rounded-2xl border border-gray-100 bg-white p-8 shadow-sm">
+              <Flag className="mb-6 h-8 w-8 text-[#0D7377]" />
+              <h3 className="mb-3 text-2xl font-black uppercase text-[#18181B]">
+                TRACK ROUNDS
+              </h3>
+              <p className="mb-8 text-base leading-relaxed text-[#71717A]">
+                Scores, skins, and bets — calculated live as you play.
+              </p>
+              <div className="aspect-[4/3] overflow-hidden rounded-xl bg-[#F3EDE4]" />
             </div>
-
-            <h1 className="text-5xl sm:text-7xl font-extrabold tracking-tight text-white leading-[1.1]">
-              Plan trips. Track rounds.<br />
-              <span className="text-[#D94F2B]">Settle bets. All in one place.</span>
-            </h1>
-            
-            <p className="mx-auto mt-6 max-w-2xl text-lg text-zinc-400 leading-relaxed">
-              Nassau replaces the 47-text thread, the shared spreadsheet nobody updates, 
-              and the buddy who &quot;forgot&quot; he owes you $85.
-
-            </p>
-
-            <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
-              <Link
-                href="/pricing"
-                className="group inline-flex items-center gap-2 rounded-xl bg-[#D94F2B] px-8 py-4 text-base font-bold text-white shadow-lg shadow-[#D94F2B]/20 transition-all hover:bg-[#D94F2B] hover:shadow-[#D94F2B]/20 hover:-translate-y-0.5"
-              >
-                Start Free — No Card Required
-                <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-              </Link>
-              <Link
-                href="/pricing"
-                className="inline-flex items-center gap-2 rounded-xl border border-zinc-700 px-8 py-4 text-base font-semibold text-zinc-300 transition-colors hover:bg-zinc-800 hover:text-white"
-              >
-                View Pricing
-              </Link>
+            {/* Card 2 — Plan Trips */}
+            <div className="rounded-2xl border border-gray-100 bg-white p-8 shadow-sm">
+              <Map className="mb-6 h-8 w-8 text-[#0D7377]" />
+              <h3 className="mb-3 text-2xl font-black uppercase text-[#18181B]">
+                PLAN TRIPS
+              </h3>
+              <p className="mb-8 text-base leading-relaxed text-[#71717A]">
+                Destinations, deposits, commitments. One link to coordinate your
+                entire crew.
+              </p>
+              <div className="aspect-[4/3] overflow-hidden rounded-xl bg-[#F3EDE4]" />
             </div>
-
-            {/* Social proof */}
-            <div className="mt-12 flex items-center justify-center gap-6 text-sm text-[#5A4F45]">
-              <div className="flex items-center gap-1.5">
-                <Users className="h-4 w-4" />
-                <span>Join 8+ golfers already on Nassau</span>
-              </div>
-              <div className="flex items-center gap-1.5">
-                <Star className="h-4 w-4 text-amber-400" />
-                <span>Free forever for rounds</span>
-              </div>
+            {/* Card 3 — Settle Up */}
+            <div className="rounded-2xl border border-gray-100 bg-white p-8 shadow-sm">
+              <Wallet className="mb-6 h-8 w-8 text-[#0D7377]" />
+              <h3 className="mb-3 text-2xl font-black uppercase text-[#18181B]">
+                SETTLE UP
+              </h3>
+              <p className="mb-8 text-base leading-relaxed text-[#71717A]">
+                Who owes who. Automated splits. One tap to Venmo.
+              </p>
+              <div className="aspect-[4/3] overflow-hidden rounded-xl bg-[#F3EDE4]" />
             </div>
           </div>
         </div>
       </section>
 
-      {/* ═══ TWO PILLARS ═══ */}
-      <section className="relative z-10 px-6 py-8 bg-[#F3EDE4]">
-        <div className="mx-auto max-w-5xl grid sm:grid-cols-2 gap-6">
-          <Link href="/login" className="group relative overflow-hidden rounded-2xl border border-[#E2D9CC] bg-[#FDFAF5] p-8 shadow-sm shadow-sm transition-all hover:border-[#D94F2B]/30 hover:shadow-md">
-            
-            <div className="relative">
-              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-[#F3EDE4] border border-[#E2D9CC] mb-4">
-                <MapPin className="h-6 w-6 text-[#D94F2B]" />
-              </div>
-              <h3 className="text-xl font-bold text-[#1A1A1A] mb-2">Plan a Trip</h3>
-              <p className="text-sm text-[#5A4F45] leading-relaxed mb-4">
-                Pick a destination, invite your crew, build the itinerary, split costs — 
-                all without a single spreadsheet.
-              </p>
-              <span className="inline-flex items-center gap-1 text-sm font-medium text-[#1A1A1A] underline underline-offset-2 group-hover:gap-2 transition-all">
-                Start planning <ChevronRight className="h-4 w-4" />
+      {/* ═══ SECTION 5 — LIVE SCORECARD ═══ */}
+      <section className="border-t border-[#18181B]/10 bg-[#F3EDE4] px-6 py-24 lg:px-16">
+        <div className="mx-auto grid max-w-6xl items-center gap-16 lg:grid-cols-2">
+          {/* Left column */}
+          <div>
+            <span className="inline-flex items-center gap-2 rounded-full bg-[#0D7377]/10 px-3 py-1 text-xs font-black uppercase tracking-widest text-[#0D7377]">
+              <span className="relative flex h-2 w-2">
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#0D7377] opacity-75" />
+                <span className="relative inline-flex h-2 w-2 rounded-full bg-[#0D7377]" />
               </span>
-            </div>
-          </Link>
-
-          <Link href="/login" className="group relative overflow-hidden rounded-2xl border border-[#E2D9CC] bg-[#FDFAF5] p-8 shadow-sm shadow-sm transition-all hover:border-amber-500/30 hover:shadow-md">
-            
-            <div className="relative">
-              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-amber-500/10 mb-4">
-                <Trophy className="h-6 w-6 text-amber-400" />
-              </div>
-              <h3 className="text-xl font-bold text-[#1A1A1A] mb-2">Track a Round</h3>
-              <p className="text-sm text-[#5A4F45] leading-relaxed mb-4">
-                Commissioner Mode — set up skins, Nassau bets, track scores live, 
-                and settle up before you hit the parking lot. Free forever.
-              </p>
-              <span className="inline-flex items-center gap-1 text-sm font-medium text-amber-400 group-hover:gap-2 transition-all">
-                Track a round <ChevronRight className="h-4 w-4" />
-              </span>
-            </div>
-          </Link>
-        </div>
-      </section>
-
-      {/* Browse curated trips */}
-      <div className="relative z-10 text-center py-4 bg-[#F3EDE4]">
-        <Link href="/explore" className="inline-flex items-center gap-2 text-sm font-medium text-[#1A1A1A] underline underline-offset-4 decoration-[#E2D9CC] hover:decoration-[#D94F2B] transition-colors">
-          Just browsing? Explore our curated trip guides
-          <ArrowRight className="h-3.5 w-3.5" />
-        </Link>
-      </div>
-
-      {/* ═══ SECTION 1: TRIP PLANNER PREVIEW ═══ */}
-      <section id="trip-planner" className="relative z-10 px-6 py-20 bg-[#F3EDE4]">
-        <div className="mx-auto max-w-5xl">
-          <div className="text-center mb-8">
-            <p className="text-xs font-semibold text-[#B83D25] uppercase tracking-widest mb-3">Trip Planning</p>
-            <h2 className="text-3xl sm:text-4xl font-bold text-[#1A1A1A]">
-              Pick a destination. We&apos;ll handle the rest.
+              LIVE
+            </span>
+            <h2 className="mt-4 text-4xl font-black uppercase tracking-tighter text-[#18181B] md:text-6xl">
+              FREE TO KEEP SCORE.
             </h2>
-            <p className="mt-4 text-[#5A4F45] max-w-xl mx-auto">
-              AI-powered trip ideation, itinerary builder, expense splitting, and group coordination — 
-              everything your trip captain needs.
+            <p className="mt-4 text-lg text-[#71717A]">
+              Commissioner Mode. Track any round, right now. No account needed.
             </p>
-          </div>
-
-          {/* Destination cards */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-8">
-            {tripDestinations.map((dest) => (
-              <Link
-                href="/login"
-                key={dest.name}
-                className="group rounded-xl border border-[#E2D9CC] bg-[#FDFAF5] p-4 shadow-sm transition-all hover:border-[#D94F2B]/30 hover:-translate-y-1 hover:shadow-md"
-              >
-                <div className="text-3xl mb-2">{dest.img}</div>
-                <h4 className="font-bold text-[#1A1A1A] text-sm">{dest.name}</h4>
-                <div className="mt-2 flex items-center gap-3 text-xs text-[#5A4F45]">
-                  <span>{dest.courses} courses</span>
-                  <span>{dest.temp}</span>
-                </div>
-                <div className="mt-2 text-sm font-bold text-[#1A1A1A]">{dest.avgCost}<span className="text-xs font-normal text-zinc-500">/person</span></div>
-              </Link>
-            ))}
-          </div>
-
-          {/* Explore CTA */}
-          <div className="text-center mb-8">
-            <Link href="/explore" className="inline-flex items-center gap-2 rounded-xl border-2 border-[#1A1A1A] px-8 py-3 text-sm font-bold text-[#1A1A1A] transition-all hover:bg-[#1A1A1A] hover:text-white">
-              See Our Top 50+ Curated Destinations
-              <ArrowRight className="h-4 w-4" />
+            <Link
+              href="/login"
+              className="mt-8 inline-block rounded-lg bg-[#D94F2B] px-8 py-4 text-sm font-black uppercase tracking-widest text-white transition-colors hover:bg-[#c4442a]"
+            >
+              START A ROUND
             </Link>
           </div>
 
-          {/* Itinerary preview */}
-          <div className="rounded-2xl border border-[#E2D9CC] bg-[#FDFAF5] overflow-hidden shadow-sm">
-            <div className="border-b border-[#E2D9CC] px-6 py-4 flex items-center justify-between">
-              <div>
-                <h3 className="font-bold text-[#1A1A1A]">Scottsdale Trip — March 2026</h3>
-                <p className="text-xs text-[#5A4F45] mt-0.5">4 days · 4 players · 4 rounds</p>
-              </div>
-              <Link href="/login" className="rounded-lg bg-[#D94F2B]/10 px-3 py-1.5 text-xs font-medium text-[#B83D25] hover:bg-[#D94F2B]/20 transition-colors">
-                Create yours →
-              </Link>
+          {/* Right column — scorecard */}
+          <div className="overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm">
+            <div className="flex items-center justify-between bg-[#18181B] px-6 py-4">
+              <span className="font-black uppercase text-[#F3EDE4]">
+                TPC SCOTTSDALE
+              </span>
+              <span className="font-black uppercase text-[#D94F2B]">
+                HOLE 16
+              </span>
             </div>
-            <div className="grid sm:grid-cols-4 divide-y sm:divide-y-0 sm:divide-x divide-[#E2D9CC]">
-              {sampleItinerary.map((day) => (
-                <div key={day.day} className="p-4">
-                  <div className="flex items-baseline gap-2 mb-3">
-                    <span className="text-lg font-bold text-[#1A1A1A]">{day.day}</span>
-                    <span className="text-xs text-[#5A4F45]">{day.date}</span>
-                  </div>
-                  <div className="space-y-2">
-                    {day.items.map((item, i) => (
-                      <p key={i} className="text-xs text-zinc-400 leading-relaxed">{item}</p>
-                    ))}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ═══ SECTION 2: ROUND TRACKER / COMMISSIONER MODE ═══ */}
-      <section className="relative z-10 px-6 py-16 bg-[#F3EDE4]/95 border-t border-[#E2D9CC]">
-        <div className="mx-auto max-w-5xl">
-          <div className="text-center mb-8">
-            <p className="text-xs font-semibold text-amber-400 uppercase tracking-widest mb-3">Commissioner Mode</p>
-            <h2 className="text-3xl sm:text-4xl font-bold text-[#1A1A1A]">
-              Track rounds. Settle bets. No arguments.
-            </h2>
-            <p className="mt-4 text-[#5A4F45] max-w-xl mx-auto">
-              Set up skins, Nassau bets, track live scores, and know exactly who owes who — 
-              before anyone &quot;forgets.&quot; Free forever.
-            </p>
-          </div>
-
-          {/* Scorecard preview */}
-          <div className="rounded-2xl border border-[#E2D9CC] bg-[#FDFAF5] overflow-hidden shadow-sm">
-            <div className="border-b border-[#E2D9CC] px-6 py-4 flex items-center justify-between">
-              <div>
-                <h3 className="font-bold text-[#1A1A1A]">TPC Scottsdale — Stadium Course</h3>
-                <p className="text-xs text-[#5A4F45] mt-0.5">$5 Nassau · $5 Skins · 4 players</p>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="rounded-full bg-green-600/10 px-2.5 py-0.5 text-xs font-medium text-green-400">Live</span>
-              </div>
-            </div>
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="border-b border-zinc-800">
-                    <th className="px-6 py-3 text-left font-medium text-[#5A4F45]">Player</th>
-                    <th className="px-4 py-3 text-center font-medium text-[#5A4F45]">Front</th>
-                    <th className="px-4 py-3 text-center font-medium text-[#5A4F45]">Back</th>
-                    <th className="px-4 py-3 text-center font-medium text-[#5A4F45]">Total</th>
-                    <th className="px-4 py-3 text-center font-medium text-[#5A4F45]">Skins</th>
-                    <th className="px-4 py-3 text-right font-medium text-[#5A4F45]">Money</th>
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="bg-gray-50">
+                  <th className="px-6 py-3 text-left text-xs font-medium uppercase text-[#71717A]">
+                    Player
+                  </th>
+                  <th className="px-4 py-3 text-center text-xs font-medium uppercase text-[#71717A]">
+                    Front
+                  </th>
+                  <th className="px-4 py-3 text-center text-xs font-medium uppercase text-[#71717A]">
+                    Back
+                  </th>
+                  <th className="px-4 py-3 text-center text-xs font-medium uppercase text-[#71717A]">
+                    Total
+                  </th>
+                  <th className="px-4 py-3 text-center text-xs font-medium uppercase text-[#71717A]">
+                    Skins
+                  </th>
+                  <th className="px-4 py-3 text-right text-xs font-medium uppercase text-[#71717A]">
+                    Money
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {sampleScorecard.map((player, i) => (
+                  <tr key={player.name} className="border-b border-gray-100">
+                    <td className="px-6 py-3 font-black text-[#18181B]">
+                      {player.name}
+                    </td>
+                    <td className="px-4 py-3 text-center text-[#71717A]">
+                      {player.front}
+                    </td>
+                    <td className="px-4 py-3 text-center text-[#71717A]">
+                      {player.back}
+                    </td>
+                    <td
+                      className={`px-4 py-3 text-center font-black ${
+                        i === 0 ? "text-[#D94F2B]" : "text-[#18181B]"
+                      }`}
+                    >
+                      {player.total}
+                    </td>
+                    <td className="px-4 py-3 text-center text-[#71717A]">
+                      {player.skins}
+                    </td>
+                    <td
+                      className={`px-4 py-3 text-right font-black ${
+                        player.money.startsWith("+")
+                          ? "text-emerald-600"
+                          : "text-[#D94F2B]"
+                      }`}
+                    >
+                      {player.money}
+                    </td>
                   </tr>
-                </thead>
-                <tbody>
-                  {sampleScorecard.map((player, i) => (
-                    <tr key={player.name} className={`border-b border-[#E2D9CC]/50 ${i === 0 ? "bg-[#D94F2B]/8" : ""}`}>
-                      <td className="px-6 py-3">
-                        <div className="flex items-center gap-2">
-                          <div className={`h-7 w-7 rounded-full flex items-center justify-center text-xs font-bold ${i === 0 ? "bg-[#D94F2B]/20 text-[#D94F2B]" : "bg-zinc-800 text-zinc-400"}`}>
-                            {player.name[0]}
-                          </div>
-                          <span className="font-medium text-[#1A1A1A]">{player.name}</span>
-                          {i === 0 && <span className="text-xs text-[#D94F2B]">👑</span>}
-                        </div>
-                      </td>
-                      <td className="px-4 py-3 text-center text-[#4A4A4A]">{player.front}</td>
-                      <td className="px-4 py-3 text-center text-[#4A4A4A]">{player.back}</td>
-                      <td className="px-4 py-3 text-center font-bold text-[#1A1A1A]">{player.total}</td>
-                      <td className="px-4 py-3 text-center text-[#4A4A4A]">{player.skins}</td>
-                      <td className={`px-4 py-3 text-right font-bold ${player.money.startsWith("+") ? "text-[#D94F2B]" : "text-red-400"}`}>
-                        {player.money}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-            <div className="px-6 py-4 border-t border-[#E2D9CC] flex items-center justify-between">
-              <p className="text-xs text-[#5A4F45]">Commissioner: Grayson · Hole 18 · 3:47 PM</p>
-              <Link href="/login" className="rounded-lg bg-amber-500/10 px-3 py-1.5 text-xs font-medium text-[#B83D25] hover:bg-amber-500/20 transition-colors">
-                Track your round →
-              </Link>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ═══ SECTION 3: EXPENSE SPLITTING ═══ */}
-      <section className="relative z-10 px-6 py-20">
-        <div className="mx-auto max-w-5xl">
-          <div className="text-center mb-8">
-            <p className="text-xs font-semibold text-[#B83D25] uppercase tracking-widest mb-3">Expense Tracking</p>
-            <h2 className="text-3xl sm:text-4xl font-bold text-[#1A1A1A]">
-              &quot;I&apos;ll Venmo you later&quot; — and they never do.
-            </h2>
-            <p className="mt-4 text-[#5A4F45] max-w-xl mx-auto">
-              Log every expense, auto-split the bill, and generate a settlement report 
-              so nobody can play dumb.
-            </p>
-          </div>
-
-          <div className="rounded-2xl border border-[#E2D9CC] bg-[#FDFAF5] overflow-hidden shadow-sm max-w-2xl mx-auto">
-            <div className="border-b border-[#E2D9CC] px-6 py-4">
-              <h3 className="font-bold text-[#1A1A1A]">Trip Expenses — Scottsdale</h3>
-              <p className="text-xs text-[#5A4F45] mt-0.5">Total: $3,120 · $780/person</p>
-            </div>
-            <div className="divide-y divide-[#E2D9CC]/50">
-              {sampleExpenses.map((exp) => (
-                <div key={exp.item} className="px-6 py-3 flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-[#1A1A1A]">{exp.item}</p>
-                    <p className="text-xs text-[#504538]">Paid by {exp.by} · {exp.split}</p>
-                  </div>
-                  <span className="text-sm font-bold text-[#1A1A1A]">{exp.amount}</span>
-                </div>
-              ))}
-            </div>
-            <div className="px-6 py-4 border-t border-[#E2D9CC] bg-[#F3EDE4]/80">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-xs font-semibold text-zinc-400 uppercase">Settlement</p>
-                  <p className="text-sm text-zinc-300 mt-1">Tyler owes Grayson <span className="font-bold text-[#D94F2B]">$185</span></p>
-                  <p className="text-sm text-zinc-300">Jake owes Grayson <span className="font-bold text-[#D94F2B]">$95</span></p>
-                </div>
-                <Link href="/login" className="rounded-lg bg-[#D94F2B] px-4 py-2 text-xs font-bold text-white hover:bg-[#D94F2B] transition-colors">
-                  Settle Up
-                </Link>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-
-      {/* ═══ PHONE MOCKUP — See it in action ═══ */}
-      <section className="relative z-10 px-6 py-20 bg-[#F3EDE4]">
-        <div className="mx-auto max-w-5xl">
-          <div className="text-center mb-12">
-            <p className="text-xs font-semibold text-[#B83D25] uppercase tracking-widest mb-3">See It In Action</p>
-            <h2 className="text-3xl sm:text-4xl font-bold text-[#1A1A1A]">
-              Your golfer&apos;s dashboard.
-            </h2>
-            <p className="mt-4 text-[#5A4F45] max-w-xl mx-auto">
-              Everything you need — trips, rounds, scores, bets, expenses — organized in one place. 
-              Dark mode for on-course readability.
-            </p>
-          </div>
-
-          {/* Phone frame */}
-          <div className="mx-auto max-w-sm">
-            <div className="rounded-[2.5rem] border-[6px] border-[#1A1A1A] bg-[#09090b] p-2 shadow-2xl">
-              {/* Phone notch */}
-              <div className="mx-auto mb-2 h-6 w-28 rounded-full bg-[#1A1A1A]" />
-              
-              {/* Screen content */}
-              <div className="rounded-[2rem] bg-[#09090b] overflow-hidden">
-                {/* App nav */}
-                <div className="px-5 py-3 flex items-center justify-between border-b border-zinc-800">
-                  <span className="text-sm font-bold text-[#D94F2B]">Nassau</span>
-                  <div className="flex gap-3 text-xs text-zinc-400">
-                    <span className="text-white font-medium">Trips</span>
-                    <span>Rounds</span>
-                  </div>
-                </div>
-
-                {/* Dashboard */}
-                <div className="px-5 py-4">
-                  <p className="text-sm text-zinc-400">Good afternoon,</p>
-                  <p className="text-lg font-bold text-white">Grayson</p>
-                  
-                  {/* Quick actions */}
-                  <div className="grid grid-cols-2 gap-2 mt-4">
-                    <div className="rounded-lg bg-zinc-900 border border-zinc-800 p-3">
-                      <p className="text-[10px] font-medium text-[#D94F2B] uppercase tracking-wider">New Trip</p>
-                      <p className="text-xs text-white mt-1">Plan a getaway</p>
-                    </div>
-                    <div className="rounded-lg bg-zinc-900 border border-zinc-800 p-3">
-                      <p className="text-[10px] font-medium text-amber-500 uppercase tracking-wider">Track Round</p>
-                      <p className="text-xs text-white mt-1">Commissioner</p>
-                    </div>
-                  </div>
-
-                  {/* Upcoming round */}
-                  <div className="mt-4 rounded-lg bg-zinc-900 border border-zinc-800 overflow-hidden">
-                    <div className="px-3 py-2.5 flex justify-between items-center">
-                      <div>
-                        <p className="text-xs font-semibold text-white">TPC Scottsdale</p>
-                        <p className="text-[10px] text-zinc-500 mt-0.5">Tomorrow · 8:15 AM · 4 players</p>
-                      </div>
-                      <div className="text-right">
-                        <p className="text-base font-light text-amber-500">72°</p>
-                        <p className="text-[9px] text-zinc-500">Sunny</p>
-                      </div>
-                    </div>
-                    <div className="px-3 py-2 border-t border-zinc-800 flex gap-1.5">
-                      {["G","T","J","M"].map((n, i) => (
-                        <div key={n} className={`w-6 h-6 rounded-full flex items-center justify-center text-[9px] font-bold ${i === 0 ? "bg-[#D94F2B]/20 text-[#D94F2B]" : "bg-zinc-800 text-zinc-500"}`}>{n}</div>
-                      ))}
-                      <span className="text-[9px] text-zinc-500 self-center ml-1">All in</span>
-                    </div>
-                  </div>
-
-                  {/* Last round */}
-                  <div className="mt-3 rounded-lg bg-zinc-900 border border-zinc-800 overflow-hidden">
-                    <div className="px-3 py-2 border-b border-zinc-800 flex justify-between">
-                      <span className="text-[10px] font-medium text-white">Grayhawk Raptor</span>
-                      <span className="text-[9px] text-zinc-500">Mar 3</span>
-                    </div>
-                    {[
-                      {n:"Grayson",s:79,m:"+$45",t:true},
-                      {n:"Tyler",s:81,m:"+$15",t:false},
-                      {n:"Jake",s:87,m:"-$20",t:false},
-                    ].map((p) => (
-                      <div key={p.n} className={`px-3 py-1.5 flex justify-between items-center border-b border-zinc-800/50 ${p.t ? "bg-[#D94F2B]/5" : ""}`}>
-                        <span className={`text-[10px] ${p.t ? "font-bold text-white" : "text-zinc-400"}`}>{p.n}</span>
-                        <div className="flex gap-3">
-                          <span className="text-[10px] font-bold text-white">{p.s}</span>
-                          <span className={`text-[10px] font-bold ${p.m.startsWith("+") ? "text-[#3D6B4A]" : "text-[#D94F2B]"}`}>{p.m}</span>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-
-                  {/* Settlement */}
-                  <div className="mt-3 rounded-lg bg-[#D94F2B]/5 border border-[#D94F2B]/15 p-3 flex justify-between items-center">
-                    <div>
-                      <p className="text-[9px] text-[#D94F2B] font-medium uppercase tracking-wider">You&apos;re owed</p>
-                      <p className="text-xl font-light text-[#D94F2B]">$45</p>
-                    </div>
-                    <div className="bg-[#D94F2B] text-white text-[10px] font-semibold px-3 py-1.5 rounded-md">Settle Up</div>
-                  </div>
-                </div>
-
-                {/* Bottom nav */}
-                <div className="px-5 py-3 border-t border-zinc-800 flex justify-around mt-2">
-                  {["Home","Trips","Rounds","Profile"].map((t, i) => (
-                    <div key={t} className="text-center">
-                      <div className={`w-1 h-1 rounded-full mx-auto mb-1 ${i === 0 ? "bg-[#D94F2B]" : "bg-transparent"}`} />
-                      <span className={`text-[9px] ${i === 0 ? "text-[#D94F2B] font-medium" : "text-zinc-600"}`}>{t}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ═══ HOW IT WORKS (simplified) ═══ */}
-      <section className="relative z-10 px-6 py-16 bg-[#F3EDE4]/95 border-t border-[#E2D9CC]">
-        <div className="mx-auto max-w-4xl">
-          <h2 className="text-center text-3xl font-bold text-[#1A1A1A] mb-16">
-            60 seconds. That&apos;s it.
-          </h2>
-          <div className="grid sm:grid-cols-3 gap-8">
-            {[
-              { icon: Target, title: "Pick your play", desc: "Create a trip or track a round. One tap, one link." },
-              { icon: Users, title: "Send one link", desc: "Your crew sees the plan, confirms, and locks in. No back-and-forth." },
-              { icon: CheckCircle2, title: "Play and settle", desc: "Scores, skins, expenses — tracked live. Settle up on the 18th green." },
-            ].map((step, i) => (
-              <div key={step.title} className="text-center">
-                <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-[#FDFAF5] border border-[#E2D9CC] shadow-sm mb-4">
-                  <step.icon className="h-7 w-7 text-[#D94F2B]" />
-                </div>
-                <h3 className="font-bold text-white mb-2">{step.title}</h3>
-                <p className="text-sm text-zinc-400 leading-relaxed">{step.desc}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ═══ PRICING ═══ */}
-      <section className="relative z-10 px-6 py-20">
-        <div className="mx-auto max-w-4xl">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-[#1A1A1A]">Simple pricing. No surprises.</h2>
-            <p className="mt-4 text-[#5A4F45]">Commissioner Mode is free. Forever. Seriously.</p>
-          </div>
-
-          <div className="grid sm:grid-cols-2 gap-6 max-w-2xl mx-auto">
-            {/* Free tier */}
-            <div className="rounded-2xl border border-[#E2D9CC] bg-[#FDFAF5] p-8 shadow-sm">
-              <div className="text-xs font-semibold text-amber-400 uppercase tracking-widest mb-2">Commissioner Mode</div>
-              <div className="flex items-baseline gap-1 mb-4">
-                <span className="text-4xl font-extrabold text-[#1A1A1A]">$0</span>
-                <span className="text-[#5A4F45]">/forever</span>
-              </div>
-              <p className="text-sm text-zinc-400 mb-6">Track rounds, run skins games, settle bets. Invite unlimited players.</p>
-              <ul className="space-y-3 mb-8">
-                {["Scorecard tracking", "Skins games + Nassau bets", "Expense splitting", "Invite via link", "Settlement calculator"].map((f) => (
-                  <li key={f} className="flex items-center gap-2 text-sm text-[#4A4A4A]">
-                    <CheckCircle2 className="h-4 w-4 text-[#D94F2B] shrink-0" />
-                    {f}
-                  </li>
                 ))}
-              </ul>
-              <Link href="/login" className="block w-full rounded-xl border border-[#E2D9CC] py-3 text-center text-sm font-bold text-[#1A1A1A] hover:bg-[#EDE7DD] transition-colors">
-                Get Started Free
-              </Link>
-            </div>
-
-            {/* Pro tier */}
-            <div className="relative rounded-2xl border border-[#D94F2B]/30 bg-[#FDFAF5] p-8 shadow-md">
-              <div className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-[#D94F2B] px-3 py-0.5 text-xs font-bold text-[#1A1A1A]">
-                Most Popular
-              </div>
-              <div className="text-xs font-semibold text-[#B83D25] uppercase tracking-widest mb-2">Nassau Pro</div>
-              <div className="flex items-baseline gap-1 mb-1">
-                <span className="text-4xl font-extrabold text-[#1A1A1A]">$6.99</span>
-                <span className="text-[#5A4F45]">/month</span>
-              </div>
-              <p className="text-xs text-[#5A4F45] mb-4">or $49.99/year (save 40%)</p>
-              <p className="text-sm text-zinc-400 mb-6">Everything in Commissioner Mode plus full trip planning tools.</p>
-              <ul className="space-y-3 mb-8">
-                {["Everything in Commissioner Mode", "AI trip ideation", "Itinerary builder", "Group coordination", "Trip recaps + sharing", "Destination guides"].map((f) => (
-                  <li key={f} className="flex items-center gap-2 text-sm text-[#4A4A4A]">
-                    <CheckCircle2 className="h-4 w-4 text-[#D94F2B] shrink-0" />
-                    {f}
-                  </li>
-                ))}
-              </ul>
-              <Link href="/login" className="block w-full rounded-xl bg-[#D94F2B] py-3 text-center text-sm font-bold text-white hover:bg-[#D94F2B] transition-colors shadow-lg shadow-[#D94F2B]/20">
-                Start 30-Day Free Trial
-              </Link>
-            </div>
+              </tbody>
+            </table>
           </div>
-
-          <p className="text-center text-xs text-[#5A4F45] mt-6">
-            Need a single trip? Grab a <span className="text-[#504538]">Per-Trip Pass for $4.99</span> — no subscription needed.
-          </p>
         </div>
       </section>
 
-      {/* ═══ FINAL CTA ═══ */}
-      <section className="relative z-10 px-6 py-24">
-        <div className="mx-auto max-w-3xl text-center">
-          <h2 className="text-3xl sm:text-4xl font-bold text-[#1A1A1A]">
-            Your crew is already planning<br />the next trip without you.
+      {/* ═══ SECTION 6 — FOUNDING MEMBERS + PRICING ═══ */}
+      <section className="border-t border-[#18181B]/10 bg-[#F3EDE4] px-6 py-24 lg:px-16">
+        <div className="mx-auto max-w-6xl">
+          <h2 className="mb-16 text-4xl font-black uppercase tracking-tighter text-[#18181B] md:text-5xl">
+            PICK YOUR PLAY.
           </h2>
-          <p className="mt-6 text-lg text-[#504538]">
-            Be the one who sends the Nassau link. Be the legend.
-          </p>
-          <Link
-            href="/login"
-            className="group mt-10 inline-flex items-center gap-2 rounded-xl bg-[#D94F2B] px-10 py-4 text-base font-bold text-white shadow-lg shadow-[#D94F2B]/20 transition-all hover:bg-[#D94F2B] hover:shadow-[#D94F2B]/20 hover:-translate-y-0.5"
+          <div className="mx-auto grid max-w-4xl gap-8 md:grid-cols-2">
+            {/* Founding Members card */}
+            <div className="rounded-2xl border border-[#0D7377]/20 bg-white p-10 shadow-sm">
+              <h3 className="mb-4 text-2xl font-black uppercase text-[#18181B]">
+                FOUNDING MEMBERS
+              </h3>
+              <p className="mb-8 text-[#71717A]">
+                First 100 golfers get Pro free for a year. Claim your spot
+                before April 1.
+              </p>
+              <p className="mb-2 text-sm text-[#71717A]">
+                87 of 100 spots remaining
+              </p>
+              <div className="h-1.5 rounded-full bg-gray-200">
+                <div
+                  className="h-1.5 rounded-full bg-[#0D7377]"
+                  style={{ width: "13%" }}
+                />
+              </div>
+              <Link
+                href="/login"
+                className="mt-6 block w-full rounded-lg bg-[#D94F2B] py-3 text-center text-sm font-black uppercase text-white transition-colors hover:bg-[#c4442a]"
+              >
+                CLAIM YOUR SPOT
+              </Link>
+            </div>
+
+            {/* Pricing card */}
+            <div className="rounded-2xl border border-gray-200 bg-white p-10 shadow-sm">
+              <h3 className="mb-1 text-xl font-black text-[#18181B]">
+                Free to keep score.
+              </h3>
+              <p className="mb-8 text-sm text-[#71717A]">
+                Pay when money&apos;s on the line.
+              </p>
+
+              {/* Commissioner tier */}
+              <div className="mb-3 flex items-center justify-between rounded-xl bg-[#F3EDE4] p-4">
+                <span className="font-black uppercase text-[#18181B]">
+                  COMMISSIONER
+                </span>
+                <div className="text-right">
+                  <span className="font-black text-[#18181B]">$0</span>{" "}
+                  <span className="text-xs text-[#71717A]">forever</span>
+                </div>
+              </div>
+
+              {/* Nassau Pro tier */}
+              <div className="relative flex items-center justify-between rounded-xl border-2 border-[#D94F2B] bg-[#F3EDE4] p-4">
+                <span className="absolute -top-2.5 left-4 rounded-full bg-[#0D7377] px-2 py-0.5 text-[10px] font-black uppercase tracking-wider text-white">
+                  PRO STATUS
+                </span>
+                <span className="font-black uppercase text-[#D94F2B]">
+                  NASSAU PRO
+                </span>
+                <div className="text-right">
+                  <span className="font-black text-[#18181B]">$6.99</span>{" "}
+                  <span className="text-xs text-[#71717A]">/mo</span>
+                </div>
+              </div>
+
+              <Link
+                href="/login"
+                className="mt-6 block w-full rounded-lg bg-[#D94F2B] py-3 text-center text-sm font-black uppercase text-white transition-colors hover:bg-[#c4442a]"
+              >
+                START 30-DAY FREE TRIAL
+              </Link>
+              <p className="mt-3 text-center text-xs text-[#71717A]">
+                Single trip access — $4.99 per event.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ═══ RECENT ARTICLES ═══ */}
+      <section className="bg-[#F3EDE4] px-6 py-16 lg:px-16">
+        <div className="mx-auto max-w-6xl">
+          <h2 className="mb-8 text-2xl font-black uppercase tracking-tighter text-[#18181B]">
+            LATEST FROM THE BLOG
+          </h2>
+          <RecentArticles />
+        </div>
+      </section>
+
+      {/* ═══ SECTION 7 — FOOTER ═══ */}
+      <footer className="bg-[#18181B] px-6 py-16 text-center">
+        <p className="mb-2 text-2xl font-black text-[#F3EDE4]">NASSAU</p>
+        <p className="mb-8 text-sm text-[#F3EDE4]/60">
+          Built by a golfer, for golfers.
+        </p>
+        <div className="mb-6 flex justify-center gap-8">
+          <a
+            href="mailto:grayson@nassau.golf"
+            className="text-sm text-[#71717A] transition-colors hover:text-[#F3EDE4]"
           >
-            Create Your Free Account
-            <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+            Feedback
+          </a>
+          <Link
+            href="/privacy"
+            className="text-sm text-[#71717A] transition-colors hover:text-[#F3EDE4]"
+          >
+            Privacy
           </Link>
-          <p className="mt-4 text-xs text-[#5A4F45]">No credit card required · 30 seconds to set up</p>
+          <Link
+            href="/terms"
+            className="text-sm text-[#71717A] transition-colors hover:text-[#F3EDE4]"
+          >
+            Terms
+          </Link>
+          <a
+            href="mailto:support@nassau.golf"
+            className="text-sm text-[#71717A] transition-colors hover:text-[#F3EDE4]"
+          >
+            Support
+          </a>
         </div>
-      </section>
-
-      {/* ═══ FOOTER ═══ */}
-      <footer className="border-t border-[#E2D9CC] px-6 py-8">
-        <div className="mx-auto max-w-5xl flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <span className="text-lg font-extrabold text-[#D94F2B] tracking-tight">Nassau</span>
-            <span className="text-xs text-[#5A4F45]">Plan trips. Track rounds. Settle bets.</span>
-          </div>
-          <div className="flex items-center gap-6 text-xs text-[#5A4F45]">
-            <Link href="/blog" className="hover:text-[#1A1A1A] transition-colors">Blog</Link>
-            <Link href="/explore" className="hover:text-[#1A1A1A] transition-colors">Explore Destinations</Link>
-            <a href="mailto:grayson@nassau.golf" className="hover:text-[#1A1A1A] transition-colors">Contact</a>
-          </div>
-        </div>
+        <p className="text-xs text-[#71717A]">
+          © 2026 Nassau Golf. All rights reserved.
+        </p>
       </footer>
     </div>
   );
