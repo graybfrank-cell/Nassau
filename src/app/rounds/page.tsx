@@ -53,7 +53,21 @@ export default function RoundsPage() {
   useEffect(() => {
     const supabase = createClient();
     supabase.auth.getUser().then(async ({ data: { user } }) => {
-      if (!user) { router.push("/login"); return; }
+      if (!user) { router.push("/login?redirect=/rounds"); return; }
+      // Check subscription status
+      try {
+        const profileRes = await fetch("/api/profile");
+        if (profileRes.ok) {
+          const profile = await profileRes.json();
+          const status = profile.subscription_status;
+          if (status !== "active" && status !== "trialing") {
+            router.push("/pricing");
+            return;
+          }
+        }
+      } catch {
+        // Non-critical — allow access on error
+      }
       setRounds(await getGameRounds());
       setLoading(false);
     });
