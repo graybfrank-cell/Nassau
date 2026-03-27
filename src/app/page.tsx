@@ -95,7 +95,7 @@ export default async function Home() {
       <section className="relative flex min-h-screen flex-col justify-end overflow-hidden pb-24 px-6 lg:px-16">
         {/* Background image */}
         <Image
-          src="https://images.unsplash.com/photo-dyXifZBEJBk?w=1920"
+          src="https://images.unsplash.com/photo-1592919355415-9db1cd94b2ba?q=80&w=2232&auto=format&fit=crop"
           alt="Golf course at dawn"
           fill
           priority
@@ -178,7 +178,7 @@ export default async function Home() {
               </p>
               <div className="relative rounded-xl overflow-hidden aspect-[4/3] mt-6">
                 <Image
-                  src="https://images.unsplash.com/photo-mwX13QqAM5s?w=600"
+                  src="https://images.unsplash.com/photo-1629293821782-4746e8921c75?q=80&w=2070&auto=format&fit=crop"
                   alt="Golf trip planning"
                   fill
                   className="object-cover"
