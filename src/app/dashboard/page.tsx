@@ -13,6 +13,7 @@ import {
   User,
   AlertCircle,
   ChevronRight,
+  DollarSign,
 } from "lucide-react";
 import type { DashboardData } from "@/types/dashboard";
 
@@ -336,7 +337,7 @@ export default function DashboardPage() {
       </div>
 
       {/* ── YOUR TRIPS SECTION ── */}
-      <div className="px-6 mt-6 mb-24">
+      <div className="px-6 mt-6">
         <p className="text-xs font-black uppercase tracking-widest text-[#71717A] mb-3">
           YOUR TRIPS
         </p>
@@ -348,6 +349,28 @@ export default function DashboardPage() {
           </div>
           <p className="text-xs text-[#0D7377] mt-1">4 of 6 paid</p>
         </div>
+      </div>
+
+      {/* ── SETTLEMENTS SECTION ── */}
+      <div className="px-6 mt-6 mb-24">
+        <p className="text-xs font-black uppercase tracking-widest text-[#71717A] mb-3">
+          SETTLEMENTS
+        </p>
+        <Link
+          href="/settlements"
+          className="flex items-center justify-between bg-[#27272A] rounded-xl p-4 border border-[#3F3F46] cursor-pointer hover:border-[#D94F2B] transition-colors"
+        >
+          <div className="flex items-center">
+            <DollarSign className="text-[#0D7377] w-5 h-5" />
+            <span className="font-bold text-[#F3EDE4] text-sm ml-3">
+              View Settlements
+            </span>
+            {hasSettlements && (
+              <span className="w-2 h-2 bg-[#D94F2B] rounded-full ml-2" />
+            )}
+          </div>
+          <ChevronRight className="text-[#71717A] w-4 h-4" />
+        </Link>
       </div>
 
       {/* ── BOTTOM NAV ── */}
