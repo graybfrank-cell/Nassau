@@ -37,7 +37,7 @@ export default function FoundingMemberPage() {
       {/* DARK HERO */}
       <section className="relative min-h-[90vh] flex flex-col justify-end pt-24 pb-16 px-6 overflow-hidden">
         <Image
-          src="https://images.unsplash.com/photo-1592919505780-303950717480?w=1920"
+          src="https://images.unsplash.com/photo-jF9TdhvYNiQ?w=1920"
           fill
           className="object-cover"
           priority

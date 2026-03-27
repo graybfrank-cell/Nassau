@@ -95,7 +95,7 @@ export default async function Home() {
       <section className="relative flex min-h-screen flex-col justify-end overflow-hidden pb-24 px-6 lg:px-16">
         {/* Background image */}
         <Image
-          src="https://images.unsplash.com/photo-1535131749006-b7f58c99034b?w=1920"
+          src="https://images.unsplash.com/photo-dyXifZBEJBk?w=1920"
           alt="Golf course at dawn"
           fill
           priority
@@ -159,7 +159,7 @@ export default async function Home() {
               </p>
               <div className="relative rounded-xl overflow-hidden aspect-[4/3] mt-6">
                 <Image
-                  src="https://images.unsplash.com/photo-1535131749006-b7f58c99034b?w=600"
+                  src="https://images.unsplash.com/photo-Nmh-pEBRt2Y?w=600"
                   alt="Live golf scorecard tracking"
                   fill
                   className="object-cover"
@@ -178,7 +178,7 @@ export default async function Home() {
               </p>
               <div className="relative rounded-xl overflow-hidden aspect-[4/3] mt-6">
                 <Image
-                  src="https://images.unsplash.com/photo-1510771463146-e89e6e86560e?w=600"
+                  src="https://images.unsplash.com/photo-mwX13QqAM5s?w=600"
                   alt="Golf trip planning"
                   fill
                   className="object-cover"
@@ -196,7 +196,7 @@ export default async function Home() {
               </p>
               <div className="relative rounded-xl overflow-hidden aspect-[4/3] mt-6">
                 <Image
-                  src="https://images.unsplash.com/photo-1592919505780-303950717480?w=600"
+                  src="https://images.unsplash.com/photo-mqQ0BuJ5dsA?w=600"
                   alt="Golf group settling bets"
                   fill
                   className="object-cover"
