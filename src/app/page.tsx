@@ -159,7 +159,7 @@ export default async function Home() {
               </p>
               <div className="relative rounded-xl overflow-hidden aspect-[4/3] mt-6">
                 <Image
-                  src="https://images.unsplash.com/photo-Nmh-pEBRt2Y?w=600"
+                  src="https://images.unsplash.com/photo-1593282153762-a41e3cceb06c?q=80&w=987&auto=format&fit=crop"
                   alt="Live golf scorecard tracking"
                   fill
                   className="object-cover"
@@ -196,7 +196,7 @@ export default async function Home() {
               </p>
               <div className="relative rounded-xl overflow-hidden aspect-[4/3] mt-6">
                 <Image
-                  src="https://images.unsplash.com/photo-mqQ0BuJ5dsA?w=600"
+                  src="https://images.unsplash.com/photo-1496115965489-21be7e6e59a0?q=80&w=987&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
                   alt="Golf group settling bets"
                   fill
                   className="object-cover"
