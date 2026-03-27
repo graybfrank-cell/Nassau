@@ -2,14 +2,18 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import {
   DollarSign,
   Check,
   ExternalLink,
-  Clock,
   CheckCircle2,
-  ArrowLeft,
+  Bell,
+  Home,
+  Trophy,
+  Map,
+  User,
 } from "lucide-react";
 
 interface Profile {
@@ -35,45 +39,7 @@ interface Settlement {
   payee: Profile;
 }
 
-function StatusBadge({ status }: { status: string }) {
-  if (status === "pending") {
-    return (
-      <span className="inline-flex items-center gap-1 rounded-full bg-yellow-900/40 px-2.5 py-0.5 text-xs font-medium text-yellow-400">
-        <Clock className="h-3 w-3" />
-        Pending
-      </span>
-    );
-  }
-  if (status === "paid") {
-    return (
-      <span className="inline-flex items-center gap-1 rounded-full bg-blue-900/40 px-2.5 py-0.5 text-xs font-medium text-blue-400">
-        <DollarSign className="h-3 w-3" />
-        Paid
-      </span>
-    );
-  }
-  return (
-    <span className="inline-flex items-center gap-1 rounded-full bg-emerald-900/40 px-2.5 py-0.5 text-xs font-medium text-emerald-400">
-      <CheckCircle2 className="h-3 w-3" />
-      Confirmed
-    </span>
-  );
-}
-
-function SkeletonCard() {
-  return (
-    <div className="animate-pulse rounded-xl bg-[#242424] p-4 space-y-3">
-      <div className="flex items-center justify-between">
-        <div className="h-4 w-32 rounded bg-zinc-700" />
-        <div className="h-5 w-16 rounded-full bg-zinc-700" />
-      </div>
-      <div className="h-3 w-48 rounded bg-zinc-700" />
-      <div className="flex gap-2">
-        <div className="h-8 w-24 rounded-lg bg-zinc-700" />
-      </div>
-    </div>
-  );
-}
+const FILTERS = ["All", "Pending", "Paid"] as const;
 
 export default function SettlementsPage() {
   const router = useRouter();
@@ -81,6 +47,7 @@ export default function SettlementsPage() {
   const [settlements, setSettlements] = useState<Settlement[]>([]);
   const [loading, setLoading] = useState(true);
   const [updatingId, setUpdatingId] = useState<string | null>(null);
+  const [activeFilter, setActiveFilter] = useState<string>("All");
 
   useEffect(() => {
     const supabase = createClient();
@@ -149,163 +116,232 @@ export default function SettlementsPage() {
     window.open(venmoUrl, "_blank");
   }
 
-  const owed = settlements.filter((s) => s.payee_id === userId);
-  const owes = settlements.filter((s) => s.payer_id === userId);
+  const youOweTotal = settlements
+    .filter((s) => s.payer_id === userId && s.status === "pending")
+    .reduce((sum, s) => sum + parseFloat(s.amount), 0);
 
-  const hasAny = settlements.length > 0;
+  const owedToYouTotal = settlements
+    .filter((s) => s.payee_id === userId && s.status === "pending")
+    .reduce((sum, s) => sum + parseFloat(s.amount), 0);
+
+  const filtered = settlements.filter((s) => {
+    if (activeFilter === "Pending") return s.status === "pending";
+    if (activeFilter === "Paid") return s.status === "paid" || s.status === "confirmed";
+    return true;
+  });
 
   return (
-    <div className="min-h-screen bg-[#1A1A1A]">
-      <div className="mx-auto max-w-2xl px-4 py-6">
-        {/* Header */}
-        <div className="mb-8 flex items-center gap-3">
-          <button
-            onClick={() => router.back()}
-            className="rounded-lg p-2 text-zinc-400 hover:bg-[#242424] hover:text-[#F3EDE4] transition-colors"
-          >
-            <ArrowLeft className="h-5 w-5" />
-          </button>
-          <div>
-            <h1 className="text-2xl font-bold text-[#F3EDE4]">Settlements</h1>
-            <p className="text-sm text-zinc-400">Track and settle up with your group</p>
+    <div
+      className="min-h-screen bg-[#18181B] pb-32"
+      style={{ fontFamily: "'Helvetica Neue', Arial, sans-serif" }}
+    >
+      {/* Top Bar */}
+      <div className="flex items-center justify-between px-6 py-4">
+        <span className="font-black text-xl uppercase tracking-tighter text-[#F3EDE4]">
+          NASSAU
+        </span>
+        <div className="flex items-center gap-4">
+          <Bell className="h-5 w-5 text-[#71717A]" />
+          <div className="h-8 w-8 rounded-full bg-[#3F3F46] flex items-center justify-center text-xs font-bold text-[#F3EDE4]">
+            U
           </div>
         </div>
+      </div>
 
-        {loading ? (
-          <div className="space-y-8">
-            <div className="space-y-3">
-              <div className="h-5 w-24 rounded bg-zinc-700 animate-pulse" />
-              <SkeletonCard />
-              <SkeletonCard />
+      {/* Page Header */}
+      <div className="px-6 mt-2">
+        <h1 className="font-black text-3xl uppercase text-[#F3EDE4]">
+          Settlements
+        </h1>
+        <p className="text-sm text-[#71717A]">
+          Who owes who. Settle up fast.
+        </p>
+      </div>
+
+      {/* Summary Card */}
+      {!loading && (
+        <div className="bg-[#27272A] rounded-xl p-4 mx-6 mt-4">
+          <div className="grid grid-cols-2">
+            <div>
+              <p className="text-xs uppercase text-[#71717A] font-bold">
+                You Owe
+              </p>
+              <p className="font-black text-2xl text-[#D94F2B]">
+                ${youOweTotal.toFixed(2)}
+              </p>
             </div>
-            <div className="space-y-3">
-              <div className="h-5 w-24 rounded bg-zinc-700 animate-pulse" />
-              <SkeletonCard />
+            <div>
+              <p className="text-xs uppercase text-[#71717A] font-bold">
+                Owed to You
+              </p>
+              <p className="font-black text-2xl text-[#0D7377]">
+                ${owedToYouTotal.toFixed(2)}
+              </p>
             </div>
           </div>
-        ) : !hasAny ? (
+        </div>
+      )}
+
+      {/* Filter Pills */}
+      <div className="px-6 mt-4 flex gap-2 overflow-x-auto">
+        {FILTERS.map((filter) => (
+          <button
+            key={filter}
+            onClick={() => setActiveFilter(filter)}
+            className={`text-xs font-black uppercase px-4 py-2 rounded-full whitespace-nowrap ${
+              activeFilter === filter
+                ? "bg-[#D94F2B] text-white"
+                : "border border-[#3F3F46] text-[#71717A]"
+            }`}
+          >
+            {filter}
+          </button>
+        ))}
+      </div>
+
+      {/* Settlements List */}
+      <div className="px-6 mt-4 space-y-3">
+        {loading ? (
+          <>
+            {[1, 2, 3].map((i) => (
+              <div
+                key={i}
+                className="animate-pulse rounded-xl bg-[#27272A] p-4 space-y-3"
+              >
+                <div className="h-4 w-32 rounded bg-zinc-700" />
+                <div className="h-6 w-20 rounded bg-zinc-700" />
+                <div className="h-8 w-28 rounded bg-zinc-700" />
+              </div>
+            ))}
+          </>
+        ) : filtered.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-20 text-center">
-            <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-[#242424]">
-              <CheckCircle2 className="h-8 w-8 text-emerald-400" />
-            </div>
-            <p className="text-lg font-medium text-[#F3EDE4]">
-              No pending settlements.
-            </p>
-            <p className="mt-1 text-sm text-zinc-400">
-              You&apos;re all square!
-            </p>
+            <p className="text-lg text-[#71717A]">All settled up 🤝</p>
           </div>
         ) : (
-          <div className="space-y-8">
-            {/* You're Owed */}
-            {owed.length > 0 && (
-              <section>
-                <h2 className="mb-3 text-sm font-semibold uppercase tracking-wider text-emerald-400">
-                  You&apos;re Owed
-                </h2>
-                <div className="space-y-3">
-                  {owed.map((s) => (
-                    <div
-                      key={s.id}
-                      className="rounded-xl bg-[#242424] p-4 space-y-3"
-                    >
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2">
-                          <span className="text-[#F3EDE4] font-medium">
-                            {s.payer.full_name || s.payer.email || "Unknown"}
-                          </span>
-                        </div>
-                        <StatusBadge status={s.status} />
-                      </div>
+          filtered.map((s) => {
+            const isOwed = s.payee_id === userId;
+            const otherPerson = isOwed ? s.payer : s.payee;
+            const isPaid =
+              s.status === "paid" || s.status === "confirmed";
 
-                      <div className="flex items-center justify-between">
-                        <span className="text-emerald-400 text-xl font-bold">
-                          +${parseFloat(s.amount).toFixed(2)}
-                        </span>
-                      </div>
+            return (
+              <div
+                key={s.id}
+                className="bg-[#27272A] rounded-xl p-4 border border-[#3F3F46]"
+              >
+                {/* Top: Name + round/trip */}
+                <div className="flex items-center justify-between">
+                  <span className="font-bold text-[#F3EDE4]">
+                    {otherPerson.full_name ||
+                      otherPerson.email ||
+                      "Unknown"}
+                  </span>
+                  <span className="text-xs text-[#71717A]">
+                    {s.note || (s.round_id ? "Round" : s.trip_id ? "Trip" : "")}
+                  </span>
+                </div>
 
-                      {s.note && (
-                        <p className="text-sm text-zinc-400">{s.note}</p>
-                      )}
+                {/* Middle: Amount */}
+                <p
+                  className={`text-xl font-black mt-2 ${
+                    isOwed ? "text-[#0D7377]" : "text-[#D94F2B]"
+                  }`}
+                >
+                  {isOwed ? "+" : "-"}$
+                  {parseFloat(s.amount).toFixed(2)}
+                </p>
 
-                      {s.status === "paid" && (
+                {/* Bottom: Actions */}
+                <div className="mt-3">
+                  {isPaid ? (
+                    <div className="flex items-center gap-1.5 text-[#0D7377]">
+                      <CheckCircle2 className="h-4 w-4" />
+                      <span className="text-sm font-bold">Paid</span>
+                    </div>
+                  ) : s.payer_id === userId && s.status === "pending" ? (
+                    <div className="flex items-center gap-3">
+                      {s.payee.venmo_username && (
                         <button
-                          onClick={() => updateStatus(s.id, "confirmed")}
-                          disabled={updatingId === s.id}
-                          className="inline-flex items-center gap-1.5 rounded-lg bg-emerald-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-emerald-500 transition-colors disabled:opacity-50"
+                          onClick={() =>
+                            openVenmo(s.payee, s.amount, s.note)
+                          }
+                          className="inline-flex items-center gap-1.5 rounded-lg bg-[#D94F2B] px-4 py-2 text-sm font-bold text-white hover:bg-[#C44425] transition-colors"
                         >
-                          <Check className="h-4 w-4" />
-                          {updatingId === s.id ? "Confirming..." : "Confirm Payment"}
+                          <ExternalLink className="h-4 w-4" />
+                          Settle via Venmo →
                         </button>
                       )}
+                      <button
+                        onClick={() => updateStatus(s.id, "paid")}
+                        disabled={updatingId === s.id}
+                        className="text-sm text-[#71717A] hover:text-[#F3EDE4] transition-colors disabled:opacity-50"
+                      >
+                        {updatingId === s.id
+                          ? "Updating..."
+                          : "Mark as Paid"}
+                      </button>
                     </div>
-                  ))}
-                </div>
-              </section>
-            )}
-
-            {/* You Owe */}
-            {owes.length > 0 && (
-              <section>
-                <h2 className="mb-3 text-sm font-semibold uppercase tracking-wider text-[#D94F2B]">
-                  You Owe
-                </h2>
-                <div className="space-y-3">
-                  {owes.map((s) => (
-                    <div
-                      key={s.id}
-                      className="rounded-xl bg-[#242424] p-4 space-y-3"
+                  ) : s.payee_id === userId && s.status === "paid" ? (
+                    <button
+                      onClick={() => updateStatus(s.id, "confirmed")}
+                      disabled={updatingId === s.id}
+                      className="inline-flex items-center gap-1.5 rounded-lg bg-[#0D7377] px-3 py-1.5 text-sm font-bold text-white hover:bg-[#0B6165] transition-colors disabled:opacity-50"
                     >
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2">
-                          <span className="text-[#F3EDE4] font-medium">
-                            {s.payee.full_name || s.payee.email || "Unknown"}
-                          </span>
-                        </div>
-                        <StatusBadge status={s.status} />
-                      </div>
-
-                      <div className="flex items-center justify-between">
-                        <span className="text-[#D94F2B] text-xl font-bold">
-                          -${parseFloat(s.amount).toFixed(2)}
-                        </span>
-                      </div>
-
-                      {s.note && (
-                        <p className="text-sm text-zinc-400">{s.note}</p>
-                      )}
-
-                      <div className="flex items-center gap-2">
-                        {s.status === "pending" && (
-                          <>
-                            {s.payee.venmo_username && (
-                              <button
-                                onClick={() => openVenmo(s.payee, s.amount, s.note)}
-                                className="inline-flex items-center gap-1.5 rounded-lg bg-[#008CFF] px-3 py-1.5 text-sm font-medium text-white hover:bg-[#0070CC] transition-colors"
-                              >
-                                <ExternalLink className="h-4 w-4" />
-                                Pay via Venmo
-                              </button>
-                            )}
-                            <button
-                              onClick={() => updateStatus(s.id, "paid")}
-                              disabled={updatingId === s.id}
-                              className="inline-flex items-center gap-1.5 rounded-lg bg-[#D94F2B] px-3 py-1.5 text-sm font-medium text-white hover:bg-[#C44425] transition-colors disabled:opacity-50"
-                            >
-                              <DollarSign className="h-4 w-4" />
-                              {updatingId === s.id ? "Updating..." : "Mark as Paid"}
-                            </button>
-                          </>
-                        )}
-                      </div>
-                    </div>
-                  ))}
+                      <Check className="h-4 w-4" />
+                      {updatingId === s.id
+                        ? "Confirming..."
+                        : "Confirm Payment"}
+                    </button>
+                  ) : null}
                 </div>
-              </section>
-            )}
-          </div>
+              </div>
+            );
+          })
         )}
       </div>
+
+      {/* Bottom Nav */}
+      <nav className="fixed bottom-0 left-0 right-0 bg-[#18181B] border-t border-[#27272A] px-6 py-3">
+        <div className="grid grid-cols-4">
+          <Link
+            href="/dashboard"
+            className="flex flex-col items-center gap-1"
+          >
+            <Home className="h-5 w-5 text-[#71717A]" />
+            <span className="text-xs uppercase font-bold text-[#71717A]">
+              Home
+            </span>
+          </Link>
+          <Link
+            href="/rounds"
+            className="flex flex-col items-center gap-1"
+          >
+            <Trophy className="h-5 w-5 text-[#71717A]" />
+            <span className="text-xs uppercase font-bold text-[#71717A]">
+              Rounds
+            </span>
+          </Link>
+          <Link
+            href="/trips"
+            className="flex flex-col items-center gap-1"
+          >
+            <Map className="h-5 w-5 text-[#71717A]" />
+            <span className="text-xs uppercase font-bold text-[#71717A]">
+              Trips
+            </span>
+          </Link>
+          <Link
+            href="/profile"
+            className="flex flex-col items-center gap-1"
+          >
+            <User className="h-5 w-5 text-[#71717A]" />
+            <span className="text-xs uppercase font-bold text-[#71717A]">
+              Profile
+            </span>
+          </Link>
+        </div>
+      </nav>
     </div>
   );
 }
