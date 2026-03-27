@@ -6,13 +6,13 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import {
   Bell,
-  ChevronRight,
   Home,
   Trophy,
   Map,
   User,
   LogOut,
   Loader2,
+  Check,
 } from "lucide-react";
 
 interface Profile {
@@ -31,14 +31,6 @@ interface Stats {
   won: number;
 }
 
-const ACCOUNT_ROWS = ["Edit Profile", "Change Email", "Notifications"];
-const GAME_ROWS = ["Default Handicap", "Home Course", "Preferred Tee"];
-const PAYMENT_ROWS = [
-  "Venmo Username",
-  "Payment History",
-  "Nassau Pro Subscription",
-];
-
 function getInitials(name: string | null | undefined): string {
   if (!name) return "U";
   return name
@@ -53,8 +45,14 @@ export default function ProfilePage() {
   const router = useRouter();
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
-  const [stats, setStats] = useState<Stats>({ rounds: 0, avgScore: 0, won: 0 });
+  const [saving, setSaving] = useState(false);
+  const [saved, setSaved] = useState(false);
   const [signingOut, setSigningOut] = useState(false);
+  const [stats, setStats] = useState<Stats>({ rounds: 0, avgScore: 0, won: 0 });
+
+  // Form fields
+  const [fullName, setFullName] = useState("");
+  const [venmoUsername, setVenmoUsername] = useState("");
 
   useEffect(() => {
     const supabase = createClient();
@@ -67,6 +65,8 @@ export default function ProfilePage() {
       if (res.ok) {
         const p: Profile = await res.json();
         setProfile(p);
+        setFullName(p.full_name || "");
+        setVenmoUsername(p.venmo_username || "");
       }
 
       // Fetch stats
@@ -87,6 +87,30 @@ export default function ProfilePage() {
       setLoading(false);
     });
   }, [router]);
+
+  async function handleSave(e: React.FormEvent) {
+    e.preventDefault();
+    setSaving(true);
+    setSaved(false);
+    try {
+      const res = await fetch("/api/profile", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          full_name: fullName,
+          venmo_username: venmoUsername,
+        }),
+      });
+      if (res.ok) {
+        const updated = await res.json();
+        setProfile(updated);
+        setSaved(true);
+        setTimeout(() => setSaved(false), 2000);
+      }
+    } finally {
+      setSaving(false);
+    }
+  }
 
   async function handleSignOut() {
     setSigningOut(true);
@@ -121,27 +145,29 @@ export default function ProfilePage() {
 
       {/* Profile Header */}
       <div className="flex flex-col items-center mt-8">
-        <div className="w-20 h-20 bg-[#27272A] rounded-full flex items-center justify-center">
+        <div className="w-20 h-20 bg-[#27272A] rounded-full mx-auto flex items-center justify-center">
           <span className="font-black text-2xl text-[#F3EDE4]">
             {getInitials(profile?.full_name)}
           </span>
         </div>
-        <h1 className="mt-4 font-black text-2xl text-[#F3EDE4]">
+        <h1 className="mt-4 font-black text-2xl text-[#F3EDE4] text-center">
           {profile?.full_name || "User"}
         </h1>
-        <p className="text-sm text-[#71717A]">{profile?.email}</p>
+        <p className="text-sm text-[#71717A] text-center mt-1">
+          {profile?.email}
+        </p>
         <div className="flex gap-2 mt-3">
           <span className="bg-[#27272A] px-3 py-1 rounded-full text-xs text-[#71717A]">
-            Handicap —
+            12 HDCP
           </span>
           <span className="bg-[#27272A] px-3 py-1 rounded-full text-xs text-[#71717A]">
-            Location —
+            Austin, TX
           </span>
         </div>
       </div>
 
       {/* Stats Card */}
-      <div className="bg-[#27272A] rounded-xl p-4 mx-6 mt-6">
+      <div className="mx-6 mt-6 bg-[#27272A] rounded-xl p-4">
         <div className="grid grid-cols-3 divide-x divide-[#3F3F46]">
           <div className="text-center">
             <p className="font-black text-2xl text-[#F3EDE4]">
@@ -173,13 +199,13 @@ export default function ProfilePage() {
       {/* Subscription Card */}
       {profile?.subscription_status &&
         profile.subscription_status !== "free" && (
-          <div className="bg-[#27272A] rounded-xl p-4 mx-6 mt-4 border-l-4 border-[#D94F2B]">
+          <div className="mx-6 mt-4 bg-[#27272A] rounded-xl p-4 border-l-4 border-[#D94F2B]">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-xs font-black uppercase text-[#D94F2B]">
                   Nassau Pro
                 </p>
-                <p className="text-sm text-[#71717A] mt-0.5">
+                <p className="text-sm text-[#71717A] mt-1">
                   Founding Member
                 </p>
               </div>
@@ -190,75 +216,78 @@ export default function ProfilePage() {
           </div>
         )}
 
-      {/* Settings Sections */}
-      <div className="mx-6 mt-6 space-y-6">
-        {/* Account */}
-        <section>
-          <h3 className="text-xs font-black uppercase tracking-widest text-[#0D7377]">
+      {/* Editable Fields */}
+      <form onSubmit={handleSave}>
+        <div className="mx-6 mt-6">
+          <p className="text-xs font-black uppercase tracking-widest text-[#0D7377] mb-3">
             Account
-          </h3>
-          <div className="mt-2">
-            {ACCOUNT_ROWS.map((label) => (
-              <div
-                key={label}
-                className="flex justify-between items-center py-4 border-b border-[#3F3F46]"
-              >
-                <span className="font-bold text-[#F3EDE4] text-sm">
-                  {label}
-                </span>
-                <ChevronRight className="text-[#71717A] w-4 h-4" />
-              </div>
-            ))}
-          </div>
-        </section>
+          </p>
 
-        {/* Game */}
-        <section>
-          <h3 className="text-xs font-black uppercase tracking-widest text-[#0D7377]">
-            Game
-          </h3>
-          <div className="mt-2">
-            {GAME_ROWS.map((label) => (
-              <div
-                key={label}
-                className="flex justify-between items-center py-4 border-b border-[#3F3F46]"
-              >
-                <span className="font-bold text-[#F3EDE4] text-sm">
-                  {label}
-                </span>
-                <ChevronRight className="text-[#71717A] w-4 h-4" />
-              </div>
-            ))}
+          {/* Full Name */}
+          <div className="mb-4">
+            <label className="text-xs text-[#71717A] uppercase mb-1 block">
+              Full Name
+            </label>
+            <input
+              type="text"
+              value={fullName}
+              onChange={(e) => setFullName(e.target.value)}
+              placeholder="Grayson Frank"
+              className="w-full bg-[#27272A] border border-[#3F3F46] rounded-lg px-4 py-3 text-[#F3EDE4] font-bold focus:border-[#D94F2B] focus:outline-none focus:ring-0 placeholder:text-[#71717A]"
+            />
           </div>
-        </section>
 
-        {/* Payments */}
-        <section>
-          <h3 className="text-xs font-black uppercase tracking-widest text-[#0D7377]">
-            Payments
-          </h3>
-          <div className="mt-2">
-            {PAYMENT_ROWS.map((label) => (
-              <div
-                key={label}
-                className="flex justify-between items-center py-4 border-b border-[#3F3F46]"
-              >
-                <span className="font-bold text-[#F3EDE4] text-sm">
-                  {label}
-                </span>
-                <ChevronRight className="text-[#71717A] w-4 h-4" />
-              </div>
-            ))}
+          {/* Venmo Username */}
+          <div>
+            <label className="text-xs text-[#71717A] uppercase mb-1 block">
+              Venmo Username
+            </label>
+            <div className="relative">
+              <span className="absolute left-4 top-1/2 -translate-y-1/2 text-[#71717A] font-bold">
+                @
+              </span>
+              <input
+                type="text"
+                value={venmoUsername}
+                onChange={(e) => setVenmoUsername(e.target.value)}
+                placeholder="John-Doe-42"
+                className="w-full bg-[#27272A] border border-[#3F3F46] rounded-lg pl-8 pr-4 py-3 text-[#F3EDE4] font-bold focus:border-[#D94F2B] focus:outline-none focus:ring-0 placeholder:text-[#71717A]"
+              />
+            </div>
+            <p className="text-xs text-[#71717A] mt-1">
+              Used for quick settlements
+            </p>
           </div>
-        </section>
-      </div>
+        </div>
+
+        {/* Save Button */}
+        <div className="mx-6 mt-6">
+          <button
+            type="submit"
+            disabled={saving}
+            className="w-full bg-[#D94F2B] text-white font-black uppercase py-3 rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50"
+          >
+            {saving ? (
+              <Loader2 className="h-4 w-4 animate-spin mx-auto" />
+            ) : (
+              "Save Changes"
+            )}
+          </button>
+          {saved && (
+            <p className="text-sm text-[#0D7377] text-center mt-2 flex items-center justify-center gap-1">
+              <Check className="h-4 w-4" />
+              Changes saved
+            </p>
+          )}
+        </div>
+      </form>
 
       {/* Sign Out */}
-      <div className="mx-6 mt-8">
+      <div className="mx-6 mt-4">
         <button
           onClick={handleSignOut}
           disabled={signingOut}
-          className="w-full border border-[#3F3F46] text-[#71717A] font-black uppercase py-3 rounded-lg hover:border-[#D94F2B] hover:text-[#D94F2B] transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+          className="w-full border border-[#3F3F46] text-[#71717A] font-black uppercase py-3 rounded-lg mb-24 hover:border-[#D94F2B] hover:text-[#D94F2B] transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
         >
           <LogOut className="h-4 w-4" />
           {signingOut ? "Signing Out..." : "Sign Out"}
