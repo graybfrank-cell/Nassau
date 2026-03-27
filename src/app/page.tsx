@@ -178,7 +178,7 @@ export default async function Home() {
               </p>
               <div className="relative rounded-xl overflow-hidden aspect-[4/3] mt-6">
                 <Image
-                  src="https://images.unsplash.com/photo-1624526267942-ab0ff8a3e972?w=600"
+                  src="https://images.unsplash.com/photo-1510771463146-e89e6e86560e?w=600"
                   alt="Golf trip planning"
                   fill
                   className="object-cover"
