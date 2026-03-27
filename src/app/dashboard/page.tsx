@@ -14,12 +14,7 @@ import {
   AlertCircle,
   ChevronRight,
 } from "lucide-react";
-import type {
-  DashboardData,
-  UpcomingRound,
-  RecentScore,
-  RecentRoundDetail,
-} from "@/types/dashboard";
+import type { DashboardData } from "@/types/dashboard";
 
 const EMPTY_DASHBOARD: DashboardData = {
   user: { fullName: "Golfer", firstName: "Golfer", venmoUsername: null },
@@ -147,12 +142,12 @@ export default function DashboardPage() {
     data.settlements.totalOwed > 0 || data.settlements.totalOwing > 0;
   const firstOwing = data.settlements.owing[0];
 
-  // Fallback sample data when no real data exists
-  const totalRounds = data.lifetimeStats.totalRounds || 23;
+  // Real stats from API — show actual values, "—" or "$0" when empty
+  const totalRounds = data.lifetimeStats.totalRounds;
   const avgScore = data.seasonStats.scoringAvg
     ? `+${data.seasonStats.scoringAvg.toFixed(1)}`
-    : "+4.1";
-  const totalWon = data.lifetimeStats.totalMoneyWon || 340;
+    : "—";
+  const totalWon = data.lifetimeStats.totalMoneyWon;
 
   // Upcoming round data
   const upcomingRound = data.upcomingRound || data.upcomingRounds[0];
@@ -194,7 +189,7 @@ export default function DashboardPage() {
       {/* ── GREETING ── */}
       <div className="px-6 mt-4">
         <h1 className="font-black text-2xl text-[#F3EDE4]">
-          Hey, {data.user.firstName || "Grayson"} 👋
+          Hey, {data.user.firstName} 👋
         </h1>
         <p className="text-sm text-[#71717A]">{formatCurrentDate()}</p>
       </div>
@@ -256,11 +251,11 @@ export default function DashboardPage() {
       </Link>
 
       {/* ── UPCOMING SECTION ── */}
-      {upcomingRound && (
-        <div className="px-6 mt-6">
-          <p className="text-xs font-black uppercase tracking-widest text-[#0D7377] mb-3">
-            UPCOMING
-          </p>
+      <div className="px-6 mt-6">
+        <p className="text-xs font-black uppercase tracking-widest text-[#0D7377] mb-3">
+          UPCOMING
+        </p>
+        {upcomingRound ? (
           <Link
             href={`/rounds/${upcomingRound.id}`}
             className="block rounded-xl bg-[#27272A] p-4 border border-[#0D7377]/30"
@@ -292,15 +287,24 @@ export default function DashboardPage() {
               </span>
             </div>
           </Link>
-        </div>
-      )}
+        ) : (
+          <div className="rounded-xl bg-[#27272A] p-4 border border-[#0D7377]/30">
+            <p className="text-sm text-[#71717A]">
+              No upcoming rounds ·{" "}
+              <Link href="/rounds/new" className="text-[#0D7377] font-bold">
+                Start one now →
+              </Link>
+            </p>
+          </div>
+        )}
+      </div>
 
       {/* ── RECENT ROUNDS SECTION ── */}
-      {recentRoundsList.length > 0 && (
-        <div className="px-6 mt-6">
-          <p className="text-xs font-black uppercase tracking-widest text-[#71717A] mb-3">
-            RECENT ROUNDS
-          </p>
+      <div className="px-6 mt-6">
+        <p className="text-xs font-black uppercase tracking-widest text-[#71717A] mb-3">
+          RECENT ROUNDS
+        </p>
+        {recentRoundsList.length > 0 ? (
           <div className="divide-y divide-[#3F3F46]">
             {recentRoundsList.map((round) => (
               <Link
@@ -324,8 +328,12 @@ export default function DashboardPage() {
               </Link>
             ))}
           </div>
-        </div>
-      )}
+        ) : (
+          <p className="text-sm text-[#71717A]">
+            No rounds yet · Your history will appear here
+          </p>
+        )}
+      </div>
 
       {/* ── YOUR TRIPS SECTION ── */}
       <div className="px-6 mt-6 mb-24">
