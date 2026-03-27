@@ -92,7 +92,7 @@ export default function RoundsPage() {
 
   useEffect(() => {
     const supabase = createClient();
-    supabase.auth.getUser().then(async ({ data: { user } }) => {
+    supabase.auth.getUser().then(async ({ data: { user } }: { data: { user: any } }) => {
       if (!user) { router.push("/login?redirect=/rounds"); return; }
       setUserId(user.id);
       // Check subscription status
@@ -114,49 +114,49 @@ export default function RoundsPage() {
     });
   }, [router]);
 
-  const completedRounds = useMemo(
-    () => rounds.filter((r) => effectiveStatus(r) === "completed"),
+  const completedRounds: GameRound[] = useMemo(
+    () => rounds.filter((r: GameRound) => effectiveStatus(r) === "completed"),
     [rounds]
   );
 
-  const totalWon = useMemo(
-    () => completedRounds.reduce((sum, r) => sum + computeMoneyWon(r, userId), 0),
+  const totalWon: number = useMemo(
+    () => completedRounds.reduce((sum: number, r: GameRound) => sum + computeMoneyWon(r, userId), 0),
     [completedRounds, userId]
   );
 
-  const totalLost = useMemo(
-    () => completedRounds.reduce((sum, r) => sum + computeMoneyLost(r, userId), 0),
+  const totalLost: number = useMemo(
+    () => completedRounds.reduce((sum: number, r: GameRound) => sum + computeMoneyLost(r, userId), 0),
     [completedRounds, userId]
   );
 
   const netWon = totalWon - totalLost;
 
-  const avgScore = useMemo(() => {
+  const avgScore: number | null = useMemo(() => {
     const scores = completedRounds
-      .map((r) => getBestScore(r, userId))
-      .filter((s): s is number => s !== null);
+      .map((r: GameRound) => getBestScore(r, userId))
+      .filter((s: number | null): s is number => s !== null);
     if (scores.length === 0) return null;
     const pars = completedRounds
-      .map((r) => getCoursePar(r))
-      .filter((p): p is number => p !== null);
+      .map((r: GameRound) => getCoursePar(r))
+      .filter((p: number | null): p is number => p !== null);
     if (pars.length === 0) return null;
-    const avgPar = pars.reduce((a, b) => a + b, 0) / pars.length;
-    const avg = scores.reduce((a, b) => a + b, 0) / scores.length;
+    const avgPar = pars.reduce((a: number, b: number) => a + b, 0) / pars.length;
+    const avg = scores.reduce((a: number, b: number) => a + b, 0) / scores.length;
     return avg - avgPar;
   }, [completedRounds, userId]);
 
-  const filteredRounds = useMemo(() => {
-    let filtered = [...rounds];
+  const filteredRounds: GameRound[] = useMemo(() => {
+    let filtered: GameRound[] = [...rounds];
     if (activeFilter === "with_bets") {
-      filtered = filtered.filter((r) => r.skinsGame || r.nassauBet);
+      filtered = filtered.filter((r: GameRound) => r.skinsGame || r.nassauBet);
     } else if (activeFilter === "wins_only") {
-      filtered = filtered.filter((r) => computeMoneyWon(r, userId) > computeMoneyLost(r, userId));
+      filtered = filtered.filter((r: GameRound) => computeMoneyWon(r, userId) > computeMoneyLost(r, userId));
     } else if (activeFilter === "this_year") {
       const year = new Date().getFullYear();
-      filtered = filtered.filter((r) => new Date(r.teeTime).getFullYear() === year);
+      filtered = filtered.filter((r: GameRound) => new Date(r.teeTime).getFullYear() === year);
     }
     return filtered.sort(
-      (a, b) => new Date(b.teeTime).getTime() - new Date(a.teeTime).getTime()
+      (a: GameRound, b: GameRound) => new Date(b.teeTime).getTime() - new Date(a.teeTime).getTime()
     );
   }, [rounds, activeFilter, userId]);
 
@@ -242,7 +242,7 @@ export default function RoundsPage() {
             <p className="text-[#71717A] text-sm">No rounds match this filter.</p>
           </div>
         ) : (
-          filteredRounds.map((round) => (
+          filteredRounds.map((round: GameRound) => (
             <RoundCard key={round.id} round={round} userId={userId} />
           ))
         )}
