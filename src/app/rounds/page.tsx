@@ -1,12 +1,19 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { getGameRounds } from "@/lib/game-store";
 import { GameRound } from "@/lib/types";
-import { Plus, MapPin, Users, Calendar, Trophy, DollarSign } from "lucide-react";
+import {
+  Plus,
+  Bell,
+  Home,
+  Trophy,
+  Map,
+  User,
+} from "lucide-react";
 
 const FOUR_HOURS_MS = 4 * 60 * 60 * 1000;
 
@@ -26,34 +33,68 @@ function effectiveStatus(round: GameRound): string {
   return round.status;
 }
 
-function formatDateTime(dateStr: string): string {
-  const d = new Date(dateStr);
-  return d.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" }) + " · " + d.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" });
+type FilterKey = "all" | "with_bets" | "wins_only" | "this_year";
+
+const FILTERS: { key: FilterKey; label: string }[] = [
+  { key: "all", label: "All" },
+  { key: "with_bets", label: "With Bets" },
+  { key: "wins_only", label: "Wins Only" },
+  { key: "this_year", label: "This Year" },
+];
+
+function computeMoneyWon(round: GameRound, userId: string | undefined): number {
+  if (!userId) return 0;
+  let won = 0;
+  for (const s of round.settlements || []) {
+    if (s.toPlayerId === userId || s.toUserId === userId) won += s.amount || 0;
+  }
+  return won;
 }
 
-function StatusBadge({ status }: { status: string }) {
-  if (status === "upcoming") return (
-    <span className="inline-flex items-center rounded-full bg-blue-900/30 px-2 py-0.5 text-xs font-medium text-blue-400">Upcoming</span>
+function computeMoneyLost(round: GameRound, userId: string | undefined): number {
+  if (!userId) return 0;
+  let lost = 0;
+  for (const s of round.settlements || []) {
+    if (s.fromPlayerId === userId || s.fromUserId === userId) lost += s.amount || 0;
+  }
+  return lost;
+}
+
+function getBestScore(round: GameRound, userId: string | undefined): number | null {
+  if (!userId) return null;
+  const player = (round.players || []).find(
+    (p: any) => p.userId === userId
   );
-  if (status === "in_progress") return (
-    <span className="inline-flex items-center gap-1 rounded-full bg-[#D94F2B]/20 px-2 py-0.5 text-xs font-medium text-[#D94F2B]">
-      <span className="h-1.5 w-1.5 rounded-full bg-[#D94F2B] animate-pulse" />Live
-    </span>
+  if (!player) return null;
+  const sc = (round.scorecards || []).find(
+    (s: any) => s.playerId === player.id
   );
-  return (
-    <span className="inline-flex items-center rounded-full bg-zinc-800 px-2 py-0.5 text-xs font-medium text-zinc-400">Completed</span>
-  );
+  return sc?.total ?? null;
+}
+
+function getCoursePar(round: GameRound): number | null {
+  const sc = (round.scorecards || [])[0];
+  if (!sc?.pars) return null;
+  return (sc.pars as number[]).reduce((a: number, b: number) => a + b, 0);
+}
+
+function formatDate(dateStr: string): string {
+  const d = new Date(dateStr);
+  return d.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
 }
 
 export default function RoundsPage() {
   const router = useRouter();
   const [rounds, setRounds] = useState<GameRound[]>([]);
   const [loading, setLoading] = useState(true);
+  const [userId, setUserId] = useState<string>();
+  const [activeFilter, setActiveFilter] = useState<FilterKey>("all");
 
   useEffect(() => {
     const supabase = createClient();
     supabase.auth.getUser().then(async ({ data: { user } }) => {
       if (!user) { router.push("/login?redirect=/rounds"); return; }
+      setUserId(user.id);
       // Check subscription status
       try {
         const profileRes = await fetch("/api/profile");
@@ -73,96 +114,247 @@ export default function RoundsPage() {
     });
   }, [router]);
 
+  const completedRounds = useMemo(
+    () => rounds.filter((r) => effectiveStatus(r) === "completed"),
+    [rounds]
+  );
+
+  const totalWon = useMemo(
+    () => completedRounds.reduce((sum, r) => sum + computeMoneyWon(r, userId), 0),
+    [completedRounds, userId]
+  );
+
+  const totalLost = useMemo(
+    () => completedRounds.reduce((sum, r) => sum + computeMoneyLost(r, userId), 0),
+    [completedRounds, userId]
+  );
+
+  const netWon = totalWon - totalLost;
+
+  const avgScore = useMemo(() => {
+    const scores = completedRounds
+      .map((r) => getBestScore(r, userId))
+      .filter((s): s is number => s !== null);
+    if (scores.length === 0) return null;
+    const pars = completedRounds
+      .map((r) => getCoursePar(r))
+      .filter((p): p is number => p !== null);
+    if (pars.length === 0) return null;
+    const avgPar = pars.reduce((a, b) => a + b, 0) / pars.length;
+    const avg = scores.reduce((a, b) => a + b, 0) / scores.length;
+    return avg - avgPar;
+  }, [completedRounds, userId]);
+
+  const filteredRounds = useMemo(() => {
+    let filtered = [...rounds];
+    if (activeFilter === "with_bets") {
+      filtered = filtered.filter((r) => r.skinsGame || r.nassauBet);
+    } else if (activeFilter === "wins_only") {
+      filtered = filtered.filter((r) => computeMoneyWon(r, userId) > computeMoneyLost(r, userId));
+    } else if (activeFilter === "this_year") {
+      const year = new Date().getFullYear();
+      filtered = filtered.filter((r) => new Date(r.teeTime).getFullYear() === year);
+    }
+    return filtered.sort(
+      (a, b) => new Date(b.teeTime).getTime() - new Date(a.teeTime).getTime()
+    );
+  }, [rounds, activeFilter, userId]);
+
   if (loading) return (
-    <div className="flex min-h-[calc(100vh-64px)] items-center justify-center bg-zinc-950">
-      <p className="text-sm text-zinc-400">Loading...</p>
+    <div className="flex min-h-screen items-center justify-center bg-[#18181B]">
+      <p className="text-sm text-[#71717A]" style={{ fontFamily: "'Helvetica Neue', Arial, sans-serif" }}>Loading...</p>
     </div>
   );
 
-  const upcoming = rounds.filter((r) => r.status === "upcoming" || r.status === "in_progress").sort((a, b) => new Date(a.teeTime).getTime() - new Date(b.teeTime).getTime());
-  const past = rounds.filter((r) => r.status === "completed").sort((a, b) => new Date(b.teeTime).getTime() - new Date(a.teeTime).getTime());
-
   return (
-    <div className="min-h-[calc(100vh-64px)] bg-zinc-950 px-4 py-10 sm:px-6">
-      <div className="mx-auto max-w-5xl">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold tracking-tight text-white">My Rounds</h1>
-            <p className="mt-1 text-sm text-zinc-400">Track your regular games.</p>
-          </div>
-          <Link href="/rounds/new" className="inline-flex items-center gap-2 rounded-lg px-4 py-2.5 text-sm font-semibold text-white transition-colors" style={{ backgroundColor: "#D94F2B" }}>
-            <Plus className="h-4 w-4" />New Round
-          </Link>
+    <div className="min-h-screen bg-[#18181B] pb-32" style={{ fontFamily: "'Helvetica Neue', Arial, sans-serif" }}>
+      {/* ── TOP BAR ── */}
+      <div className="flex justify-between items-center px-6 py-4 bg-[#18181B]">
+        <span className="font-black text-xl text-[#F3EDE4]">NASSAU</span>
+        <div className="flex items-center gap-4">
+          <Bell className="h-5 w-5 text-[#71717A]" />
+          <div className="h-8 w-8 rounded-full bg-[#3F3F46]" />
         </div>
+      </div>
 
-        {rounds.length === 0 ? (
-          <div className="mt-16 text-center">
-            <div className="text-4xl">⛳</div>
-            <h2 className="mt-4 text-lg font-semibold text-white">No rounds yet</h2>
-            <p className="mt-2 text-sm text-zinc-400">Start tracking your regular games.<br />Scores, skins, expenses — all in one place.</p>
-            <Link href="/rounds/new" className="mt-6 inline-flex items-center gap-2 rounded-lg px-5 py-2.5 text-sm font-semibold text-white transition-colors" style={{ backgroundColor: "#D94F2B" }}>
-              <Plus className="h-4 w-4" />Create Your First Round
+      {/* ── PAGE HEADER ── */}
+      <div className="px-6 mt-4">
+        <h1 className="font-black text-3xl uppercase tracking-tighter text-[#F3EDE4]">
+          MY ROUNDS
+        </h1>
+        <p className="text-sm text-[#71717A] mt-1">
+          {completedRounds.length} rounds played · <span className="text-[#D94F2B]">${Math.abs(netWon).toLocaleString()}</span> total {netWon >= 0 ? "won" : "lost"}
+        </p>
+      </div>
+
+      {/* ── STATS ROW ── */}
+      <div className="mx-6 mt-4 bg-[#27272A] rounded-xl p-4">
+        <div className="grid grid-cols-3 divide-x divide-[#3F3F46]">
+          <div className="text-center">
+            <div className="text-2xl font-black text-[#F3EDE4]">{completedRounds.length}</div>
+            <div className="text-xs uppercase text-[#71717A] font-bold mt-1">Rounds</div>
+          </div>
+          <div className="text-center">
+            <div className="text-2xl font-black text-[#F3EDE4]">
+              {avgScore !== null ? (avgScore >= 0 ? `+${avgScore.toFixed(1)}` : avgScore.toFixed(1)) : "—"}
+            </div>
+            <div className="text-xs uppercase text-[#71717A] font-bold mt-1">Avg Score</div>
+          </div>
+          <div className="text-center">
+            <div className="text-2xl font-black text-[#D94F2B]">${Math.abs(netWon).toLocaleString()}</div>
+            <div className="text-xs uppercase text-[#71717A] font-bold mt-1">Won</div>
+          </div>
+        </div>
+      </div>
+
+      {/* ── FILTER PILLS ── */}
+      <div className="px-6 mt-4 flex gap-2 overflow-x-auto">
+        {FILTERS.map((f) => (
+          <button
+            key={f.key}
+            onClick={() => setActiveFilter(f.key)}
+            className={`text-xs font-black uppercase px-4 py-2 rounded-full whitespace-nowrap ${
+              activeFilter === f.key
+                ? "bg-[#D94F2B] text-white"
+                : "border border-[#3F3F46] text-[#71717A]"
+            }`}
+          >
+            {f.label}
+          </button>
+        ))}
+      </div>
+
+      {/* ── ROUNDS LIST ── */}
+      <div className="px-6 mt-4 space-y-3">
+        {filteredRounds.length === 0 && rounds.length === 0 ? (
+          <div className="bg-[#27272A] rounded-xl p-8 border border-[#3F3F46] text-center">
+            <p className="text-[#71717A] text-sm mb-4">No rounds yet</p>
+            <Link
+              href="/rounds/new"
+              className="inline-flex items-center gap-2 bg-[#D94F2B] text-white font-bold text-sm px-5 py-2.5 rounded-lg"
+            >
+              <Plus className="h-4 w-4" />
+              Start Your First Round
             </Link>
           </div>
+        ) : filteredRounds.length === 0 ? (
+          <div className="bg-[#27272A] rounded-xl p-8 border border-[#3F3F46] text-center">
+            <p className="text-[#71717A] text-sm">No rounds match this filter.</p>
+          </div>
         ) : (
-          <>
-            {upcoming.length > 0 && (
-              <div className="mt-8">
-                <h2 className="text-xs font-semibold uppercase tracking-wider text-zinc-500">Upcoming</h2>
-                <div className="mt-3 space-y-3">{upcoming.map((round) => <RoundCard key={round.id} round={round} />)}</div>
-              </div>
-            )}
-            {past.length > 0 && (
-              <div className="mt-8">
-                <h2 className="text-xs font-semibold uppercase tracking-wider text-zinc-500">Past Rounds</h2>
-                <div className="mt-3 space-y-3">{past.map((round) => <RoundCard key={round.id} round={round} />)}</div>
-              </div>
-            )}
-          </>
+          filteredRounds.map((round) => (
+            <RoundCard key={round.id} round={round} userId={userId} />
+          ))
         )}
       </div>
+
+      {/* ── NEW ROUND BUTTON ── */}
+      <Link
+        href="/rounds/new"
+        className="fixed bottom-20 right-6 flex h-14 w-14 items-center justify-center rounded-full bg-[#D94F2B] shadow-lg shadow-[#D94F2B]/30"
+      >
+        <Plus className="h-6 w-6 text-white" />
+      </Link>
+
+      {/* ── BOTTOM NAV ── */}
+      <nav className="fixed bottom-0 left-0 right-0 bg-[#18181B] border-t border-[#27272A] px-6 py-3">
+        <div className="grid grid-cols-4">
+          <Link href="/dashboard" className="flex flex-col items-center gap-1">
+            <Home className="h-5 w-5 text-[#71717A]" />
+            <span className="text-xs uppercase font-bold text-[#71717A]">Home</span>
+          </Link>
+          <Link href="/rounds" className="flex flex-col items-center gap-1">
+            <Trophy className="h-5 w-5 text-[#D94F2B]" />
+            <span className="text-xs uppercase font-bold text-[#D94F2B]">Rounds</span>
+          </Link>
+          <Link href="/trips" className="flex flex-col items-center gap-1">
+            <Map className="h-5 w-5 text-[#71717A]" />
+            <span className="text-xs uppercase font-bold text-[#71717A]">Trips</span>
+          </Link>
+          <Link href="/profile" className="flex flex-col items-center gap-1">
+            <User className="h-5 w-5 text-[#71717A]" />
+            <span className="text-xs uppercase font-bold text-[#71717A]">Profile</span>
+          </Link>
+        </div>
+      </nav>
     </div>
   );
 }
 
-function RoundCard({ round }: { round: GameRound }) {
-  const confirmedCount = round.players.filter((p: any) => p.status === "confirmed" || p.role === "COMMISSIONER").length;
-  const settledCount = round.settlements.filter((s: any) => s.settled).length;
-  const totalSettlements = round.settlements.length;
-  const scores = round.scorecards.filter((sc: any) => sc.total && sc.total > 0).sort((a: any, b: any) => (a.total || 999) - (b.total || 999));
-  const bestPlayer = scores.length > 0 ? round.players.find((p: any) => p.id === scores[0].playerId) : null;
+function RoundCard({ round, userId }: { round: GameRound; userId: string | undefined }) {
+  const status = effectiveStatus(round);
+  const score = getBestScore(round, userId);
+  const par = getCoursePar(round);
+  const won = computeMoneyWon(round, userId);
+  const lost = computeMoneyLost(round, userId);
+  const net = won - lost;
+  const scoreDiff = score !== null && par !== null ? score - par : null;
+
+  const players = round.players || [];
 
   return (
-    <Link href={`/rounds/${round.id}`} className="block rounded-xl border border-zinc-800 bg-zinc-900 p-5 transition-all hover:border-zinc-700 hover:shadow-lg">
-      <div className="flex items-start justify-between">
-        <div className="flex-1">
-          <div className="flex items-center gap-2">
-            <h3 className="font-semibold text-white">{round.courseName}</h3>
-            <StatusBadge status={round.status} />
-          </div>
-          {round.courseLocation && (
-            <div className="mt-1 flex items-center gap-1.5 text-sm text-zinc-400">
-              <MapPin className="h-3.5 w-3.5" />{round.courseLocation}
+    <Link href={`/rounds/${round.id}`} className="block bg-[#27272A] rounded-xl p-4 border border-[#3F3F46]">
+      {/* Top row */}
+      <div className="flex items-center justify-between">
+        <span className="font-bold text-[#F3EDE4]">{round.courseName}</span>
+        <span className="text-sm text-[#71717A]">{formatDate(round.teeTime)}</span>
+      </div>
+
+      {/* Middle row */}
+      <div className="flex items-center gap-2 mt-2">
+        {score !== null && (
+          <span
+            className={`font-black text-lg px-3 py-1 rounded-lg ${
+              scoreDiff !== null && scoreDiff < 0
+                ? "bg-[#0D7377]/20 text-[#0D7377]"
+                : "bg-[#3F3F46] text-[#71717A]"
+            }`}
+          >
+            {score}
+          </span>
+        )}
+        {status === "in_progress" && (
+          <span className="bg-[#D94F2B]/20 text-[#D94F2B] font-bold text-xs px-2 py-1 rounded flex items-center gap-1">
+            <span className="h-1.5 w-1.5 rounded-full bg-[#D94F2B] animate-pulse" />
+            Live
+          </span>
+        )}
+        {status === "upcoming" && (
+          <span className="bg-[#0D7377]/20 text-[#0D7377] font-bold text-xs px-2 py-1 rounded">
+            Upcoming
+          </span>
+        )}
+        {(won > 0 || lost > 0) && (
+          <span
+            className={`font-bold text-xs px-2 py-1 rounded ${
+              net >= 0
+                ? "bg-[#D94F2B]/20 text-[#D94F2B]"
+                : "bg-red-900/20 text-red-400"
+            }`}
+          >
+            {net >= 0 ? `Won $${net}` : `Lost $${Math.abs(net)}`}
+          </span>
+        )}
+      </div>
+
+      {/* Bottom row */}
+      <div className="flex items-center justify-between mt-3">
+        <div className="flex -space-x-2">
+          {players.slice(0, 4).map((p: any, i: number) => (
+            <div
+              key={p.id || i}
+              className="h-7 w-7 rounded-full bg-[#3F3F46] border-2 border-[#27272A] flex items-center justify-center text-[10px] font-bold text-[#F3EDE4]"
+            >
+              {(p.name || "?").charAt(0).toUpperCase()}
+            </div>
+          ))}
+          {players.length > 4 && (
+            <div className="h-7 w-7 rounded-full bg-[#3F3F46] border-2 border-[#27272A] flex items-center justify-center text-[10px] font-bold text-[#71717A]">
+              +{players.length - 4}
             </div>
           )}
-          <div className="mt-1.5 flex items-center gap-1.5 text-sm text-zinc-400">
-            <Calendar className="h-3.5 w-3.5" />{formatDateTime(round.teeTime)}
-          </div>
-          <div className="mt-2 flex flex-wrap items-center gap-3 text-xs text-zinc-500">
-            <span className="inline-flex items-center gap-1"><Users className="h-3.5 w-3.5" />{confirmedCount} player{confirmedCount !== 1 ? "s" : ""}</span>
-            {round.skinsGame && <span className="inline-flex items-center gap-1"><Trophy className="h-3.5 w-3.5" />${round.skinsGame.buyIn} skins</span>}
-            {round.status === "completed" && bestPlayer && scores[0].total && (
-              <span className="inline-flex items-center gap-1 text-[#D94F2B]"><Trophy className="h-3.5 w-3.5" />{bestPlayer.name} shot {scores[0].total}</span>
-            )}
-            {round.status === "completed" && scores.length > 0 && <span>Scores: {scores.map((sc: any) => sc.total).join(", ")}</span>}
-            {totalSettlements > 0 && (
-              <span className="inline-flex items-center gap-1"><DollarSign className="h-3.5 w-3.5" />
-                {settledCount === totalSettlements ? <span className="text-[#D94F2B]">All settled</span> : `${totalSettlements - settledCount} unsettled`}
-              </span>
-            )}
-          </div>
         </div>
-        <span className="text-sm text-zinc-500">View &rarr;</span>
+        <span className="text-[#0D7377] font-bold text-sm">View Recap →</span>
       </div>
     </Link>
   );
