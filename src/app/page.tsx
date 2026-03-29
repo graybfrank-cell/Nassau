@@ -1,8 +1,22 @@
+import { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
 import { Flag, Map, Wallet, CheckCircle2 } from "lucide-react";
 import AuthRedirect from "./auth-redirect";
 import { createServiceClient } from "@/lib/supabase/admin";
+
+export const metadata: Metadata = {
+  title: "Nassau — Plan Trips. Track Rounds. Settle Bets.",
+  description:
+    "The app for golf groups who actually play. Plan trips, track scores, settle bets — all in one place.",
+  openGraph: {
+    title: "Nassau — Plan Trips. Track Rounds. Settle Bets.",
+    description: "The app for golf groups who actually play.",
+    images: [
+      "/api/og/default?title=Plan%20Trips.%0ATrack%20Rounds.%0ASettle%20Bets.&subtitle=The%20app%20for%20groups%20who%20actually%20play.",
+    ],
+  },
+};
 
 /* ─── Sample data for live scorecard demo ─── */
 
