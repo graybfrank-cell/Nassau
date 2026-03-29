@@ -86,6 +86,7 @@ export default function TripDetailPage() {
   const params = useParams();
   const tripId = params.id as string;
 
+  const [activeTab, setActiveTab] = useState<'overview' | 'crew' | 'money' | 'rounds' | 'photos'>('overview');
   const [trip, setTrip] = useState<Trip | null>(null);
   const [loading, setLoading] = useState(true);
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
@@ -1071,9 +1072,34 @@ export default function TripDetailPage() {
           </div>
         </div>
 
+        {/* Tab Bar */}
+        <div className="sticky top-0 z-10 bg-dark border-b border-cream/[0.06]">
+          <div className="flex overflow-x-auto scrollbar-hide px-5">
+            {([
+              { key: 'overview', label: 'Overview' },
+              { key: 'crew', label: 'Crew' },
+              { key: 'money', label: 'Money' },
+              { key: 'rounds', label: 'Rounds' },
+              { key: 'photos', label: 'Photos' },
+            ] as const).map((tab) => (
+              <button
+                key={tab.key}
+                onClick={() => setActiveTab(tab.key)}
+                className={`shrink-0 border-b-2 px-4 py-3 text-[13px] font-medium transition-colors ${
+                  activeTab === tab.key
+                    ? 'border-coral text-coral'
+                    : 'border-transparent text-cream/40 hover:text-cream/60'
+                }`}
+              >
+                {tab.label}
+              </button>
+            ))}
+          </div>
+        </div>
+
         {/* Error Banner */}
         {error && (
-          <div className="mx-5 mb-4 flex items-center gap-2 rounded-[10px] border border-red-500/30 bg-red-500/10 px-4 py-3 text-[13px] text-red-400">
+          <div className="mx-5 mt-4 flex items-center gap-2 rounded-[10px] border border-red-500/30 bg-red-500/10 px-4 py-3 text-[13px] text-red-400">
             <AlertCircle className="h-4 w-4 shrink-0" />
             {error}
           </div>
@@ -1081,7 +1107,28 @@ export default function TripDetailPage() {
 
         <div className="px-5 pb-32 space-y-6">
 
-        {/* ─── Date Poll Section ─── */}
+        {/* ═══════ TAB: OVERVIEW ═══════ */}
+        {activeTab === 'overview' && (
+          <>
+            {/* Quick Stats Row */}
+            <div className="grid grid-cols-3 gap-2.5 sm:grid-cols-4">
+              {(() => {
+                const days = trip.startDate && trip.endDate ? nightsBetween(trip.startDate, trip.endDate) : 0;
+                const stats = [
+                  { label: 'Days', value: days > 0 ? `${days}` : '—' },
+                  { label: 'Golfers', value: `${trip.members.length}` },
+                  { label: 'Rounds', value: `${roundCount}` },
+                ];
+                return stats.map((s) => (
+                  <div key={s.label} className="rounded-[10px] bg-cream/[0.04] border border-cream/[0.08] p-3 text-center">
+                    <p className="text-[18px] font-medium text-cream">{s.value}</p>
+                    <p className="text-[11px] uppercase tracking-[1.2px] text-cream/40">{s.label}</p>
+                  </div>
+                ));
+              })()}
+            </div>
+
+            {/* ─── Date Poll Section ─── */}
         {datePoll?.status === "locked" && trip.startDate && trip.endDate ? (
           /* Locked dates display */
           <div className="rounded-[10px] border border-teal/30 bg-teal/10 p-5">
@@ -1350,16 +1397,6 @@ export default function TripDetailPage() {
             </div>
           </div>
         )}
-
-        {/* Round Hub Cards */}
-        <RoundHub
-          trip={trip}
-          rounds={rounds}
-          scorecards={scorecards}
-          skinsGames={skinsGames}
-          currentUserId={currentUserId}
-          onRefresh={refresh}
-        />
 
         {/* Two-column layout for lodging + leaderboard */}
         <div className="grid gap-4 lg:grid-cols-2">
@@ -2084,7 +2121,11 @@ export default function TripDetailPage() {
           )}
         </div>
 
-        {/* Edit Modal / Drawer */}
+          </>
+        )}
+        {/* end TAB: OVERVIEW */}
+
+        {/* Edit Modal / Drawer — always rendered */}
         {editingItem && (
           <div
             className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/60"
@@ -2208,6 +2249,9 @@ export default function TripDetailPage() {
           </div>
         )}
 
+        {/* ═══════ TAB: CREW ═══════ */}
+        {activeTab === 'crew' && (
+          <>
         {/* Members & Invite Section */}
         <div className="rounded-[10px] border border-cream/[0.08] bg-cream/[0.04] p-5">
           <div className="flex items-center justify-between">
@@ -2404,6 +2448,85 @@ export default function TripDetailPage() {
             </div>
           )}
         </div>
+          </>
+        )}
+        {/* end TAB: CREW */}
+
+        {/* ═══════ TAB: MONEY ═══════ */}
+        {activeTab === 'money' && (
+          <>
+            <div className="rounded-[10px] border border-cream/[0.08] bg-cream/[0.04] p-5 text-center">
+              <DollarSign className="mx-auto h-8 w-8 text-cream/30" />
+              <p className="mt-3 text-[13px] text-cream/40">
+                Track expenses, splits, and settlements.
+              </p>
+              <Link
+                href={`/trips/${tripId}/expenses`}
+                className="mt-4 inline-flex items-center gap-2 rounded-[10px] bg-coral px-5 py-3 text-[14px] font-medium text-cream transition-colors hover:bg-coral/90"
+              >
+                {expenseCount > 0 ? `View ${expenseCount} Expense${expenseCount !== 1 ? 's' : ''}` : 'Add Expenses'}
+                <ChevronRight className="h-4 w-4" />
+              </Link>
+            </div>
+            {skinsCount > 0 && (
+              <Link
+                href={`/trips/${tripId}/skins`}
+                className="flex items-center gap-4 rounded-[10px] border border-cream/[0.08] bg-cream/[0.04] p-4 transition-colors hover:bg-cream/[0.06]"
+              >
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px] bg-gold/15 text-gold">
+                  <Trophy className="h-5 w-5" />
+                </div>
+                <div className="flex-1">
+                  <h3 className="text-[14px] font-medium text-cream">Skins</h3>
+                  <p className="text-[12px] text-cream/40">{skinsCount} game{skinsCount !== 1 ? 's' : ''} played</p>
+                </div>
+                <ChevronRight className="h-4 w-4 text-cream/20" />
+              </Link>
+            )}
+          </>
+        )}
+        {/* end TAB: MONEY */}
+
+        {/* ═══════ TAB: ROUNDS ═══════ */}
+        {activeTab === 'rounds' && (
+          <>
+            {/* Round Hub Cards */}
+            <RoundHub
+              trip={trip}
+              rounds={rounds}
+              scorecards={scorecards}
+              skinsGames={skinsGames}
+              currentUserId={currentUserId}
+              onRefresh={refresh}
+            />
+
+            {/* Leaderboard Preview */}
+            {leaderboard.length > 0 && (
+              <div className="rounded-[10px] border border-cream/[0.08] bg-cream/[0.04] p-5">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Medal className="h-4 w-4 text-cream/35" />
+                    <h2 className="text-[15px] font-medium text-cream">Leaderboard</h2>
+                  </div>
+                  <Link href={`/trips/${tripId}/leaderboard`} className="text-[12px] font-medium text-coral hover:text-coral/80">
+                    View Full
+                  </Link>
+                </div>
+                <div className="mt-3 space-y-1">
+                  {leaderboard.slice(0, 5).map((entry, idx) => (
+                    <div key={entry.name} className={`flex items-center justify-between rounded-lg px-3 py-2 ${idx === 0 ? "bg-gold/10" : ""}`}>
+                      <div className="flex items-center gap-2.5">
+                        <span className={`w-5 text-center text-[12px] font-bold ${idx === 0 ? "text-gold" : "text-cream/30"}`}>{idx + 1}</span>
+                        <span className="text-[13px] font-medium text-cream">{entry.name}</span>
+                      </div>
+                      <span className={`text-[13px] font-bold ${entry.vsPar > 0 ? "text-coral" : entry.vsPar < 0 ? "text-teal" : "text-cream/60"}`}>
+                        {entry.vsPar > 0 ? `+${entry.vsPar}` : entry.vsPar === 0 ? "E" : entry.vsPar}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
 
         {/* Feature Cards */}
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
@@ -2426,7 +2549,13 @@ export default function TripDetailPage() {
             </Link>
           ))}
         </div>
+          </>
+        )}
+        {/* end TAB: ROUNDS */}
 
+        {/* ═══════ TAB: PHOTOS ═══════ */}
+        {activeTab === 'photos' && (
+          <>
         {/* Trip Photos */}
         <div>
           <div className="flex items-center gap-2 mb-4">
@@ -2441,6 +2570,10 @@ export default function TripDetailPage() {
             onPhotosChange={setTripPhotos}
           />
         </div>
+          </>
+        )}
+        {/* end TAB: PHOTOS */}
+
       </div>{/* end space-y-6 */}
       </div>{/* end max-w-5xl */}
 
