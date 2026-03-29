@@ -182,8 +182,18 @@ export default function DashboardPage() {
           NASSAU
         </span>
         <div className="flex items-center gap-3">
-          <Bell className="h-5 w-5 text-[#71717A]" />
-          <div className="h-8 w-8 rounded-full bg-[#27272A]" />
+          <Link href="/settlements" className="relative cursor-pointer transition-colors">
+            <Bell className="h-5 w-5 text-cream/40 hover:text-cream/60" />
+            {hasSettlements && (
+              <div className="absolute -top-1 -right-1 h-2 w-2 rounded-full bg-coral" />
+            )}
+          </Link>
+          <Link href="/profile" className="h-8 w-8 rounded-full bg-gradient-to-br from-coral to-gold flex items-center justify-center text-[11px] font-medium text-dark">
+            {data.user.firstName[0]}
+            {data.user.fullName.split(" ").length > 1
+              ? data.user.fullName.split(" ").slice(-1)[0][0]
+              : ""}
+          </Link>
         </div>
       </div>
 

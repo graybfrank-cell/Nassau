@@ -208,7 +208,7 @@ export default async function BlogPost({ params, searchParams }: Props) {
       )}
 
       {/* Nav */}
-      <nav className="border-b border-zinc-200 bg-slate-900">
+      <nav className="border-b border-cream/[0.08] bg-[#18181B]">
         <div className="mx-auto flex max-w-5xl items-center justify-between px-6 py-4">
           <Link
             href="/"
@@ -223,7 +223,7 @@ export default async function BlogPost({ params, searchParams }: Props) {
             <Link href="/explore" className="text-sm font-medium text-zinc-300 hover:text-white transition-colors">
               Explore
             </Link>
-            <Link href="/login" className="rounded-lg bg-emerald-600 px-4 py-1.5 text-sm font-semibold text-white hover:bg-emerald-700 transition-colors">
+            <Link href="/login" className="rounded-lg bg-coral px-4 py-1.5 text-sm font-semibold text-white hover:bg-coral/90 transition-colors">
               Sign In
             </Link>
           </div>
@@ -241,7 +241,7 @@ export default async function BlogPost({ params, searchParams }: Props) {
           <div className="absolute inset-0 bg-gradient-to-t from-slate-900/90 via-slate-900/40 to-transparent" />
           <div className="absolute bottom-0 left-0 right-0 mx-auto max-w-3xl px-6 pb-10">
             {post.tags?.[0] && (
-              <span className="rounded-full bg-emerald-600 px-3 py-1 text-xs font-semibold text-white">
+              <span className="rounded-full bg-coral px-3 py-1 text-xs font-semibold text-white">
                 {post.tags[0]}
               </span>
             )}
@@ -283,7 +283,7 @@ export default async function BlogPost({ params, searchParams }: Props) {
         />
 
         {/* CTA */}
-        <div className="mt-12 rounded-xl border border-emerald-200 bg-emerald-50 p-8 text-center">
+        <div className="mt-12 rounded-xl border border-coral/20 bg-coral/5 p-8 text-center">
           <h3 className="text-xl font-bold text-zinc-900">
             Ready to plan your golf trip?
           </h3>
@@ -313,7 +313,7 @@ export default async function BlogPost({ params, searchParams }: Props) {
                       <a
                         key={item.id}
                         href={`#${item.id}`}
-                        className="block text-sm text-zinc-600 hover:text-emerald-600 transition-colors"
+                        className="block text-sm text-zinc-600 hover:text-coral transition-colors"
                       >
                         {item.text}
                       </a>
@@ -321,14 +321,14 @@ export default async function BlogPost({ params, searchParams }: Props) {
                   </nav>
                 </div>
               )}
-              <div className="rounded-xl border border-emerald-200 bg-emerald-50 p-5">
+              <div className="rounded-xl border border-coral/20 bg-coral/5 p-5">
                 <h4 className="font-semibold text-zinc-900">Plan your golf trip</h4>
                 <p className="mt-1 text-sm text-zinc-600">
                   Organize your crew, track rounds, and settle bets.
                 </p>
                 <Link
                   href="/login"
-                  className="mt-4 block rounded-lg bg-emerald-600 px-4 py-2 text-center text-sm font-semibold text-white hover:bg-emerald-700 transition-colors"
+                  className="mt-4 block rounded-lg bg-coral px-4 py-2 text-center text-sm font-semibold text-white hover:bg-coral/90 transition-colors"
                 >
                   Start for free
                 </Link>
