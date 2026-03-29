@@ -50,7 +50,7 @@ export default async function BlogIndex() {
   return (
     <div className="min-h-screen bg-white">
       {/* Nav */}
-      <nav className="border-b border-zinc-200 bg-slate-900">
+      <nav className="border-b border-cream/[0.08] bg-[#18181B]">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
           <Link
             href="/"
@@ -73,7 +73,7 @@ export default async function BlogIndex() {
             </Link>
             <Link
               href="/login"
-              className="rounded-lg bg-emerald-600 px-4 py-1.5 text-sm font-semibold text-white hover:bg-emerald-700 transition-colors"
+              className="rounded-lg bg-coral px-4 py-1.5 text-sm font-semibold text-white hover:bg-coral/90 transition-colors"
             >
               Sign In
             </Link>
@@ -82,7 +82,7 @@ export default async function BlogIndex() {
       </nav>
 
       {/* Hero header */}
-      <section className="bg-slate-900 px-6 py-16 text-center">
+      <section className="bg-[#18181B] px-6 py-16 text-center">
         <h1 className="text-4xl font-bold tracking-tight text-white sm:text-5xl">
           Golf Trip Intel
         </h1>
@@ -146,19 +146,19 @@ export default async function BlogIndex() {
                         />
                       </div>
                     ) : (
-                      <div className="flex aspect-video items-center justify-center bg-gradient-to-br from-emerald-800 to-slate-900">
-                        <span className="text-4xl font-extrabold text-emerald-500/20">
+                      <div className="flex aspect-video items-center justify-center bg-gradient-to-br from-teal to-[#18181B]">
+                        <span className="text-4xl font-extrabold text-teal/20">
                           N
                         </span>
                       </div>
                     )}
                     <div className="p-5">
                       {post.tags?.[0] && (
-                        <span className="rounded-full bg-emerald-100 px-2.5 py-0.5 text-xs font-medium text-emerald-700">
+                        <span className="rounded-full bg-coral/10 px-2.5 py-0.5 text-xs font-medium text-coral">
                           {post.tags[0]}
                         </span>
                       )}
-                      <h3 className="mt-2 text-lg font-semibold text-zinc-900 group-hover:text-emerald-700 transition-colors line-clamp-2">
+                      <h3 className="mt-2 text-lg font-semibold text-zinc-900 group-hover:text-coral transition-colors line-clamp-2">
                         {post.title}
                       </h3>
                       <p className="mt-2 text-sm text-zinc-500 line-clamp-2">
@@ -193,7 +193,7 @@ export default async function BlogIndex() {
           Plan your next golf trip &rarr;{" "}
           <Link
             href="/"
-            className="font-semibold text-emerald-600 hover:text-emerald-700"
+            className="font-semibold text-coral hover:text-coral/90"
           >
             nassau.golf
           </Link>

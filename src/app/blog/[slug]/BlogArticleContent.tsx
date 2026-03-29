@@ -62,7 +62,7 @@ const components: Components = {
     return (
       <a
         href={resolved}
-        className="text-emerald-600 underline hover:text-emerald-700"
+        className="text-coral underline hover:text-coral/90"
         target={resolved?.startsWith("http") ? "_blank" : undefined}
         rel={resolved?.startsWith("http") ? "noopener noreferrer" : undefined}
       >
@@ -96,7 +96,7 @@ const components: Components = {
     </ol>
   ),
   blockquote: ({ children }) => (
-    <blockquote className="border-l-4 border-emerald-500 pl-6 italic text-zinc-500 my-8">
+    <blockquote className="border-l-4 border-teal pl-6 italic text-zinc-500 my-8">
       {children}
     </blockquote>
   ),
