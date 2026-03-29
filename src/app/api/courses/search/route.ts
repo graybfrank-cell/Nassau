@@ -36,8 +36,13 @@ export async function GET(req: NextRequest) {
   const courses = (data.courses || []).map(
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (c: any) => ({
-      id: c.id,
+      id: String(c.id),
       name: c.club_name || c.name || "",
+      city: c.city || "",
+      state: c.state || "",
+      country: c.country || "",
+      par: c.par || 72,
+      holes: c.holes || 18,
       location: [c.city, c.state, c.country].filter(Boolean).join(", "),
     })
   );
