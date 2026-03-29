@@ -78,28 +78,28 @@ function formatFullDate(dateStr: string): string {
 function StatusBadge({ status }: { status: string }) {
   if (status === "upcoming") {
     return (
-      <span className="inline-flex items-center rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-700">
+      <span className="inline-flex items-center rounded-full bg-teal/15 px-3 py-1 text-[11px] font-medium text-teal">
         Upcoming
       </span>
     );
   }
   if (status === "in_progress") {
     return (
-      <span className="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-2.5 py-0.5 text-xs font-medium text-[#D94F2B]">
-        <span className="h-1.5 w-1.5 rounded-full bg-[#D94F2B] animate-pulse" />
+      <span className="inline-flex items-center gap-1 rounded-full bg-coral/15 px-3 py-1 text-[11px] font-medium text-coral">
+        <span className="h-1.5 w-1.5 rounded-full bg-coral animate-pulse" />
         In Progress
       </span>
     );
   }
   return (
-    <span className="inline-flex items-center rounded-full bg-zinc-100 px-2.5 py-0.5 text-xs font-medium text-zinc-500">
+    <span className="inline-flex items-center rounded-full bg-cream/[0.08] px-3 py-1 text-[11px] font-medium text-cream/50">
       Completed
     </span>
   );
 }
 
 function WeatherIcon({ icon }: { icon: string }) {
-  const cls = "h-8 w-8 text-zinc-600";
+  const cls = "h-8 w-8 text-cream/50";
   switch (icon) {
     case "sun":
       return <Sun className={cls} />;
@@ -206,7 +206,7 @@ export default function RoundDashboardPage() {
   if (loading) {
     return (
       <div className="flex min-h-[calc(100vh-64px)] items-center justify-center">
-        <p className="text-sm text-zinc-400">Loading...</p>
+        <p className="text-sm text-cream/40">Loading...</p>
       </div>
     );
   }
@@ -215,10 +215,10 @@ export default function RoundDashboardPage() {
     return (
       <div className="flex min-h-[calc(100vh-64px)] items-center justify-center">
         <div className="text-center">
-          <h2 className="text-lg font-semibold text-zinc-900">
+          <h2 className="text-lg font-semibold text-cream">
             Round not found
           </h2>
-          <p className="mt-2 text-sm text-zinc-500">
+          <p className="mt-2 text-sm text-cream/50">
             This round doesn&apos;t exist or you don&apos;t have access.
           </p>
           <Link
@@ -569,18 +569,18 @@ export default function RoundDashboardPage() {
   }
 
   return (
-    <div className="min-h-[calc(100vh-64px)] bg-zinc-50 px-4 py-10 sm:px-6">
+    <div className="min-h-[calc(100vh-64px)] bg-dark px-4 py-10 sm:px-6">
       <div className="mx-auto max-w-5xl">
         <Link
           href="/rounds"
-          className="inline-flex items-center gap-1.5 text-sm text-zinc-500 transition-colors hover:text-zinc-700"
+          className="inline-flex items-center gap-1.5 text-sm text-cream/50 transition-colors hover:text-cream/80"
         >
           <ArrowLeft className="h-4 w-4" />
           Back to Rounds
         </Link>
 
         {error && (
-          <div className="mt-4 flex items-center gap-2 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+          <div className="mt-4 flex items-center gap-2 rounded-[10px] border border-coral/20 bg-coral/10 px-4 py-3 text-sm text-coral">
             <AlertCircle className="h-4 w-4 shrink-0" />
             {error}
           </div>
@@ -591,7 +591,7 @@ export default function RoundDashboardPage() {
           {round.coursePhotoUrl ? (
             <img src={round.coursePhotoUrl} alt={round.courseName} className="w-full h-full object-cover" />
           ) : (
-            <div className="w-full h-full bg-gradient-to-r from-emerald-800 to-emerald-600" />
+            <div className="w-full h-full bg-cream/[0.04]" />
           )}
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
           <div className="absolute bottom-4 left-4">
@@ -605,11 +605,11 @@ export default function RoundDashboardPage() {
         <div className="mt-3 flex flex-wrap gap-3">
           {/* Weather card */}
           {weatherData && (
-            <div className="flex items-center gap-3 rounded-lg border border-zinc-200 bg-white px-4 py-2">
+            <div className="flex items-center gap-3 rounded-[10px] border border-cream/[0.08] bg-cream/[0.04] px-4 py-2">
               <WeatherIcon icon={weatherData.weatherIcon} />
               <div>
-                <p className="text-sm font-medium text-zinc-900">{weatherData.tempHigh}&deg;/{weatherData.tempLow}&deg;F</p>
-                <p className="text-xs text-zinc-500">{weatherData.weatherLabel} &middot; Wind {weatherData.windSpeedMax}mph &middot; {weatherData.precipitationProbability}% rain</p>
+                <p className="text-sm font-medium text-cream">{weatherData.tempHigh}&deg;/{weatherData.tempLow}&deg;F</p>
+                <p className="text-xs text-cream/50">{weatherData.weatherLabel} &middot; Wind {weatherData.windSpeedMax}mph &middot; {weatherData.precipitationProbability}% rain</p>
               </div>
             </div>
           )}
@@ -619,7 +619,7 @@ export default function RoundDashboardPage() {
               href={`https://www.google.com/maps/search/?api=1&query=${round.courseLat},${round.courseLng}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 rounded-lg border border-zinc-200 bg-white px-4 py-2 text-sm text-zinc-700 hover:bg-zinc-50"
+              className="inline-flex items-center gap-1.5 rounded-[10px] border border-cream/[0.08] bg-cream/[0.04] px-4 py-2 text-sm text-cream/80 hover:bg-cream/[0.06]"
             >
               <MapPin className="h-4 w-4" />
               Open in Google Maps
@@ -627,7 +627,7 @@ export default function RoundDashboardPage() {
           )}
           {/* Address */}
           {round.courseAddress && (
-            <span className="inline-flex items-center gap-1.5 text-sm text-zinc-500">
+            <span className="inline-flex items-center gap-1.5 text-sm text-cream/50">
               <MapPin className="h-3.5 w-3.5" />
               {round.courseAddress}
             </span>
@@ -635,46 +635,46 @@ export default function RoundDashboardPage() {
         </div>
 
         {/* Round Header */}
-        <div className="mt-6 rounded-xl border border-zinc-200 bg-white p-6 shadow-sm">
+        <div className="mt-6 rounded-[10px] border border-cream/[0.08] bg-cream/[0.04] p-6">
           <div className="flex items-start justify-between">
             <div>
               <div className="flex items-center gap-3">
-                <h1 className="text-2xl font-bold tracking-tight text-zinc-900">
+                <h1 className="text-2xl font-bold tracking-tight text-cream">
                   {round.courseName}
                 </h1>
                 {round.courseLayout && (
-                  <span className="inline-flex items-center rounded-full bg-emerald-100 px-2.5 py-0.5 text-xs font-medium text-emerald-700">
+                  <span className="inline-flex items-center rounded-full bg-teal/15 px-2.5 py-0.5 text-xs font-medium text-teal">
                     {round.courseLayout}
                   </span>
                 )}
                 <StatusBadge status={round.status} />
               </div>
               <div className="mt-2 space-y-1">
-                <div className="flex items-center gap-1.5 text-sm text-zinc-500">
+                <div className="flex items-center gap-1.5 text-sm text-cream/50">
                   <Calendar className="h-3.5 w-3.5" />
                   {formatFullDate(round.teeTime)}
                 </div>
                 {round.courseLocation && (
-                  <div className="flex items-center gap-1.5 text-sm text-zinc-500">
+                  <div className="flex items-center gap-1.5 text-sm text-cream/50">
                     <MapPin className="h-3.5 w-3.5" />
                     {round.courseLocation}
                   </div>
                 )}
                 {round.notes && (
-                  <div className="flex items-center gap-1.5 text-sm text-zinc-500">
+                  <div className="flex items-center gap-1.5 text-sm text-cream/50">
                     <Clock className="h-3.5 w-3.5" />
                     {round.notes}
                   </div>
                 )}
                 {round.startingHole === 10 && (
-                  <span className="inline-flex items-center rounded-full bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-700">
+                  <span className="inline-flex items-center rounded-full bg-cream/[0.08] px-2 py-0.5 text-xs font-medium text-cream/50">
                     Starting Hole 10
                   </span>
                 )}
               </div>
               {isCommissioner && (
                 <div className="mt-3">
-                  <label className="block text-xs font-medium text-zinc-500 mb-1">Starting Hole</label>
+                  <label className="block text-xs font-medium text-cream/40 mb-1">Starting Hole</label>
                   <div className="flex gap-1.5">
                     {[1, 10].map((hole) => (
                       <button
@@ -682,8 +682,8 @@ export default function RoundDashboardPage() {
                         onClick={() => handleStartingHoleChange(hole)}
                         className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${
                           round.startingHole === hole
-                            ? "bg-emerald-100 text-[#D94F2B]"
-                            : "bg-zinc-100 text-zinc-500 hover:bg-zinc-200"
+                            ? "bg-coral/15 text-coral"
+                            : "bg-cream/[0.06] text-cream/50 hover:bg-cream/[0.08]"
                         }`}
                       >
                         Hole {hole}
@@ -698,7 +698,7 @@ export default function RoundDashboardPage() {
               {isCommissioner && round.status === "upcoming" && (
                 <button
                   onClick={handleStartRound}
-                  className="rounded-lg bg-[#D94F2B] px-3 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-[#B83D25]"
+                  className="rounded-lg bg-coral px-3 py-1.5 text-xs font-semibold text-cream transition-colors hover:bg-[#B83D25]"
                 >
                   Start Round
                 </button>
@@ -706,7 +706,7 @@ export default function RoundDashboardPage() {
               {isCommissioner && round.status === "in_progress" && (
                 <button
                   onClick={() => handleStatusChange("completed")}
-                  className="rounded-lg bg-zinc-800 px-3 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-zinc-700"
+                  className="rounded-lg bg-cream/[0.08] px-3 py-1.5 text-xs font-semibold text-cream transition-colors hover:bg-cream/[0.12]"
                 >
                   Complete Round
                 </button>
@@ -716,22 +716,22 @@ export default function RoundDashboardPage() {
         </div>
 
         {/* Players */}
-        <div className="mt-6 rounded-xl border border-zinc-200 bg-white p-6 shadow-sm">
+        <div className="mt-6 rounded-[10px] border border-cream/[0.08] bg-cream/[0.04] p-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <Users className="h-5 w-5 text-zinc-400" />
-              <h2 className="text-lg font-semibold text-zinc-900">
+              <Users className="h-5 w-5 text-cream/40" />
+              <h2 className="text-lg font-semibold text-cream">
                 Players ({confirmedPlayers.length})
               </h2>
             </div>
             <div className="flex items-center gap-2">
               <button
                 onClick={handleCopyInviteLink}
-                className="inline-flex items-center gap-1.5 rounded-lg border border-zinc-200 bg-white px-3 py-1.5 text-xs font-semibold text-zinc-700 transition-colors hover:bg-zinc-50"
+                className="inline-flex items-center gap-1.5 rounded-lg border border-cream/10 px-3 py-1.5 text-xs font-semibold text-cream/60 transition-colors hover:text-cream/80"
               >
                 {copiedLink ? (
                   <>
-                    <Check className="h-3.5 w-3.5 text-[#D94F2B]" />
+                    <Check className="h-3.5 w-3.5 text-coral" />
                     Copied!
                   </>
                 ) : (
@@ -744,7 +744,7 @@ export default function RoundDashboardPage() {
               {isCommissioner && (
                 <button
                   onClick={() => setShowAddPlayer(!showAddPlayer)}
-                  className="inline-flex items-center gap-1.5 rounded-lg bg-[#D94F2B] px-3 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-[#B83D25]"
+                  className="inline-flex items-center gap-1.5 rounded-lg border border-teal/30 bg-teal/10 px-3 py-1.5 text-xs font-semibold text-teal transition-colors hover:bg-teal/20"
                 >
                   <Plus className="h-3.5 w-3.5" />
                   Add Player
@@ -756,10 +756,10 @@ export default function RoundDashboardPage() {
           {showAddPlayer && (
             <form
               onSubmit={handleAddPlayer}
-              className="mt-4 flex items-end gap-3 rounded-lg border border-zinc-200 bg-zinc-50 p-4"
+              className="mt-4 flex items-end gap-3 rounded-[10px] border border-cream/[0.08] bg-cream/[0.04] p-4"
             >
               <div className="flex-1">
-                <label className="block text-xs font-medium text-zinc-600">
+                <label className="block text-xs font-medium text-cream/40">
                   Name
                 </label>
                 <input
@@ -768,19 +768,19 @@ export default function RoundDashboardPage() {
                   value={newPlayerName}
                   onChange={(e) => setNewPlayerName(e.target.value)}
                   placeholder="Player name"
-                  className="mt-1 block w-full rounded-md border border-zinc-300 px-3 py-1.5 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-[#D94F2B] focus:outline-none focus:ring-2 focus:ring-[#D94F2B]/20"
+                  className="mt-1 block w-full rounded-[10px] border border-cream/10 bg-transparent px-3 py-1.5 text-sm text-cream placeholder:text-cream/30 focus:border-coral/40 focus:outline-none focus:ring-2 focus:ring-coral/20"
                 />
               </div>
               <button
                 type="submit"
-                className="rounded-md bg-[#D94F2B] px-4 py-1.5 text-sm font-medium text-white hover:bg-[#B83D25]"
+                className="rounded-md bg-coral px-4 py-1.5 text-sm font-medium text-cream hover:bg-[#B83D25]"
               >
                 Add
               </button>
               <button
                 type="button"
                 onClick={() => setShowAddPlayer(false)}
-                className="rounded-md border border-zinc-300 p-1.5 text-zinc-400 hover:text-zinc-600"
+                className="rounded-md border border-cream/10 p-1.5 text-cream/40 hover:text-cream/60"
               >
                 <X className="h-4 w-4" />
               </button>
@@ -791,23 +791,23 @@ export default function RoundDashboardPage() {
             {round.players.map((player: any) => (
               <div
                 key={player.id}
-                className="group flex items-center justify-between rounded-lg border border-zinc-100 px-3 py-2"
+                className="group flex items-center justify-between rounded-lg border border-cream/[0.06] px-3 py-2"
               >
                 <div className="flex items-center gap-2">
                   {player.role === "COMMISSIONER" && (
                     <Crown className="h-3.5 w-3.5 text-amber-500" />
                   )}
-                  <span className="text-sm font-medium text-zinc-900">
+                  <span className="text-sm font-medium text-cream">
                     {player.name}
                   </span>
                   {player.status === "confirmed" || player.role === "COMMISSIONER" ? (
-                    <CheckCircle2 className="h-3.5 w-3.5 text-[#D94F2B]" />
+                    <CheckCircle2 className="h-3.5 w-3.5 text-coral" />
                   ) : player.status === "declined" ? (
                     <X className="h-3.5 w-3.5 text-red-400" />
                   ) : (
-                    <Clock className="h-3.5 w-3.5 text-zinc-300" />
+                    <Clock className="h-3.5 w-3.5 text-cream/30" />
                   )}
-                  <span className="text-xs text-zinc-400">
+                  <span className="text-xs text-cream/40">
                     {player.status === "confirmed" || player.role === "COMMISSIONER"
                       ? ""
                       : player.status}
@@ -817,7 +817,7 @@ export default function RoundDashboardPage() {
                   player.role !== "COMMISSIONER" && (
                     <button
                       onClick={() => handleRemovePlayer(player.id)}
-                      className="rounded-md p-1 text-zinc-300 opacity-0 transition-all hover:bg-red-50 hover:text-red-500 group-hover:opacity-100"
+                      className="rounded-md p-1 text-cream/30 opacity-0 transition-all hover:bg-coral/10 hover:text-coral group-hover:opacity-100"
                     >
                       <X className="h-3.5 w-3.5" />
                     </button>
@@ -829,11 +829,11 @@ export default function RoundDashboardPage() {
 
         {/* Ready to Tee Off CTA */}
         {isCommissioner && round.status === "upcoming" && (
-          <div className="mt-6 rounded-xl border border-zinc-200 bg-white p-6 shadow-sm text-center">
-            <p className="text-sm font-medium text-zinc-500">Ready to tee off?</p>
+          <div className="mt-6 rounded-[10px] border border-cream/[0.08] bg-cream/[0.04] p-6 text-center">
+            <p className="text-sm font-medium text-cream/50">Ready to tee off?</p>
             <button
               onClick={handleStartRound}
-              className="mt-3 w-full rounded-xl bg-[#D94F2B] py-5 text-lg font-bold text-white transition-colors hover:bg-[#B83D25] active:scale-[0.98]"
+              className="mt-3 w-full rounded-xl bg-coral py-5 text-lg font-bold text-cream transition-colors hover:bg-[#B83D25] active:scale-[0.98]"
             >
               Start Round 🏌️
             </button>
@@ -867,11 +867,11 @@ export default function RoundDashboardPage() {
         )}
 
         {/* Scorecard */}
-        <div className="mt-6 rounded-xl border border-zinc-200 bg-white p-6 shadow-sm">
+        <div className="mt-6 rounded-[10px] border border-cream/[0.08] bg-cream/[0.04] p-6">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-2">
-              <ClipboardList className="h-5 w-5 text-zinc-400" />
-              <h2 className="text-lg font-semibold text-zinc-900">Scorecard</h2>
+              <ClipboardList className="h-5 w-5 text-cream/40" />
+              <h2 className="text-lg font-semibold text-cream">Scorecard</h2>
             </div>
             {confirmedPlayers.length > 0 && (
               <ScorecardScanner
@@ -882,7 +882,7 @@ export default function RoundDashboardPage() {
           </div>
 
           {confirmedPlayers.length === 0 ? (
-            <p className="text-sm text-zinc-400">
+            <p className="text-sm text-cream/40">
               No confirmed players yet. Add players to start entering scores.
             </p>
           ) : (
@@ -918,11 +918,11 @@ export default function RoundDashboardPage() {
         </div>
 
         {/* Skins Game */}
-        <div className="mt-6 rounded-xl border border-zinc-200 bg-white p-6 shadow-sm">
+        <div className="mt-6 rounded-[10px] border border-cream/[0.08] bg-cream/[0.04] p-6">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-2">
-              <Trophy className="h-5 w-5 text-zinc-400" />
-              <h2 className="text-lg font-semibold text-zinc-900">
+              <Trophy className="h-5 w-5 text-cream/40" />
+              <h2 className="text-lg font-semibold text-cream">
                 Skins Game
                 {round.skinsGame && ` ($${round.skinsGame.buyIn} buy-in)`}
               </h2>
@@ -930,7 +930,7 @@ export default function RoundDashboardPage() {
             {isCommissioner && round.skinsGame && (
               <button
                 onClick={handleRemoveSkinsGame}
-                className="inline-flex items-center gap-1 text-xs text-red-500 hover:text-red-600"
+                className="inline-flex items-center gap-1 text-xs text-coral/60 hover:text-coral"
               >
                 <Trash2 className="h-3 w-3" />
                 Remove
@@ -940,7 +940,7 @@ export default function RoundDashboardPage() {
 
           {round.skinsGame ? (
             confirmedPlayers.length < 2 ? (
-              <p className="text-sm text-zinc-400">
+              <p className="text-sm text-cream/40">
                 Need at least 2 confirmed players for skins.
               </p>
             ) : (
@@ -953,8 +953,8 @@ export default function RoundDashboardPage() {
             )
           ) : isCommissioner ? (
             showAddSkins ? (
-              <div className="rounded-lg border border-zinc-200 bg-zinc-50 p-4">
-                <label className="block text-xs font-medium text-zinc-600">Buy-in</label>
+              <div className="rounded-[10px] border border-cream/[0.08] bg-cream/[0.04] p-4">
+                <label className="block text-xs font-medium text-cream/40">Buy-in</label>
                 <div className="mt-1.5 flex items-center gap-2">
                   {[5, 10, 20, 50].map((amount) => (
                     <button
@@ -962,34 +962,34 @@ export default function RoundDashboardPage() {
                       onClick={() => setSkinsBuyIn(String(amount))}
                       className={`rounded-full px-3 py-1.5 text-xs font-medium transition-colors ${
                         skinsBuyIn === String(amount)
-                          ? "bg-emerald-100 text-[#D94F2B]"
-                          : "bg-zinc-100 text-zinc-500 hover:bg-zinc-200"
+                          ? "bg-coral/15 text-coral"
+                          : "bg-cream/[0.06] text-cream/50 hover:bg-cream/[0.08]"
                       }`}
                     >
                       ${amount}
                     </button>
                   ))}
                   <div className="relative">
-                    <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-xs text-zinc-400">$</span>
+                    <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-xs text-cream/40">$</span>
                     <input
                       type="number"
                       min="1"
                       value={skinsBuyIn}
                       onChange={(e) => setSkinsBuyIn(e.target.value)}
-                      className="w-20 rounded-lg border border-zinc-300 py-1.5 pl-6 pr-2 text-xs text-zinc-900 focus:border-[#D94F2B] focus:outline-none focus:ring-1 focus:ring-[#D94F2B]/20"
+                      className="w-20 rounded-lg border border-cream/10 bg-transparent py-1.5 pl-6 pr-2 text-xs text-cream focus:border-coral/40 focus:outline-none focus:ring-1 focus:ring-coral/20"
                     />
                   </div>
                 </div>
                 <div className="mt-3 flex gap-2">
                   <button
                     onClick={handleAddSkinsGame}
-                    className="rounded-md bg-[#D94F2B] px-4 py-1.5 text-xs font-medium text-white hover:bg-[#B83D25]"
+                    className="rounded-md bg-coral px-4 py-1.5 text-xs font-medium text-cream hover:bg-[#B83D25]"
                   >
                     Create Skins Game
                   </button>
                   <button
                     onClick={() => setShowAddSkins(false)}
-                    className="rounded-md border border-zinc-300 px-4 py-1.5 text-xs font-medium text-zinc-600 hover:bg-zinc-50"
+                    className="rounded-md border border-cream/10 px-4 py-1.5 text-xs font-medium text-cream/60 hover:bg-cream/[0.06]"
                   >
                     Cancel
                   </button>
@@ -998,23 +998,23 @@ export default function RoundDashboardPage() {
             ) : (
               <button
                 onClick={() => setShowAddSkins(true)}
-                className="inline-flex items-center gap-1.5 rounded-lg border border-dashed border-zinc-300 px-4 py-3 text-sm font-medium text-zinc-500 transition-colors hover:border-emerald-400 hover:text-[#D94F2B] w-full justify-center"
+                className="inline-flex items-center gap-1.5 rounded-lg border border-dashed border-cream/10 px-4 py-3 text-sm font-medium text-cream/50 transition-colors hover:border-teal/30 hover:text-teal w-full justify-center"
               >
                 <Plus className="h-4 w-4" />
                 Add Skins Game
               </button>
             )
           ) : (
-            <p className="text-sm text-zinc-400">No skins game for this round.</p>
+            <p className="text-sm text-cream/40">No skins game for this round.</p>
           )}
         </div>
 
         {/* Nassau Bet */}
-        <div className="mt-6 rounded-xl border border-zinc-200 bg-white p-6 shadow-sm">
+        <div className="mt-6 rounded-[10px] border border-cream/[0.08] bg-cream/[0.04] p-6">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-2">
-              <Trophy className="h-5 w-5 text-zinc-400" />
-              <h2 className="text-lg font-semibold text-zinc-900">
+              <Trophy className="h-5 w-5 text-cream/40" />
+              <h2 className="text-lg font-semibold text-cream">
                 Nassau Bet
                 {round.nassauBet && ` ($${round.nassauBet.betAmount}/bet)`}
               </h2>
@@ -1022,7 +1022,7 @@ export default function RoundDashboardPage() {
             {isCommissioner && round.nassauBet && (
               <button
                 onClick={handleRemoveNassauBet}
-                className="inline-flex items-center gap-1 text-xs text-red-500 hover:text-red-600"
+                className="inline-flex items-center gap-1 text-xs text-coral/60 hover:text-coral"
               >
                 <Trash2 className="h-3 w-3" />
                 Remove
@@ -1032,7 +1032,7 @@ export default function RoundDashboardPage() {
 
           {round.nassauBet ? (
             confirmedPlayers.length < 2 ? (
-              <p className="text-sm text-zinc-400">
+              <p className="text-sm text-cream/40">
                 Need at least 2 confirmed players for Nassau bet.
               </p>
             ) : (
@@ -1051,8 +1051,8 @@ export default function RoundDashboardPage() {
             )
           ) : isCommissioner ? (
             showAddNassau ? (
-              <div className="rounded-lg border border-zinc-200 bg-zinc-50 p-4">
-                <label className="block text-xs font-medium text-zinc-600">Per-bet amount</label>
+              <div className="rounded-[10px] border border-cream/[0.08] bg-cream/[0.04] p-4">
+                <label className="block text-xs font-medium text-cream/40">Per-bet amount</label>
                 <div className="mt-1.5 flex items-center gap-2">
                   {[5, 10, 20, 50].map((amount) => (
                     <button
@@ -1060,38 +1060,38 @@ export default function RoundDashboardPage() {
                       onClick={() => setNassauBetAmount(String(amount))}
                       className={`rounded-full px-3 py-1.5 text-xs font-medium transition-colors ${
                         nassauBetAmount === String(amount)
-                          ? "bg-emerald-100 text-[#D94F2B]"
-                          : "bg-zinc-100 text-zinc-500 hover:bg-zinc-200"
+                          ? "bg-coral/15 text-coral"
+                          : "bg-cream/[0.06] text-cream/50 hover:bg-cream/[0.08]"
                       }`}
                     >
                       ${amount}
                     </button>
                   ))}
                   <div className="relative">
-                    <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-xs text-zinc-400">$</span>
+                    <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-xs text-cream/40">$</span>
                     <input
                       type="number"
                       min="1"
                       value={nassauBetAmount}
                       onChange={(e) => setNassauBetAmount(e.target.value)}
-                      className="w-20 rounded-lg border border-zinc-300 py-1.5 pl-6 pr-2 text-xs text-zinc-900 focus:border-[#D94F2B] focus:outline-none focus:ring-1 focus:ring-[#D94F2B]/20"
+                      className="w-20 rounded-lg border border-cream/10 bg-transparent py-1.5 pl-6 pr-2 text-xs text-cream focus:border-coral/40 focus:outline-none focus:ring-1 focus:ring-coral/20"
                     />
                   </div>
                 </div>
-                <p className="mt-2 text-xs text-zinc-400">
+                <p className="mt-2 text-xs text-cream/40">
                   3 bets: front 9, back 9, total 18 &middot; Total at risk: $
                   {(parseFloat(nassauBetAmount) || 0) * 3} per player
                 </p>
                 <div className="mt-3 flex gap-2">
                   <button
                     onClick={handleAddNassauBet}
-                    className="rounded-md bg-[#D94F2B] px-4 py-1.5 text-xs font-medium text-white hover:bg-[#B83D25]"
+                    className="rounded-md bg-coral px-4 py-1.5 text-xs font-medium text-cream hover:bg-[#B83D25]"
                   >
                     Create Nassau Bet
                   </button>
                   <button
                     onClick={() => setShowAddNassau(false)}
-                    className="rounded-md border border-zinc-300 px-4 py-1.5 text-xs font-medium text-zinc-600 hover:bg-zinc-50"
+                    className="rounded-md border border-cream/10 px-4 py-1.5 text-xs font-medium text-cream/60 hover:bg-cream/[0.06]"
                   >
                     Cancel
                   </button>
@@ -1100,23 +1100,23 @@ export default function RoundDashboardPage() {
             ) : (
               <button
                 onClick={() => setShowAddNassau(true)}
-                className="inline-flex items-center gap-1.5 rounded-lg border border-dashed border-zinc-300 px-4 py-3 text-sm font-medium text-zinc-500 transition-colors hover:border-emerald-400 hover:text-[#D94F2B] w-full justify-center"
+                className="inline-flex items-center gap-1.5 rounded-lg border border-dashed border-cream/10 px-4 py-3 text-sm font-medium text-cream/50 transition-colors hover:border-teal/30 hover:text-teal w-full justify-center"
               >
                 <Plus className="h-4 w-4" />
                 Add Nassau Bet
               </button>
             )
           ) : (
-            <p className="text-sm text-zinc-400">No Nassau bet for this round.</p>
+            <p className="text-sm text-cream/40">No Nassau bet for this round.</p>
           )}
         </div>
 
         {/* Expenses */}
-        <div className="mt-6 rounded-xl border border-zinc-200 bg-white p-6 shadow-sm">
+        <div className="mt-6 rounded-[10px] border border-cream/[0.08] bg-cream/[0.04] p-6">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-2">
-              <DollarSign className="h-5 w-5 text-zinc-400" />
-              <h2 className="text-lg font-semibold text-zinc-900">Expenses</h2>
+              <DollarSign className="h-5 w-5 text-cream/40" />
+              <h2 className="text-lg font-semibold text-cream">Expenses</h2>
             </div>
             {confirmedPlayers.length > 0 && (
               <ReceiptScanner
@@ -1136,18 +1136,18 @@ export default function RoundDashboardPage() {
         </div>
 
         {/* Settlements */}
-        <div className="mt-6 rounded-xl border border-zinc-200 bg-white p-6 shadow-sm">
+        <div className="mt-6 rounded-[10px] border border-cream/[0.08] bg-cream/[0.04] p-6">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-2">
-              <DollarSign className="h-5 w-5 text-zinc-400" />
-              <h2 className="text-lg font-semibold text-zinc-900">
+              <DollarSign className="h-5 w-5 text-cream/40" />
+              <h2 className="text-lg font-semibold text-cream">
                 Settlements
               </h2>
             </div>
             {isCommissioner && (
               <button
                 onClick={handleRecalculate}
-                className="text-xs font-medium text-[#D94F2B] hover:text-[#D94F2B]"
+                className="text-xs font-medium text-coral hover:text-coral/80"
               >
                 Recalculate
               </button>
@@ -1167,10 +1167,10 @@ export default function RoundDashboardPage() {
           round.awards &&
           Array.isArray(round.awards) &&
           round.awards.length > 0 && (
-            <div className="mt-6 rounded-xl border border-zinc-200 bg-white p-6 shadow-sm">
+            <div className="mt-6 rounded-[10px] border border-cream/[0.08] bg-cream/[0.04] p-6">
               <div className="flex items-center gap-2 mb-4">
                 <Trophy className="h-5 w-5 text-amber-500" />
-                <h2 className="text-lg font-semibold text-zinc-900">
+                <h2 className="text-lg font-semibold text-cream">
                   Post-Round Awards
                 </h2>
               </div>
@@ -1179,20 +1179,20 @@ export default function RoundDashboardPage() {
           )}
 
         {/* Share */}
-        <div className="mt-6 rounded-xl border border-zinc-200 bg-white p-6 shadow-sm">
+        <div className="mt-6 rounded-[10px] border border-cream/[0.08] bg-cream/[0.04] p-6">
           <div className="flex items-center gap-2 mb-4">
-            <Share2 className="h-5 w-5 text-zinc-400" />
-            <h2 className="text-lg font-semibold text-zinc-900">Share</h2>
+            <Share2 className="h-5 w-5 text-cream/40" />
+            <h2 className="text-lg font-semibold text-cream">Share</h2>
           </div>
 
           <div className="flex flex-wrap gap-3">
             <button
               onClick={handleCopyInviteLink}
-              className="inline-flex items-center gap-1.5 rounded-lg border border-zinc-200 bg-white px-4 py-2 text-sm font-medium text-zinc-700 transition-colors hover:bg-zinc-50"
+              className="inline-flex items-center gap-1.5 rounded-lg border border-cream/10 px-4 py-2 text-sm font-medium text-cream/60 transition-colors hover:text-cream/80"
             >
               {copiedLink ? (
                 <>
-                  <Check className="h-4 w-4 text-[#D94F2B]" />
+                  <Check className="h-4 w-4 text-coral" />
                   Copied!
                 </>
               ) : (
@@ -1204,11 +1204,11 @@ export default function RoundDashboardPage() {
             </button>
             <button
               onClick={handleShareResults}
-              className="inline-flex items-center gap-1.5 rounded-lg border border-zinc-200 bg-white px-4 py-2 text-sm font-medium text-zinc-700 transition-colors hover:bg-zinc-50"
+              className="inline-flex items-center gap-1.5 rounded-lg border border-cream/10 px-4 py-2 text-sm font-medium text-cream/60 transition-colors hover:text-cream/80"
             >
               {copiedSummary ? (
                 <>
-                  <Check className="h-4 w-4 text-[#D94F2B]" />
+                  <Check className="h-4 w-4 text-coral" />
                   Copied!
                 </>
               ) : (
