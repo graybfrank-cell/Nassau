@@ -14,7 +14,8 @@ const paths = [
   {
     emoji: "\uD83E\uDD16",
     title: "Help Me Figure It Out",
-    description: "Not sure where to go? Answer a few questions and our AI will plan the perfect trip.",
+    description:
+      "Not sure where to go? Answer a few questions and our AI will plan the perfect trip.",
     href: "/trips/create/ai",
     available: true,
   },
@@ -29,21 +30,21 @@ const paths = [
 
 export default function NewTripPage() {
   return (
-    <div className="min-h-[calc(100vh-64px)] bg-zinc-50 px-6 py-10">
+    <div className="min-h-[calc(100vh-64px)] bg-dark px-6 py-10">
       <div className="mx-auto max-w-2xl">
         <Link
           href="/dashboard"
-          className="inline-flex items-center gap-1.5 text-sm text-zinc-500 transition-colors hover:text-zinc-700"
+          className="inline-flex items-center gap-1.5 text-sm text-cream/50 transition-colors hover:text-cream/70"
         >
           <ArrowLeft className="h-4 w-4" />
           Back to Dashboard
         </Link>
 
         <div className="mt-8 text-center">
-          <h1 className="text-3xl font-bold tracking-tight text-zinc-900">
+          <h1 className="text-3xl font-bold tracking-tight text-cream">
             Plan Your Trip
           </h1>
-          <p className="mt-2 text-zinc-500">
+          <p className="mt-2 text-cream/50">
             How would you like to get started?
           </p>
         </div>
@@ -53,20 +54,20 @@ export default function NewTripPage() {
             <Link
               key={path.title}
               href={path.href}
-              className="group relative block rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm transition-all hover:border-[#D94F2B]/40 hover:shadow-md"
+              className="group relative block rounded-2xl border border-cream/10 bg-cream/[0.06] p-6 transition-all hover:border-coral/40 hover:bg-cream/[0.08]"
             >
               {!path.available && (
-                <span className="absolute right-4 top-4 rounded-full bg-zinc-100 px-2.5 py-0.5 text-xs font-medium text-zinc-500">
+                <span className="absolute right-4 top-4 rounded-full bg-cream/10 px-2.5 py-0.5 text-xs font-medium text-cream/50">
                   Coming Soon
                 </span>
               )}
               <div className="flex items-start gap-4">
                 <span className="text-4xl">{path.emoji}</span>
                 <div>
-                  <h2 className="text-lg font-semibold text-zinc-900 group-hover:text-[#D94F2B]">
+                  <h2 className="text-lg font-semibold text-cream group-hover:text-coral">
                     {path.title}
                   </h2>
-                  <p className="mt-1 text-sm text-zinc-500">
+                  <p className="mt-1 text-sm text-cream/50">
                     {path.description}
                   </p>
                 </div>
