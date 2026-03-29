@@ -17,8 +17,38 @@ const geistMono = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "Nassau — The Golf Trip Companion",
-  description: "Plan golf trips, manage itineraries, track expenses, generate pairings, and run skins games.",
+  title: {
+    default: "Nassau — The Golf Trip Companion",
+    template: "%s | Nassau",
+  },
+  description:
+    "Plan golf trips, track rounds, settle bets. The app for groups who actually play.",
+  metadataBase: new URL("https://nassau.golf"),
+  openGraph: {
+    title: "Nassau — The Golf Trip Companion",
+    description:
+      "Plan golf trips, track rounds, settle bets. The app for groups who actually play.",
+    url: "https://nassau.golf",
+    siteName: "Nassau",
+    images: [
+      {
+        url: "/api/og/default?title=Nassau&subtitle=The Golf Trip Companion",
+        width: 1200,
+        height: 630,
+        alt: "Nassau — The Golf Trip Companion",
+      },
+    ],
+    locale: "en_US",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Nassau — The Golf Trip Companion",
+    description:
+      "Plan golf trips, track rounds, settle bets. The app for groups who actually play.",
+    images: ["/api/og/default?title=Nassau&subtitle=The Golf Trip Companion"],
+    creator: "@UseNassauGolf",
+  },
 };
 
 async function getUser() {
