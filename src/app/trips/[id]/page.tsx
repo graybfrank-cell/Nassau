@@ -63,13 +63,13 @@ import RoundHub from "@/components/RoundHub";
 import TripPhotos from "@/components/trips/TripPhotos";
 
 const SCHEDULE_TYPES = [
-  { value: "tee_time", label: "Tee Time", emoji: "\u26F3", color: "bg-teal/15 text-teal", border: "border-l-teal" },
-  { value: "dinner", label: "Dining", emoji: "\uD83C\uDF7D\uFE0F", color: "bg-coral/15 text-coral", border: "border-l-coral" },
-  { value: "activity", label: "Activity", emoji: "\uD83C\uDFAF", color: "bg-blue-500/15 text-blue-400", border: "border-l-blue-400" },
+  { value: "tee_time", label: "Tee Time", emoji: "\u26F3", color: "bg-coral/15 text-coral", border: "border-l-coral" },
+  { value: "dinner", label: "Dining", emoji: "\uD83C\uDF7D\uFE0F", color: "bg-teal/15 text-teal", border: "border-l-teal" },
+  { value: "activity", label: "Activity", emoji: "\uD83C\uDFAF", color: "bg-cream/[0.40] text-cream", border: "border-l-cream/40" },
   { value: "travel", label: "Travel", emoji: "\u2708\uFE0F", color: "bg-purple-500/15 text-purple-400", border: "border-l-purple-400" },
   { value: "lodging", label: "Lodging", emoji: "\uD83C\uDFE8", color: "bg-amber-500/15 text-amber-400", border: "border-l-amber-400" },
   { value: "entertainment", label: "Entertainment", emoji: "\uD83C\uDF89", color: "bg-pink-500/15 text-pink-400", border: "border-l-pink-400" },
-  { value: "other", label: "Other", emoji: "\uD83D\uDCCC", color: "bg-cream/[0.08] text-cream/50", border: "border-l-cream/20" },
+  { value: "other", label: "Other", emoji: "\uD83D\uDCCC", color: "bg-cream/[0.20] text-cream/50", border: "border-l-cream/20" },
 ] as const;
 
 const EMPTY_LODGING: Lodging = {
@@ -777,10 +777,10 @@ export default function TripDetailPage() {
           <h2 className="text-lg font-medium text-cream">Trip not found</h2>
           <p className="mt-2 text-[13px] text-cream/40">This trip may have been deleted.</p>
           <Link
-            href="/dashboard"
+            href="/trips"
             className="mt-4 inline-block text-[13px] font-medium text-coral hover:text-coral/80"
           >
-            Back to Dashboard
+            Back to Trips
           </Link>
         </div>
       </div>
@@ -929,7 +929,7 @@ export default function TripDetailPage() {
         <div className="px-5 pb-4 pt-4">
           <div className="flex items-center gap-3">
             <Link
-              href="/dashboard"
+              href="/trips"
               className="flex h-9 w-9 items-center justify-center rounded-full border border-cream/[0.12] transition-colors hover:bg-cream/[0.06]"
             >
               <ArrowLeft className="h-[18px] w-[18px] text-cream" strokeWidth={2} />
@@ -963,7 +963,7 @@ export default function TripDetailPage() {
             <button
               onClick={handleShareInvite}
               disabled={inviteLoading}
-              className={`flex items-center gap-1.5 rounded-[10px] border px-3 py-2 text-[13px] font-medium transition-all ${
+              className={`flex items-center gap-1.5 rounded-[10px] border px-4 py-2 text-[13px] font-medium transition-all ${
                 copied
                   ? "border-coral/50 text-coral"
                   : "border-teal/30 bg-teal/10 text-teal hover:bg-teal/15"
@@ -1542,7 +1542,7 @@ export default function TripDetailPage() {
                 )}
               </div>
             ) : (
-              <p className="mt-3 text-[13px] text-cream/30">
+              <p className="mt-3 text-[13px] text-cream/30 text-center py-8">
                 No lodging info yet. Tap Add to enter details.
               </p>
             )}
@@ -1568,7 +1568,7 @@ export default function TripDetailPage() {
             </div>
 
             {leaderboard.length === 0 ? (
-              <p className="mt-3 text-[13px] text-cream/30">
+              <p className="mt-3 text-[13px] text-cream/30 text-center py-8">
                 No scores yet. Start a scorecard to see standings.
               </p>
             ) : (
@@ -1890,7 +1890,7 @@ export default function TripDetailPage() {
           )}
 
           {liveSchedule.length === 0 ? (
-            <p className="mt-3 text-[13px] text-cream/30">
+            <p className="mt-3 text-[13px] text-cream/30 text-center py-8">
               No events scheduled yet.{isCaptain ? " Add tee times, dinners, and activities." : ""}
             </p>
           ) : (
@@ -1903,10 +1903,10 @@ export default function TripDetailPage() {
                 const nextDate = dateIdx < scheduleDates.length - 1 ? scheduleDates[dateIdx + 1] : null;
                 return (
                   <div key={date}>
-                    <h3 className="flex items-center gap-2 text-[11px] font-medium uppercase tracking-[1.2px] text-cream/40">
-                      {dayLabel && <span className="text-cream/50">{dayLabel}</span>}
-                      {dayLabel && <span>&mdash;</span>}
-                      {formatDate(date)}
+                    <h3 className="flex items-center gap-2 border-b border-cream/[0.06] pb-2 text-[11px] uppercase tracking-[1.2px]">
+                      {dayLabel && <span className="text-cream font-medium">{dayLabel}</span>}
+                      {dayLabel && <span className="text-cream/40">&mdash;</span>}
+                      <span className="text-cream/40">{formatDate(date)}</span>
                     </h3>
                     <div className="mt-2 space-y-1.5">
                       {dayEvents.map((event, idx) => {
@@ -2400,10 +2400,10 @@ export default function TripDetailPage() {
               {trip.members.map((member) => {
                 const rsvp = member.rsvpStatus || "PENDING";
                 const badgeMap: Record<string, { color: string; label: string }> = {
-                  GOING: { color: "bg-teal/15 text-teal", label: "Going" },
-                  MAYBE: { color: "bg-yellow-500/15 text-yellow-400", label: "Maybe" },
-                  DECLINED: { color: "bg-coral/15 text-coral/70", label: "Declined" },
-                  PENDING: { color: "bg-cream/[0.08] text-cream/40", label: "Pending" },
+                  GOING: { color: "bg-teal/15 text-teal border border-teal/30", label: "Going" },
+                  MAYBE: { color: "bg-yellow-500/15 text-yellow-400 border border-yellow-500/30", label: "Maybe" },
+                  DECLINED: { color: "bg-coral/10 text-coral/60 border border-coral/20", label: "Declined" },
+                  PENDING: { color: "bg-cream/[0.06] text-cream/50 border border-cream/10", label: "Pending" },
                 };
                 const badge = badgeMap[rsvp] || badgeMap.PENDING;
                 const isMemberCaptain = member.role === "CAPTAIN";
@@ -2432,7 +2432,7 @@ export default function TripDetailPage() {
                       </span>
                     </div>
                     <span
-                      className={`shrink-0 rounded-full px-2 py-0.5 text-[10px] font-medium ${badge.color}`}
+                      className={`shrink-0 rounded-full px-3 py-1 text-[11px] font-medium ${badge.color}`}
                     >
                       {badge.label}
                     </span>
