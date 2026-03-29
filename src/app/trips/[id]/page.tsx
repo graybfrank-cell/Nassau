@@ -63,13 +63,13 @@ import RoundHub from "@/components/RoundHub";
 import TripPhotos from "@/components/trips/TripPhotos";
 
 const SCHEDULE_TYPES = [
-  { value: "tee_time", label: "Tee Time", emoji: "\u26F3", color: "bg-emerald-100 text-[#D94F2B]", border: "border-l-emerald-500" },
-  { value: "dinner", label: "Dining", emoji: "\uD83C\uDF7D\uFE0F", color: "bg-rose-100 text-rose-700", border: "border-l-rose-500" },
-  { value: "activity", label: "Activity", emoji: "\uD83C\uDFAF", color: "bg-blue-100 text-blue-700", border: "border-l-blue-500" },
-  { value: "travel", label: "Travel", emoji: "\u2708\uFE0F", color: "bg-purple-100 text-purple-700", border: "border-l-purple-500" },
-  { value: "lodging", label: "Lodging", emoji: "\uD83C\uDFE8", color: "bg-amber-100 text-amber-700", border: "border-l-amber-500" },
-  { value: "entertainment", label: "Entertainment", emoji: "\uD83C\uDF89", color: "bg-pink-100 text-pink-700", border: "border-l-pink-500" },
-  { value: "other", label: "Other", emoji: "\uD83D\uDCCC", color: "bg-zinc-100 text-zinc-700", border: "border-l-zinc-400" },
+  { value: "tee_time", label: "Tee Time", emoji: "\u26F3", color: "bg-teal/15 text-teal", border: "border-l-teal" },
+  { value: "dinner", label: "Dining", emoji: "\uD83C\uDF7D\uFE0F", color: "bg-coral/15 text-coral", border: "border-l-coral" },
+  { value: "activity", label: "Activity", emoji: "\uD83C\uDFAF", color: "bg-blue-500/15 text-blue-400", border: "border-l-blue-400" },
+  { value: "travel", label: "Travel", emoji: "\u2708\uFE0F", color: "bg-purple-500/15 text-purple-400", border: "border-l-purple-400" },
+  { value: "lodging", label: "Lodging", emoji: "\uD83C\uDFE8", color: "bg-amber-500/15 text-amber-400", border: "border-l-amber-400" },
+  { value: "entertainment", label: "Entertainment", emoji: "\uD83C\uDF89", color: "bg-pink-500/15 text-pink-400", border: "border-l-pink-400" },
+  { value: "other", label: "Other", emoji: "\uD83D\uDCCC", color: "bg-cream/[0.08] text-cream/50", border: "border-l-cream/20" },
 ] as const;
 
 const EMPTY_LODGING: Lodging = {
@@ -763,21 +763,21 @@ export default function TripDetailPage() {
 
   if (loading) {
     return (
-      <div className="flex min-h-[calc(100vh-64px)] items-center justify-center">
-        <p className="text-sm text-zinc-400">Loading...</p>
+      <div className="flex min-h-screen items-center justify-center bg-dark">
+        <div className="h-5 w-5 animate-spin rounded-full border-2 border-cream/20 border-t-coral" />
       </div>
     );
   }
 
   if (!trip) {
     return (
-      <div className="flex min-h-[calc(100vh-64px)] items-center justify-center">
+      <div className="flex min-h-screen items-center justify-center bg-dark">
         <div className="text-center">
-          <h2 className="text-lg font-semibold text-zinc-900">Trip not found</h2>
-          <p className="mt-2 text-sm text-zinc-500">This trip may have been deleted.</p>
+          <h2 className="text-lg font-medium text-cream">Trip not found</h2>
+          <p className="mt-2 text-[13px] text-cream/40">This trip may have been deleted.</p>
           <Link
             href="/dashboard"
-            className="mt-4 inline-block text-sm font-medium text-[#D94F2B] hover:text-[#B83D25]"
+            className="mt-4 inline-block text-[13px] font-medium text-coral hover:text-coral/80"
           >
             Back to Dashboard
           </Link>
@@ -889,205 +889,208 @@ export default function TripDetailPage() {
       title: "Expenses",
       desc: `${expenseCount} expense${expenseCount !== 1 ? "s" : ""} logged`,
       href: `/trips/${tripId}/expenses`,
-      color: "bg-blue-100 text-blue-700",
+      color: "bg-blue-500/15 text-blue-400",
     },
     {
       icon: Shuffle,
       title: "Pairings",
       desc: `${roundCount} round${roundCount !== 1 ? "s" : ""} created`,
       href: `/trips/${tripId}/pairings`,
-      color: "bg-purple-100 text-purple-700",
+      color: "bg-purple-500/15 text-purple-400",
     },
     {
       icon: Trophy,
       title: "Skins",
       desc: `${skinsCount} game${skinsCount !== 1 ? "s" : ""} played`,
       href: `/trips/${tripId}/skins`,
-      color: "bg-amber-100 text-amber-700",
+      color: "bg-gold/15 text-gold",
     },
     {
       icon: ClipboardList,
       title: "Scorecards",
       desc: `${scorecardCount} round${scorecardCount !== 1 ? "s" : ""} scored`,
       href: `/trips/${tripId}/scorecards`,
-      color: "bg-emerald-100 text-[#D94F2B]",
+      color: "bg-teal/15 text-teal",
     },
     {
       icon: Medal,
       title: "Leaderboard",
       desc: "Standings & rankings",
       href: `/trips/${tripId}/leaderboard`,
-      color: "bg-orange-100 text-orange-700",
+      color: "bg-coral/15 text-coral",
     },
   ];
 
   return (
-    <div className="min-h-[calc(100vh-64px)] bg-zinc-50 px-4 py-10 sm:px-6">
+    <div className="min-h-screen bg-dark">
       <div className="mx-auto max-w-5xl">
-        <Link
-          href="/dashboard"
-          className="inline-flex items-center gap-1.5 text-sm text-zinc-500 transition-colors hover:text-zinc-700"
-        >
-          <ArrowLeft className="h-4 w-4" />
-          Back to Trips
-        </Link>
-
-        {/* Error Banner */}
-        {error && (
-          <div className="mt-4 flex items-center gap-2 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
-            <AlertCircle className="h-4 w-4 shrink-0" />
-            {error}
-          </div>
-        )}
-
-        {/* Trip Header */}
-        <div className="mt-6 rounded-xl border border-zinc-200 bg-white p-6 shadow-sm">
-          <div className="flex items-start justify-between">
-            <div>
+        {/* Header */}
+        <div className="px-5 pb-4 pt-4">
+          <div className="flex items-center gap-3">
+            <Link
+              href="/dashboard"
+              className="flex h-9 w-9 items-center justify-center rounded-full border border-cream/[0.12] transition-colors hover:bg-cream/[0.06]"
+            >
+              <ArrowLeft className="h-[18px] w-[18px] text-cream" strokeWidth={2} />
+            </Link>
+            <div className="flex-1 min-w-0">
               {editingName ? (
-                <div className="flex items-center gap-2">
-                  <input
-                    autoFocus
-                    type="text"
-                    value={nameDraft}
-                    onChange={(e) => setNameDraft(e.target.value)}
-                    onBlur={() => handleSaveName()}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter") (e.target as HTMLInputElement).blur();
-                      if (e.key === "Escape") { setEditingName(false); }
-                    }}
-                    className="w-full rounded-md border border-[#D94F2B]/40 px-2 py-1 text-2xl font-bold tracking-tight text-zinc-900 outline-none focus:ring-2 focus:ring-[#D94F2B]/20"
-                  />
-                </div>
+                <input
+                  autoFocus
+                  type="text"
+                  value={nameDraft}
+                  onChange={(e) => setNameDraft(e.target.value)}
+                  onBlur={() => handleSaveName()}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") (e.target as HTMLInputElement).blur();
+                    if (e.key === "Escape") { setEditingName(false); }
+                  }}
+                  className="w-full rounded-[10px] border border-coral/40 bg-cream/[0.06] px-3 py-1 text-[22px] font-medium tracking-tight text-cream outline-none"
+                />
               ) : (
                 <h1
-                  className={`text-2xl font-bold tracking-tight text-zinc-900${isCaptain ? " cursor-pointer hover:text-[#B83D25]" : ""}`}
+                  className={`text-[22px] font-medium tracking-tight text-cream truncate${isCaptain ? " cursor-pointer" : ""}`}
                   onClick={isCaptain ? () => { setNameDraft(trip.name); setEditingName(true); } : undefined}
-                  title={isCaptain ? "Click to edit trip name" : undefined}
                 >
                   {trip.name}
                   {isCaptain && (
-                    <Pencil className="ml-2 inline h-4 w-4 text-zinc-300" />
+                    <Pencil className="ml-2 inline h-3.5 w-3.5 text-cream/30" />
                   )}
                 </h1>
-              )}
-              {trip.destination && (
-                <p className="mt-1 text-sm text-zinc-500">{trip.destination}</p>
-              )}
-              {(trip.startDate || trip.endDate) && (
-                <p className="mt-1 text-sm text-zinc-400">
-                  {trip.startDate && trip.endDate
-                    ? `${trip.startDate} — ${trip.endDate}`
-                    : trip.startDate || trip.endDate}
-                </p>
-              )}
-              {(trip.arrivalTime || trip.departureTime) && !editingTravel && (
-                <div className="mt-2 flex items-center gap-4 text-sm text-zinc-500">
-                  {trip.arrivalTime && (
-                    <span className="inline-flex items-center gap-1">
-                      <PlaneLanding className="h-3.5 w-3.5" />
-                      {trip.arrivalTime}
-                    </span>
-                  )}
-                  {trip.departureTime && (
-                    <span className="inline-flex items-center gap-1">
-                      <PlaneTakeoff className="h-3.5 w-3.5" />
-                      {trip.departureTime}
-                    </span>
-                  )}
-                  <button
-                    onClick={() => setEditingTravel(true)}
-                    className="text-zinc-300 hover:text-zinc-500"
-                  >
-                    <Pencil className="h-3 w-3" />
-                  </button>
-                </div>
-              )}
-              {!trip.arrivalTime && !trip.departureTime && !editingTravel && (
-                <button
-                  onClick={() => setEditingTravel(true)}
-                  className="mt-2 text-xs font-medium text-zinc-400 hover:text-zinc-600"
-                >
-                  + Add arrival / departure times
-                </button>
-              )}
-              {editingTravel && (
-                <form
-                  onSubmit={handleSaveTravel}
-                  className="mt-3 flex items-end gap-3"
-                >
-                  <div>
-                    <label className="block text-xs font-medium text-zinc-600">
-                      Arrival
-                    </label>
-                    <input
-                      type="text"
-                      value={arrivalTime}
-                      onChange={(e) => setArrivalTime(e.target.value)}
-                      placeholder="Fri 3/14 at 2:30 PM"
-                      className="mt-1 block w-44 rounded-md border border-zinc-300 px-3 py-1.5 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-[#D94F2B] focus:outline-none focus:ring-2 focus:ring-[#D94F2B]/20"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-xs font-medium text-zinc-600">
-                      Departure
-                    </label>
-                    <input
-                      type="text"
-                      value={departureTime}
-                      onChange={(e) => setDepartureTime(e.target.value)}
-                      placeholder="Sun 3/16 at 6:00 PM"
-                      className="mt-1 block w-44 rounded-md border border-zinc-300 px-3 py-1.5 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-[#D94F2B] focus:outline-none focus:ring-2 focus:ring-[#D94F2B]/20"
-                    />
-                  </div>
-                  <button
-                    type="submit"
-                    className="rounded-md bg-[#D94F2B] px-3 py-1.5 text-sm font-medium text-white hover:bg-[#B83D25]"
-                  >
-                    Save
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setEditingTravel(false)}
-                    className="rounded-md border border-zinc-300 p-1.5 text-zinc-400 hover:text-zinc-600"
-                  >
-                    <X className="h-4 w-4" />
-                  </button>
-                </form>
               )}
             </div>
             <button
               onClick={handleShareInvite}
               disabled={inviteLoading}
-              className="inline-flex items-center gap-1.5 rounded-lg border border-zinc-200 bg-white px-3 py-1.5 text-xs font-semibold text-zinc-700 transition-colors hover:bg-zinc-50 disabled:opacity-50"
+              className={`flex items-center gap-1.5 rounded-[10px] border px-3 py-2 text-[13px] font-medium transition-all ${
+                copied
+                  ? "border-coral/50 text-coral"
+                  : "border-teal/30 bg-teal/10 text-teal hover:bg-teal/15"
+              }`}
             >
               {copied ? (
                 <>
-                  <Check className="h-3.5 w-3.5 text-[#D94F2B]" />
+                  <Check className="h-3.5 w-3.5" strokeWidth={2.5} />
                   Copied!
                 </>
               ) : inviteLoading ? (
-                "..."
+                <Loader2 className="h-3.5 w-3.5 animate-spin" />
               ) : (
                 <>
-                  <Link2 className="h-3.5 w-3.5" />
-                  Invite Link
+                  <Link2 className="h-3.5 w-3.5" strokeWidth={2} />
+                  Invite
                 </>
               )}
             </button>
           </div>
+
+          {/* Subtitle: destination + dates */}
+          <div className="mt-1.5 ml-12">
+            <p className="text-[13px] text-cream/50">
+              {[
+                trip.destination,
+                trip.startDate && trip.endDate
+                  ? `${formatDateShort(trip.startDate)} — ${formatDateShort(trip.endDate)}`
+                  : trip.startDate ? formatDateShort(trip.startDate) : null,
+              ].filter(Boolean).join(" · ")}
+            </p>
+            {(trip.arrivalTime || trip.departureTime) && !editingTravel && (
+              <div className="mt-1 flex items-center gap-3 text-[12px] text-cream/35">
+                {trip.arrivalTime && (
+                  <span className="inline-flex items-center gap-1">
+                    <PlaneLanding className="h-3 w-3" />
+                    {trip.arrivalTime}
+                  </span>
+                )}
+                {trip.departureTime && (
+                  <span className="inline-flex items-center gap-1">
+                    <PlaneTakeoff className="h-3 w-3" />
+                    {trip.departureTime}
+                  </span>
+                )}
+                <button
+                  onClick={() => setEditingTravel(true)}
+                  className="text-cream/20 hover:text-cream/50"
+                >
+                  <Pencil className="h-2.5 w-2.5" />
+                </button>
+              </div>
+            )}
+            {!trip.arrivalTime && !trip.departureTime && !editingTravel && (
+              <button
+                onClick={() => setEditingTravel(true)}
+                className="mt-1 text-[12px] font-medium text-cream/30 hover:text-cream/50"
+              >
+                + Add arrival / departure times
+              </button>
+            )}
+            {editingTravel && (
+              <form
+                onSubmit={handleSaveTravel}
+                className="mt-2 flex flex-wrap items-end gap-2"
+              >
+                <div>
+                  <label className="block text-[11px] font-medium uppercase tracking-[1.2px] text-cream/40">
+                    Arrival
+                  </label>
+                  <input
+                    type="text"
+                    value={arrivalTime}
+                    onChange={(e) => setArrivalTime(e.target.value)}
+                    placeholder="Fri 3/14 at 2:30 PM"
+                    className="mt-1 block w-44 rounded-[10px] border border-cream/10 bg-cream/[0.06] px-3 py-2 text-[13px] text-cream placeholder:text-cream/35 outline-none focus:border-coral/40"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[11px] font-medium uppercase tracking-[1.2px] text-cream/40">
+                    Departure
+                  </label>
+                  <input
+                    type="text"
+                    value={departureTime}
+                    onChange={(e) => setDepartureTime(e.target.value)}
+                    placeholder="Sun 3/16 at 6:00 PM"
+                    className="mt-1 block w-44 rounded-[10px] border border-cream/10 bg-cream/[0.06] px-3 py-2 text-[13px] text-cream placeholder:text-cream/35 outline-none focus:border-coral/40"
+                  />
+                </div>
+                <button
+                  type="submit"
+                  className="rounded-[10px] bg-coral px-3 py-2 text-[13px] font-medium text-cream hover:bg-coral/90"
+                >
+                  Save
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setEditingTravel(false)}
+                  className="rounded-[10px] border border-cream/10 p-2 text-cream/40 hover:text-cream/60"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              </form>
+            )}
+          </div>
         </div>
+
+        {/* Error Banner */}
+        {error && (
+          <div className="mx-5 mb-4 flex items-center gap-2 rounded-[10px] border border-red-500/30 bg-red-500/10 px-4 py-3 text-[13px] text-red-400">
+            <AlertCircle className="h-4 w-4 shrink-0" />
+            {error}
+          </div>
+        )}
+
+        <div className="px-5 pb-32 space-y-6">
 
         {/* ─── Date Poll Section ─── */}
         {datePoll?.status === "locked" && trip.startDate && trip.endDate ? (
           /* Locked dates display */
-          <div className="mt-6 rounded-xl border-2 border-emerald-200 bg-emerald-50/30 p-5 shadow-sm">
+          <div className="rounded-[10px] border border-teal/30 bg-teal/10 p-5">
             <div className="flex items-center gap-2">
-              <Lock className="h-5 w-5 text-[#D94F2B]" />
-              <h2 className="text-lg font-semibold text-zinc-900">Trip Dates Locked</h2>
+              <Lock className="h-5 w-5 text-teal" />
+              <h2 className="text-[15px] font-medium text-cream">Trip Dates Locked</h2>
             </div>
-            <p className="mt-2 text-sm text-zinc-700">
-              <span className="font-semibold">{formatDateShort(trip.startDate)} — {formatDateShort(trip.endDate)}</span>
+            <p className="mt-2 text-[13px] text-cream/60">
+              <span className="font-medium text-cream">{formatDateShort(trip.startDate)} — {formatDateShort(trip.endDate)}</span>
               {" "}({nightsBetween(trip.startDate, trip.endDate)} night{nightsBetween(trip.startDate, trip.endDate) !== 1 ? "s" : ""})
             </p>
           </div>
@@ -1110,15 +1113,15 @@ export default function TripDetailPage() {
         ) : !trip.startDate && !trip.endDate && !datePoll ? (
           /* No dates, no poll — prompt captain */
           currentUserId && trip.members.some((m) => m.userId === currentUserId && (m.role === "CAPTAIN" || m.role === "CO_CAPTAIN")) ? (
-            <div className="mt-6 rounded-xl border-2 border-dashed border-zinc-300 bg-white p-6 text-center shadow-sm">
-              <CalendarDays className="mx-auto h-8 w-8 text-zinc-400" />
-              <h2 className="mt-3 text-lg font-semibold text-zinc-900">When&apos;s the trip?</h2>
-              <p className="mt-1 text-sm text-zinc-500">
+            <div className="rounded-[10px] border border-dashed border-cream/15 p-6 text-center">
+              <CalendarDays className="mx-auto h-8 w-8 text-cream/30" />
+              <h2 className="mt-3 text-[15px] font-medium text-cream">When&apos;s the trip?</h2>
+              <p className="mt-1 text-[13px] text-cream/40">
                 Pick a few possible date windows and let the crew vote.
               </p>
               <button
                 onClick={() => { setShowCreatePoll(true); setPollStep(1); }}
-                className="mt-4 inline-flex items-center gap-2 rounded-lg bg-[#D94F2B] px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[#B83D25]"
+                className="mt-4 inline-flex items-center gap-2 rounded-[10px] bg-coral px-5 py-3 text-[14px] font-medium text-cream transition-colors hover:bg-coral/90"
               >
                 <Vote className="h-4 w-4" />
                 Set Up Date Poll
@@ -1130,35 +1133,35 @@ export default function TripDetailPage() {
         {/* Create Poll Modal */}
         {showCreatePoll && (
           <div
-            className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/40 backdrop-blur-sm"
+            className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/60"
             onClick={() => setShowCreatePoll(false)}
           >
             <div
-              className="w-full max-w-lg rounded-t-2xl sm:rounded-2xl bg-white p-6 shadow-xl max-h-[90vh] overflow-y-auto animate-[slideUp_200ms_ease-out]"
+              className="w-full max-w-lg rounded-t-2xl sm:rounded-2xl bg-[#1e1e21] p-6 shadow-xl max-h-[90vh] overflow-y-auto animate-[slideUp_200ms_ease-out]"
               onClick={(e) => e.stopPropagation()}
             >
               <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-semibold text-zinc-900">
+                <h3 className="text-[17px] font-medium text-cream">
                   {pollStep === 1 ? "Trip Duration" : pollStep === 2 ? "Pick Date Windows" : "Confirm & Send"}
                 </h3>
-                <button onClick={() => setShowCreatePoll(false)} className="rounded-md p-1 text-zinc-400 hover:bg-zinc-100 hover:text-zinc-600">
-                  <X className="h-5 w-5" />
+                <button onClick={() => setShowCreatePoll(false)} className="flex h-8 w-8 items-center justify-center rounded-full text-cream/40 hover:bg-cream/10">
+                  <X className="h-4 w-4" strokeWidth={2} />
                 </button>
               </div>
 
               {/* Step 1: Nights */}
               {pollStep === 1 && (
                 <div>
-                  <p className="text-sm text-zinc-500 mb-4">How many nights is this trip?</p>
+                  <p className="text-[13px] text-cream/40 mb-4">How many nights is this trip?</p>
                   <div className="flex flex-wrap gap-2">
                     {[2, 3, 4, 5, 6, 7].map((n) => (
                       <button
                         key={n}
                         onClick={() => setPollNights(n)}
-                        className={`rounded-full px-4 py-2 text-sm font-medium transition-colors min-h-[44px] ${
+                        className={`rounded-full px-4 py-2.5 text-[13px] font-medium transition-all min-h-[44px] ${
                           pollNights === n
-                            ? "bg-emerald-100 text-[#D94F2B] ring-2 ring-[#D94F2B]/30"
-                            : "bg-zinc-100 text-zinc-600 hover:bg-zinc-200"
+                            ? "border border-coral/50 bg-coral/12 text-coral"
+                            : "border border-cream/10 bg-cream/[0.06] text-cream/60 hover:border-cream/20"
                         }`}
                       >
                         {n} night{n !== 1 ? "s" : ""}
@@ -1168,7 +1171,7 @@ export default function TripDetailPage() {
                   <button
                     onClick={handleFetchSuggestions}
                     disabled={pollLoadingSuggestions}
-                    className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-lg bg-[#D94F2B] px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[#B83D25] disabled:opacity-50"
+                    className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-[10px] bg-coral px-5 py-3.5 text-[14px] font-medium text-cream transition-colors hover:bg-coral/90 disabled:opacity-50"
                   >
                     {pollLoadingSuggestions ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
                     {pollLoadingSuggestions ? "Getting suggestions..." : "Next — Pick Dates"}
@@ -1179,24 +1182,22 @@ export default function TripDetailPage() {
               {/* Step 2: Suggestions + Edit */}
               {pollStep === 2 && (
                 <div>
-                  {/* KB suggestions info */}
                   {pollSuggestions?.bestMonths?.length > 0 && (
-                    <div className="mb-4 rounded-lg border border-blue-100 bg-blue-50 p-3 text-sm">
-                      <p className="font-medium text-blue-800">
-                        {"\uD83D\uDCA1"} Best months for {pollSuggestions.destination || trip.destination}: {pollSuggestions.bestMonths.join(", ")}
+                    <div className="mb-4 rounded-[10px] border border-teal/20 bg-teal/10 p-3 text-[13px]">
+                      <p className="font-medium text-teal">
+                        Best months for {pollSuggestions.destination || trip.destination}: {pollSuggestions.bestMonths.join(", ")}
                       </p>
                       {pollSuggestions.avoidMonths?.length > 0 && (
-                        <p className="mt-1 text-blue-600">
-                          {"\u26A0\uFE0F"} Avoid: {pollSuggestions.avoidMonths.join(", ")}{pollSuggestions.avoidReason ? ` — ${pollSuggestions.avoidReason}` : ""}
+                        <p className="mt-1 text-cream/50">
+                          Avoid: {pollSuggestions.avoidMonths.join(", ")}{pollSuggestions.avoidReason ? ` — ${pollSuggestions.avoidReason}` : ""}
                         </p>
                       )}
                     </div>
                   )}
 
-                  {/* Pre-filled suggestion chips */}
                   {pollSuggestions?.suggestions?.length > 0 && (
                     <div className="mb-4">
-                      <p className="mb-2 text-xs font-medium uppercase tracking-wide text-zinc-500">Suggested windows</p>
+                      <p className="mb-2 text-[11px] font-medium uppercase tracking-[1.2px] text-cream/40">Suggested windows</p>
                       <div className="flex flex-wrap gap-2">
                         {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                         {pollSuggestions.suggestions.map((s: any, i: number) => {
@@ -1211,15 +1212,15 @@ export default function TripDetailPage() {
                                   setPollDraftOptions((prev) => [...prev, { start_date: s.start_date, end_date: s.end_date, label: "" }]);
                                 }
                               }}
-                              className={`rounded-lg border px-3 py-2 text-left text-sm transition-colors ${
+                              className={`rounded-[10px] border px-3 py-2 text-left text-[13px] transition-colors ${
                                 isSelected
-                                  ? "border-[#D94F2B]/40 bg-emerald-50 text-[#1A1A1A]"
-                                  : "border-zinc-200 bg-white text-zinc-700 hover:border-zinc-300"
+                                  ? "border-coral/50 bg-coral/12 text-coral"
+                                  : "border-cream/10 bg-cream/[0.06] text-cream/60 hover:border-cream/20"
                               }`}
                             >
                               <span className="font-medium">{s.label}</span>
                               {s.tag && (
-                                <span className="ml-2 text-xs text-zinc-500">{s.tag}</span>
+                                <span className="ml-2 text-[12px] text-cream/40">{s.tag}</span>
                               )}
                             </button>
                           );
@@ -1228,34 +1229,33 @@ export default function TripDetailPage() {
                     </div>
                   )}
 
-                  {/* Editable options */}
                   <div className="space-y-3">
                     {pollDraftOptions.map((opt, idx) => (
-                      <div key={idx} className="rounded-lg border border-zinc-200 bg-zinc-50 p-3">
+                      <div key={idx} className="rounded-[10px] border border-cream/[0.08] bg-cream/[0.04] p-3">
                         <div className="flex items-center justify-between mb-2">
-                          <span className="text-xs font-semibold text-zinc-500">Option {String.fromCharCode(65 + idx)}</span>
+                          <span className="text-[11px] font-medium uppercase tracking-[1.2px] text-cream/40">Option {String.fromCharCode(65 + idx)}</span>
                           {pollDraftOptions.length > 2 && (
-                            <button onClick={() => handleRemovePollOption(idx)} className="text-xs text-red-400 hover:text-red-600">Remove</button>
+                            <button onClick={() => handleRemovePollOption(idx)} className="text-[12px] text-red-400 hover:text-red-300">Remove</button>
                           )}
                         </div>
                         <div className="grid gap-2 sm:grid-cols-2">
                           <div>
-                            <label className="block text-xs text-zinc-500">Start date</label>
+                            <label className="block text-[11px] text-cream/40">Start date</label>
                             <input
                               type="date"
                               value={opt.start_date}
                               onChange={(e) => handlePollOptionDateChange(idx, e.target.value)}
                               min={addDaysISO(new Date().toISOString().split("T")[0], 7)}
-                              className="mt-1 block w-full rounded-md border border-zinc-300 px-3 py-1.5 text-sm text-zinc-900 focus:border-[#D94F2B] focus:outline-none focus:ring-2 focus:ring-[#D94F2B]/20"
+                              className="mt-1 block w-full rounded-[10px] border border-cream/10 bg-cream/[0.06] px-3 py-2 text-[13px] text-cream outline-none focus:border-coral/40"
                             />
                           </div>
                           <div>
-                            <label className="block text-xs text-zinc-500">End date</label>
+                            <label className="block text-[11px] text-cream/40">End date</label>
                             <input
                               type="date"
                               value={opt.end_date}
                               readOnly
-                              className="mt-1 block w-full rounded-md border border-zinc-200 bg-zinc-100 px-3 py-1.5 text-sm text-zinc-500"
+                              className="mt-1 block w-full rounded-[10px] border border-cream/[0.08] bg-cream/[0.04] px-3 py-2 text-[13px] text-cream/50"
                             />
                           </div>
                         </div>
@@ -1270,7 +1270,7 @@ export default function TripDetailPage() {
                             });
                           }}
                           placeholder='Optional label (e.g. "Spring Break")'
-                          className="mt-2 block w-full rounded-md border border-zinc-300 px-3 py-1.5 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-[#D94F2B] focus:outline-none focus:ring-2 focus:ring-[#D94F2B]/20"
+                          className="mt-2 block w-full rounded-[10px] border border-cream/10 bg-cream/[0.06] px-3 py-2 text-[13px] text-cream placeholder:text-cream/35 outline-none focus:border-coral/40"
                         />
                       </div>
                     ))}
@@ -1279,7 +1279,7 @@ export default function TripDetailPage() {
                   {pollDraftOptions.length < 5 && (
                     <button
                       onClick={handleAddPollOption}
-                      className="mt-3 inline-flex items-center gap-1 text-sm font-medium text-[#D94F2B] hover:text-[#B83D25]"
+                      className="mt-3 inline-flex items-center gap-1 text-[13px] font-medium text-coral hover:text-coral/80"
                     >
                       <Plus className="h-3.5 w-3.5" />
                       Add Option
@@ -1289,14 +1289,14 @@ export default function TripDetailPage() {
                   <div className="mt-5 flex gap-3">
                     <button
                       onClick={() => setPollStep(1)}
-                      className="rounded-lg border border-zinc-300 px-4 py-2 text-sm font-medium text-zinc-600 hover:bg-zinc-50"
+                      className="rounded-[10px] border border-cream/10 px-4 py-2.5 text-[13px] font-medium text-cream/50"
                     >
                       Back
                     </button>
                     <button
                       onClick={() => setPollStep(3)}
                       disabled={pollDraftOptions.filter((o) => o.start_date && o.end_date).length < 2}
-                      className="flex-1 rounded-lg bg-[#D94F2B] px-5 py-2 text-sm font-semibold text-white transition-colors hover:bg-[#B83D25] disabled:opacity-40 disabled:cursor-not-allowed"
+                      className="flex-1 rounded-[10px] bg-coral px-5 py-2.5 text-[13px] font-medium text-cream transition-colors hover:bg-coral/90 disabled:opacity-40"
                     >
                       Review & Send
                     </button>
@@ -1307,20 +1307,20 @@ export default function TripDetailPage() {
               {/* Step 3: Confirm */}
               {pollStep === 3 && (
                 <div>
-                  <p className="text-sm text-zinc-500 mb-4">
-                    Your crew will have <strong>72 hours</strong> to vote. Everyone with an email on file gets notified.
+                  <p className="text-[13px] text-cream/40 mb-4">
+                    Your crew will have <strong className="text-cream/60">72 hours</strong> to vote. Everyone with an email on file gets notified.
                   </p>
                   <div className="space-y-2">
                     {pollDraftOptions.filter((o) => o.start_date && o.end_date).map((opt, idx) => (
-                      <div key={idx} className="flex items-center gap-3 rounded-lg border border-zinc-200 bg-white px-4 py-3">
-                        <span className="flex h-7 w-7 items-center justify-center rounded-full bg-emerald-100 text-xs font-bold text-[#D94F2B]">
+                      <div key={idx} className="flex items-center gap-3 rounded-[10px] border border-cream/[0.08] bg-cream/[0.04] px-4 py-3">
+                        <span className="flex h-7 w-7 items-center justify-center rounded-full bg-coral/15 text-[12px] font-bold text-coral">
                           {String.fromCharCode(65 + idx)}
                         </span>
                         <div>
-                          <p className="text-sm font-medium text-zinc-900">
+                          <p className="text-[13px] font-medium text-cream">
                             {formatDateShort(opt.start_date)} — {formatDateShort(opt.end_date)}
                           </p>
-                          <p className="text-xs text-zinc-500">
+                          <p className="text-[12px] text-cream/40">
                             {pollNights} night{pollNights !== 1 ? "s" : ""}
                             {opt.label ? ` · "${opt.label}"` : ""}
                           </p>
@@ -1332,14 +1332,14 @@ export default function TripDetailPage() {
                   <div className="mt-5 flex gap-3">
                     <button
                       onClick={() => setPollStep(2)}
-                      className="rounded-lg border border-zinc-300 px-4 py-2 text-sm font-medium text-zinc-600 hover:bg-zinc-50"
+                      className="rounded-[10px] border border-cream/10 px-4 py-2.5 text-[13px] font-medium text-cream/50"
                     >
                       Back
                     </button>
                     <button
                       onClick={handleCreatePoll}
                       disabled={pollCreating}
-                      className="flex-1 inline-flex items-center justify-center gap-2 rounded-lg bg-[#D94F2B] px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[#B83D25] disabled:opacity-50"
+                      className="flex-1 inline-flex items-center justify-center gap-2 rounded-[10px] bg-coral px-5 py-3 text-[14px] font-medium text-cream transition-colors hover:bg-coral/90 disabled:opacity-50"
                     >
                       {pollCreating ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
                       {pollCreating ? "Creating..." : "Send Poll to Crew"}
@@ -1362,24 +1362,24 @@ export default function TripDetailPage() {
         />
 
         {/* Two-column layout for lodging + leaderboard */}
-        <div className="mt-6 grid gap-6 lg:grid-cols-2">
+        <div className="grid gap-4 lg:grid-cols-2">
           {/* Lodging */}
-          <div className="rounded-xl border border-zinc-200 bg-white p-6 shadow-sm">
+          <div className="rounded-[10px] border border-cream/[0.08] bg-cream/[0.04] p-5">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <Hotel className="h-5 w-5 text-zinc-400" />
-                <h2 className="text-lg font-semibold text-zinc-900">Lodging</h2>
+                <Hotel className="h-4 w-4 text-cream/35" />
+                <h2 className="text-[15px] font-medium text-cream">Lodging</h2>
               </div>
               <button
                 onClick={() => setEditingLodging(!editingLodging)}
-                className="text-xs font-medium text-zinc-400 hover:text-zinc-600"
+                className="text-[12px] font-medium text-cream/40 hover:text-cream/60"
               >
                 {editingLodging ? "Cancel" : hasLodging ? <Pencil className="h-3.5 w-3.5" /> : "Add"}
               </button>
             </div>
 
             {editingLodging ? (
-              <form onSubmit={handleSaveLodging} className="mt-4 space-y-3">
+              <form onSubmit={handleSaveLodging} className="mt-3 space-y-2.5">
                 <input
                   type="text"
                   value={lodgingForm.name}
@@ -1387,7 +1387,7 @@ export default function TripDetailPage() {
                     setLodgingForm({ ...lodgingForm, name: e.target.value })
                   }
                   placeholder="Hotel / Rental name"
-                  className="block w-full rounded-md border border-zinc-300 px-3 py-1.5 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-[#D94F2B] focus:outline-none focus:ring-2 focus:ring-[#D94F2B]/20"
+                  className="block w-full rounded-[10px] border border-cream/10 bg-cream/[0.06] px-3 py-2 text-[13px] text-cream placeholder:text-cream/35 outline-none focus:border-coral/40"
                 />
                 <input
                   type="text"
@@ -1396,11 +1396,11 @@ export default function TripDetailPage() {
                     setLodgingForm({ ...lodgingForm, address: e.target.value })
                   }
                   placeholder="Address"
-                  className="block w-full rounded-md border border-zinc-300 px-3 py-1.5 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-[#D94F2B] focus:outline-none focus:ring-2 focus:ring-[#D94F2B]/20"
+                  className="block w-full rounded-[10px] border border-cream/10 bg-cream/[0.06] px-3 py-2 text-[13px] text-cream placeholder:text-cream/35 outline-none focus:border-coral/40"
                 />
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-xs font-medium text-zinc-600">
+                    <label className="block text-[11px] font-medium uppercase tracking-[1.2px] text-cream/40">
                       Check-in
                     </label>
                     <input
@@ -1410,11 +1410,11 @@ export default function TripDetailPage() {
                         setLodgingForm({ ...lodgingForm, checkIn: e.target.value })
                       }
                       placeholder="3:00 PM"
-                      className="mt-1 block w-full rounded-md border border-zinc-300 px-3 py-1.5 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-[#D94F2B] focus:outline-none focus:ring-2 focus:ring-[#D94F2B]/20"
+                      className="mt-1 block w-full rounded-[10px] border border-cream/10 bg-cream/[0.06] px-3 py-2 text-[13px] text-cream placeholder:text-cream/35 outline-none focus:border-coral/40"
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-medium text-zinc-600">
+                    <label className="block text-[11px] font-medium uppercase tracking-[1.2px] text-cream/40">
                       Check-out
                     </label>
                     <input
@@ -1424,7 +1424,7 @@ export default function TripDetailPage() {
                         setLodgingForm({ ...lodgingForm, checkOut: e.target.value })
                       }
                       placeholder="11:00 AM"
-                      className="mt-1 block w-full rounded-md border border-zinc-300 px-3 py-1.5 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-[#D94F2B] focus:outline-none focus:ring-2 focus:ring-[#D94F2B]/20"
+                      className="mt-1 block w-full rounded-[10px] border border-cream/10 bg-cream/[0.06] px-3 py-2 text-[13px] text-cream placeholder:text-cream/35 outline-none focus:border-coral/40"
                     />
                   </div>
                 </div>
@@ -1439,7 +1439,7 @@ export default function TripDetailPage() {
                       })
                     }
                     placeholder="Confirmation #"
-                    className="block w-full rounded-md border border-zinc-300 px-3 py-1.5 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-[#D94F2B] focus:outline-none focus:ring-2 focus:ring-[#D94F2B]/20"
+                    className="block w-full rounded-[10px] border border-cream/10 bg-cream/[0.06] px-3 py-2 text-[13px] text-cream placeholder:text-cream/35 outline-none focus:border-coral/40"
                   />
                   <input
                     type="text"
@@ -1448,7 +1448,7 @@ export default function TripDetailPage() {
                       setLodgingForm({ ...lodgingForm, phone: e.target.value })
                     }
                     placeholder="Phone"
-                    className="block w-full rounded-md border border-zinc-300 px-3 py-1.5 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-[#D94F2B] focus:outline-none focus:ring-2 focus:ring-[#D94F2B]/20"
+                    className="block w-full rounded-[10px] border border-cream/10 bg-cream/[0.06] px-3 py-2 text-[13px] text-cream placeholder:text-cream/35 outline-none focus:border-coral/40"
                   />
                 </div>
                 <textarea
@@ -1458,72 +1458,72 @@ export default function TripDetailPage() {
                   }
                   placeholder="Notes (WiFi password, gate code, etc.)"
                   rows={2}
-                  className="block w-full rounded-md border border-zinc-300 px-3 py-1.5 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-[#D94F2B] focus:outline-none focus:ring-2 focus:ring-[#D94F2B]/20"
+                  className="block w-full rounded-[10px] border border-cream/10 bg-cream/[0.06] px-3 py-2 text-[13px] text-cream placeholder:text-cream/35 outline-none focus:border-coral/40"
                 />
                 <button
                   type="submit"
-                  className="rounded-md bg-[#D94F2B] px-4 py-1.5 text-sm font-medium text-white hover:bg-[#B83D25]"
+                  className="rounded-[10px] bg-coral px-4 py-2 text-[13px] font-medium text-cream hover:bg-coral/90"
                 >
                   Save
                 </button>
               </form>
             ) : hasLodging ? (
-              <div className="mt-3 space-y-2">
-                <p className="text-sm font-medium text-zinc-900">
+              <div className="mt-3 space-y-1.5">
+                <p className="text-[14px] font-medium text-cream">
                   {trip.lodging.name}
                 </p>
                 {trip.lodging.address && (
-                  <div className="flex items-start gap-1.5 text-sm text-zinc-500">
-                    <MapPin className="mt-0.5 h-3.5 w-3.5 shrink-0" />
+                  <div className="flex items-start gap-1.5 text-[13px] text-cream/50">
+                    <MapPin className="mt-0.5 h-3.5 w-3.5 shrink-0 text-cream/35" />
                     {trip.lodging.address}
                   </div>
                 )}
                 {(trip.lodging.checkIn || trip.lodging.checkOut) && (
-                  <div className="flex items-center gap-1.5 text-sm text-zinc-500">
-                    <Clock className="h-3.5 w-3.5" />
+                  <div className="flex items-center gap-1.5 text-[13px] text-cream/50">
+                    <Clock className="h-3.5 w-3.5 text-cream/35" />
                     {trip.lodging.checkIn && `In: ${trip.lodging.checkIn}`}
                     {trip.lodging.checkIn && trip.lodging.checkOut && " · "}
                     {trip.lodging.checkOut && `Out: ${trip.lodging.checkOut}`}
                   </div>
                 )}
                 {trip.lodging.confirmationNumber && (
-                  <div className="flex items-center gap-1.5 text-sm text-zinc-500">
-                    <Hash className="h-3.5 w-3.5" />
+                  <div className="flex items-center gap-1.5 text-[13px] text-cream/50">
+                    <Hash className="h-3.5 w-3.5 text-cream/35" />
                     {trip.lodging.confirmationNumber}
                   </div>
                 )}
                 {trip.lodging.phone && (
-                  <div className="flex items-center gap-1.5 text-sm text-zinc-500">
-                    <Phone className="h-3.5 w-3.5" />
+                  <div className="flex items-center gap-1.5 text-[13px] text-cream/50">
+                    <Phone className="h-3.5 w-3.5 text-cream/35" />
                     {trip.lodging.phone}
                   </div>
                 )}
                 {trip.lodging.notes && (
-                  <p className="mt-1 rounded-md bg-zinc-50 px-3 py-2 text-xs text-zinc-500">
+                  <p className="mt-1 rounded-[10px] bg-cream/[0.04] px-3 py-2 text-[12px] text-cream/40">
                     {trip.lodging.notes}
                   </p>
                 )}
               </div>
             ) : (
-              <p className="mt-3 text-sm text-zinc-400">
-                No lodging info yet. Click Add to enter details.
+              <p className="mt-3 text-[13px] text-cream/30">
+                No lodging info yet. Tap Add to enter details.
               </p>
             )}
           </div>
 
           {/* Leaderboard Preview */}
-          <div className="rounded-xl border border-zinc-200 bg-white p-6 shadow-sm">
+          <div className="rounded-[10px] border border-cream/[0.08] bg-cream/[0.04] p-5">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <Medal className="h-5 w-5 text-zinc-400" />
-                <h2 className="text-lg font-semibold text-zinc-900">
+                <Medal className="h-4 w-4 text-cream/35" />
+                <h2 className="text-[15px] font-medium text-cream">
                   Leaderboard
                 </h2>
               </div>
               {leaderboard.length > 0 && (
                 <Link
                   href={`/trips/${tripId}/leaderboard`}
-                  className="text-xs font-medium text-[#D94F2B] hover:text-[#B83D25]"
+                  className="text-[12px] font-medium text-coral hover:text-coral/80"
                 >
                   View Full
                 </Link>
@@ -1531,47 +1531,47 @@ export default function TripDetailPage() {
             </div>
 
             {leaderboard.length === 0 ? (
-              <p className="mt-3 text-sm text-zinc-400">
+              <p className="mt-3 text-[13px] text-cream/30">
                 No scores yet. Start a scorecard to see standings.
               </p>
             ) : (
-              <div className="mt-3 space-y-1.5">
+              <div className="mt-3 space-y-1">
                 {leaderboard.slice(0, 5).map((entry, idx) => (
                   <div
                     key={entry.name}
                     className={`flex items-center justify-between rounded-lg px-3 py-2 ${
-                      idx === 0 ? "bg-emerald-50" : ""
+                      idx === 0 ? "bg-gold/10" : ""
                     }`}
                   >
                     <div className="flex items-center gap-2.5">
                       <span
-                        className={`w-5 text-center text-xs font-bold ${
+                        className={`w-5 text-center text-[12px] font-bold ${
                           idx === 0
-                            ? "text-yellow-500"
+                            ? "text-gold"
                             : idx === 1
-                              ? "text-zinc-400"
+                              ? "text-cream/40"
                               : idx === 2
                                 ? "text-amber-600"
-                                : "text-zinc-400"
+                                : "text-cream/30"
                         }`}
                       >
                         {idx + 1}
                       </span>
-                      <span className="text-sm font-medium text-zinc-900">
+                      <span className="text-[13px] font-medium text-cream">
                         {entry.name}
                       </span>
                     </div>
                     <div className="flex items-center gap-3">
-                      <span className="text-xs text-zinc-400">
+                      <span className="text-[12px] text-cream/35">
                         {entry.rounds}R
                       </span>
                       <span
-                        className={`text-sm font-bold ${
+                        className={`text-[13px] font-bold ${
                           entry.vsPar > 0
-                            ? "text-blue-600"
+                            ? "text-coral"
                             : entry.vsPar < 0
-                              ? "text-red-600"
-                              : "text-zinc-700"
+                              ? "text-teal"
+                              : "text-cream/60"
                         }`}
                       >
                         {entry.vsPar > 0
@@ -1590,24 +1590,22 @@ export default function TripDetailPage() {
 
         {/* Booking Checklist */}
         {totalBookable > 0 && (
-          <div className="mt-6 rounded-xl border border-zinc-200 bg-white p-6 shadow-sm">
+          <div className="rounded-[10px] border border-cream/[0.08] bg-cream/[0.04] p-5">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <CheckCircle2 className="h-5 w-5 text-zinc-400" />
-                <h2 className="text-lg font-semibold text-zinc-900">Booking Checklist</h2>
+                <CheckCircle2 className="h-4 w-4 text-cream/35" />
+                <h2 className="text-[15px] font-medium text-cream">Booking Checklist</h2>
               </div>
-              <span className="text-xs font-medium text-zinc-500">
+              <span className="text-[12px] font-medium text-cream/40">
                 {bookedCount} of {totalBookable} booked
               </span>
             </div>
 
             {/* Progress bar */}
             <div className="mt-3">
-              <div className="h-2 w-full overflow-hidden rounded-full bg-zinc-100">
+              <div className="h-1.5 w-full overflow-hidden rounded-full bg-cream/[0.08]">
                 <div
-                  className={`h-full rounded-full transition-all duration-500 ${
-                    allBooked ? "bg-[#D94F2B]" : "bg-[#D94F2B]"
-                  }`}
+                  className="h-full rounded-full bg-coral transition-all duration-500"
                   style={{ width: `${totalBookable > 0 ? (bookedCount / totalBookable) * 100 : 0}%` }}
                 />
               </div>
@@ -1615,19 +1613,19 @@ export default function TripDetailPage() {
 
             {/* Celebration state */}
             {allBooked ? (
-              <div className="mt-5 rounded-lg border border-emerald-200 bg-emerald-50 px-5 py-4 text-center">
-                <p className="text-base font-semibold text-[#1A1A1A]">
-                  {"\uD83C\uDF89"} Everything&apos;s booked! Your crew is all set.
+              <div className="mt-5 rounded-[10px] border border-teal/30 bg-teal/10 px-5 py-4 text-center">
+                <p className="text-[14px] font-medium text-cream">
+                  Everything&apos;s booked! Your crew is all set.
                 </p>
               </div>
             ) : (
               <div className="mt-5 space-y-6">
                 {checklistGroups.map((group) => (
                   <div key={group.label}>
-                    <h3 className="text-xs font-bold uppercase tracking-wider text-zinc-400">
+                    <h3 className="text-[11px] font-medium uppercase tracking-[1.2px] text-cream/40">
                       {group.icon} {group.label}
                     </h3>
-                    <div className="mt-2 space-y-3">
+                    <div className="mt-2 space-y-2">
                       {group.items.map((item) => {
                         const isBooked = item.bookingStatus === "booked";
                         const dayLabel = getDayLabel(item);
@@ -1636,13 +1634,12 @@ export default function TripDetailPage() {
                         return (
                           <div
                             key={item.id}
-                            className={`rounded-lg border px-4 py-3 transition-colors ${
+                            className={`rounded-[10px] border px-4 py-3 transition-colors ${
                               isBooked
-                                ? "border-emerald-200 bg-emerald-50/50"
-                                : "border-zinc-200 bg-white"
+                                ? "border-teal/20 bg-teal/5"
+                                : "border-cream/[0.08] bg-cream/[0.04]"
                             }`}
                           >
-                            {/* Top row: checkbox + title + cost + day/time */}
                             <div className="flex items-start gap-3">
                               {isCaptain ? (
                                 <button
@@ -1651,36 +1648,36 @@ export default function TripDetailPage() {
                                   title={isBooked ? "Mark as needs booking" : "Mark as booked"}
                                 >
                                   {isBooked ? (
-                                    <CheckCircle2 className="h-5 w-5 text-[#D94F2B]" />
+                                    <CheckCircle2 className="h-5 w-5 text-teal" />
                                   ) : (
-                                    <Circle className="h-5 w-5 text-zinc-300 hover:text-[#D94F2B]" />
+                                    <Circle className="h-5 w-5 text-cream/20 hover:text-coral" />
                                   )}
                                 </button>
                               ) : (
                                 <span className="mt-0.5 shrink-0">
                                   {isBooked ? (
-                                    <CheckCircle2 className="h-5 w-5 text-[#D94F2B]" />
+                                    <CheckCircle2 className="h-5 w-5 text-teal" />
                                   ) : (
-                                    <Circle className="h-5 w-5 text-zinc-300" />
+                                    <Circle className="h-5 w-5 text-cream/20" />
                                   )}
                                 </span>
                               )}
                               <div className="min-w-0 flex-1">
                                 <div className="flex items-center gap-2">
                                   <span
-                                    className={`text-sm font-semibold ${
-                                      isBooked ? "text-[#1A1A1A] line-through" : "text-zinc-900"
+                                    className={`text-[13px] font-medium ${
+                                      isBooked ? "text-cream/50 line-through" : "text-cream"
                                     }`}
                                   >
                                     {item.title}
                                   </span>
                                   {isBooked && (
-                                    <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-semibold text-[#D94F2B]">
+                                    <span className="rounded-full bg-teal/15 px-2 py-0.5 text-[10px] font-medium text-teal">
                                       Booked
                                     </span>
                                   )}
                                 </div>
-                                <div className="mt-0.5 flex flex-wrap items-center gap-x-3 gap-y-0.5 text-xs text-zinc-500">
+                                <div className="mt-0.5 flex flex-wrap items-center gap-x-3 gap-y-0.5 text-[12px] text-cream/40">
                                   {item.cost > 0 && <span>${item.cost}/pp</span>}
                                   {dayLabel && item.time && (
                                     <span>
@@ -1692,9 +1689,9 @@ export default function TripDetailPage() {
                               </div>
                             </div>
 
-                            {/* Contact info row — inline editable for captain, read-only for members */}
+                            {/* Contact info row */}
                             {!isBooked && (
-                              <div className="mt-2 ml-8 flex flex-wrap items-center gap-x-4 gap-y-1.5 text-xs text-zinc-500">
+                              <div className="mt-2 ml-8 flex flex-wrap items-center gap-x-4 gap-y-1.5 text-[12px] text-cream/40">
                                 {isCaptain ? (
                                   <>
                                     <InlineContactField
@@ -1732,7 +1729,7 @@ export default function TripDetailPage() {
                                           href={item.website.startsWith("http") ? item.website : `https://${item.website}`}
                                           target="_blank"
                                           rel="noopener noreferrer"
-                                          className="text-[#D94F2B] underline hover:text-[#B83D25]"
+                                          className="text-coral underline hover:text-coral/80"
                                         >
                                           {item.website.replace(/^https?:\/\//, "")}
                                           <ExternalLink className="ml-0.5 inline h-2.5 w-2.5" />
@@ -1748,8 +1745,8 @@ export default function TripDetailPage() {
                                   </>
                                 )}
                                 {bookBy && (
-                                  <span className="text-zinc-400">
-                                    {"\u23F0"} Book by: {bookBy} ({weeksBefore} before trip)
+                                  <span className="text-cream/30">
+                                    Book by: {bookBy} ({weeksBefore} before trip)
                                   </span>
                                 )}
                               </div>
@@ -1765,27 +1762,27 @@ export default function TripDetailPage() {
 
             {/* Lodging booking reminder */}
             {hasLodging && trip.lodging.name && (
-              <div className="mt-5 border-t border-zinc-100 pt-4">
-                <h3 className="text-xs font-bold uppercase tracking-wider text-zinc-400">
-                  {"\uD83C\uDFE8"} LODGING
+              <div className="mt-5 border-t border-cream/[0.06] pt-4">
+                <h3 className="text-[11px] font-medium uppercase tracking-[1.2px] text-cream/40">
+                  LODGING
                 </h3>
-                <div className="mt-2 rounded-lg border border-zinc-200 bg-white px-4 py-3">
-                  <div className="flex items-center gap-2 text-sm">
-                    <Hotel className="h-4 w-4 text-zinc-400" />
-                    <span className="font-semibold text-zinc-900">{trip.lodging.name}</span>
+                <div className="mt-2 rounded-[10px] border border-cream/[0.08] bg-cream/[0.04] px-4 py-3">
+                  <div className="flex items-center gap-2 text-[13px]">
+                    <Hotel className="h-4 w-4 text-cream/35" />
+                    <span className="font-medium text-cream">{trip.lodging.name}</span>
                   </div>
                   {trip.lodging.phone && (
-                    <div className="mt-1 ml-6 flex items-center gap-1.5 text-xs text-zinc-500">
+                    <div className="mt-1 ml-6 flex items-center gap-1.5 text-[12px] text-cream/40">
                       <Phone className="h-3 w-3" />
                       {trip.lodging.phone}
                     </div>
                   )}
                   {trip.lodging.notes && (
-                    <p className="mt-1 ml-6 text-xs text-zinc-400">{trip.lodging.notes}</p>
+                    <p className="mt-1 ml-6 text-[12px] text-cream/30">{trip.lodging.notes}</p>
                   )}
                   {trip.startDate && (
-                    <p className="mt-1 ml-6 text-xs text-zinc-400">
-                      {"\u23F0"} Book by: {(() => {
+                    <p className="mt-1 ml-6 text-[12px] text-cream/30">
+                      Book by: {(() => {
                         const start = new Date(trip.startDate + "T12:00:00");
                         start.setDate(start.getDate() - 14);
                         return start.toLocaleDateString("en-US", { month: "short", day: "numeric" });
@@ -1799,11 +1796,11 @@ export default function TripDetailPage() {
         )}
 
         {/* Schedule */}
-        <div className="mt-6 rounded-xl border border-zinc-200 bg-white p-6 shadow-sm">
+        <div className="rounded-[10px] border border-cream/[0.08] bg-cream/[0.04] p-5">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <CalendarDays className="h-5 w-5 text-zinc-400" />
-              <h2 className="text-lg font-semibold text-zinc-900">Schedule</h2>
+              <CalendarDays className="h-4 w-4 text-cream/35" />
+              <h2 className="text-[15px] font-medium text-cream">Schedule</h2>
             </div>
             {isCaptain && (
               <button
@@ -1811,7 +1808,7 @@ export default function TripDetailPage() {
                   setShowAddEvent(!showAddEvent);
                   if (!showAddEvent && trip.startDate) setEventDate(trip.startDate);
                 }}
-                className="inline-flex items-center gap-1.5 rounded-lg bg-[#D94F2B] px-3 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-[#B83D25]"
+                className="inline-flex items-center gap-1.5 rounded-[10px] bg-coral px-3 py-2 text-[12px] font-medium text-cream transition-colors hover:bg-coral/90"
               >
                 <Plus className="h-3.5 w-3.5" />
                 Add Event
@@ -1822,41 +1819,41 @@ export default function TripDetailPage() {
           {showAddEvent && isCaptain && (
             <form
               onSubmit={handleAddEvent}
-              className="mt-4 rounded-lg border border-zinc-200 bg-zinc-50 p-4"
+              className="mt-4 rounded-[10px] border border-cream/10 bg-cream/[0.06] p-4"
             >
               <div className="grid gap-3 sm:grid-cols-2">
                 <div>
-                  <label className="block text-xs font-medium text-zinc-600">Date *</label>
-                  <input type="date" required value={eventDate} onChange={(e) => setEventDate(e.target.value)} className="mt-1 block w-full rounded-md border border-zinc-300 px-3 py-1.5 text-sm text-zinc-900 focus:border-[#D94F2B] focus:outline-none focus:ring-2 focus:ring-[#D94F2B]/20" />
+                  <label className="block text-[11px] font-medium uppercase tracking-[1.2px] text-cream/40">Date *</label>
+                  <input type="date" required value={eventDate} onChange={(e) => setEventDate(e.target.value)} className="mt-1 block w-full rounded-[10px] border border-cream/10 bg-cream/[0.06] px-3 py-2 text-[13px] text-cream outline-none focus:border-coral/40" />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-zinc-600">Time</label>
-                  <input type="time" value={eventTime} onChange={(e) => setEventTime(e.target.value)} className="mt-1 block w-full rounded-md border border-zinc-300 px-3 py-1.5 text-sm text-zinc-900 focus:border-[#D94F2B] focus:outline-none focus:ring-2 focus:ring-[#D94F2B]/20" />
+                  <label className="block text-[11px] font-medium uppercase tracking-[1.2px] text-cream/40">Time</label>
+                  <input type="time" value={eventTime} onChange={(e) => setEventTime(e.target.value)} className="mt-1 block w-full rounded-[10px] border border-cream/10 bg-cream/[0.06] px-3 py-2 text-[13px] text-cream outline-none focus:border-coral/40" />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-zinc-600">Title *</label>
-                  <input type="text" required value={eventTitle} onChange={(e) => setEventTitle(e.target.value)} placeholder="TPC Scottsdale - Round 1" className="mt-1 block w-full rounded-md border border-zinc-300 px-3 py-1.5 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-[#D94F2B] focus:outline-none focus:ring-2 focus:ring-[#D94F2B]/20" />
+                  <label className="block text-[11px] font-medium uppercase tracking-[1.2px] text-cream/40">Title *</label>
+                  <input type="text" required value={eventTitle} onChange={(e) => setEventTitle(e.target.value)} placeholder="TPC Scottsdale - Round 1" className="mt-1 block w-full rounded-[10px] border border-cream/10 bg-cream/[0.06] px-3 py-2 text-[13px] text-cream placeholder:text-cream/35 outline-none focus:border-coral/40" />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-zinc-600">Type</label>
-                  <select value={eventType} onChange={(e) => setEventType(e.target.value as ScheduleItem["type"])} className="mt-1 block w-full rounded-md border border-zinc-300 px-3 py-1.5 text-sm text-zinc-900 focus:border-[#D94F2B] focus:outline-none focus:ring-2 focus:ring-[#D94F2B]/20">
+                  <label className="block text-[11px] font-medium uppercase tracking-[1.2px] text-cream/40">Type</label>
+                  <select value={eventType} onChange={(e) => setEventType(e.target.value as ScheduleItem["type"])} className="mt-1 block w-full rounded-[10px] border border-cream/10 bg-cream/[0.06] px-3 py-2 text-[13px] text-cream outline-none focus:border-coral/40">
                     {SCHEDULE_TYPES.map((t) => (<option key={t.value} value={t.value}>{t.emoji} {t.label}</option>))}
                   </select>
                 </div>
                 <div className="sm:col-span-2">
-                  <label className="block text-xs font-medium text-zinc-600">Description</label>
-                  <input type="text" value={eventDesc} onChange={(e) => setEventDesc(e.target.value)} placeholder="Optional details" className="mt-1 block w-full rounded-md border border-zinc-300 px-3 py-1.5 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-[#D94F2B] focus:outline-none focus:ring-2 focus:ring-[#D94F2B]/20" />
+                  <label className="block text-[11px] font-medium uppercase tracking-[1.2px] text-cream/40">Description</label>
+                  <input type="text" value={eventDesc} onChange={(e) => setEventDesc(e.target.value)} placeholder="Optional details" className="mt-1 block w-full rounded-[10px] border border-cream/10 bg-cream/[0.06] px-3 py-2 text-[13px] text-cream placeholder:text-cream/35 outline-none focus:border-coral/40" />
                 </div>
               </div>
               <div className="mt-4 flex gap-3">
-                <button type="submit" className="rounded-md bg-[#D94F2B] px-4 py-1.5 text-sm font-medium text-white hover:bg-[#B83D25]">Add</button>
-                <button type="button" onClick={() => setShowAddEvent(false)} className="rounded-md border border-zinc-300 px-4 py-1.5 text-sm font-medium text-zinc-600 hover:bg-zinc-50">Cancel</button>
+                <button type="submit" className="rounded-[10px] bg-coral px-4 py-2 text-[13px] font-medium text-cream hover:bg-coral/90">Add</button>
+                <button type="button" onClick={() => setShowAddEvent(false)} className="rounded-[10px] border border-cream/10 px-4 py-2 text-[13px] font-medium text-cream/50">Cancel</button>
               </div>
             </form>
           )}
 
           {liveSchedule.length === 0 ? (
-            <p className="mt-3 text-sm text-zinc-400">
+            <p className="mt-3 text-[13px] text-cream/30">
               No events scheduled yet.{isCaptain ? " Add tee times, dinners, and activities." : ""}
             </p>
           ) : (
@@ -1869,8 +1866,8 @@ export default function TripDetailPage() {
                 const nextDate = dateIdx < scheduleDates.length - 1 ? scheduleDates[dateIdx + 1] : null;
                 return (
                   <div key={date}>
-                    <h3 className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-zinc-400">
-                      {dayLabel && <span className="text-zinc-500">{dayLabel}</span>}
+                    <h3 className="flex items-center gap-2 text-[11px] font-medium uppercase tracking-[1.2px] text-cream/40">
+                      {dayLabel && <span className="text-cream/50">{dayLabel}</span>}
                       {dayLabel && <span>&mdash;</span>}
                       {formatDate(date)}
                     </h3>
@@ -1887,10 +1884,10 @@ export default function TripDetailPage() {
                             onDragOver={isCaptain ? (e) => handleDragOver(e, event.id) : undefined}
                             onDrop={isCaptain ? (e) => handleDrop(e, event.id, dayEvents) : undefined}
                             onDragEnd={() => { setDragId(null); setDragOverId(null); }}
-                            className={`group relative rounded-lg border-l-4 ${typeConfig?.border || "border-l-zinc-300"} border border-zinc-200 bg-white px-3 py-2.5 transition-all ${
+                            className={`group relative rounded-[10px] border-l-4 ${typeConfig?.border || "border-l-cream/20"} border border-cream/[0.08] bg-cream/[0.04] px-3 py-2.5 transition-all ${
                               isDragging ? "opacity-40" : ""
-                            } ${isDragOver ? "ring-2 ring-[#D94F2B] ring-offset-1" : ""} ${
-                              isCaptain ? "cursor-pointer hover:shadow-sm" : ""
+                            } ${isDragOver ? "ring-2 ring-coral ring-offset-1 ring-offset-dark" : ""} ${
+                              isCaptain ? "cursor-pointer hover:bg-cream/[0.06]" : ""
                             }`}
                             onClick={isCaptain ? () => openEditModal(event) : undefined}
                           >
@@ -1898,7 +1895,7 @@ export default function TripDetailPage() {
                               {/* Drag handle — captain only */}
                               {isCaptain && (
                                 <span
-                                  className="shrink-0 cursor-grab touch-none text-zinc-300 hover:text-zinc-500 active:cursor-grabbing min-w-[20px]"
+                                  className="shrink-0 cursor-grab touch-none text-cream/20 hover:text-cream/40 active:cursor-grabbing min-w-[20px]"
                                   onClick={(e) => e.stopPropagation()}
                                   onMouseDown={(e) => e.stopPropagation()}
                                 >
@@ -1908,21 +1905,20 @@ export default function TripDetailPage() {
                               {/* Type emoji + time + title */}
                               <span className="shrink-0 text-base">{typeConfig?.emoji || "\uD83D\uDCCC"}</span>
                               {event.time && (
-                                <span className="shrink-0 text-xs font-semibold text-zinc-500">
+                                <span className="shrink-0 text-[12px] font-medium text-cream/50">
                                   {formatTime(event.time)}
                                 </span>
                               )}
-                              <span className="text-sm font-semibold text-zinc-900">
+                              <span className="text-[13px] font-medium text-cream">
                                 {event.title}
                               </span>
                               <span className="flex-1" />
-                              {/* Cost + type label */}
                               {event.cost > 0 && (
-                                <span className="hidden shrink-0 text-xs font-medium text-zinc-500 sm:block">
+                                <span className="hidden shrink-0 text-[12px] font-medium text-cream/40 sm:block">
                                   ${event.cost}/person
                                 </span>
                               )}
-                              <span className={`hidden shrink-0 rounded-full px-2 py-0.5 text-[10px] font-medium sm:inline ${typeConfig?.color || "bg-zinc-100 text-zinc-700"}`}>
+                              <span className={`hidden shrink-0 rounded-full px-2 py-0.5 text-[10px] font-medium sm:inline ${typeConfig?.color || "bg-cream/[0.08] text-cream/50"}`}>
                                 {typeConfig?.label || event.type}
                               </span>
                               {/* Captain edit/delete + reorder */}
@@ -1932,7 +1928,7 @@ export default function TripDetailPage() {
                                   <button
                                     onClick={() => handleMoveItem(event.id, "up", dayEvents)}
                                     disabled={idx === 0}
-                                    className="rounded p-1 text-zinc-300 hover:bg-zinc-100 hover:text-zinc-600 disabled:opacity-30 min-w-[28px] min-h-[28px] flex items-center justify-center"
+                                    className="rounded p-1 text-cream/20 hover:bg-cream/[0.06] hover:text-cream/50 disabled:opacity-30 min-w-[28px] min-h-[28px] flex items-center justify-center"
                                     title="Move up"
                                   >
                                     <ChevronUp className="h-3.5 w-3.5" />
@@ -1940,7 +1936,7 @@ export default function TripDetailPage() {
                                   <button
                                     onClick={() => handleMoveItem(event.id, "down", dayEvents)}
                                     disabled={idx === dayEvents.length - 1}
-                                    className="rounded p-1 text-zinc-300 hover:bg-zinc-100 hover:text-zinc-600 disabled:opacity-30 min-w-[28px] min-h-[28px] flex items-center justify-center"
+                                    className="rounded p-1 text-cream/20 hover:bg-cream/[0.06] hover:text-cream/50 disabled:opacity-30 min-w-[28px] min-h-[28px] flex items-center justify-center"
                                     title="Move down"
                                   >
                                     <ChevronDown className="h-3.5 w-3.5" />
@@ -1949,7 +1945,7 @@ export default function TripDetailPage() {
                                   {prevDate && (
                                     <button
                                       onClick={() => handleQuickMove(event, prevDate)}
-                                      className="rounded p-1 text-zinc-300 hover:bg-zinc-100 hover:text-zinc-600 min-w-[28px] min-h-[28px] flex items-center justify-center"
+                                      className="rounded p-1 text-cream/20 hover:bg-cream/[0.06] hover:text-cream/50 min-w-[28px] min-h-[28px] flex items-center justify-center"
                                       title={`Move to ${formatDate(prevDate)}`}
                                     >
                                       <ChevronLeft className="h-3.5 w-3.5" />
@@ -1958,7 +1954,7 @@ export default function TripDetailPage() {
                                   {nextDate && (
                                     <button
                                       onClick={() => handleQuickMove(event, nextDate)}
-                                      className="rounded p-1 text-zinc-300 hover:bg-zinc-100 hover:text-zinc-600 min-w-[28px] min-h-[28px] flex items-center justify-center"
+                                      className="rounded p-1 text-cream/20 hover:bg-cream/[0.06] hover:text-cream/50 min-w-[28px] min-h-[28px] flex items-center justify-center"
                                       title={`Move to ${formatDate(nextDate)}`}
                                     >
                                       <ChevronRight className="h-3.5 w-3.5" />
@@ -1967,7 +1963,7 @@ export default function TripDetailPage() {
                                   {/* Edit icon */}
                                   <button
                                     onClick={() => openEditModal(event)}
-                                    className="rounded p-1 text-zinc-300 hover:bg-zinc-100 hover:text-zinc-600 min-w-[28px] min-h-[28px] flex items-center justify-center"
+                                    className="rounded p-1 text-cream/20 hover:bg-cream/[0.06] hover:text-cream/50 min-w-[28px] min-h-[28px] flex items-center justify-center"
                                     title="Edit"
                                   >
                                     <Pencil className="h-3 w-3" />
@@ -1985,8 +1981,8 @@ export default function TripDetailPage() {
                                     }}
                                     className={`rounded p-1 min-w-[28px] min-h-[28px] flex items-center justify-center transition-colors ${
                                       deleteConfirm === event.id
-                                        ? "bg-red-100 text-red-600"
-                                        : "text-zinc-300 hover:bg-red-50 hover:text-red-500"
+                                        ? "bg-red-500/15 text-red-400"
+                                        : "text-cream/20 hover:bg-red-500/10 hover:text-red-400"
                                     }`}
                                     title={deleteConfirm === event.id ? "Click again to confirm" : "Delete"}
                                   >
@@ -1997,12 +1993,12 @@ export default function TripDetailPage() {
                             </div>
                             {/* Second row: cost (mobile) + description/notes */}
                             {(event.cost > 0 || event.description || event.notes) && (
-                              <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-0.5 pl-0 text-xs text-zinc-500" style={{ paddingLeft: isCaptain ? "28px" : "0" }}>
+                              <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-0.5 pl-0 text-[12px] text-cream/40" style={{ paddingLeft: isCaptain ? "28px" : "0" }}>
                                 {event.cost > 0 && (
                                   <span className="sm:hidden">${event.cost}/person</span>
                                 )}
                                 {event.description && <span>{event.description}</span>}
-                                {event.notes && <span className="italic text-zinc-400">{event.notes}</span>}
+                                {event.notes && <span className="italic text-cream/30">{event.notes}</span>}
                               </div>
                             )}
                           </div>
@@ -2013,7 +2009,7 @@ export default function TripDetailPage() {
                     {isCaptain && (
                       <>
                         {addForDate === date ? (
-                          <div className="mt-2 rounded-lg border border-zinc-200 bg-zinc-50 p-3">
+                          <div className="mt-2 rounded-[10px] border border-cream/10 bg-cream/[0.06] p-3">
                             <div className="grid gap-2 sm:grid-cols-3">
                               <input
                                 type="text"
@@ -2021,18 +2017,18 @@ export default function TripDetailPage() {
                                 value={addForm.title}
                                 onChange={(e) => setAddForm({ ...addForm, title: e.target.value })}
                                 placeholder="Event title *"
-                                className="col-span-1 rounded-md border border-zinc-300 px-3 py-1.5 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-[#D94F2B] focus:outline-none focus:ring-2 focus:ring-[#D94F2B]/20"
+                                className="col-span-1 rounded-[10px] border border-cream/10 bg-cream/[0.06] px-3 py-2 text-[13px] text-cream placeholder:text-cream/35 outline-none focus:border-coral/40"
                               />
                               <input
                                 type="time"
                                 value={addForm.time}
                                 onChange={(e) => setAddForm({ ...addForm, time: e.target.value })}
-                                className="rounded-md border border-zinc-300 px-3 py-1.5 text-sm text-zinc-900 focus:border-[#D94F2B] focus:outline-none focus:ring-2 focus:ring-[#D94F2B]/20"
+                                className="rounded-[10px] border border-cream/10 bg-cream/[0.06] px-3 py-2 text-[13px] text-cream outline-none focus:border-coral/40"
                               />
                               <select
                                 value={addForm.type}
                                 onChange={(e) => setAddForm({ ...addForm, type: e.target.value })}
-                                className="rounded-md border border-zinc-300 px-3 py-1.5 text-sm text-zinc-900 focus:border-[#D94F2B] focus:outline-none focus:ring-2 focus:ring-[#D94F2B]/20"
+                                className="rounded-[10px] border border-cream/10 bg-cream/[0.06] px-3 py-2 text-[13px] text-cream outline-none focus:border-coral/40"
                               >
                                 {SCHEDULE_TYPES.map((t) => (<option key={t.value} value={t.value}>{t.emoji} {t.label}</option>))}
                               </select>
@@ -2043,28 +2039,28 @@ export default function TripDetailPage() {
                                 value={addForm.cost}
                                 onChange={(e) => setAddForm({ ...addForm, cost: e.target.value })}
                                 placeholder="$ Cost per person (optional)"
-                                className="rounded-md border border-zinc-300 px-3 py-1.5 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-[#D94F2B] focus:outline-none focus:ring-2 focus:ring-[#D94F2B]/20"
+                                className="rounded-[10px] border border-cream/10 bg-cream/[0.06] px-3 py-2 text-[13px] text-cream placeholder:text-cream/35 outline-none focus:border-coral/40"
                               />
                               <input
                                 type="text"
                                 value={addForm.notes}
                                 onChange={(e) => setAddForm({ ...addForm, notes: e.target.value })}
                                 placeholder="Notes (optional)"
-                                className="rounded-md border border-zinc-300 px-3 py-1.5 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-[#D94F2B] focus:outline-none focus:ring-2 focus:ring-[#D94F2B]/20"
+                                className="rounded-[10px] border border-cream/10 bg-cream/[0.06] px-3 py-2 text-[13px] text-cream placeholder:text-cream/35 outline-none focus:border-coral/40"
                               />
                             </div>
                             <div className="mt-2 flex gap-2">
                               <button
                                 onClick={handleAddForDay}
                                 disabled={addSaving || !addForm.title.trim()}
-                                className="inline-flex items-center gap-1 rounded-md bg-[#D94F2B] px-3 py-1.5 text-xs font-medium text-white hover:bg-[#B83D25] disabled:opacity-50"
+                                className="inline-flex items-center gap-1 rounded-[10px] bg-coral px-3 py-2 text-[12px] font-medium text-cream hover:bg-coral/90 disabled:opacity-50"
                               >
                                 {addSaving ? <Loader2 className="h-3 w-3 animate-spin" /> : <Plus className="h-3 w-3" />}
                                 Add
                               </button>
                               <button
                                 onClick={() => setAddForDate(null)}
-                                className="rounded-md border border-zinc-300 px-3 py-1.5 text-xs font-medium text-zinc-600 hover:bg-zinc-50"
+                                className="rounded-[10px] border border-cream/10 px-3 py-2 text-[12px] font-medium text-cream/50"
                               >
                                 Cancel
                               </button>
@@ -2073,7 +2069,7 @@ export default function TripDetailPage() {
                         ) : (
                           <button
                             onClick={() => openAddForDay(date, dayEvents)}
-                            className="mt-2 inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs font-medium text-zinc-400 transition-colors hover:bg-zinc-100 hover:text-zinc-600"
+                            className="mt-2 inline-flex items-center gap-1 rounded-[10px] border border-dashed border-cream/15 px-3 py-1.5 text-[12px] font-medium text-cream/40 transition-colors hover:border-cream/25 hover:text-cream/60"
                           >
                             <Plus className="h-3 w-3" />
                             Add to {dayLabel || formatDate(date)}
@@ -2091,45 +2087,45 @@ export default function TripDetailPage() {
         {/* Edit Modal / Drawer */}
         {editingItem && (
           <div
-            className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/40 backdrop-blur-sm"
+            className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/60"
             onClick={() => setEditingItem(null)}
           >
             <div
-              className="w-full max-w-lg rounded-t-2xl sm:rounded-2xl bg-white p-6 shadow-xl max-h-[90vh] overflow-y-auto animate-[slideUp_200ms_ease-out]"
+              className="w-full max-w-lg rounded-t-2xl sm:rounded-2xl bg-[#1e1e21] p-6 shadow-xl max-h-[90vh] overflow-y-auto animate-[slideUp_200ms_ease-out]"
               onClick={(e) => e.stopPropagation()}
             >
               <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-semibold text-zinc-900">Edit Event</h3>
+                <h3 className="text-[17px] font-medium text-cream">Edit Event</h3>
                 <button
                   onClick={() => setEditingItem(null)}
-                  className="rounded-md p-1 text-zinc-400 hover:bg-zinc-100 hover:text-zinc-600"
+                  className="flex h-8 w-8 items-center justify-center rounded-full text-cream/40 hover:bg-cream/10"
                 >
-                  <X className="h-5 w-5" />
+                  <X className="h-4 w-4" strokeWidth={2} />
                 </button>
               </div>
 
               <div className="space-y-3">
                 <div>
-                  <label className="block text-xs font-medium text-zinc-600">Title *</label>
-                  <input type="text" value={editForm.title} onChange={(e) => setEditForm({ ...editForm, title: e.target.value })} className="mt-1 block w-full rounded-md border border-zinc-300 px-3 py-2 text-sm text-zinc-900 focus:border-[#D94F2B] focus:outline-none focus:ring-2 focus:ring-[#D94F2B]/20" />
+                  <label className="block text-[11px] font-medium uppercase tracking-[1.2px] text-cream/40">Title *</label>
+                  <input type="text" value={editForm.title} onChange={(e) => setEditForm({ ...editForm, title: e.target.value })} className="mt-1 block w-full rounded-[10px] border border-cream/10 bg-cream/[0.06] px-3 py-2 text-[13px] text-cream outline-none focus:border-coral/40" />
                 </div>
                 <div className="grid gap-3 sm:grid-cols-2">
                   <div>
-                    <label className="block text-xs font-medium text-zinc-600">Time</label>
-                    <input type="time" value={editForm.time} onChange={(e) => setEditForm({ ...editForm, time: e.target.value })} className="mt-1 block w-full rounded-md border border-zinc-300 px-3 py-2 text-sm text-zinc-900 focus:border-[#D94F2B] focus:outline-none focus:ring-2 focus:ring-[#D94F2B]/20" />
+                    <label className="block text-[11px] font-medium uppercase tracking-[1.2px] text-cream/40">Time</label>
+                    <input type="time" value={editForm.time} onChange={(e) => setEditForm({ ...editForm, time: e.target.value })} className="mt-1 block w-full rounded-[10px] border border-cream/10 bg-cream/[0.06] px-3 py-2 text-[13px] text-cream outline-none focus:border-coral/40" />
                   </div>
                   <div>
-                    <label className="block text-xs font-medium text-zinc-600">Type</label>
+                    <label className="block text-[11px] font-medium uppercase tracking-[1.2px] text-cream/40">Type</label>
                     <div className="mt-1 flex flex-wrap gap-1.5">
                       {SCHEDULE_TYPES.map((t) => (
                         <button
                           key={t.value}
                           type="button"
                           onClick={() => setEditForm({ ...editForm, type: t.value })}
-                          className={`rounded-full px-2.5 py-1 text-xs font-medium transition-all min-h-[32px] ${
+                          className={`rounded-full px-2.5 py-1 text-[12px] font-medium transition-all min-h-[32px] ${
                             editForm.type === t.value
-                              ? `${t.color} ring-2 ring-offset-1 ring-current`
-                              : "bg-zinc-100 text-zinc-500 hover:bg-zinc-200"
+                              ? `${t.color} ring-2 ring-offset-1 ring-offset-[#1e1e21] ring-current`
+                              : "bg-cream/[0.06] text-cream/50 hover:bg-cream/[0.08]"
                           }`}
                         >
                           {t.emoji} {t.label}
@@ -2139,25 +2135,25 @@ export default function TripDetailPage() {
                   </div>
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-zinc-600">Day</label>
+                  <label className="block text-[11px] font-medium uppercase tracking-[1.2px] text-cream/40">Day</label>
                   {tripDates.length > 0 ? (
-                    <select value={editForm.date} onChange={(e) => setEditForm({ ...editForm, date: e.target.value })} className="mt-1 block w-full rounded-md border border-zinc-300 px-3 py-2 text-sm text-zinc-900 focus:border-[#D94F2B] focus:outline-none focus:ring-2 focus:ring-[#D94F2B]/20">
+                    <select value={editForm.date} onChange={(e) => setEditForm({ ...editForm, date: e.target.value })} className="mt-1 block w-full rounded-[10px] border border-cream/10 bg-cream/[0.06] px-3 py-2 text-[13px] text-cream outline-none focus:border-coral/40">
                       {tripDates.map((td) => (<option key={td.date} value={td.date}>{td.label}</option>))}
                     </select>
                   ) : (
-                    <input type="date" value={editForm.date} onChange={(e) => setEditForm({ ...editForm, date: e.target.value })} className="mt-1 block w-full rounded-md border border-zinc-300 px-3 py-2 text-sm text-zinc-900 focus:border-[#D94F2B] focus:outline-none focus:ring-2 focus:ring-[#D94F2B]/20" />
+                    <input type="date" value={editForm.date} onChange={(e) => setEditForm({ ...editForm, date: e.target.value })} className="mt-1 block w-full rounded-[10px] border border-cream/10 bg-cream/[0.06] px-3 py-2 text-[13px] text-cream outline-none focus:border-coral/40" />
                   )}
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-zinc-600">Est. cost per person</label>
+                  <label className="block text-[11px] font-medium uppercase tracking-[1.2px] text-cream/40">Est. cost per person</label>
                   <div className="relative mt-1">
-                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-zinc-400">$</span>
-                    <input type="number" value={editForm.cost} onChange={(e) => setEditForm({ ...editForm, cost: e.target.value })} placeholder="0" className="block w-full rounded-md border border-zinc-300 pl-7 pr-3 py-2 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-[#D94F2B] focus:outline-none focus:ring-2 focus:ring-[#D94F2B]/20" />
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[13px] text-cream/35">$</span>
+                    <input type="number" value={editForm.cost} onChange={(e) => setEditForm({ ...editForm, cost: e.target.value })} placeholder="0" className="block w-full rounded-[10px] border border-cream/10 bg-cream/[0.06] pl-7 pr-3 py-2 text-[13px] text-cream placeholder:text-cream/35 outline-none focus:border-coral/40" />
                   </div>
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-zinc-600">Notes</label>
-                  <textarea value={editForm.notes} onChange={(e) => setEditForm({ ...editForm, notes: e.target.value })} rows={2} placeholder="Optional notes..." className="mt-1 block w-full rounded-md border border-zinc-300 px-3 py-2 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-[#D94F2B] focus:outline-none focus:ring-2 focus:ring-[#D94F2B]/20" />
+                  <label className="block text-[11px] font-medium uppercase tracking-[1.2px] text-cream/40">Notes</label>
+                  <textarea value={editForm.notes} onChange={(e) => setEditForm({ ...editForm, notes: e.target.value })} rows={2} placeholder="Optional notes..." className="mt-1 block w-full rounded-md border border-cream/10 px-3 py-2 text-sm text-cream placeholder:text-cream/40 focus:border-[#D94F2B] focus:outline-none focus:ring-2 focus:ring-[#D94F2B]/20" />
                 </div>
               </div>
 
@@ -2166,34 +2162,34 @@ export default function TripDetailPage() {
                 <button
                   onClick={handleEditSave}
                   disabled={editSaving || !editForm.title.trim()}
-                  className="inline-flex items-center gap-1.5 rounded-lg bg-[#D94F2B] px-5 py-2 text-sm font-semibold text-white transition-colors hover:bg-[#B83D25] disabled:opacity-50 min-h-[44px]"
+                  className="inline-flex items-center gap-1.5 rounded-[10px] bg-coral px-5 py-3 text-[14px] font-medium text-cream transition-colors hover:bg-coral/90 disabled:opacity-50 min-h-[44px]"
                 >
                   {editSaving && <Loader2 className="h-4 w-4 animate-spin" />}
                   Save
                 </button>
                 <button
                   onClick={() => setEditingItem(null)}
-                  className="rounded-lg border border-zinc-300 px-4 py-2 text-sm font-medium text-zinc-600 hover:bg-zinc-50 min-h-[44px]"
+                  className="rounded-[10px] border border-cream/10 px-4 py-3 text-[14px] font-medium text-cream/50 min-h-[44px]"
                 >
                   Cancel
                 </button>
               </div>
 
               {/* Delete */}
-              <div className="mt-4 border-t border-zinc-100 pt-4">
+              <div className="mt-4 border-t border-cream/[0.06] pt-4">
                 {deleteConfirm === editingItem.id ? (
                   <div className="flex items-center gap-3">
-                    <span className="text-sm text-red-600">Delete &ldquo;{editingItem.title}&rdquo;?</span>
+                    <span className="text-[13px] text-red-400">Delete &ldquo;{editingItem.title}&rdquo;?</span>
                     <button
                       onClick={handleEditDelete}
                       disabled={editSaving}
-                      className="rounded-md bg-red-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-red-700 disabled:opacity-50"
+                      className="rounded-[10px] bg-red-600 px-3 py-1.5 text-[12px] font-medium text-white hover:bg-red-700 disabled:opacity-50"
                     >
                       Delete
                     </button>
                     <button
                       onClick={() => setDeleteConfirm(null)}
-                      className="text-xs text-zinc-400 hover:text-zinc-600"
+                      className="text-[12px] text-cream/40 hover:text-cream/60"
                     >
                       Cancel
                     </button>
@@ -2201,7 +2197,7 @@ export default function TripDetailPage() {
                 ) : (
                   <button
                     onClick={() => setDeleteConfirm(editingItem.id)}
-                    className="inline-flex items-center gap-1.5 text-sm font-medium text-red-500 hover:text-red-600"
+                    className="inline-flex items-center gap-1.5 text-[13px] font-medium text-red-400 hover:text-red-300"
                   >
                     <Trash2 className="h-3.5 w-3.5" />
                     Delete this event
@@ -2213,11 +2209,11 @@ export default function TripDetailPage() {
         )}
 
         {/* Members & Invite Section */}
-        <div className="mt-6 rounded-xl border border-zinc-200 bg-white p-6 shadow-sm">
+        <div className="rounded-[10px] border border-cream/[0.08] bg-cream/[0.04] p-5">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <Users className="h-5 w-5 text-zinc-400" />
-              <h2 className="text-lg font-semibold text-zinc-900">
+              <Users className="h-4 w-4 text-cream/35" />
+              <h2 className="text-[15px] font-medium text-cream">
                 Members ({trip.members.length})
               </h2>
               {(() => {
@@ -2225,7 +2221,7 @@ export default function TripDetailPage() {
                   (m) => m.rsvpStatus === "GOING"
                 ).length;
                 return going > 0 ? (
-                  <span className="text-xs text-zinc-400">
+                  <span className="text-[12px] text-cream/35">
                     {going} confirmed
                   </span>
                 ) : null;
@@ -2234,29 +2230,29 @@ export default function TripDetailPage() {
             <div className="flex items-center gap-2">
               <button
                 onClick={() => setShowInvite(!showInvite)}
-                className="inline-flex items-center gap-1.5 rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-1.5 text-xs font-semibold text-[#D94F2B] transition-colors hover:bg-emerald-100"
+                className="inline-flex items-center gap-1.5 rounded-[10px] border border-teal/30 bg-teal/10 px-3 py-2 text-[12px] font-medium text-teal transition-colors hover:bg-teal/15"
               >
                 <Mail className="h-3.5 w-3.5" />
-                Invite Crew
+                Invite
               </button>
               <button
                 onClick={() => setShowAddMember(!showAddMember)}
-                className="inline-flex items-center gap-1.5 rounded-lg bg-[#D94F2B] px-3 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-[#B83D25]"
+                className="inline-flex items-center gap-1.5 rounded-[10px] bg-coral px-3 py-2 text-[12px] font-medium text-cream transition-colors hover:bg-coral/90"
               >
                 <Plus className="h-3.5 w-3.5" />
-                Add Member
+                Add
               </button>
             </div>
           </div>
 
           {/* Invite success toast */}
           {inviteSuccess && (
-            <div className="mt-3 flex items-center gap-2 rounded-lg border border-green-200 bg-green-50 px-4 py-2.5 text-sm text-green-700">
+            <div className="mt-3 flex items-center gap-2 rounded-[10px] border border-teal/30 bg-teal/10 px-4 py-2.5 text-[13px] text-teal">
               <Check className="h-4 w-4 shrink-0" />
               {inviteSuccess}
               <button
                 onClick={() => setInviteSuccess(null)}
-                className="ml-auto text-green-400 hover:text-green-600"
+                className="ml-auto text-teal/50 hover:text-teal"
               >
                 <X className="h-3.5 w-3.5" />
               </button>
@@ -2267,9 +2263,9 @@ export default function TripDetailPage() {
           {showInvite && (
             <form
               onSubmit={handleInviteEmails}
-              className="mt-4 rounded-lg border border-zinc-200 bg-zinc-50 p-4"
+              className="mt-4 rounded-[10px] border border-cream/10 bg-cream/[0.06] p-4"
             >
-              <label className="block text-xs font-medium text-zinc-600">
+              <label className="block text-[11px] font-medium uppercase tracking-[1.2px] text-cream/40">
                 Email addresses (comma or newline separated)
               </label>
               <textarea
@@ -2277,13 +2273,13 @@ export default function TripDetailPage() {
                 onChange={(e) => setInviteEmails(e.target.value)}
                 rows={3}
                 placeholder={"john@example.com, mike@example.com\nor paste multiple emails..."}
-                className="mt-1 block w-full rounded-md border border-zinc-300 px-3 py-1.5 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-[#D94F2B] focus:outline-none focus:ring-2 focus:ring-[#D94F2B]/20"
+                className="mt-1 block w-full rounded-[10px] border border-cream/10 bg-cream/[0.06] px-3 py-2 text-[13px] text-cream placeholder:text-cream/35 outline-none focus:border-coral/40"
               />
               <div className="mt-3 flex gap-3">
                 <button
                   type="submit"
                   disabled={inviteSending || !inviteEmails.trim()}
-                  className="inline-flex items-center gap-1.5 rounded-md bg-[#D94F2B] px-4 py-1.5 text-sm font-medium text-white hover:bg-[#B83D25] disabled:opacity-50"
+                  className="inline-flex items-center gap-1.5 rounded-[10px] bg-coral px-4 py-2 text-[13px] font-medium text-cream hover:bg-coral/90 disabled:opacity-50"
                 >
                   {inviteSending ? (
                     <RotateCw className="h-3.5 w-3.5 animate-spin" />
@@ -2295,7 +2291,7 @@ export default function TripDetailPage() {
                 <button
                   type="button"
                   onClick={() => setShowInvite(false)}
-                  className="rounded-md border border-zinc-300 px-4 py-1.5 text-sm font-medium text-zinc-600 hover:bg-zinc-50"
+                  className="rounded-[10px] border border-cream/10 px-4 py-2 text-[13px] font-medium text-cream/50"
                 >
                   Cancel
                 </button>
@@ -2307,10 +2303,10 @@ export default function TripDetailPage() {
           {showAddMember && (
             <form
               onSubmit={handleAddMember}
-              className="mt-4 flex items-end gap-3 rounded-lg border border-zinc-200 bg-zinc-50 p-4"
+              className="mt-4 flex items-end gap-3 rounded-[10px] border border-cream/10 bg-cream/[0.06] p-4"
             >
               <div className="flex-1">
-                <label className="block text-xs font-medium text-zinc-600">
+                <label className="block text-[11px] font-medium uppercase tracking-[1.2px] text-cream/40">
                   Name
                 </label>
                 <input
@@ -2319,11 +2315,11 @@ export default function TripDetailPage() {
                   value={memberName}
                   onChange={(e) => setMemberName(e.target.value)}
                   placeholder="John Smith"
-                  className="mt-1 block w-full rounded-md border border-zinc-300 px-3 py-1.5 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-[#D94F2B] focus:outline-none focus:ring-2 focus:ring-[#D94F2B]/20"
+                  className="mt-1 block w-full rounded-[10px] border border-cream/10 bg-cream/[0.06] px-3 py-2 text-[13px] text-cream placeholder:text-cream/35 outline-none focus:border-coral/40"
                 />
               </div>
               <div className="w-24">
-                <label className="block text-xs font-medium text-zinc-600">
+                <label className="block text-[11px] font-medium uppercase tracking-[1.2px] text-cream/40">
                   Handicap
                 </label>
                 <input
@@ -2331,19 +2327,19 @@ export default function TripDetailPage() {
                   value={memberHandicap}
                   onChange={(e) => setMemberHandicap(e.target.value)}
                   placeholder="12"
-                  className="mt-1 block w-full rounded-md border border-zinc-300 px-3 py-1.5 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-[#D94F2B] focus:outline-none focus:ring-2 focus:ring-[#D94F2B]/20"
+                  className="mt-1 block w-full rounded-[10px] border border-cream/10 bg-cream/[0.06] px-3 py-2 text-[13px] text-cream placeholder:text-cream/35 outline-none focus:border-coral/40"
                 />
               </div>
               <button
                 type="submit"
-                className="rounded-md bg-[#D94F2B] px-4 py-1.5 text-sm font-medium text-white hover:bg-[#B83D25]"
+                className="rounded-[10px] bg-coral px-4 py-2 text-[13px] font-medium text-cream hover:bg-coral/90"
               >
                 Add
               </button>
               <button
                 type="button"
                 onClick={() => setShowAddMember(false)}
-                className="rounded-md border border-zinc-300 p-1.5 text-zinc-400 hover:text-zinc-600"
+                className="rounded-[10px] border border-cream/10 p-2 text-cream/40 hover:text-cream/60"
               >
                 <X className="h-4 w-4" />
               </button>
@@ -2352,52 +2348,56 @@ export default function TripDetailPage() {
 
           {/* Member List */}
           {trip.members.length === 0 ? (
-            <p className="mt-4 text-sm text-zinc-400">
+            <p className="mt-4 text-[13px] text-cream/30">
               No members yet. Add players or invite by email.
             </p>
           ) : (
-            <div className="mt-4 grid gap-2 sm:grid-cols-2">
+            <div className="mt-4 space-y-1">
               {trip.members.map((member) => {
                 const rsvp = member.rsvpStatus || "PENDING";
                 const badgeMap: Record<string, { color: string; label: string }> = {
-                  GOING: { color: "bg-green-100 text-green-700", label: "Going" },
-                  MAYBE: { color: "bg-yellow-100 text-yellow-700", label: "Maybe" },
-                  DECLINED: { color: "bg-red-100 text-red-700", label: "Declined" },
-                  PENDING: { color: "bg-zinc-100 text-zinc-500", label: "Pending" },
+                  GOING: { color: "bg-teal/15 text-teal", label: "Going" },
+                  MAYBE: { color: "bg-yellow-500/15 text-yellow-400", label: "Maybe" },
+                  DECLINED: { color: "bg-coral/15 text-coral/70", label: "Declined" },
+                  PENDING: { color: "bg-cream/[0.08] text-cream/40", label: "Pending" },
                 };
                 const badge = badgeMap[rsvp] || badgeMap.PENDING;
+                const isMemberCaptain = member.role === "CAPTAIN";
 
                 return (
                   <div
                     key={member.id}
-                    className="group flex items-center justify-between rounded-lg border border-zinc-100 px-3 py-2"
+                    className="group flex items-center gap-3 border-b border-cream/[0.06] py-3 last:border-0"
                   >
-                    <div className="flex items-center gap-2">
-                      <span className="text-sm font-medium text-zinc-900">
-                        {member.name}
-                      </span>
-                      {member.role === "CAPTAIN" && (
-                        <span className="rounded-full bg-amber-100 px-1.5 py-0.5 text-[10px] font-semibold text-amber-700">
-                          {"\uD83D\uDC51"}
+                    <div className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-[13px] font-medium ${
+                      isMemberCaptain ? "bg-gradient-to-br from-coral to-gold text-dark" : "bg-teal text-cream"
+                    }`}>
+                      {member.name.split(" ").map((n) => n[0]).join("").toUpperCase().slice(0, 2)}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2">
+                        <span className="text-[14px] font-medium text-cream truncate">
+                          {member.name}
                         </span>
-                      )}
-                      <span className="text-xs text-zinc-400">
+                        {isMemberCaptain && (
+                          <span className="text-[12px] text-cream/40">Commissioner</span>
+                        )}
+                      </div>
+                      <span className="text-[12px] text-cream/35">
                         HCP {member.handicap}
                       </span>
                     </div>
-                    <div className="flex items-center gap-1.5">
-                      <span
-                        className={`rounded-full px-2 py-0.5 text-[10px] font-medium ${badge.color}`}
-                      >
-                        {badge.label}
-                      </span>
-                      <button
-                        onClick={() => handleRemoveMember(member.id)}
-                        className="rounded-md p-1 text-zinc-300 opacity-0 transition-all hover:bg-red-50 hover:text-red-500 group-hover:opacity-100"
-                      >
-                        <X className="h-3.5 w-3.5" />
-                      </button>
-                    </div>
+                    <span
+                      className={`shrink-0 rounded-full px-2 py-0.5 text-[10px] font-medium ${badge.color}`}
+                    >
+                      {badge.label}
+                    </span>
+                    <button
+                      onClick={() => handleRemoveMember(member.id)}
+                      className="shrink-0 rounded-full p-1 text-cream/15 opacity-0 transition-all hover:bg-cream/10 hover:text-cream/40 group-hover:opacity-100"
+                    >
+                      <X className="h-3.5 w-3.5" />
+                    </button>
                   </div>
                 );
               })}
@@ -2406,32 +2406,32 @@ export default function TripDetailPage() {
         </div>
 
         {/* Feature Cards */}
-        <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {featureCards.map((card) => (
             <Link
               key={card.title}
               href={card.href}
-              className="group flex items-center gap-4 rounded-xl border border-zinc-200 bg-white p-5 shadow-sm transition-shadow hover:shadow-md"
+              className="group flex items-center gap-4 rounded-[10px] border border-cream/[0.08] bg-cream/[0.04] p-4 transition-colors hover:bg-cream/[0.06]"
             >
               <div
-                className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-lg ${card.color}`}
+                className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px] ${card.color}`}
               >
                 <card.icon className="h-5 w-5" />
               </div>
               <div className="flex-1">
-                <h3 className="font-semibold text-zinc-900">{card.title}</h3>
-                <p className="text-xs text-zinc-400">{card.desc}</p>
+                <h3 className="text-[14px] font-medium text-cream">{card.title}</h3>
+                <p className="text-[12px] text-cream/40">{card.desc}</p>
               </div>
-              <ChevronRight className="h-4 w-4 text-zinc-300 transition-colors group-hover:text-zinc-500" />
+              <ChevronRight className="h-4 w-4 text-cream/20 transition-colors group-hover:text-cream/40" />
             </Link>
           ))}
         </div>
 
         {/* Trip Photos */}
-        <div className="mt-8">
+        <div>
           <div className="flex items-center gap-2 mb-4">
-            <Camera className="h-5 w-5 text-zinc-400" />
-            <h2 className="text-lg font-semibold text-zinc-900">Trip Photos</h2>
+            <Camera className="h-4 w-4 text-cream/35" />
+            <h2 className="text-[15px] font-medium text-cream">Trip Photos</h2>
           </div>
           <TripPhotos
             tripId={tripId}
@@ -2441,7 +2441,8 @@ export default function TripDetailPage() {
             onPhotosChange={setTripPhotos}
           />
         </div>
-      </div>
+      </div>{/* end space-y-6 */}
+      </div>{/* end max-w-5xl */}
 
       {/* Keyframes */}
       <style jsx global>{`
@@ -2500,7 +2501,7 @@ function InlineContactField({
           onBlur={handleBlur}
           onKeyDown={handleKeyDown}
           placeholder={label}
-          className="w-40 rounded border border-[#D94F2B]/40 bg-white px-1.5 py-0.5 text-xs text-zinc-700 outline-none focus:ring-1 focus:ring-[#D94F2B]"
+          className="w-40 rounded-lg border border-coral/40 bg-cream/[0.06] px-1.5 py-0.5 text-[12px] text-cream outline-none focus:border-coral"
         />
       </span>
     );
@@ -2515,7 +2516,7 @@ function InlineContactField({
             href={value.startsWith("http") ? value : `https://${value}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-[#D94F2B] underline hover:text-[#B83D25]"
+            className="text-coral underline hover:text-coral/80"
           >
             {value.replace(/^https?:\/\//, "")}
             <ExternalLink className="ml-0.5 inline h-2.5 w-2.5" />
@@ -2525,7 +2526,7 @@ function InlineContactField({
         )}
         <button
           onClick={() => { setDraft(value); setEditing(true); }}
-          className="text-zinc-300 hover:text-zinc-500"
+          className="text-cream/20 hover:text-cream/40"
         >
           <Pencil className="h-2.5 w-2.5" />
         </button>
@@ -2536,7 +2537,7 @@ function InlineContactField({
   return (
     <button
       onClick={() => { setDraft(""); setEditing(true); }}
-      className="inline-flex items-center gap-1 text-zinc-300 hover:text-zinc-500"
+      className="inline-flex items-center gap-1 text-cream/25 hover:text-cream/50"
     >
       {icon}
       <span className="underline">{label}</span>
@@ -2731,16 +2732,16 @@ function DatePollVotingCard({
   }
 
   return (
-    <div className={`mt-6 rounded-xl border-2 ${isActive ? "border-emerald-200" : "border-zinc-200"} bg-white p-5 shadow-sm`}>
+    <div className={`rounded-[10px] border ${isActive ? "border-teal/30" : "border-cream/[0.08]"} bg-cream/[0.04] p-5`}>
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <Vote className="h-5 w-5 text-[#D94F2B]" />
-          <h2 className="text-lg font-semibold text-zinc-900">
+          <Vote className="h-5 w-5 text-coral" />
+          <h2 className="text-[15px] font-medium text-cream">
             {isActive ? "Vote on Trip Dates" : "Date Poll Results"}
           </h2>
         </div>
-        <span className={`rounded-full px-2.5 py-1 text-xs font-medium ${
-          isActive ? "bg-emerald-100 text-[#D94F2B]" : "bg-zinc-100 text-zinc-600"
+        <span className={`rounded-full px-2.5 py-1 text-[12px] font-medium ${
+          isActive ? "bg-teal/15 text-teal" : "bg-cream/[0.08] text-cream/40"
         }`}>
           {isActive ? formatCountdown(poll.deadline) : "Voting closed"}
         </span>
@@ -2748,13 +2749,13 @@ function DatePollVotingCard({
 
       {/* Voter progress */}
       <div className="mt-3 flex items-center gap-2">
-        <div className="h-1.5 flex-1 rounded-full bg-zinc-100 overflow-hidden">
+        <div className="h-1.5 flex-1 rounded-full bg-cream/[0.08] overflow-hidden">
           <div
-            className="h-full rounded-full bg-[#D94F2B] transition-all"
+            className="h-full rounded-full bg-coral transition-all"
             style={{ width: `${totalMembers > 0 ? (votedCount / totalMembers) * 100 : 0}%` }}
           />
         </div>
-        <span className="text-xs text-zinc-500">{votedCount} of {totalMembers} voted</span>
+        <span className="text-xs text-cream/50">{votedCount} of {totalMembers} voted</span>
       </div>
 
       {/* Options */}
@@ -2777,26 +2778,26 @@ function DatePollVotingCard({
             <div
               key={opt.id}
               className={`rounded-lg border ${
-                isBest && (isClosed || votedCount >= 2) ? "border-[#D94F2B]/40 bg-emerald-50/30" : "border-zinc-200"
+                isBest && (isClosed || votedCount >= 2) ? "border-[#D94F2B]/40 bg-teal/5" : "border-cream/[0.08]"
               } p-4`}
             >
               <div className="flex items-start justify-between">
                 <div>
                   <div className="flex items-center gap-2">
-                    <span className="flex h-6 w-6 items-center justify-center rounded-full bg-zinc-100 text-xs font-bold text-zinc-600">
+                    <span className="flex h-6 w-6 items-center justify-center rounded-full bg-cream/[0.08] text-xs font-bold text-cream/60">
                       {String.fromCharCode(65 + idx)}
                     </span>
-                    <p className="text-sm font-semibold text-zinc-900">
+                    <p className="text-sm font-semibold text-cream">
                       {startStr} — {endStr}
                     </p>
                   </div>
-                  <p className="mt-0.5 ml-8 text-xs text-zinc-500">
+                  <p className="mt-0.5 ml-8 text-xs text-cream/50">
                     {startDay}–{endDay} · {nights} night{nights !== 1 ? "s" : ""}
                     {opt.label ? ` · "${opt.label}"` : ""}
                   </p>
                 </div>
                 {isBest && (isClosed || votedCount >= 2) && (
-                  <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-semibold text-[#D94F2B]">
+                  <span className="rounded-full bg-teal/15 px-2 py-0.5 text-[10px] font-semibold text-coral">
                     Best match
                   </span>
                 )}
@@ -2846,21 +2847,21 @@ function DatePollVotingCard({
 
               {/* Lock button for captain */}
               {isCaptain && (isClosed || votedCount === totalMembers) && (
-                <div className="mt-3 border-t border-zinc-100 pt-3">
+                <div className="mt-3 border-t border-cream/[0.06] pt-3">
                   {lockConfirm === opt.id ? (
                     <div className="flex items-center gap-2">
-                      <span className="text-xs text-zinc-600">Lock in these dates?</span>
+                      <span className="text-xs text-cream/60">Lock in these dates?</span>
                       <button
                         onClick={() => onLock(opt.id)}
                         disabled={locking}
-                        className="inline-flex items-center gap-1 rounded-md bg-[#D94F2B] px-3 py-1.5 text-xs font-medium text-white hover:bg-[#B83D25] disabled:opacity-50"
+                        className="inline-flex items-center gap-1 rounded-md bg-coral px-3 py-1.5 text-xs font-medium text-white hover:bg-[#B83D25] disabled:opacity-50"
                       >
                         {locking ? <Loader2 className="h-3 w-3 animate-spin" /> : <Lock className="h-3 w-3" />}
                         {locking ? "Locking..." : "Confirm"}
                       </button>
                       <button
                         onClick={() => onLockConfirm(null)}
-                        className="text-xs text-zinc-400 hover:text-zinc-600"
+                        className="text-xs text-cream/40 hover:text-cream/60"
                       >
                         Cancel
                       </button>
@@ -2868,7 +2869,7 @@ function DatePollVotingCard({
                   ) : (
                     <button
                       onClick={() => onLockConfirm(opt.id)}
-                      className="inline-flex items-center gap-1.5 text-xs font-medium text-[#D94F2B] hover:text-[#B83D25]"
+                      className="inline-flex items-center gap-1.5 text-xs font-medium text-coral hover:text-coral/80"
                     >
                       <Lock className="h-3 w-3" />
                       Lock In These Dates
@@ -2883,7 +2884,7 @@ function DatePollVotingCard({
 
       {/* Best match summary */}
       {bestOption && votedCount >= 2 && (
-        <p className="mt-3 text-xs text-zinc-500">
+        <p className="mt-3 text-xs text-cream/50">
           {"\uD83D\uDCA1"} Best match: Option {String.fromCharCode(65 + options.findIndex((o) => o.id === bestOption.id))}
           {" "}({bestOption.yesCount} {"\u2705"}{bestOption.noCount > 0 ? `, ${bestOption.noCount} \u274C` : ""})
         </p>
@@ -2894,7 +2895,7 @@ function DatePollVotingCard({
         <button
           onClick={handleSubmitVotes}
           disabled={voting}
-          className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-lg bg-[#D94F2B] px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[#B83D25] disabled:opacity-50 min-h-[44px]"
+          className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-lg bg-coral px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[#B83D25] disabled:opacity-50 min-h-[44px]"
         >
           {voting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Check className="h-4 w-4" />}
           {voting ? "Submitting..." : "Submit Votes"}
@@ -2903,7 +2904,7 @@ function DatePollVotingCard({
 
       {/* All voted message */}
       {votedCount === totalMembers && totalMembers > 0 && isActive && (
-        <p className="mt-3 text-center text-xs text-[#D94F2B] font-medium">
+        <p className="mt-3 text-center text-xs text-coral font-medium">
           Everyone&apos;s voted! {isCaptain ? "You can lock in dates now." : "Waiting for the captain to lock in dates."}
         </p>
       )}
