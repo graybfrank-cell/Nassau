@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import { createClient } from "@/lib/supabase/client";
 import {
   Bell,
@@ -135,34 +136,30 @@ export default function ProfilePage() {
       className="min-h-screen bg-[#18181B] pb-32"
       style={{ fontFamily: "'Helvetica Neue', Arial, sans-serif" }}
     >
-      {/* Top Bar */}
-      <div className="flex items-center justify-between px-6 py-4">
-        <span className="font-black text-xl uppercase tracking-tighter text-[#F3EDE4]">
-          NASSAU
-        </span>
-        <Bell className="h-5 w-5 text-[#71717A]" />
-      </div>
-
-      {/* Profile Header */}
-      <div className="flex flex-col items-center mt-8">
-        <div className="w-20 h-20 bg-[#27272A] rounded-full mx-auto flex items-center justify-center">
-          <span className="font-black text-2xl text-[#F3EDE4]">
-            {getInitials(profile?.full_name)}
-          </span>
-        </div>
-        <h1 className="mt-4 font-black text-2xl text-[#F3EDE4] text-center">
-          {profile?.full_name || "User"}
-        </h1>
-        <p className="text-sm text-[#71717A] text-center mt-1">
-          {profile?.email}
-        </p>
-        <div className="flex gap-2 mt-3">
-          <span className="bg-[#27272A] px-3 py-1 rounded-full text-xs text-[#71717A]">
-            12 HDCP
-          </span>
-          <span className="bg-[#27272A] px-3 py-1 rounded-full text-xs text-[#71717A]">
-            Austin, TX
-          </span>
+      {/* ── BANNER ── */}
+      <div className="relative h-40 sm:h-48 overflow-hidden">
+        <Image
+          src="https://images.unsplash.com/photo-1611374243147-44a702c2d44c?q=80&w=2070&auto=format&fit=crop"
+          alt="Golfer at golden hour"
+          fill
+          className="object-cover"
+          priority
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-dark/80 via-dark/60 to-dark" />
+        <div className="relative z-10 flex h-full items-end px-6 pb-5">
+          <div className="flex items-center gap-4">
+            <div className="w-16 h-16 bg-[#27272A] rounded-full flex items-center justify-center border-2 border-dark/50">
+              <span className="font-black text-xl text-[#F3EDE4]">
+                {getInitials(profile?.full_name)}
+              </span>
+            </div>
+            <div>
+              <h1 className="text-[22px] font-medium text-[#F3EDE4] tracking-tight">
+                {profile?.full_name || "User"}
+              </h1>
+              <p className="text-[13px] text-[#F3EDE4]/50">12 HDCP · Austin, TX</p>
+            </div>
+          </div>
         </div>
       </div>
 

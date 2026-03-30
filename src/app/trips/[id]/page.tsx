@@ -3,6 +3,7 @@
 import { useEffect, useState, useRef, useCallback } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import { createClient } from "@/lib/supabase/client";
 import {
   getTrip,
@@ -925,69 +926,89 @@ export default function TripDetailPage() {
   return (
     <div className="min-h-screen bg-dark">
       <div className="mx-auto max-w-5xl">
-        {/* Header */}
-        <div className="px-5 pb-4 pt-4">
-          <div className="flex items-center gap-3">
-            <Link
-              href="/trips"
-              className="flex h-9 w-9 items-center justify-center rounded-full border border-cream/[0.12] transition-colors hover:bg-cream/[0.06]"
-            >
-              <ArrowLeft className="h-[18px] w-[18px] text-cream" strokeWidth={2} />
-            </Link>
-            <div className="flex-1 min-w-0">
-              {editingName ? (
-                <input
-                  autoFocus
-                  type="text"
-                  value={nameDraft}
-                  onChange={(e) => setNameDraft(e.target.value)}
-                  onBlur={() => handleSaveName()}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter") (e.target as HTMLInputElement).blur();
-                    if (e.key === "Escape") { setEditingName(false); }
-                  }}
-                  className="w-full rounded-[10px] border border-coral/40 bg-cream/[0.06] px-3 py-1 text-[22px] font-medium tracking-tight text-cream outline-none"
-                />
-              ) : (
-                <h1
-                  className={`text-[22px] font-medium tracking-tight text-cream truncate${isCaptain ? " cursor-pointer" : ""}`}
-                  onClick={isCaptain ? () => { setNameDraft(trip.name); setEditingName(true); } : undefined}
-                >
-                  {trip.name}
-                  {isCaptain && (
-                    <Pencil className="ml-2 inline h-3.5 w-3.5 text-cream/30" />
-                  )}
-                </h1>
-              )}
+        {/* ── BANNER ── */}
+        <div className="relative h-40 sm:h-48 overflow-hidden">
+          <Image
+            src="https://images.unsplash.com/photo-1560807707-8cc77767d783?q=80&w=2070&auto=format&fit=crop"
+            alt="Resort golf course"
+            fill
+            className="object-cover"
+            priority
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-dark/80 via-dark/60 to-dark" />
+          <div className="relative z-10 flex h-full items-end px-5 pb-4">
+            <div className="flex items-center gap-3 w-full">
+              <Link
+                href="/trips"
+                className="flex h-9 w-9 items-center justify-center rounded-full border border-cream/[0.12] bg-dark/30 transition-colors hover:bg-cream/[0.06]"
+              >
+                <ArrowLeft className="h-[18px] w-[18px] text-cream" strokeWidth={2} />
+              </Link>
+              <div className="flex-1 min-w-0">
+                {editingName ? (
+                  <input
+                    autoFocus
+                    type="text"
+                    value={nameDraft}
+                    onChange={(e) => setNameDraft(e.target.value)}
+                    onBlur={() => handleSaveName()}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") (e.target as HTMLInputElement).blur();
+                      if (e.key === "Escape") { setEditingName(false); }
+                    }}
+                    className="w-full rounded-[10px] border border-coral/40 bg-cream/[0.06] px-3 py-1 text-[22px] font-medium tracking-tight text-cream outline-none"
+                  />
+                ) : (
+                  <h1
+                    className={`text-[22px] font-medium tracking-tight text-cream truncate${isCaptain ? " cursor-pointer" : ""}`}
+                    onClick={isCaptain ? () => { setNameDraft(trip.name); setEditingName(true); } : undefined}
+                  >
+                    {trip.name}
+                    {isCaptain && (
+                      <Pencil className="ml-2 inline h-3.5 w-3.5 text-cream/30" />
+                    )}
+                  </h1>
+                )}
+                <p className="text-[13px] text-cream/50 truncate">
+                  {[
+                    trip.destination,
+                    trip.startDate && trip.endDate
+                      ? `${formatDateShort(trip.startDate)} — ${formatDateShort(trip.endDate)}`
+                      : trip.startDate ? formatDateShort(trip.startDate) : null,
+                  ].filter(Boolean).join(" · ")}
+                </p>
+              </div>
+              <button
+                onClick={handleShareInvite}
+                disabled={inviteLoading}
+                className={`flex items-center gap-1.5 rounded-[10px] border px-4 py-2 text-[13px] font-medium transition-all ${
+                  copied
+                    ? "border-coral/50 text-coral"
+                    : "border-teal/30 bg-teal/10 text-teal hover:bg-teal/15"
+                }`}
+              >
+                {copied ? (
+                  <>
+                    <Check className="h-3.5 w-3.5" strokeWidth={2.5} />
+                    Copied!
+                  </>
+                ) : inviteLoading ? (
+                  <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                ) : (
+                  <>
+                    <Link2 className="h-3.5 w-3.5" strokeWidth={2} />
+                    Invite
+                  </>
+                )}
+              </button>
             </div>
-            <button
-              onClick={handleShareInvite}
-              disabled={inviteLoading}
-              className={`flex items-center gap-1.5 rounded-[10px] border px-4 py-2 text-[13px] font-medium transition-all ${
-                copied
-                  ? "border-coral/50 text-coral"
-                  : "border-teal/30 bg-teal/10 text-teal hover:bg-teal/15"
-              }`}
-            >
-              {copied ? (
-                <>
-                  <Check className="h-3.5 w-3.5" strokeWidth={2.5} />
-                  Copied!
-                </>
-              ) : inviteLoading ? (
-                <Loader2 className="h-3.5 w-3.5 animate-spin" />
-              ) : (
-                <>
-                  <Link2 className="h-3.5 w-3.5" strokeWidth={2} />
-                  Invite
-                </>
-              )}
-            </button>
           </div>
+        </div>
 
-          {/* Subtitle: destination + dates */}
-          <div className="mt-1.5 ml-12">
-            <p className="text-[13px] text-cream/50">
+        {/* Travel info (below banner) */}
+        <div className="px-5 pb-4">
+          <div className="ml-12">
+            <p className="text-[13px] text-cream/50 sr-only">
               {[
                 trip.destination,
                 trip.startDate && trip.endDate

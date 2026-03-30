@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import { createClient } from "@/lib/supabase/client";
 import {
   getGameRound,
@@ -591,14 +592,23 @@ export default function RoundDashboardPage() {
           {round.coursePhotoUrl ? (
             <img src={round.coursePhotoUrl} alt={round.courseName} className="w-full h-full object-cover" />
           ) : (
-            <div className="w-full h-full bg-cream/[0.04]" />
+            <Image
+              src="https://images.unsplash.com/photo-1592919355415-9db1cd94b2ba?q=80&w=2232&auto=format&fit=crop"
+              alt="Golf course landscape"
+              fill
+              className="object-cover"
+              priority
+            />
           )}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-          <div className="absolute bottom-4 left-4">
+          <div className="absolute inset-0 bg-gradient-to-b from-dark/80 via-dark/60 to-dark" />
+          <div className="absolute bottom-4 left-4 z-10">
             <h1 className="text-2xl font-bold text-white">{round.courseName}</h1>
-            {round.courseLayout && (
-              <span className="text-sm text-white/80">{round.courseLayout}</span>
-            )}
+            <p className="text-sm text-white/60">
+              {[
+                round.courseLayout,
+                round.courseLocation,
+              ].filter(Boolean).join(" · ")}
+            </p>
           </div>
         </div>
 
