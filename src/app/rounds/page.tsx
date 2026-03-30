@@ -3,6 +3,7 @@
 import { useEffect, useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import { createClient } from "@/lib/supabase/client";
 import { getGameRounds } from "@/lib/game-store";
 import { GameRound } from "@/lib/types";
@@ -168,23 +169,24 @@ export default function RoundsPage() {
 
   return (
     <div className="min-h-screen bg-[#18181B] pb-32" style={{ fontFamily: "'Helvetica Neue', Arial, sans-serif" }}>
-      {/* ── TOP BAR ── */}
-      <div className="flex justify-between items-center px-6 py-4 bg-[#18181B]">
-        <span className="font-black text-xl text-[#F3EDE4]">NASSAU</span>
-        <div className="flex items-center gap-4">
-          <Bell className="h-5 w-5 text-[#71717A]" />
-          <div className="h-8 w-8 rounded-full bg-[#3F3F46]" />
+      {/* ── BANNER ── */}
+      <div className="relative h-40 sm:h-48 overflow-hidden">
+        <Image
+          src="https://images.unsplash.com/photo-1593282153762-a41e3cceb06c?q=80&w=987&auto=format&fit=crop"
+          alt="Close-up golf moment"
+          fill
+          className="object-cover"
+          priority
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-dark/80 via-dark/60 to-dark" />
+        <div className="relative z-10 flex h-full items-end px-6 pb-5">
+          <div>
+            <h1 className="text-[22px] font-medium text-[#F3EDE4] tracking-tight">My Rounds</h1>
+            <p className="text-[13px] text-[#F3EDE4]/50">
+              {completedRounds.length} rounds played
+            </p>
+          </div>
         </div>
-      </div>
-
-      {/* ── PAGE HEADER ── */}
-      <div className="px-6 mt-4">
-        <h1 className="font-black text-3xl uppercase tracking-tighter text-[#F3EDE4]">
-          MY ROUNDS
-        </h1>
-        <p className="text-sm text-[#71717A] mt-1">
-          {completedRounds.length} rounds played · <span className="text-[#D94F2B]">${Math.abs(netWon).toLocaleString()}</span> total {netWon >= 0 ? "won" : "lost"}
-        </p>
       </div>
 
       {/* ── STATS ROW ── */}

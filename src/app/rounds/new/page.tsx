@@ -1,6 +1,7 @@
 'use client';
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 import { ArrowLeft, Search, Calendar, Clock, Check, Plus, Link2, X, MapPin } from 'lucide-react';
 
 interface GolfCourse {
@@ -536,15 +537,28 @@ export default function NewRoundPage() {
   return (
     <>
       <div className="min-h-screen bg-dark">
-        <div className="flex items-center gap-3 px-5 pb-5 pt-4">
-          <button
-            onClick={() => router.back()}
-            type="button"
-            className="flex h-9 w-9 items-center justify-center rounded-full border border-cream/[0.12] transition-colors hover:bg-cream/[0.06]"
-          >
-            <ArrowLeft className="h-[18px] w-[18px] text-cream" strokeWidth={2} />
-          </button>
-          <h1 className="text-[22px] font-medium tracking-tight text-cream">New round</h1>
+        {/* ── BANNER ── */}
+        <div className="relative h-40 sm:h-48 overflow-hidden">
+          <Image
+            src="https://images.unsplash.com/photo-1535131749006-b7f58c99034b?q=80&w=2070&auto=format&fit=crop"
+            alt="Golf course fairway"
+            fill
+            className="object-cover"
+            priority
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-dark/80 via-dark/60 to-dark" />
+          <div className="relative z-10 flex h-full items-end px-5 pb-5">
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => router.back()}
+                type="button"
+                className="flex h-9 w-9 items-center justify-center rounded-full border border-cream/[0.12] bg-dark/30 transition-colors hover:bg-cream/[0.06]"
+              >
+                <ArrowLeft className="h-[18px] w-[18px] text-cream" strokeWidth={2} />
+              </button>
+              <h1 className="text-[22px] font-medium tracking-tight text-cream">New round</h1>
+            </div>
+          </div>
         </div>
 
         <div className="space-y-6 px-5 pb-32">

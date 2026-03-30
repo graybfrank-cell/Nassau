@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
+import Image from "next/image";
 import {
   Bell,
   Flag,
@@ -176,33 +177,45 @@ export default function DashboardPage() {
       className="min-h-screen bg-[#18181B] pb-32"
       style={{ fontFamily: "'Helvetica Neue', Arial, sans-serif" }}
     >
-      {/* ── TOP BAR ── */}
-      <div className="flex items-center justify-between px-6 py-4">
-        <span className="font-black text-xl uppercase tracking-tighter text-[#F3EDE4]">
-          NASSAU
-        </span>
-        <div className="flex items-center gap-3">
-          <Link href="/settlements" className="relative cursor-pointer transition-colors">
-            <Bell className="h-5 w-5 text-cream/40 hover:text-cream/60" />
-            {hasSettlements && (
-              <div className="absolute -top-1 -right-1 h-2 w-2 rounded-full bg-coral" />
-            )}
-          </Link>
-          <Link href="/profile" className="h-8 w-8 rounded-full bg-gradient-to-br from-coral to-gold flex items-center justify-center text-[11px] font-medium text-dark">
-            {data.user.firstName[0]}
-            {data.user.fullName.split(" ").length > 1
-              ? data.user.fullName.split(" ").slice(-1)[0][0]
-              : ""}
-          </Link>
+      {/* ── BANNER ── */}
+      <div className="relative h-40 sm:h-48 overflow-hidden">
+        <Image
+          src="https://images.unsplash.com/photo-1587174486073-ae5e5cff23aa?q=80&w=2070&auto=format&fit=crop"
+          alt="Sunrise over a golf course"
+          fill
+          className="object-cover"
+          priority
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-dark/80 via-dark/60 to-dark" />
+        <div className="relative z-10 flex flex-col h-full">
+          {/* ── TOP BAR ── */}
+          <div className="flex items-center justify-between px-6 py-4">
+            <span className="font-black text-xl uppercase tracking-tighter text-[#F3EDE4]">
+              NASSAU
+            </span>
+            <div className="flex items-center gap-3">
+              <Link href="/settlements" className="relative cursor-pointer transition-colors">
+                <Bell className="h-5 w-5 text-cream/40 hover:text-cream/60" />
+                {hasSettlements && (
+                  <div className="absolute -top-1 -right-1 h-2 w-2 rounded-full bg-coral" />
+                )}
+              </Link>
+              <Link href="/profile" className="h-8 w-8 rounded-full bg-gradient-to-br from-coral to-gold flex items-center justify-center text-[11px] font-medium text-dark">
+                {data.user.firstName[0]}
+                {data.user.fullName.split(" ").length > 1
+                  ? data.user.fullName.split(" ").slice(-1)[0][0]
+                  : ""}
+              </Link>
+            </div>
+          </div>
+          {/* ── GREETING ── */}
+          <div className="mt-auto px-6 pb-5">
+            <h1 className="font-black text-2xl text-[#F3EDE4]">
+              Hey, {data.user.firstName} 👋
+            </h1>
+            <p className="text-sm text-[#71717A]">{formatCurrentDate()}</p>
+          </div>
         </div>
-      </div>
-
-      {/* ── GREETING ── */}
-      <div className="px-6 mt-4">
-        <h1 className="font-black text-2xl text-[#F3EDE4]">
-          Hey, {data.user.firstName} 👋
-        </h1>
-        <p className="text-sm text-[#71717A]">{formatCurrentDate()}</p>
       </div>
 
       {/* ── SETTLEMENTS BANNER ── */}

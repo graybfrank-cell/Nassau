@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 import {
   ArrowLeft,
   MapPin,
@@ -694,21 +695,33 @@ export default function CreateTripPage() {
   return (
     <>
       <div className="min-h-screen bg-dark">
-        {/* Header */}
-        <div className="flex items-center gap-3 px-5 pb-3 pt-4">
-          <button
-            onClick={goBack}
-            type="button"
-            className="flex h-9 w-9 items-center justify-center rounded-full border border-cream/[0.12] transition-colors hover:bg-cream/[0.06]"
-          >
-            <ArrowLeft className="h-[18px] w-[18px] text-cream" strokeWidth={2} />
-          </button>
-          <h1 className="flex-1 text-[22px] font-medium tracking-tight text-cream">
-            New trip
-          </h1>
-          <span className="text-[13px] text-cream/40">
-            Step {step} of {TOTAL_STEPS}
-          </span>
+        {/* ── BANNER ── */}
+        <div className="relative h-40 sm:h-48 overflow-hidden">
+          <Image
+            src="https://images.unsplash.com/photo-1600533396250-e8c6579e7186?q=80&w=2070&auto=format&fit=crop"
+            alt="Scenic golf destination"
+            fill
+            className="object-cover"
+            priority
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-dark/80 via-dark/60 to-dark" />
+          <div className="relative z-10 flex h-full items-end px-5 pb-5">
+            <div className="flex items-center gap-3 w-full">
+              <button
+                onClick={goBack}
+                type="button"
+                className="flex h-9 w-9 items-center justify-center rounded-full border border-cream/[0.12] bg-dark/30 transition-colors hover:bg-cream/[0.06]"
+              >
+                <ArrowLeft className="h-[18px] w-[18px] text-cream" strokeWidth={2} />
+              </button>
+              <h1 className="flex-1 text-[22px] font-medium tracking-tight text-cream">
+                New trip
+              </h1>
+              <span className="text-[13px] text-cream/40">
+                Step {step} of {TOTAL_STEPS}
+              </span>
+            </div>
+          </div>
         </div>
 
         {/* Progress bar */}
