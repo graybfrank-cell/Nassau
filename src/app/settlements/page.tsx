@@ -149,7 +149,7 @@ export default function SettlementsPage() {
       {/* ── BANNER ── */}
       <div className="relative h-40 sm:h-48 overflow-hidden">
         <Image
-          src="https://images.unsplash.com/photo-1605460375648-278bcbd579a6?q=80&w=2070&auto=format&fit=crop"
+          src="https://images.unsplash.com/photo-1587174486073-ae5e5cff23aa?q=80&w=2070&auto=format&fit=crop"
           alt="Golf course clubhouse"
           fill
           className="object-cover"
