@@ -1,7 +1,7 @@
 import { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
-import { Flag, Map, Wallet, CheckCircle2 } from "lucide-react";
+import { Flag, Map, Wallet, CheckCircle2, Search, Users, Gamepad2, CreditCard } from "lucide-react";
 import AuthRedirect from "./auth-redirect";
 import { createServiceClient } from "@/lib/supabase/admin";
 
@@ -32,6 +32,17 @@ const sampleScorecard: {
   { name: "Tyler", front: 42, back: 39, total: 81, skins: 2, money: "+$15" },
   { name: "Jake", front: 44, back: 43, total: 87, skins: 1, money: "-$20" },
   { name: "Marcus", front: 40, back: 45, total: 85, skins: 0, money: "-$40" },
+];
+
+/* ─── Explore destination cards data ─── */
+
+const exploreDestinations = [
+  { name: "Scottsdale, AZ", price: "from $1,650", vibes: ["Resort", "Party"], info: "3N · 3 rounds", id: "scottsdale-az" },
+  { name: "Bandon Dunes, OR", price: "from $3,200", vibes: ["Bucket List", "Competitive"], info: "3N · 4 rounds", id: "bandon-dunes-or" },
+  { name: "Pinehurst, NC", price: "from $2,200", vibes: ["Bucket List", "Competitive"], info: "3N · 3 rounds", id: "pinehurst-nc" },
+  { name: "Myrtle Beach, SC", price: "from $850", vibes: ["Budget", "Party"], info: "3N · 4 rounds", id: "myrtle-beach-sc" },
+  { name: "Pebble Beach, CA", price: "from $3,500", vibes: ["Bucket List", "Scenic"], info: "3N · 3 rounds", id: "pebble-beach-monterey-ca" },
+  { name: "St. Andrews, Scotland", price: "from $5,000", vibes: ["Bucket List", "Competitive"], info: "4N · 3 rounds", id: "st-andrews-scotland" },
 ];
 
 /* ─── RecentArticles (preserved) ─── */
@@ -105,7 +116,7 @@ export default async function Home() {
     <div className="relative">
       <AuthRedirect />
 
-      {/* ═══ SECTION 2 — HERO ═══ */}
+      {/* ═══ SECTION 1 — HERO ═══ */}
       <section className="relative flex min-h-screen flex-col justify-end overflow-hidden pb-24 px-6 lg:px-16">
         {/* Background image */}
         <Image
@@ -147,179 +158,218 @@ export default async function Home() {
             </Link>
           </div>
           <p className="mt-4 text-xs uppercase tracking-widest text-[#F3EDE4]/30">
-            100 founding member spots · Free for a year
+            88 founding member spots · $49.99/yr locked forever
           </p>
         </div>
       </section>
 
-      {/* ═══ SECTION 3 — TRANSITION ═══ */}
+      {/* ═══ TRANSITION ═══ */}
       <div className="h-32 bg-gradient-to-b from-[#18181B] to-[#F3EDE4]" />
 
-      {/* ═══ SECTION 4 — FEATURE CARDS ═══ */}
+      {/* ═══ SECTION 2 — VALUE PROP 1: GOLF TRIPS, HANDLED ═══ */}
       <section id="features" className="bg-[#F3EDE4] px-6 py-24 lg:px-16">
         <div className="mx-auto max-w-6xl">
-          <h2 className="mb-16 text-4xl font-black uppercase tracking-tighter text-[#18181B] md:text-6xl">
-            THE WHOLE GAME. ONE APP.
+          <h2 className="text-[32px] font-black uppercase tracking-tight text-[#18181B] sm:text-[40px]">
+            GOLF TRIPS, HANDLED.
           </h2>
-          <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
-            {/* Card 1 — Track Rounds */}
-            <Link href="/login?redirect=/rounds" className="rounded-2xl border border-gray-100 bg-white p-8 shadow-sm transition-transform duration-300 ease-out hover:scale-[1.03] hover:shadow-md cursor-pointer">
-              <Flag className="mb-6 h-8 w-8 text-[#0D7377]" />
-              <h3 className="mb-3 text-2xl font-black uppercase text-[#18181B]">
-                TRACK ROUNDS
-              </h3>
-              <p className="mb-8 text-base leading-relaxed text-[#71717A]">
-                Scores, skins, and bets — calculated live as you play.
-              </p>
-              <div className="relative rounded-xl overflow-hidden aspect-[4/3] mt-6">
-                <Image
-                  src="https://images.unsplash.com/photo-1593282153762-a41e3cceb06c?q=80&w=987&auto=format&fit=crop"
-                  alt="Live golf scorecard tracking"
-                  fill
-                  className="object-cover"
-                />
-              </div>
-            </Link>
-            {/* Card 2 — Plan Trips */}
-            <Link href="/login?redirect=/trips" className="rounded-2xl border border-gray-100 bg-white p-8 shadow-sm transition-transform duration-300 ease-out hover:scale-[1.03] hover:shadow-md cursor-pointer">
-              <Map className="mb-6 h-8 w-8 text-[#0D7377]" />
-              <h3 className="mb-3 text-2xl font-black uppercase text-[#18181B]">
-                PLAN TRIPS
-              </h3>
-              <p className="mb-8 text-base leading-relaxed text-[#71717A]">
-                Destinations, deposits, commitments. One link to coordinate your
-                entire crew.
-              </p>
-              <div className="relative rounded-xl overflow-hidden aspect-[4/3] mt-6">
-                <Image
-                  src="https://images.unsplash.com/photo-1629293821782-4746e8921c75?q=80&w=2070&auto=format&fit=crop"
-                  alt="Golf trip planning"
-                  fill
-                  className="object-cover"
-                />
-              </div>
-            </Link>
-            {/* Card 3 — Settle Up */}
-            <Link href="/login?redirect=/settlements" className="rounded-2xl border border-gray-100 bg-white p-8 shadow-sm transition-transform duration-300 ease-out hover:scale-[1.03] hover:shadow-md cursor-pointer">
-              <Wallet className="mb-6 h-8 w-8 text-[#0D7377]" />
-              <h3 className="mb-3 text-2xl font-black uppercase text-[#18181B]">
-                SETTLE UP
-              </h3>
-              <p className="mb-8 text-base leading-relaxed text-[#71717A]">
-                Who owes who. Automated splits. One tap to Venmo.
-              </p>
-              <div className="relative rounded-xl overflow-hidden aspect-[4/3] mt-6">
-                <Image
-                  src="https://images.unsplash.com/photo-1745341226731-d6a3d332906e?q=80&w=1064&auto=format&fit=crop"
-                  alt="Golf group settling bets"
-                  fill
-                  className="object-cover"
-                />
-              </div>
-            </Link>
-          </div>
-        </div>
-      </section>
+          <p className="mt-3 text-[16px] text-[#18181B]/60">
+            From &ldquo;we should do a trip&rdquo; to &ldquo;that was the best trip ever&rdquo; &mdash; one app.
+          </p>
 
-      {/* ═══ SECTION 5 — LIVE SCORECARD ═══ */}
-      <section className="border-t border-[#18181B]/10 bg-[#F3EDE4] px-6 pt-8 pb-24 lg:px-16">
-        <div className="mx-auto grid max-w-6xl items-center gap-16 lg:grid-cols-2">
-          {/* Left column */}
-          <div>
-            <span className="inline-flex items-center gap-2 rounded-full bg-[#0D7377]/10 px-3 py-1 text-xs font-black uppercase tracking-widest text-[#0D7377]">
-              <span className="relative flex h-2 w-2">
-                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#0D7377] opacity-75" />
-                <span className="relative inline-flex h-2 w-2 rounded-full bg-[#0D7377]" />
-              </span>
-              LIVE
-            </span>
-            <h2 className="mt-4 text-4xl font-black uppercase tracking-tighter text-[#18181B] md:text-6xl">
-              FREE TO KEEP SCORE.
-            </h2>
-            <p className="mt-4 text-lg text-[#71717A]">
-              Commissioner Mode. Track any round, right now. No account needed.
-            </p>
-            <Link
-              href="/login"
-              className="mt-8 inline-block rounded-lg bg-[#D94F2B] px-8 py-4 text-sm font-black uppercase tracking-widest text-white transition-colors hover:bg-[#c4442a]"
-            >
-              START A ROUND
-            </Link>
-          </div>
-
-          {/* Right column — scorecard */}
-          <div className="overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm">
-            <div className="flex items-center justify-between bg-[#18181B] px-6 py-4">
-              <span className="font-black uppercase text-[#F3EDE4]">
-                TPC SCOTTSDALE
-              </span>
-              <span className="font-black uppercase text-[#D94F2B]">
-                HOLE 16
-              </span>
+          {/* 4 Steps */}
+          <div className="mt-12 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+            {/* Step 1 — Explore */}
+            <div className="rounded-[10px] border border-[#18181B]/10 bg-white p-6">
+              <Search className="mb-4 h-7 w-7 text-[#0D7377]" />
+              <h3 className="mb-2 text-lg font-black uppercase text-[#18181B]">Explore</h3>
+              <p className="text-sm leading-relaxed text-[#71717A]">
+                50+ curated destinations with real pricing and insider intel
+              </p>
             </div>
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="bg-gray-50">
-                  <th className="px-6 py-3 text-left text-xs font-medium uppercase text-[#71717A]">
-                    Player
-                  </th>
-                  <th className="px-4 py-3 text-center text-xs font-medium uppercase text-[#71717A]">
-                    Front
-                  </th>
-                  <th className="px-4 py-3 text-center text-xs font-medium uppercase text-[#71717A]">
-                    Back
-                  </th>
-                  <th className="px-4 py-3 text-center text-xs font-medium uppercase text-[#71717A]">
-                    Total
-                  </th>
-                  <th className="px-4 py-3 text-center text-xs font-medium uppercase text-[#71717A]">
-                    Skins
-                  </th>
-                  <th className="px-4 py-3 text-right text-xs font-medium uppercase text-[#71717A]">
-                    Money
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {sampleScorecard.map((player, i) => (
-                  <tr key={player.name} className="border-b border-gray-100">
-                    <td className="px-6 py-3 font-black text-[#18181B]">
-                      {player.name}
-                    </td>
-                    <td className="px-4 py-3 text-center text-[#71717A]">
-                      {player.front}
-                    </td>
-                    <td className="px-4 py-3 text-center text-[#71717A]">
-                      {player.back}
-                    </td>
-                    <td
-                      className={`px-4 py-3 text-center font-black ${
-                        i === 0 ? "text-[#D94F2B]" : "text-[#18181B]"
-                      }`}
-                    >
-                      {player.total}
-                    </td>
-                    <td className="px-4 py-3 text-center text-[#71717A]">
-                      {player.skins}
-                    </td>
-                    <td
-                      className={`px-4 py-3 text-right font-black ${
-                        player.money.startsWith("+")
-                          ? "text-emerald-600"
-                          : "text-[#D94F2B]"
-                      }`}
-                    >
-                      {player.money}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+            {/* Step 2 — Coordinate */}
+            <div className="rounded-[10px] border border-[#18181B]/10 bg-white p-6">
+              <Users className="mb-4 h-7 w-7 text-[#0D7377]" />
+              <h3 className="mb-2 text-lg font-black uppercase text-[#18181B]">Coordinate</h3>
+              <p className="text-sm leading-relaxed text-[#71717A]">
+                One link. Your crew commits, votes on dates, and locks in.
+              </p>
+            </div>
+            {/* Step 3 — Play */}
+            <div className="rounded-[10px] border border-[#18181B]/10 bg-white p-6">
+              <Gamepad2 className="mb-4 h-7 w-7 text-[#0D7377]" />
+              <h3 className="mb-2 text-lg font-black uppercase text-[#18181B]">Play</h3>
+              <p className="text-sm leading-relaxed text-[#71717A]">
+                Live scorecards, skins, Nassau bets — calculated automatically
+              </p>
+            </div>
+            {/* Step 4 — Settle */}
+            <div className="rounded-[10px] border border-[#18181B]/10 bg-white p-6">
+              <CreditCard className="mb-4 h-7 w-7 text-[#0D7377]" />
+              <h3 className="mb-2 text-lg font-black uppercase text-[#18181B]">Settle</h3>
+              <p className="text-sm leading-relaxed text-[#71717A]">
+                Who owes who. One tap to Venmo. No spreadsheets.
+              </p>
+            </div>
+          </div>
+
+          {/* CTA */}
+          <div className="mt-10">
+            <Link
+              href="/explore"
+              className="inline-block rounded-[10px] bg-[#0D7377] px-8 py-4 text-[16px] font-medium text-[#F3EDE4] transition-colors hover:bg-[#0b6264]"
+            >
+              Explore Destinations →
+            </Link>
           </div>
         </div>
       </section>
 
-      {/* ═══ SECTION 6 — FOUNDING MEMBERS + PRICING ═══ */}
+      {/* ═══ SECTION 3 — WHERE TO NEXT? ═══ */}
+      <section className="border-t border-[#18181B]/10 bg-[#F3EDE4] px-6 py-24 lg:px-16">
+        <div className="mx-auto max-w-6xl">
+          <h2 className="text-[32px] font-black uppercase tracking-tight text-[#18181B] sm:text-[40px]">
+            WHERE TO NEXT?
+          </h2>
+          <p className="mt-3 text-[16px] text-[#18181B]/60">
+            50+ curated golf trips. Real courses. Real pricing.
+          </p>
+
+          {/* 6 destination cards */}
+          <div className="mt-12 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {exploreDestinations.map((dest) => (
+              <Link
+                key={dest.id}
+                href={`/explore#${dest.id}`}
+                className="group rounded-[10px] border border-[#18181B]/10 bg-white p-6 transition-all hover:shadow-md"
+              >
+                <div className="flex items-start justify-between">
+                  <h3 className="text-lg font-black text-[#18181B] group-hover:text-[#D94F2B] transition-colors">
+                    {dest.name}
+                  </h3>
+                  <span className="text-sm font-bold text-[#0D7377]">{dest.price}</span>
+                </div>
+                <p className="mt-1 text-xs text-[#71717A]">{dest.info}</p>
+                <div className="mt-3 flex flex-wrap gap-1.5">
+                  {dest.vibes.map((vibe) => (
+                    <span
+                      key={vibe}
+                      className="rounded-full bg-[#0D7377]/10 px-2.5 py-0.5 text-xs font-medium text-[#0D7377]"
+                    >
+                      {vibe}
+                    </span>
+                  ))}
+                </div>
+              </Link>
+            ))}
+          </div>
+
+          {/* CTA */}
+          <div className="mt-10">
+            <Link
+              href="/explore"
+              className="inline-block rounded-[10px] bg-[#0D7377] px-8 py-4 text-[16px] font-medium text-[#F3EDE4] transition-colors hover:bg-[#0b6264]"
+            >
+              See all 50+ destinations →
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* ═══ SECTION 4 — VALUE PROP 2: BETS MADE SIMPLE ═══ */}
+      <section className="border-t border-[#18181B]/10 bg-[#F3EDE4] px-6 pt-24 pb-24 lg:px-16">
+        <div className="mx-auto max-w-6xl">
+          <h2 className="text-[32px] font-black uppercase tracking-tight text-[#18181B] sm:text-[40px]">
+            BETS MADE SIMPLE.
+          </h2>
+          <p className="mt-3 text-[16px] text-[#18181B]/60">
+            Skins. Nassau. Match play. Best ball. Pick your game — we handle the math.
+          </p>
+
+          {/* Scorecard preview */}
+          <div className="mx-auto mt-12 max-w-2xl">
+            <div className="overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm">
+              <div className="flex items-center justify-between bg-[#18181B] px-6 py-4">
+                <span className="font-black uppercase text-[#F3EDE4]">
+                  TPC SCOTTSDALE
+                </span>
+                <span className="font-black uppercase text-[#D94F2B]">
+                  HOLE 16
+                </span>
+              </div>
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="bg-gray-50">
+                    <th className="px-6 py-3 text-left text-xs font-medium uppercase text-[#71717A]">
+                      Player
+                    </th>
+                    <th className="px-4 py-3 text-center text-xs font-medium uppercase text-[#71717A]">
+                      Front
+                    </th>
+                    <th className="px-4 py-3 text-center text-xs font-medium uppercase text-[#71717A]">
+                      Back
+                    </th>
+                    <th className="px-4 py-3 text-center text-xs font-medium uppercase text-[#71717A]">
+                      Total
+                    </th>
+                    <th className="px-4 py-3 text-center text-xs font-medium uppercase text-[#71717A]">
+                      Skins
+                    </th>
+                    <th className="px-4 py-3 text-right text-xs font-medium uppercase text-[#71717A]">
+                      Money
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {sampleScorecard.map((player, i) => (
+                    <tr key={player.name} className="border-b border-gray-100">
+                      <td className="px-6 py-3 font-black text-[#18181B]">
+                        {player.name}
+                      </td>
+                      <td className="px-4 py-3 text-center text-[#71717A]">
+                        {player.front}
+                      </td>
+                      <td className="px-4 py-3 text-center text-[#71717A]">
+                        {player.back}
+                      </td>
+                      <td
+                        className={`px-4 py-3 text-center font-black ${
+                          i === 0 ? "text-[#D94F2B]" : "text-[#18181B]"
+                        }`}
+                      >
+                        {player.total}
+                      </td>
+                      <td className="px-4 py-3 text-center text-[#71717A]">
+                        {player.skins}
+                      </td>
+                      <td
+                        className={`px-4 py-3 text-right font-black ${
+                          player.money.startsWith("+")
+                            ? "text-emerald-600"
+                            : "text-[#D94F2B]"
+                        }`}
+                      >
+                        {player.money}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            <p className="mt-8 text-center text-[16px] text-[#18181B]/60">
+              Commissioner Mode is free. Forever.{" "}
+              <Link
+                href="/login?redirect=/rounds/new"
+                className="font-medium text-[#D94F2B] underline underline-offset-2 hover:text-[#c4442a]"
+              >
+                Start a round →
+              </Link>
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* ═══ SECTION 5 — FOUNDING MEMBERS + PRICING ═══ */}
       <section className="border-t border-[#18181B]/10 bg-[#F3EDE4] px-6 py-24 lg:px-16">
         <div className="mx-auto max-w-6xl">
           <h2 className="mb-16 text-4xl font-black uppercase tracking-tighter text-[#18181B] md:text-5xl">
@@ -332,8 +382,7 @@ export default async function Home() {
                 FOUNDING MEMBERS
               </h3>
               <p className="mb-4 text-[#71717A]">
-                First 100 golfers get Pro free for a year. Claim your spot
-                before April 1.
+                88 founding member spots remaining. Lock in $49.99/yr — the price never goes up.
               </p>
               <div className="mb-6">
                 <span className="text-4xl font-black text-[#18181B]">$49.99</span>
@@ -457,7 +506,7 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* ═══ SECTION 7 — FOOTER ═══ */}
+      {/* ═══ FOOTER ═══ */}
       <footer className="bg-[#18181B] px-6 py-16 text-center">
         <p className="mb-2 text-2xl font-black text-[#F3EDE4]">NASSAU</p>
         <p className="mb-8 text-sm text-[#F3EDE4]/60">
