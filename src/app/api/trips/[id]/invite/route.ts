@@ -143,14 +143,27 @@ export async function POST(
     return NextResponse.json({ results });
   }
 
-  // Legacy: generate invite code
+  // Legacy: generate invite code + ensure share_code exists
   const inviteCode = generateInviteCode();
-  const updated = await prisma.trips.update({
+  const shareCode = generateShareCode();
+
+  const existingTrip = await prisma.trips.findUnique({
     where: { id },
-    data: { invite_code: inviteCode },
+    select: { share_code: true },
   });
 
-  return NextResponse.json({ inviteCode: updated.invite_code });
+  const updated = await prisma.trips.update({
+    where: { id },
+    data: {
+      invite_code: inviteCode,
+      ...(existingTrip && !existingTrip.share_code ? { share_code: shareCode } : {}),
+    },
+  });
+
+  return NextResponse.json({
+    inviteCode: updated.invite_code,
+    shareCode: updated.share_code,
+  });
 }
 
 function buildInviteEmail(data: {

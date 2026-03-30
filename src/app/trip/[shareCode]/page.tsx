@@ -1,10 +1,20 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
-import { MapPin, Calendar, Users, Check, AlertCircle, Vote, Loader2 } from "lucide-react";
+import {
+  MapPin,
+  Calendar,
+  Users,
+  Check,
+  AlertCircle,
+  Vote,
+  Loader2,
+  Clock,
+  ChevronRight,
+} from "lucide-react";
 
 interface TripMember {
   id: string;
@@ -13,6 +23,12 @@ interface TripMember {
   rsvpStatus: string;
   handicap: number;
   userId: string | null;
+}
+
+interface ScheduleItem {
+  date: string;
+  title: string;
+  type: string;
 }
 
 interface PollOption {
@@ -39,16 +55,49 @@ interface TripData {
   endDate: string;
   vibe: string | null;
   shareCode: string;
+  groupSizeTarget: number | null;
   members: TripMember[];
+  schedule: ScheduleItem[];
   datePoll: DatePollData | null;
 }
 
-const STATUS_BADGE: Record<string, { label: string; color: string; icon: string }> = {
-  GOING: { label: "Going", color: "bg-green-100 text-green-700", icon: "\uD83D\uDFE2" },
-  MAYBE: { label: "Maybe", color: "bg-yellow-100 text-yellow-700", icon: "\uD83D\uDFE1" },
-  DECLINED: { label: "Can't Make It", color: "bg-red-100 text-red-700", icon: "\uD83D\uDD34" },
-  PENDING: { label: "Pending", color: "bg-zinc-100 text-zinc-500", icon: "\u2B1C" },
-};
+function formatDateRange(startDate: string, endDate: string): string {
+  if (!startDate || !endDate) return startDate || endDate || "";
+  const s = new Date(startDate + "T12:00:00");
+  const e = new Date(endDate + "T12:00:00");
+  const sMonth = s.toLocaleDateString("en-US", { month: "short" });
+  const eMonth = e.toLocaleDateString("en-US", { month: "short" });
+  const sDay = s.getDate();
+  const eDay = e.getDate();
+  const year = s.getFullYear();
+  if (sMonth === eMonth) {
+    return `${sMonth} ${sDay}-${eDay}, ${year}`;
+  }
+  return `${sMonth} ${sDay} - ${eMonth} ${eDay}, ${year}`;
+}
+
+function getDaysUntil(startDate: string): number | null {
+  if (!startDate) return null;
+  const s = new Date(startDate + "T12:00:00");
+  const now = new Date();
+  now.setHours(12, 0, 0, 0);
+  const diff = Math.ceil((s.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+  return diff > 0 ? diff : null;
+}
+
+function getNightsAndDays(
+  startDate: string,
+  endDate: string
+): { nights: number; days: number } | null {
+  if (!startDate || !endDate) return null;
+  const s = new Date(startDate + "T12:00:00");
+  const e = new Date(endDate + "T12:00:00");
+  const nights = Math.round(
+    (e.getTime() - s.getTime()) / (1000 * 60 * 60 * 24)
+  );
+  if (nights <= 0) return null;
+  return { nights, days: nights + 1 };
+}
 
 function formatCountdown(deadline: string | Date): string {
   const dl = new Date(deadline);
@@ -64,8 +113,16 @@ function formatCountdown(deadline: string | Date): string {
   return `${mins}m left`;
 }
 
+// Unsplash photo search for destination hero images
+function getDestinationImageUrl(destination: string): string {
+  if (!destination) return "";
+  const query = encodeURIComponent(`${destination} golf course landscape`);
+  return `https://source.unsplash.com/800x400/?${query}`;
+}
+
 export default function TripSharePage() {
   const params = useParams();
+  const router = useRouter();
   const shareCode = params.shareCode as string;
 
   const [trip, setTrip] = useState<TripData | null>(null);
@@ -75,6 +132,7 @@ export default function TripSharePage() {
   const [rsvpLoading, setRsvpLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+  const [imageLoaded, setImageLoaded] = useState(false);
 
   // Poll voting state
   const [draftVotes, setDraftVotes] = useState<Record<string, string>>({});
@@ -83,7 +141,9 @@ export default function TripSharePage() {
   useEffect(() => {
     async function load() {
       const supabase = createClient();
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
       if (user) setUserId(user.id);
 
       const res = await fetch(`/api/trip/${shareCode}`);
@@ -101,7 +161,8 @@ export default function TripSharePage() {
   async function handleRSVP(status: "GOING" | "MAYBE" | "DECLINED") {
     if (!trip) return;
     if (!userId) {
-      setError("You must be signed in to RSVP.");
+      // Redirect to login, come back after
+      router.push(`/login?returnTo=/trip/${shareCode}`);
       return;
     }
 
@@ -145,7 +206,10 @@ export default function TripSharePage() {
     setPollVoting(true);
     setError(null);
     try {
-      const votes = Object.entries(draftVotes).map(([option_id, vote]) => ({ option_id, vote }));
+      const votes = Object.entries(draftVotes).map(([option_id, vote]) => ({
+        option_id,
+        vote,
+      }));
       const res = await fetch(`/api/trips/${trip.id}/date-poll/vote`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -155,7 +219,6 @@ export default function TripSharePage() {
         const data = await res.json().catch(() => ({}));
         throw new Error(data.error || "Failed to cast vote");
       }
-      // Refresh
       const tripRes = await fetch(`/api/trip/${shareCode}`);
       if (tripRes.ok) setTrip(await tripRes.json());
     } catch (err) {
@@ -166,28 +229,33 @@ export default function TripSharePage() {
 
   if (loading) {
     return (
-      <div className="flex min-h-[calc(100vh-64px)] items-center justify-center">
-        <p className="text-sm text-zinc-400">Loading...</p>
+      <div className="flex min-h-screen items-center justify-center bg-[#F3EDE4]">
+        <div className="flex flex-col items-center gap-3">
+          <Loader2 className="h-6 w-6 animate-spin text-[#1A1A1A]/30" />
+          <p className="text-sm text-[#1A1A1A]/40">Loading trip...</p>
+        </div>
       </div>
     );
   }
 
   if (notFound) {
     return (
-      <div className="flex min-h-[calc(100vh-64px)] items-center justify-center">
+      <div className="flex min-h-screen items-center justify-center bg-[#F3EDE4] px-6">
         <div className="text-center">
-          <span className="text-5xl">{"\uD83C\uDFCC\uFE0F"}</span>
-          <h1 className="mt-4 text-xl font-bold text-zinc-900">
+          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-white shadow-sm">
+            <AlertCircle className="h-8 w-8 text-[#D94F2B]" />
+          </div>
+          <h1 className="mt-5 text-xl font-bold text-[#1A1A1A]">
             Trip Not Found
           </h1>
-          <p className="mt-2 text-sm text-zinc-500">
+          <p className="mt-2 text-sm text-[#1A1A1A]/50">
             This invite link may be expired or invalid.
           </p>
           <Link
-            href="/dashboard"
-            className="mt-6 inline-block rounded-lg bg-[#D94F2B] px-5 py-2.5 text-sm font-semibold text-white hover:bg-[#B83D25]"
+            href="/"
+            className="mt-6 inline-block rounded-[10px] bg-[#D94F2B] px-6 py-3 text-sm font-semibold text-[#F3EDE4] hover:bg-[#B83D25] transition-colors"
           >
-            Go to Dashboard
+            Go to Nassau
           </Link>
         </div>
       </div>
@@ -198,300 +266,595 @@ export default function TripSharePage() {
 
   const goingCount = trip.members.filter((m) => m.rsvpStatus === "GOING").length;
   const totalMembers = trip.members.length;
+  const targetSize = trip.groupSizeTarget || totalMembers;
 
   const myMember = userId
     ? trip.members.find((m) => m.userId === userId)
     : null;
   const isCaptain = myMember?.role === "CAPTAIN";
+  const isMember = !!myMember;
 
-  const duration = (() => {
-    if (!trip.startDate || !trip.endDate) return null;
-    const s = new Date(trip.startDate + "T12:00:00");
-    const e = new Date(trip.endDate + "T12:00:00");
-    const d = Math.round((e.getTime() - s.getTime()) / (1000 * 60 * 60 * 24));
-    if (d <= 0) return null;
-    return `${d} night${d !== 1 ? "s" : ""}, ${d + 1} day${d + 1 !== 1 ? "s" : ""}`;
-  })();
+  const daysUntil = getDaysUntil(trip.startDate);
+  const duration = getNightsAndDays(trip.startDate, trip.endDate);
+  const dateRange = formatDateRange(trip.startDate, trip.endDate);
+
+  const teeTimeCount = trip.schedule.filter(
+    (s) => s.type === "tee_time"
+  ).length;
+
+  // Group schedule items by date for itinerary preview
+  const scheduleByDate = trip.schedule.reduce(
+    (acc, item) => {
+      if (!acc[item.date]) acc[item.date] = [];
+      acc[item.date].push(item);
+      return acc;
+    },
+    {} as Record<string, ScheduleItem[]>
+  );
+  const scheduleDates = Object.keys(scheduleByDate).sort();
 
   const poll = trip.datePoll;
-  const pollActive = poll?.status === "active" && new Date(poll.deadline) > new Date();
-  const isMember = !!myMember;
+  const pollActive =
+    poll?.status === "active" && new Date(poll.deadline) > new Date();
 
   function getMemberNameByUserId(uid: string): string {
     const m = trip?.members.find((m) => m.userId === uid);
     return m?.name?.split(" ")[0] || "?";
   }
 
+  // Sort members: captain first, then going, then pending, then rest
+  const sortedMembers = [...trip.members].sort((a, b) => {
+    if (a.role === "CAPTAIN") return -1;
+    if (b.role === "CAPTAIN") return 1;
+    const order: Record<string, number> = {
+      GOING: 0,
+      MAYBE: 1,
+      PENDING: 2,
+      DECLINED: 3,
+    };
+    return (order[a.rsvpStatus] ?? 2) - (order[b.rsvpStatus] ?? 2);
+  });
+
   return (
-    <div className="min-h-[calc(100vh-64px)] bg-zinc-50 px-6 py-10">
-      <div className="mx-auto max-w-lg">
-        {/* Trip card */}
-        <div className="rounded-2xl border border-zinc-200 bg-white p-8 shadow-sm">
-          <div className="text-center">
-            <span className="text-4xl">{"\uD83C\uDFCC\uFE0F"}</span>
-            <h1 className="mt-4 text-2xl font-bold tracking-tight text-zinc-900">
-              {trip.name}
-            </h1>
-          </div>
+    <div className="min-h-screen bg-[#F3EDE4]">
+      {/* A. Hero Banner */}
+      <div className="relative h-48 sm:h-56 overflow-hidden bg-[#1A1A1A]">
+        {trip.destination && (
+          <>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={getDestinationImageUrl(trip.destination)}
+              alt={trip.destination}
+              className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-700 ${imageLoaded ? "opacity-100" : "opacity-0"}`}
+              onLoad={() => setImageLoaded(true)}
+            />
+          </>
+        )}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
+        <div className="absolute inset-0 flex flex-col justify-end p-5 pb-8">
+          <h1 className="text-[24px] font-bold text-white leading-tight">
+            {trip.name}
+          </h1>
+          <p className="mt-1 text-[14px] text-white/70">
+            {[trip.destination, dateRange].filter(Boolean).join(" \u00B7 ")}
+          </p>
+          {daysUntil && (
+            <span className="mt-2 inline-flex w-fit items-center gap-1.5 rounded-full bg-white/20 backdrop-blur-sm px-3 py-1 text-[12px] font-medium text-white">
+              <Clock className="h-3 w-3" />
+              {daysUntil} days away
+            </span>
+          )}
+        </div>
+      </div>
 
-          <div className="mt-6 space-y-3">
-            {trip.destination && (
-              <div className="flex items-center gap-2 text-sm text-zinc-600">
-                <MapPin className="h-4 w-4 text-zinc-400" />
-                {trip.destination}
+      {/* B. Trip Info Card */}
+      <div className="bg-white rounded-[10px] shadow-sm mx-5 -mt-6 relative z-10 p-5">
+        <div className="grid grid-cols-2 gap-3">
+          {teeTimeCount > 0 && (
+            <div className="flex items-center gap-2.5">
+              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#0D7377]/10">
+                <span className="text-[14px]">&#9971;</span>
               </div>
-            )}
-            {(trip.startDate || trip.endDate) && (
-              <div className="flex items-center gap-2 text-sm text-zinc-600">
-                <Calendar className="h-4 w-4 text-zinc-400" />
-                {trip.startDate && trip.endDate
-                  ? `${trip.startDate} \u2014 ${trip.endDate}`
-                  : trip.startDate || trip.endDate}
-                {duration && (
-                  <span className="text-xs text-zinc-400">({duration})</span>
-                )}
+              <div>
+                <p className="text-[14px] font-semibold text-[#1A1A1A]">
+                  {teeTimeCount} round{teeTimeCount !== 1 ? "s" : ""}
+                </p>
+                <p className="text-[11px] text-[#1A1A1A]/40">planned</p>
               </div>
-            )}
-            <div className="flex items-center gap-2 text-sm text-zinc-600">
-              <Users className="h-4 w-4 text-zinc-400" />
-              {goingCount} of {totalMembers} confirmed
-            </div>
-          </div>
-
-          {/* Errors / Success */}
-          {error && (
-            <div className="mt-4 flex items-center gap-2 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
-              <AlertCircle className="h-4 w-4 shrink-0" />
-              {error}
             </div>
           )}
-          {success && (
-            <div className="mt-4 flex items-center gap-2 rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-700">
-              <Check className="h-4 w-4 shrink-0" />
-              {success}
+          {duration && (
+            <div className="flex items-center gap-2.5">
+              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#0D7377]/10">
+                <Calendar className="h-4 w-4 text-[#0D7377]" />
+              </div>
+              <div>
+                <p className="text-[14px] font-semibold text-[#1A1A1A]">
+                  {duration.days} day{duration.days !== 1 ? "s" : ""}
+                </p>
+                <p className="text-[11px] text-[#1A1A1A]/40">
+                  {duration.nights} night{duration.nights !== 1 ? "s" : ""}
+                </p>
+              </div>
             </div>
           )}
-
-          {/* RSVP section */}
-          {userId ? (
-            <div className="mt-6">
-              {isCaptain ? (
-                <div className="rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-center text-sm text-amber-700">
-                  You&apos;re the captain of this trip &mdash; you&apos;re locked in as Going!
-                </div>
-              ) : (
-                <>
-                  {myMember && myMember.rsvpStatus !== "PENDING" && (
-                    <p className="mb-3 text-center text-sm text-zinc-500">
-                      Your current status:{" "}
-                      <span className="font-medium">
-                        {STATUS_BADGE[myMember.rsvpStatus]?.label || myMember.rsvpStatus}
-                      </span>
-                    </p>
-                  )}
-                  <div className="flex gap-2">
-                    <button
-                      onClick={() => handleRSVP("GOING")}
-                      disabled={rsvpLoading}
-                      className={`flex-1 rounded-lg py-2.5 text-sm font-semibold transition-colors disabled:opacity-50 ${
-                        myMember?.rsvpStatus === "GOING"
-                          ? "bg-green-600 text-white"
-                          : "border border-green-300 text-green-700 hover:bg-green-50"
-                      }`}
-                    >
-                      {rsvpLoading ? "..." : "I'm In!"}
-                    </button>
-                    <button
-                      onClick={() => handleRSVP("MAYBE")}
-                      disabled={rsvpLoading}
-                      className={`flex-1 rounded-lg py-2.5 text-sm font-semibold transition-colors disabled:opacity-50 ${
-                        myMember?.rsvpStatus === "MAYBE"
-                          ? "bg-yellow-500 text-white"
-                          : "border border-yellow-300 text-yellow-700 hover:bg-yellow-50"
-                      }`}
-                    >
-                      {rsvpLoading ? "..." : "Maybe"}
-                    </button>
-                    <button
-                      onClick={() => handleRSVP("DECLINED")}
-                      disabled={rsvpLoading}
-                      className={`flex-1 rounded-lg py-2.5 text-sm font-semibold transition-colors disabled:opacity-50 ${
-                        myMember?.rsvpStatus === "DECLINED"
-                          ? "bg-red-600 text-white"
-                          : "border border-red-300 text-red-700 hover:bg-red-50"
-                      }`}
-                    >
-                      {rsvpLoading ? "..." : "Can't Make It"}
-                    </button>
-                  </div>
-                </>
-              )}
+          <div className="flex items-center gap-2.5">
+            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#0D7377]/10">
+              <Users className="h-4 w-4 text-[#0D7377]" />
             </div>
-          ) : (
-            <div className="mt-6 text-center">
-              <p className="mb-3 text-sm text-zinc-500">
-                Sign in to RSVP for this trip.
+            <div>
+              <p className="text-[14px] font-semibold text-[#1A1A1A]">
+                {targetSize} golfer{targetSize !== 1 ? "s" : ""}
               </p>
-              <Link
-                href={`/login?returnTo=/trip/${shareCode}`}
-                className="inline-block rounded-lg bg-[#D94F2B] px-6 py-2.5 text-sm font-semibold text-white hover:bg-[#B83D25]"
-              >
-                Sign Up to RSVP
-              </Link>
+              <p className="text-[11px] text-[#1A1A1A]/40">invited</p>
+            </div>
+          </div>
+          {trip.destination && (
+            <div className="flex items-center gap-2.5">
+              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#0D7377]/10">
+                <MapPin className="h-4 w-4 text-[#0D7377]" />
+              </div>
+              <div>
+                <p className="text-[14px] font-semibold text-[#1A1A1A] truncate max-w-[120px]">
+                  {trip.destination}
+                </p>
+                <p className="text-[11px] text-[#1A1A1A]/40">destination</p>
+              </div>
             </div>
           )}
         </div>
+      </div>
 
-        {/* Date Poll Section */}
-        {poll && poll.status !== "locked" && poll.options.length > 0 && (
-          <div className="mt-6 rounded-2xl border-2 border-emerald-200 bg-white p-6 shadow-sm">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <Vote className="h-5 w-5 text-[#D94F2B]" />
-                <h2 className="text-sm font-semibold text-zinc-900">Vote on Trip Dates</h2>
-              </div>
-              <span className={`rounded-full px-2.5 py-1 text-xs font-medium ${
-                pollActive ? "bg-emerald-100 text-[#D94F2B]" : "bg-zinc-100 text-zinc-600"
-              }`}>
-                {pollActive ? formatCountdown(poll.deadline) : "Voting closed"}
-              </span>
-            </div>
-
-            <div className="mt-4 space-y-3">
-              {poll.options.map((opt, idx) => {
-                const startDate = new Date(opt.startDate);
-                const endDate = new Date(opt.endDate);
-                const nights = Math.round((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24));
-                const startStr = startDate.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
-                const endStr = endDate.toLocaleDateString("en-US", { month: "short", day: "numeric" });
-                const startDay = startDate.toLocaleDateString("en-US", { weekday: "short" });
-                const endDay = endDate.toLocaleDateString("en-US", { weekday: "short" });
-                const currentVote = draftVotes[opt.id] || "";
-
-                const yesVotes = opt.votes.filter((v) => v.vote === "yes");
-                const maybeVotes = opt.votes.filter((v) => v.vote === "maybe");
-                const noVotes = opt.votes.filter((v) => v.vote === "no");
-
-                return (
-                  <div key={opt.id} className="rounded-lg border border-zinc-200 p-3">
-                    <div className="flex items-center gap-2">
-                      <span className="flex h-6 w-6 items-center justify-center rounded-full bg-zinc-100 text-xs font-bold text-zinc-600">
-                        {String.fromCharCode(65 + idx)}
-                      </span>
-                      <div>
-                        <p className="text-sm font-semibold text-zinc-900">
-                          {startStr} — {endStr}
-                        </p>
-                        <p className="text-xs text-zinc-500">
-                          {startDay}–{endDay} · {nights} night{nights !== 1 ? "s" : ""}
-                          {opt.label ? ` · "${opt.label}"` : ""}
-                        </p>
-                      </div>
-                    </div>
-
-                    {/* Vote buttons — only for logged-in members during active poll */}
-                    {pollActive && isMember && userId && (
-                      <div className="mt-2 flex gap-2">
-                        {[
-                          { value: "yes", label: "Works", emoji: "\u2705", bg: "bg-green-50 text-green-700 border-green-200", active: "bg-green-100 ring-2 ring-green-500/30" },
-                          { value: "maybe", label: "Maybe", emoji: "\u26A0\uFE0F", bg: "bg-yellow-50 text-yellow-700 border-yellow-200", active: "bg-yellow-100 ring-2 ring-yellow-500/30" },
-                          { value: "no", label: "Can't", emoji: "\u274C", bg: "bg-red-50 text-red-700 border-red-200", active: "bg-red-100 ring-2 ring-red-500/30" },
-                        ].map((btn) => (
-                          <button
-                            key={btn.value}
-                            onClick={() => setDraftVotes((prev) => ({ ...prev, [opt.id]: btn.value }))}
-                            className={`flex-1 rounded-lg border px-3 py-2.5 text-sm font-medium transition-all min-h-[44px] ${
-                              currentVote === btn.value ? btn.active : `${btn.bg} hover:opacity-80`
-                            }`}
-                          >
-                            {btn.emoji} {btn.label}
-                          </button>
-                        ))}
-                      </div>
-                    )}
-
-                    {/* Voter badges */}
-                    {opt.votes.length > 0 && (
-                      <div className="mt-2 flex flex-wrap gap-1">
-                        {yesVotes.map((v) => (
-                          <span key={v.userId} className="rounded-full bg-green-100 px-2 py-0.5 text-[10px] font-medium text-green-700">
-                            {"\u2705"} {getMemberNameByUserId(v.userId)}
-                          </span>
-                        ))}
-                        {maybeVotes.map((v) => (
-                          <span key={v.userId} className="rounded-full bg-yellow-100 px-2 py-0.5 text-[10px] font-medium text-yellow-700">
-                            {"\u26A0\uFE0F"} {getMemberNameByUserId(v.userId)}
-                          </span>
-                        ))}
-                        {noVotes.map((v) => (
-                          <span key={v.userId} className="rounded-full bg-red-100 px-2 py-0.5 text-[10px] font-medium text-red-700">
-                            {"\u274C"} {getMemberNameByUserId(v.userId)}
-                          </span>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                );
-              })}
-            </div>
-
-            {/* Submit votes */}
-            {pollActive && isMember && userId && Object.keys(draftVotes).length > 0 && (
-              <button
-                onClick={handleSubmitPollVotes}
-                disabled={pollVoting}
-                className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-lg bg-[#D94F2B] px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[#B83D25] disabled:opacity-50 min-h-[44px]"
+      {/* C. Who's In (Social Proof) */}
+      <div className="bg-white rounded-[10px] shadow-sm mx-5 mt-4 p-5">
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-[13px] font-bold text-[#1A1A1A]/60 uppercase tracking-wider">
+            Who&apos;s In
+          </h2>
+          <span className="text-[12px] font-medium text-[#0D7377]">
+            {goingCount} of {targetSize} committed
+          </span>
+        </div>
+        {/* Progress bar */}
+        <div className="h-1.5 w-full rounded-full bg-[#1A1A1A]/5 mb-4">
+          <div
+            className="h-1.5 rounded-full bg-[#0D7377] transition-all duration-500"
+            style={{
+              width: `${Math.min(100, (goingCount / targetSize) * 100)}%`,
+            }}
+          />
+        </div>
+        <div className="space-y-1">
+          {sortedMembers.map((m) => {
+            const isGoing = m.rsvpStatus === "GOING";
+            const isPending =
+              m.rsvpStatus === "PENDING" || m.rsvpStatus === "MAYBE";
+            const isDeclined = m.rsvpStatus === "DECLINED";
+            return (
+              <div
+                key={m.id}
+                className="flex items-center justify-between rounded-lg px-3 py-2.5"
               >
-                {pollVoting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Check className="h-4 w-4" />}
-                {pollVoting ? "Submitting..." : "Submit Votes"}
-              </button>
-            )}
-
-            {/* Not logged in CTA */}
-            {!userId && pollActive && (
-              <div className="mt-4 text-center">
-                <Link
-                  href={`/login?returnTo=/trip/${shareCode}`}
-                  className="inline-block rounded-lg bg-[#D94F2B] px-6 py-2.5 text-sm font-semibold text-white hover:bg-[#B83D25]"
-                >
-                  Sign In to Vote
-                </Link>
-              </div>
-            )}
-          </div>
-        )}
-
-        {/* Who's going */}
-        <div className="mt-6 rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm">
-          <h2 className="text-sm font-semibold text-zinc-600">The Crew</h2>
-          <div className="mt-3 space-y-2">
-            {trip.members.map((m) => {
-              const badge = STATUS_BADGE[m.rsvpStatus] || STATUS_BADGE.PENDING;
-              return (
-                <div
-                  key={m.id}
-                  className="flex items-center justify-between rounded-lg px-3 py-2 hover:bg-zinc-50"
-                >
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm font-medium text-zinc-900">
-                      {m.name}
-                    </span>
-                    {m.role === "CAPTAIN" && (
-                      <span className="rounded-full bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-700">
-                        Captain
-                      </span>
-                    )}
-                  </div>
+                <div className="flex items-center gap-2.5">
                   <span
-                    className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${badge.color}`}
+                    className={`flex h-7 w-7 items-center justify-center rounded-full text-[12px] font-bold ${
+                      isGoing
+                        ? "bg-[#0D7377]/10 text-[#0D7377]"
+                        : isPending
+                          ? "bg-[#1A1A1A]/5 text-[#1A1A1A]/30"
+                          : "bg-red-50 text-red-400"
+                    }`}
                   >
-                    {badge.icon} {badge.label}
+                    {isGoing ? (
+                      <Check className="h-3.5 w-3.5" />
+                    ) : isPending ? (
+                      <Clock className="h-3.5 w-3.5" />
+                    ) : (
+                      "\u2014"
+                    )}
                   </span>
+                  <span
+                    className={`text-[14px] font-medium ${
+                      isGoing
+                        ? "text-[#1A1A1A]"
+                        : isDeclined
+                          ? "text-[#1A1A1A]/30 line-through"
+                          : "text-[#1A1A1A]/60"
+                    }`}
+                  >
+                    {m.name}
+                  </span>
+                  {m.role === "CAPTAIN" && (
+                    <span className="rounded-full bg-[#C9A54E]/15 px-2 py-0.5 text-[10px] font-semibold text-[#C9A54E]">
+                      Captain
+                    </span>
+                  )}
+                </div>
+                <span
+                  className={`rounded-full px-2.5 py-1 text-[11px] font-semibold ${
+                    isGoing
+                      ? "bg-[#0D7377]/10 text-[#0D7377]"
+                      : isPending
+                        ? "bg-[#1A1A1A]/5 text-[#1A1A1A]/40"
+                        : "bg-red-50 text-red-400"
+                  }`}
+                >
+                  {isGoing
+                    ? "Going"
+                    : m.rsvpStatus === "MAYBE"
+                      ? "Maybe"
+                      : isPending
+                        ? "Pending"
+                        : "Declined"}
+                </span>
+              </div>
+            );
+          })}
+          {/* "You?" placeholder for non-members */}
+          {!isMember && !userId && (
+            <div className="flex items-center justify-between rounded-lg px-3 py-2.5 border border-dashed border-[#D94F2B]/30">
+              <div className="flex items-center gap-2.5">
+                <span className="flex h-7 w-7 items-center justify-center rounded-full bg-[#D94F2B]/10 text-[#D94F2B]">
+                  <ChevronRight className="h-3.5 w-3.5" />
+                </span>
+                <span className="text-[15px] font-semibold text-[#D94F2B]">
+                  You?
+                </span>
+              </div>
+              <span className="text-[11px] text-[#1A1A1A]/30">&mdash;</span>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* D. Itinerary Preview */}
+      {scheduleDates.length > 0 && (
+        <div className="bg-white rounded-[10px] shadow-sm mx-5 mt-4 p-5">
+          <h2 className="text-[13px] font-bold text-[#1A1A1A]/60 uppercase tracking-wider mb-4">
+            The Plan
+          </h2>
+          <div className="space-y-3">
+            {scheduleDates.map((date, idx) => {
+              const items = scheduleByDate[date];
+              const d = new Date(date + "T12:00:00");
+              const dayLabel = `Day ${idx + 1}`;
+              const dateLabel = d.toLocaleDateString("en-US", {
+                weekday: "short",
+                month: "short",
+                day: "numeric",
+              });
+              return (
+                <div key={date}>
+                  <div className="flex items-center gap-2 mb-1.5">
+                    <span className="text-[12px] font-bold text-[#0D7377]">
+                      {dayLabel}
+                    </span>
+                    <span className="text-[11px] text-[#1A1A1A]/30">
+                      {dateLabel}
+                    </span>
+                  </div>
+                  {items.map((item, i) => (
+                    <div
+                      key={i}
+                      className="flex items-center gap-2.5 pl-4 py-1"
+                    >
+                      <span className="text-[12px]">
+                        {item.type === "tee_time"
+                          ? "\u26F3"
+                          : item.type === "dinner"
+                            ? "\uD83C\uDF7D\uFE0F"
+                            : item.type === "travel"
+                              ? "\u2708\uFE0F"
+                              : item.type === "lodging"
+                                ? "\uD83C\uDFE8"
+                                : item.type === "entertainment"
+                                  ? "\uD83C\uDF89"
+                                  : "\u2022"}
+                      </span>
+                      <span className="text-[13px] text-[#1A1A1A]/80">
+                        {item.title}
+                      </span>
+                    </div>
+                  ))}
                 </div>
               );
             })}
           </div>
         </div>
+      )}
+
+      {/* Date Poll Section */}
+      {poll && poll.status !== "locked" && poll.options.length > 0 && (
+        <div className="bg-white rounded-[10px] shadow-sm mx-5 mt-4 p-5 border-2 border-[#0D7377]/20">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-2">
+              <Vote className="h-4 w-4 text-[#D94F2B]" />
+              <h2 className="text-[13px] font-bold text-[#1A1A1A]/60 uppercase tracking-wider">
+                Vote on Dates
+              </h2>
+            </div>
+            <span
+              className={`rounded-full px-2.5 py-1 text-[11px] font-medium ${
+                pollActive
+                  ? "bg-[#0D7377]/10 text-[#0D7377]"
+                  : "bg-[#1A1A1A]/5 text-[#1A1A1A]/40"
+              }`}
+            >
+              {pollActive ? formatCountdown(poll.deadline) : "Voting closed"}
+            </span>
+          </div>
+
+          <div className="space-y-3">
+            {poll.options.map((opt, idx) => {
+              const startDate = new Date(opt.startDate);
+              const endDate = new Date(opt.endDate);
+              const nights = Math.round(
+                (endDate.getTime() - startDate.getTime()) /
+                  (1000 * 60 * 60 * 24)
+              );
+              const startStr = startDate.toLocaleDateString("en-US", {
+                month: "short",
+                day: "numeric",
+                year: "numeric",
+              });
+              const endStr = endDate.toLocaleDateString("en-US", {
+                month: "short",
+                day: "numeric",
+              });
+              const startDay = startDate.toLocaleDateString("en-US", {
+                weekday: "short",
+              });
+              const endDay = endDate.toLocaleDateString("en-US", {
+                weekday: "short",
+              });
+              const currentVote = draftVotes[opt.id] || "";
+              const yesVotes = opt.votes.filter((v) => v.vote === "yes");
+              const maybeVotes = opt.votes.filter((v) => v.vote === "maybe");
+              const noVotes = opt.votes.filter((v) => v.vote === "no");
+
+              return (
+                <div
+                  key={opt.id}
+                  className="rounded-lg border border-[#1A1A1A]/10 p-3"
+                >
+                  <div className="flex items-center gap-2">
+                    <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[#0D7377]/10 text-[11px] font-bold text-[#0D7377]">
+                      {String.fromCharCode(65 + idx)}
+                    </span>
+                    <div>
+                      <p className="text-[13px] font-semibold text-[#1A1A1A]">
+                        {startStr} &mdash; {endStr}
+                      </p>
+                      <p className="text-[11px] text-[#1A1A1A]/40">
+                        {startDay}&ndash;{endDay} &middot; {nights} night
+                        {nights !== 1 ? "s" : ""}
+                        {opt.label ? ` \u00B7 "${opt.label}"` : ""}
+                      </p>
+                    </div>
+                  </div>
+
+                  {pollActive && isMember && userId && (
+                    <div className="mt-2 flex gap-2">
+                      {[
+                        {
+                          value: "yes",
+                          label: "Works",
+                          bg: "bg-[#0D7377]/5 text-[#0D7377] border-[#0D7377]/20",
+                          active:
+                            "bg-[#0D7377]/15 ring-2 ring-[#0D7377]/30 text-[#0D7377]",
+                        },
+                        {
+                          value: "maybe",
+                          label: "Maybe",
+                          bg: "bg-yellow-50 text-yellow-700 border-yellow-200",
+                          active:
+                            "bg-yellow-100 ring-2 ring-yellow-500/30 text-yellow-700",
+                        },
+                        {
+                          value: "no",
+                          label: "Can't",
+                          bg: "bg-red-50 text-red-500 border-red-200",
+                          active:
+                            "bg-red-100 ring-2 ring-red-500/30 text-red-600",
+                        },
+                      ].map((btn) => (
+                        <button
+                          key={btn.value}
+                          onClick={() =>
+                            setDraftVotes((prev) => ({
+                              ...prev,
+                              [opt.id]: btn.value,
+                            }))
+                          }
+                          className={`flex-1 rounded-lg border px-3 py-2.5 text-[13px] font-medium transition-all min-h-[44px] ${
+                            currentVote === btn.value
+                              ? btn.active
+                              : `${btn.bg} hover:opacity-80`
+                          }`}
+                        >
+                          {btn.label}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+
+                  {opt.votes.length > 0 && (
+                    <div className="mt-2 flex flex-wrap gap-1">
+                      {yesVotes.map((v) => (
+                        <span
+                          key={v.userId}
+                          className="rounded-full bg-[#0D7377]/10 px-2 py-0.5 text-[10px] font-medium text-[#0D7377]"
+                        >
+                          {getMemberNameByUserId(v.userId)}
+                        </span>
+                      ))}
+                      {maybeVotes.map((v) => (
+                        <span
+                          key={v.userId}
+                          className="rounded-full bg-yellow-100 px-2 py-0.5 text-[10px] font-medium text-yellow-700"
+                        >
+                          {getMemberNameByUserId(v.userId)}
+                        </span>
+                      ))}
+                      {noVotes.map((v) => (
+                        <span
+                          key={v.userId}
+                          className="rounded-full bg-red-100 px-2 py-0.5 text-[10px] font-medium text-red-500"
+                        >
+                          {getMemberNameByUserId(v.userId)}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+
+          {pollActive && isMember && userId && Object.keys(draftVotes).length > 0 && (
+            <button
+              onClick={handleSubmitPollVotes}
+              disabled={pollVoting}
+              className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-[10px] bg-[#0D7377] px-5 py-3 text-[14px] font-semibold text-white transition-colors hover:bg-[#0B6164] disabled:opacity-50 min-h-[44px]"
+            >
+              {pollVoting ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <Check className="h-4 w-4" />
+              )}
+              {pollVoting ? "Submitting..." : "Submit Votes"}
+            </button>
+          )}
+
+          {!userId && pollActive && (
+            <div className="mt-4 text-center">
+              <Link
+                href={`/login?returnTo=/trip/${shareCode}`}
+                className="inline-block rounded-[10px] bg-[#0D7377] px-6 py-3 text-[14px] font-semibold text-white hover:bg-[#0B6164] transition-colors"
+              >
+                Sign In to Vote
+              </Link>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Errors / Success */}
+      {error && (
+        <div className="mx-5 mt-4 flex items-center gap-2 rounded-[10px] bg-red-50 border border-red-200 px-4 py-3 text-[13px] text-red-700">
+          <AlertCircle className="h-4 w-4 shrink-0" />
+          {error}
+        </div>
+      )}
+      {success && (
+        <div className="mx-5 mt-4 flex items-center gap-2 rounded-[10px] bg-[#0D7377]/10 border border-[#0D7377]/20 px-4 py-3 text-[13px] text-[#0D7377]">
+          <Check className="h-4 w-4 shrink-0" />
+          {success}
+        </div>
+      )}
+
+      {/* E. CTA Section */}
+      <div className="mx-5 mt-6">
+        {userId ? (
+          isCaptain ? (
+            <div className="rounded-[10px] bg-[#C9A54E]/10 border border-[#C9A54E]/20 px-5 py-4 text-center">
+              <p className="text-[14px] font-semibold text-[#C9A54E]">
+                You&apos;re the captain &mdash; you&apos;re locked in!
+              </p>
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {myMember && myMember.rsvpStatus !== "PENDING" && (
+                <p className="text-center text-[13px] text-[#1A1A1A]/50">
+                  Your status:{" "}
+                  <span className="font-semibold">
+                    {myMember.rsvpStatus === "GOING"
+                      ? "Going"
+                      : myMember.rsvpStatus === "MAYBE"
+                        ? "Maybe"
+                        : myMember.rsvpStatus === "DECLINED"
+                          ? "Declined"
+                          : myMember.rsvpStatus}
+                  </span>
+                </p>
+              )}
+              <button
+                onClick={() => handleRSVP("GOING")}
+                disabled={rsvpLoading}
+                className={`w-full rounded-[10px] py-4 text-[18px] font-bold transition-colors disabled:opacity-50 shadow-lg ${
+                  myMember?.rsvpStatus === "GOING"
+                    ? "bg-[#0D7377] text-white"
+                    : "bg-[#D94F2B] text-[#F3EDE4] hover:bg-[#B83D25]"
+                }`}
+              >
+                {rsvpLoading ? (
+                  <Loader2 className="h-5 w-5 animate-spin mx-auto" />
+                ) : myMember?.rsvpStatus === "GOING" ? (
+                  "You're In!"
+                ) : (
+                  "I'M IN"
+                )}
+              </button>
+              {myMember?.rsvpStatus !== "GOING" && (
+                <p className="text-[12px] text-[#1A1A1A]/40 text-center">
+                  Free to join
+                </p>
+              )}
+              <div className="flex gap-2">
+                <button
+                  onClick={() => handleRSVP("MAYBE")}
+                  disabled={rsvpLoading}
+                  className={`flex-1 rounded-[10px] py-2.5 text-[13px] font-semibold transition-colors disabled:opacity-50 border ${
+                    myMember?.rsvpStatus === "MAYBE"
+                      ? "bg-yellow-100 border-yellow-300 text-yellow-700"
+                      : "border-[#1A1A1A]/10 text-[#1A1A1A]/50 hover:bg-[#1A1A1A]/5"
+                  }`}
+                >
+                  Maybe
+                </button>
+                <button
+                  onClick={() => handleRSVP("DECLINED")}
+                  disabled={rsvpLoading}
+                  className={`flex-1 rounded-[10px] py-2.5 text-[13px] font-semibold transition-colors disabled:opacity-50 border ${
+                    myMember?.rsvpStatus === "DECLINED"
+                      ? "bg-red-50 border-red-300 text-red-600"
+                      : "border-[#1A1A1A]/10 text-[#1A1A1A]/40 hover:bg-[#1A1A1A]/5"
+                  }`}
+                >
+                  Can&apos;t Make It
+                </button>
+              </div>
+            </div>
+          )
+        ) : (
+          <div className="space-y-2">
+            <Link
+              href={`/login?returnTo=/trip/${shareCode}`}
+              className="flex w-full items-center justify-center rounded-[10px] bg-[#D94F2B] py-4 text-[18px] font-bold text-[#F3EDE4] shadow-lg hover:bg-[#B83D25] transition-colors"
+            >
+              I&apos;M IN
+            </Link>
+            <p className="text-[12px] text-[#1A1A1A]/40 text-center">
+              Free to join
+            </p>
+            <button
+              onClick={() => router.push(`/login?returnTo=/trip/${shareCode}&action=decline`)}
+              className="w-full text-center text-[13px] text-[#1A1A1A]/30 hover:text-[#1A1A1A]/50 transition-colors py-2"
+            >
+              Can&apos;t make it? Decline
+            </button>
+          </div>
+        )}
+      </div>
+
+      {/* F. Footer */}
+      <div className="text-center mt-8 pb-8">
+        <p className="text-[12px] text-[#1A1A1A]/30">
+          Powered by{" "}
+          <span className="font-semibold">Nassau</span> &mdash; The operating
+          system for golf trips.
+        </p>
+        <p className="text-[11px] text-[#1A1A1A]/20 mt-1">nassau.golf</p>
       </div>
     </div>
   );

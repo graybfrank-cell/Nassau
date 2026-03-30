@@ -255,19 +255,20 @@ export default function TripDetailPage() {
 
   async function handleShareInvite() {
     setInviteLoading(true);
-    let code = trip?.inviteCode;
-    if (!code) {
+    // Prefer share_code for the cinematic share page
+    let sc = (trip as any)?.share_code;
+    if (!sc) {
       const res = await fetch(`/api/trips/${tripId}/invite`, {
         method: "POST",
       });
       if (res.ok) {
         const data = await res.json();
-        code = data.inviteCode;
+        sc = data.shareCode;
         await refresh();
       }
     }
-    if (code) {
-      const link = `${window.location.origin}/invite/${code}`;
+    if (sc) {
+      const link = `${window.location.origin}/trip/${sc}`;
       await navigator.clipboard.writeText(link);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
@@ -1278,7 +1279,8 @@ export default function TripDetailPage() {
                           <button
                             onClick={() => {
                               const goingCount = trip.members.filter((mm) => mm.rsvpStatus === "GOING").length;
-                              const msg = `Hey — we're planning ${trip.name}${trip.destination ? ` in ${trip.destination}` : ""}. ${goingCount} guy${goingCount !== 1 ? "s are" : " is"} already in. Commit here: ${window.location.origin}/invite/${trip.inviteCode || ""}`;
+                              const shareUrl = (trip as any).share_code ? `${window.location.origin}/trip/${(trip as any).share_code}` : `${window.location.origin}/invite/${trip.inviteCode || ""}`;
+                              const msg = `Hey — we're planning ${trip.name}${trip.destination ? ` in ${trip.destination}` : ""}. ${goingCount} guy${goingCount !== 1 ? "s are" : " is"} already in. Commit here: ${shareUrl}`;
                               navigator.clipboard.writeText(msg);
                               setNudgeToast(true);
                               setTimeout(() => setNudgeToast(false), 2000);
