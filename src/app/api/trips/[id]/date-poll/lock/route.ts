@@ -78,125 +78,130 @@ export async function POST(
     return NextResponse.json({ error: "option_id required" }, { status: 400 });
   }
 
-  // Find the poll and option
-  const poll = await prisma.datePolls.findFirst({
-    where: { trip_id: tripId, status: { in: ["active", "closed"] } },
-    orderBy: { created_at: "desc" },
-    include: { options: true },
-  });
-
-  if (!poll) {
-    return NextResponse.json({ error: "No poll found" }, { status: 404 });
-  }
-
-  const option = poll.options.find((o: any) => o.id === optionId);
-  if (!option) {
-    return NextResponse.json({ error: "Option not found" }, { status: 404 });
-  }
-
-  // Lock the poll
-  await prisma.datePolls.update({
-    where: { id: poll.id },
-    data: {
-      status: "locked",
-      locked_option_id: optionId,
-      closed_at: new Date(),
-    },
-  });
-
-  // Update trip dates
-  const startDate = new Date(option.start_date).toISOString().split("T")[0];
-  const endDate = new Date(option.end_date).toISOString().split("T")[0];
-
-  const trip = await prisma.trips.update({
-    where: { id: tripId },
-    data: {
-      start_date: startDate,
-      end_date: endDate,
-    },
-  });
-
-  // Ensure share code
-  let shareCode = trip.share_code;
-  if (!shareCode) {
-    shareCode = generateShareCode();
-    await prisma.trips.update({
-      where: { id: tripId },
-      data: { share_code: shareCode },
+  try {
+    // Find the poll and option
+    const poll = await prisma.datePolls.findFirst({
+      where: { trip_id: tripId, status: { in: ["active", "closed"] } },
+      orderBy: { created_at: "desc" },
+      include: { options: true },
     });
-  }
 
-  // Generate .ics calendar file
-  const icsContent = generateICS({
-    tripName: trip.name,
-    destination: trip.destination,
-    startDate: new Date(option.start_date),
-    endDate: new Date(option.end_date),
-    shareCode,
-  });
+    if (!poll) {
+      return NextResponse.json({ error: "No poll found" }, { status: 404 });
+    }
 
-  // Send lock-in emails with .ics attachment
-  if (resend) {
-    const members = await prisma.tripMembers.findMany({
-      where: {
-        trip_id: tripId,
-        rsvp_status: { in: ["GOING", "PENDING"] },
-        email: { not: null },
+    const option = poll.options.find((o: any) => o.id === optionId);
+    if (!option) {
+      return NextResponse.json({ error: "Option not found" }, { status: 404 });
+    }
+
+    // Lock the poll
+    await prisma.datePolls.update({
+      where: { id: poll.id },
+      data: {
+        status: "locked",
+        locked_option_id: optionId,
+        closed_at: new Date(),
       },
     });
 
-    const captainName = membership.name || "Your trip captain";
-    const tripUrl = `https://nassau.golf/trip/${shareCode}`;
-    const startStr = new Date(option.start_date).toLocaleDateString("en-US", {
-      month: "short",
-      day: "numeric",
-      year: "numeric",
-    });
-    const endStr = new Date(option.end_date).toLocaleDateString("en-US", {
-      month: "short",
-      day: "numeric",
-    });
-    const nights = Math.round(
-      (new Date(option.end_date).getTime() - new Date(option.start_date).getTime()) /
-        (1000 * 60 * 60 * 24)
-    );
-    const goingCount = members.filter((m: any) => m.rsvp_status === "GOING").length;
+    // Update trip dates
+    const startDate = new Date(option.start_date).toISOString().split("T")[0];
+    const endDate = new Date(option.end_date).toISOString().split("T")[0];
 
-    for (const member of members) {
-      if (!member.email) continue;
-      try {
-        await resend.emails.send({
-          from: "Nassau <noreply@nassau.golf>",
-          to: member.email,
-          subject: `🎉 Dates locked for ${trip.name}! ${startStr.replace(/, \d{4}$/, "")}-${endStr}`,
-          html: buildLockEmail({
-            captainName,
-            tripName: trip.name,
-            destination: trip.destination,
-            dateRange: `${startStr} — ${endStr}`,
-            nights,
-            goingCount,
-            tripUrl,
-          }),
-          attachments: [
-            {
-              filename: `${trip.name.replace(/[^a-zA-Z0-9]/g, "-")}.ics`,
-              content: Buffer.from(icsContent).toString("base64"),
-              contentType: "text/calendar",
-            },
-          ],
-        });
-      } catch {
-        // Don't block on email failure
+    const trip = await prisma.trips.update({
+      where: { id: tripId },
+      data: {
+        start_date: startDate,
+        end_date: endDate,
+      },
+    });
+
+    // Ensure share code
+    let shareCode = trip.share_code;
+    if (!shareCode) {
+      shareCode = generateShareCode();
+      await prisma.trips.update({
+        where: { id: tripId },
+        data: { share_code: shareCode },
+      });
+    }
+
+    // Generate .ics calendar file
+    const icsContent = generateICS({
+      tripName: trip.name,
+      destination: trip.destination,
+      startDate: new Date(option.start_date),
+      endDate: new Date(option.end_date),
+      shareCode,
+    });
+
+    // Send lock-in emails with .ics attachment
+    if (resend) {
+      const members = await prisma.tripMembers.findMany({
+        where: {
+          trip_id: tripId,
+          rsvp_status: { in: ["GOING", "PENDING"] },
+          email: { not: null },
+        },
+      });
+
+      const captainName = membership.name || "Your trip captain";
+      const tripUrl = `https://nassau.golf/trip/${shareCode}`;
+      const startStr = new Date(option.start_date).toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+        year: "numeric",
+      });
+      const endStr = new Date(option.end_date).toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+      });
+      const nights = Math.round(
+        (new Date(option.end_date).getTime() - new Date(option.start_date).getTime()) /
+          (1000 * 60 * 60 * 24)
+      );
+      const goingCount = members.filter((m: any) => m.rsvp_status === "GOING").length;
+
+      for (const member of members) {
+        if (!member.email) continue;
+        try {
+          await resend.emails.send({
+            from: "Nassau <noreply@nassau.golf>",
+            to: member.email,
+            subject: `🎉 Dates locked for ${trip.name}! ${startStr.replace(/, \d{4}$/, "")}-${endStr}`,
+            html: buildLockEmail({
+              captainName,
+              tripName: trip.name,
+              destination: trip.destination,
+              dateRange: `${startStr} — ${endStr}`,
+              nights,
+              goingCount,
+              tripUrl,
+            }),
+            attachments: [
+              {
+                filename: `${trip.name.replace(/[^a-zA-Z0-9]/g, "-")}.ics`,
+                content: Buffer.from(icsContent).toString("base64"),
+                contentType: "text/calendar",
+              },
+            ],
+          });
+        } catch {
+          // Don't block on email failure
+        }
       }
     }
-  }
 
-  return NextResponse.json({
-    success: true,
-    tripDates: { start_date: startDate, end_date: endDate },
-    ics: icsContent,
-  });
+    return NextResponse.json({
+      success: true,
+      tripDates: { start_date: startDate, end_date: endDate },
+      ics: icsContent,
+    });
+  } catch {
+    // Date poll tables not yet provisioned
+    return NextResponse.json({ error: "Date poll feature not yet available" }, { status: 422 });
+  }
 }
 
 function buildLockEmail(data: {

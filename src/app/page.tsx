@@ -355,12 +355,12 @@ export default async function Home() {
                 </div>
               </div>
               <p className="mb-2 text-sm text-[#71717A]">
-                47 of 100 spots remaining
+                88 of 100 spots remaining
               </p>
               <div className="h-1.5 rounded-full bg-gray-200">
                 <div
                   className="h-1.5 rounded-full bg-[#0D7377]"
-                  style={{ width: "53%" }}
+                  style={{ width: "12%" }}
                 />
               </div>
               <Link
