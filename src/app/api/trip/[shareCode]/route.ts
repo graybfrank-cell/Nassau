@@ -85,6 +85,23 @@ export async function GET(
       // Poll fetch non-critical for share page
     }
 
+    // Fetch schedule / itinerary for this trip
+    let scheduleData: { date: string; title: string; type: string }[] = [];
+    try {
+      const items = await prisma.scheduleItems.findMany({
+        where: { trip_id: trip.id },
+        orderBy: [{ date: "asc" }, { sort_order: "asc" }],
+        select: { date: true, title: true, type: true },
+      });
+      scheduleData = items.map((s: any) => ({
+        date: s.date,
+        title: s.title,
+        type: s.type,
+      }));
+    } catch {
+      // Schedule fetch non-critical
+    }
+
     // Return safe public data
     return NextResponse.json({
       id: trip.id,
@@ -94,6 +111,7 @@ export async function GET(
       endDate: trip.end_date,
       vibe: trip.vibe,
       shareCode: trip.share_code,
+      groupSizeTarget: trip.group_size_target,
       members: trip.members.map((m: any) => ({
         id: m.id,
         name: m.name,
@@ -102,6 +120,7 @@ export async function GET(
         handicap: Number(m.handicap),
         userId: m.user_id,
       })),
+      schedule: scheduleData,
       datePoll: pollData,
     });
   } catch (err) {
