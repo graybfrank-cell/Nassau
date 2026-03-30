@@ -30,53 +30,58 @@ export async function GET(
   const membership = await getTripMembership(tripId, user.id);
   if (!membership) return forbidden();
 
-  const poll = await prisma.datePolls.findFirst({
-    where: { trip_id: tripId },
-    orderBy: { created_at: "desc" },
-    include: {
-      options: { orderBy: { sort_order: "asc" } },
-      votes: true,
-    },
-  });
+  try {
+    const poll = await prisma.datePolls.findFirst({
+      where: { trip_id: tripId },
+      orderBy: { created_at: "desc" },
+      include: {
+        options: { orderBy: { sort_order: "asc" } },
+        votes: true,
+      },
+    });
 
-  if (!poll) {
-    return NextResponse.json({ poll: null });
-  }
-
-  // Build userVotes map: { optionId: "yes"|"maybe"|"no" }
-  const userVotes: Record<string, string> = {};
-  for (const v of poll.votes) {
-    if (v.user_id === user.id) {
-      userVotes[v.option_id] = v.vote;
+    if (!poll) {
+      return NextResponse.json({ poll: null });
     }
+
+    // Build userVotes map: { optionId: "yes"|"maybe"|"no" }
+    const userVotes: Record<string, string> = {};
+    for (const v of poll.votes) {
+      if (v.user_id === user.id) {
+        userVotes[v.option_id] = v.vote;
+      }
+    }
+
+    // Group votes by option
+    const optionsWithVotes = poll.options.map((opt: any) => {
+      const optionVotes = poll.votes.filter((v: any) => v.option_id === opt.id);
+      return {
+        ...opt,
+        votes: optionVotes.map((v: any) => ({
+          userId: v.user_id,
+          vote: v.vote,
+        })),
+      };
+    });
+
+    return NextResponse.json({
+      poll: {
+        id: poll.id,
+        tripId: poll.trip_id,
+        createdBy: poll.created_by,
+        status: poll.status,
+        deadline: poll.deadline,
+        createdAt: poll.created_at,
+        closedAt: poll.closed_at,
+        lockedOptionId: poll.locked_option_id,
+      },
+      options: optionsWithVotes,
+      userVotes,
+    });
+  } catch {
+    // Date poll tables not yet provisioned — return empty state
+    return NextResponse.json({ poll: null, options: [], userVotes: {} });
   }
-
-  // Group votes by option
-  const optionsWithVotes = poll.options.map((opt: any) => {
-    const optionVotes = poll.votes.filter((v: any) => v.option_id === opt.id);
-    return {
-      ...opt,
-      votes: optionVotes.map((v: any) => ({
-        userId: v.user_id,
-        vote: v.vote,
-      })),
-    };
-  });
-
-  return NextResponse.json({
-    poll: {
-      id: poll.id,
-      tripId: poll.trip_id,
-      createdBy: poll.created_by,
-      status: poll.status,
-      deadline: poll.deadline,
-      createdAt: poll.created_at,
-      closedAt: poll.closed_at,
-      lockedOptionId: poll.locked_option_id,
-    },
-    options: optionsWithVotes,
-    userVotes,
-  });
 }
 
 // POST /api/trips/[id]/date-poll — create a new poll
@@ -100,98 +105,103 @@ export async function POST(
     return NextResponse.json({ error: "At least 2 date options required" }, { status: 400 });
   }
 
-  // Close any existing active polls
-  await prisma.datePolls.updateMany({
-    where: { trip_id: tripId, status: "active" },
-    data: { status: "closed", closed_at: new Date() },
-  });
-
-  const deadline = new Date();
-  deadline.setHours(deadline.getHours() + 72);
-
-  const poll = await prisma.datePolls.create({
-    data: {
-      trip_id: tripId,
-      created_by: user.id,
-      status: "active",
-      deadline,
-      options: {
-        create: options.map((opt, i) => ({
-          start_date: new Date(opt.start_date + "T12:00:00Z"),
-          end_date: new Date(opt.end_date + "T12:00:00Z"),
-          label: opt.label || null,
-          sort_order: i,
-        })),
-      },
-    },
-    include: { options: { orderBy: { sort_order: "asc" } } },
-  });
-
-  // Ensure trip has share code for the poll link
-  const trip = await prisma.trips.findUnique({ where: { id: tripId } });
-  let shareCode = trip?.share_code;
-  if (!shareCode) {
-    shareCode = generateShareCode();
-    await prisma.trips.update({
-      where: { id: tripId },
-      data: { share_code: shareCode },
+  try {
+    // Close any existing active polls
+    await prisma.datePolls.updateMany({
+      where: { trip_id: tripId, status: "active" },
+      data: { status: "closed", closed_at: new Date() },
     });
-  }
 
-  // Send notification emails to all trip members
-  if (resend && trip) {
-    const members = await prisma.tripMembers.findMany({
-      where: {
+    const deadline = new Date();
+    deadline.setHours(deadline.getHours() + 72);
+
+    const poll = await prisma.datePolls.create({
+      data: {
         trip_id: tripId,
-        rsvp_status: { in: ["GOING", "PENDING"] },
-        email: { not: null },
+        created_by: user.id,
+        status: "active",
+        deadline,
+        options: {
+          create: options.map((opt, i) => ({
+            start_date: new Date(opt.start_date + "T12:00:00Z"),
+            end_date: new Date(opt.end_date + "T12:00:00Z"),
+            label: opt.label || null,
+            sort_order: i,
+          })),
+        },
       },
+      include: { options: { orderBy: { sort_order: "asc" } } },
     });
 
-    const captainName = membership.name || "Your trip captain";
-    const tripUrl = `https://nassau.golf/trip/${shareCode}`;
-    const durationNights = body.duration_nights || 3;
+    // Ensure trip has share code for the poll link
+    const trip = await prisma.trips.findUnique({ where: { id: tripId } });
+    let shareCode = trip?.share_code;
+    if (!shareCode) {
+      shareCode = generateShareCode();
+      await prisma.trips.update({
+        where: { id: tripId },
+        data: { share_code: shareCode },
+      });
+    }
 
-    const optionLines = poll.options.map((opt: any, i: any) => {
-      const letter = String.fromCharCode(65 + i);
-      const start = new Date(opt.start_date);
-      const end = new Date(opt.end_date);
-      const startStr = start.toLocaleDateString("en-US", { month: "short", day: "numeric" });
-      const endStr = end.toLocaleDateString("en-US", { month: "short", day: "numeric" });
-      return `Option ${letter}: ${startStr}-${endStr} (${durationNights} night${durationNights !== 1 ? "s" : ""})${opt.label ? ` — "${opt.label}"` : ""}`;
-    });
+    // Send notification emails to all trip members
+    if (resend && trip) {
+      const members = await prisma.tripMembers.findMany({
+        where: {
+          trip_id: tripId,
+          rsvp_status: { in: ["GOING", "PENDING"] },
+          email: { not: null },
+        },
+      });
 
-    const deadlineStr = deadline.toLocaleDateString("en-US", {
-      weekday: "short",
-      month: "short",
-      day: "numeric",
-      hour: "numeric",
-      minute: "2-digit",
-    });
+      const captainName = membership.name || "Your trip captain";
+      const tripUrl = `https://nassau.golf/trip/${shareCode}`;
+      const durationNights = body.duration_nights || 3;
 
-    for (const member of members) {
-      if (!member.email || member.user_id === user.id) continue;
-      try {
-        await resend.emails.send({
-          from: "Nassau <noreply@nassau.golf>",
-          to: member.email,
-          subject: `📅 Vote on dates for ${trip.name}!`,
-          html: buildPollEmail({
-            captainName,
-            tripName: trip.name,
-            destination: trip.destination,
-            options: optionLines,
-            deadline: deadlineStr,
-            tripUrl,
-          }),
-        });
-      } catch {
-        // Don't block on email failure
+      const optionLines = poll.options.map((opt: any, i: any) => {
+        const letter = String.fromCharCode(65 + i);
+        const start = new Date(opt.start_date);
+        const end = new Date(opt.end_date);
+        const startStr = start.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+        const endStr = end.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+        return `Option ${letter}: ${startStr}-${endStr} (${durationNights} night${durationNights !== 1 ? "s" : ""})${opt.label ? ` — "${opt.label}"` : ""}`;
+      });
+
+      const deadlineStr = deadline.toLocaleDateString("en-US", {
+        weekday: "short",
+        month: "short",
+        day: "numeric",
+        hour: "numeric",
+        minute: "2-digit",
+      });
+
+      for (const member of members) {
+        if (!member.email || member.user_id === user.id) continue;
+        try {
+          await resend.emails.send({
+            from: "Nassau <noreply@nassau.golf>",
+            to: member.email,
+            subject: `📅 Vote on dates for ${trip.name}!`,
+            html: buildPollEmail({
+              captainName,
+              tripName: trip.name,
+              destination: trip.destination,
+              options: optionLines,
+              deadline: deadlineStr,
+              tripUrl,
+            }),
+          });
+        } catch {
+          // Don't block on email failure
+        }
       }
     }
-  }
 
-  return NextResponse.json({ poll, shareCode }, { status: 201 });
+    return NextResponse.json({ poll, shareCode }, { status: 201 });
+  } catch {
+    // Date poll tables not yet provisioned
+    return NextResponse.json({ error: "Date poll feature not yet available" }, { status: 422 });
+  }
 }
 
 function buildPollEmail(data: {
