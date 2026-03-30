@@ -145,6 +145,20 @@ export default function TripsPage() {
         </div>
       </div>
 
+      {/* ── EXPLORE CTA ── */}
+      <div className="px-6 mt-4">
+        <Link
+          href="/explore"
+          className="flex items-center justify-between rounded-[10px] border border-[#0D7377]/20 bg-[#0D7377]/[0.06] p-4"
+        >
+          <div>
+            <p className="text-sm font-semibold text-[#F3EDE4]">Explore 50+ golf destinations</p>
+            <p className="text-xs text-[#71717A] mt-0.5">Browse curated trips and start planning</p>
+          </div>
+          <span className="text-[#0D7377] text-lg font-bold">→</span>
+        </Link>
+      </div>
+
       {/* ── FILTER PILLS ── */}
       <div className="px-6 mt-4 flex gap-2 overflow-x-auto">
         {FILTERS.map((filter) => (

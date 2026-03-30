@@ -26,7 +26,7 @@ const paths = [
     title: "Browse Trips",
     description: "Explore pre-built trip templates from top destinations.",
     href: "/explore",
-    available: false,
+    available: true,
   },
 ];
 
