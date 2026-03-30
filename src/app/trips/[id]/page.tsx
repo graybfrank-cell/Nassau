@@ -18,7 +18,7 @@ import {
   getSkinsGames,
   getScorecards,
 } from "@/lib/store";
-import { Trip, Lodging, ScheduleItem, Scorecard, Round, SkinsGame } from "@/lib/types";
+import { Trip, Lodging, ScheduleItem, Scorecard, Round, SkinsGame, Expense } from "@/lib/types";
 import {
   ArrowLeft,
   Users,
@@ -101,6 +101,8 @@ export default function TripDetailPage() {
   const [scorecards, setScorecards] = useState<Scorecard[]>([]);
   const [rounds, setRounds] = useState<Round[]>([]);
   const [skinsGames, setSkinsGames] = useState<SkinsGame[]>([]);
+  const [expenses, setExpenses] = useState<Expense[]>([]);
+  const [nudgeToast, setNudgeToast] = useState(false);
   const [showAddMember, setShowAddMember] = useState(false);
   const [memberName, setMemberName] = useState("");
   const [memberHandicap, setMemberHandicap] = useState("");
@@ -200,6 +202,7 @@ export default function TripDetailPage() {
         getSkinsGames(tripId),
         getScorecards({ tripId }),
       ]);
+      setExpenses(expenses);
       setExpenseCount(expenses.length);
       setRounds(rds);
       setRoundCount(rds.length);
@@ -1133,27 +1136,174 @@ export default function TripDetailPage() {
         {/* ═══════ TAB: OVERVIEW ═══════ */}
         {activeTab === 'overview' && (
           <>
-            {/* Quick Stats Row */}
-            <div className="grid grid-cols-3 gap-2.5 sm:grid-cols-4">
-              {(() => {
-                const days = trip.startDate && trip.endDate ? nightsBetween(trip.startDate, trip.endDate) : 0;
-                const stats = [
-                  { label: 'Days', value: days > 0 ? `${days}` : '—' },
-                  { label: 'Golfers', value: `${trip.members.length}` },
-                  { label: 'Rounds', value: `${roundCount}` },
-                ];
-                return stats.map((s) => (
-                  <div key={s.label} className="rounded-[10px] bg-cream/[0.04] border border-cream/[0.08] p-3 text-center">
-                    <p className="text-[18px] font-medium text-cream">{s.value}</p>
-                    <p className="text-[11px] uppercase tracking-[1.2px] text-cream/40">{s.label}</p>
+            {/* ─── A. Countdown ─── */}
+            {(() => {
+              if (trip.startDate) {
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                const start = new Date(trip.startDate + "T00:00:00");
+                const daysAway = Math.ceil((start.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+                if (daysAway > 0) {
+                  return (
+                    <div className="text-center py-2">
+                      <p className="text-[28px] font-bold text-cream">{daysAway} DAY{daysAway !== 1 ? "S" : ""} UNTIL TEE TIME</p>
+                    </div>
+                  );
+                }
+                if (daysAway === 0) {
+                  return (
+                    <div className="text-center py-2">
+                      <p className="text-[28px] font-bold text-coral">IT&apos;S GO TIME</p>
+                    </div>
+                  );
+                }
+                return null;
+              }
+              if (isCaptain) {
+                return (
+                  <button
+                    onClick={() => { setShowCreatePoll(true); setPollStep(1); }}
+                    className="block w-full text-center py-2"
+                  >
+                    <p className="text-[28px] font-bold text-cream/40 hover:text-coral transition-colors">SET YOUR DATES &rarr;</p>
+                  </button>
+                );
+              }
+              return null;
+            })()}
+
+            {/* ─── B. Trip Readiness Progress Bar ─── */}
+            {(() => {
+              const goingCount = trip.members.filter((m) => m.rsvpStatus === "GOING").length;
+              const teeTimeCount = liveSchedule.filter((s) => s.type === "tee_time").length;
+              const milestones = [
+                { label: "Trip created", done: true },
+                { label: "Destination set", done: !!trip.destination },
+                { label: "Dates confirmed", done: !!(trip.startDate && trip.endDate) },
+                { label: `Crew locked in (${goingCount} of ${trip.members.length} committed)`, done: goingCount === trip.members.length && trip.members.length > 1 },
+                { label: `Tee times booked (${teeTimeCount} round${teeTimeCount !== 1 ? "s" : ""})`, done: teeTimeCount > 0 },
+                { label: "Lodging confirmed", done: !!(trip.lodging.name || trip.lodging.address) },
+              ];
+              const completedCount = milestones.filter((m) => m.done).length;
+              const pct = Math.round((completedCount / milestones.length) * 100);
+              const scrollTargets: Record<number, string> = {
+                2: "dates-section",
+                3: "crew-section",
+                4: "schedule-section",
+                5: "lodging-section",
+              };
+              return (
+                <div className="rounded-[10px] border border-cream/[0.08] bg-cream/[0.04] p-5">
+                  <div className="flex items-center justify-between mb-3">
+                    <h2 className="text-[13px] font-medium text-cream/40 uppercase tracking-wider">Trip Readiness &mdash; {completedCount} of {milestones.length} complete</h2>
+                    <span className="text-[13px] font-medium text-cream/50">{pct}%</span>
                   </div>
-                ));
-              })()}
+                  <div className="h-2 w-full bg-cream/10 rounded-full overflow-hidden">
+                    <div className="h-2 bg-coral rounded-full transition-all duration-500" style={{ width: `${pct}%` }} />
+                  </div>
+                  <div className="mt-4 space-y-2">
+                    {milestones.map((m, idx) => (
+                      <button
+                        key={idx}
+                        className="flex items-center gap-2 w-full text-left"
+                        onClick={() => {
+                          const target = scrollTargets[idx];
+                          if (target) {
+                            document.getElementById(target)?.scrollIntoView({ behavior: "smooth", block: "start" });
+                          }
+                        }}
+                      >
+                        {m.done ? (
+                          <CheckCircle2 className="h-4 w-4 text-teal shrink-0" />
+                        ) : (
+                          <Circle className="h-4 w-4 text-cream/30 shrink-0" />
+                        )}
+                        <span className={`text-[13px] ${m.done ? "text-cream/50 line-through" : "text-cream"}`}>{m.label}</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              );
+            })()}
+
+            {/* ─── C. Quick Stats Row ─── */}
+            {(() => {
+              const daysCount = trip.startDate && trip.endDate ? nightsBetween(trip.startDate, trip.endDate) : 0;
+              const goingCount = trip.members.filter((m) => m.rsvpStatus === "GOING").length;
+              const totalExpenses = expenses.reduce((sum, e) => sum + e.amount, 0);
+              const goingMembers = trip.members.filter((m) => m.rsvpStatus === "GOING").length || 1;
+              const costPerPerson = totalExpenses > 0 ? Math.round(totalExpenses / goingMembers) : null;
+              const teeTimeRounds = liveSchedule.filter((s) => s.type === "tee_time").length;
+              const stats = [
+                { label: "Days Away", value: trip.startDate ? (() => { const today = new Date(); today.setHours(0,0,0,0); const s = new Date(trip.startDate + "T00:00:00"); const d = Math.ceil((s.getTime() - today.getTime()) / (1000*60*60*24)); return d > 0 ? `${d}` : d === 0 ? "Today" : "Past"; })() : "TBD" },
+                { label: "Committed", value: `${goingCount}/${trip.members.length}` },
+                { label: "Est. Cost", value: costPerPerson ? `$${costPerPerson.toLocaleString()}/pp` : (liveSchedule.reduce((s, e) => s + e.cost, 0) > 0 ? `~$${Math.round(liveSchedule.reduce((s, e) => s + e.cost, 0))}/pp` : "TBD") },
+                { label: "Rounds", value: `${teeTimeRounds}` },
+              ];
+              return (
+                <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-4">
+                  {stats.map((s) => (
+                    <div key={s.label} className="rounded-[10px] bg-cream/[0.04] border border-cream/[0.08] p-3 text-center">
+                      <p className="text-[18px] font-medium text-cream">{s.value}</p>
+                      <p className="text-[11px] uppercase tracking-[1.2px] text-cream/40">{s.label}</p>
+                    </div>
+                  ))}
+                </div>
+              );
+            })()}
+
+            {/* ─── D. Crew Status ─── */}
+            <div id="crew-section" className="rounded-[10px] border border-cream/[0.08] bg-cream/[0.04] p-5">
+              <h2 className="text-[13px] font-medium text-cream/40 uppercase tracking-wider mb-3">The Crew</h2>
+              <div className="divide-y divide-cream/[0.06]">
+                {trip.members.map((m) => {
+                  const status = (m.rsvpStatus || "PENDING").toUpperCase();
+                  const statusConfig = status === "GOING"
+                    ? { label: "Going", cls: "bg-teal/20 text-teal" }
+                    : status === "DECLINED"
+                      ? { label: "Declined", cls: "bg-coral/20 text-coral" }
+                      : { label: "Pending", cls: "bg-cream/10 text-cream/50" };
+                  const roleLabel = m.role === "CAPTAIN" ? "Captain" : m.role === "CO_CAPTAIN" ? "Co-Captain" : "Player";
+                  return (
+                    <div key={m.id} className="flex items-center justify-between py-3">
+                      <div className="flex items-center gap-3 min-w-0">
+                        <span className="text-[14px] font-medium text-cream truncate">{m.name}</span>
+                        <span className="text-[12px] text-cream/30 shrink-0">{roleLabel}</span>
+                      </div>
+                      <div className="flex items-center gap-2 shrink-0">
+                        <span className={`rounded-full px-2.5 py-0.5 text-[11px] font-medium ${statusConfig.cls}`}>
+                          {statusConfig.label}
+                        </span>
+                        {status === "PENDING" && isCaptain && (
+                          <button
+                            onClick={() => {
+                              const goingCount = trip.members.filter((mm) => mm.rsvpStatus === "GOING").length;
+                              const msg = `Hey — we're planning ${trip.name}${trip.destination ? ` in ${trip.destination}` : ""}. ${goingCount} guy${goingCount !== 1 ? "s are" : " is"} already in. Commit here: ${window.location.origin}/invite/${trip.inviteCode || ""}`;
+                              navigator.clipboard.writeText(msg);
+                              setNudgeToast(true);
+                              setTimeout(() => setNudgeToast(false), 2000);
+                            }}
+                            className="border border-coral/30 text-coral text-[11px] rounded-full px-3 py-1 hover:bg-coral/10 transition-colors"
+                          >
+                            Nudge
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+              {/* Nudge toast */}
+              {nudgeToast && (
+                <div className="mt-3 rounded-[10px] border border-teal/30 bg-teal/10 px-4 py-2 text-[13px] text-teal text-center">
+                  Copied to clipboard
+                </div>
+              )}
             </div>
 
             {/* ─── Date Poll Section ─── */}
+            <div id="dates-section">
         {datePoll?.status === "locked" && trip.startDate && trip.endDate ? (
-          /* Locked dates display */
           <div className="rounded-[10px] border border-teal/30 bg-teal/10 p-5">
             <div className="flex items-center gap-2">
               <Lock className="h-5 w-5 text-teal" />
@@ -1165,7 +1315,6 @@ export default function TripDetailPage() {
             </p>
           </div>
         ) : datePoll?.status === "active" || datePoll?.status === "closed" ? (
-          /* Active / Closed poll — voting UI */
           <DatePollVotingCard
             poll={datePoll}
             options={pollOptions}
@@ -1181,7 +1330,6 @@ export default function TripDetailPage() {
             onLock={handleLockDates}
           />
         ) : !trip.startDate && !trip.endDate && !datePoll ? (
-          /* No dates, no poll — prompt captain */
           currentUserId && trip.members.some((m) => m.userId === currentUserId && (m.role === "CAPTAIN" || m.role === "CO_CAPTAIN")) ? (
             <div className="rounded-[10px] border border-dashed border-cream/15 p-6 text-center">
               <CalendarDays className="mx-auto h-8 w-8 text-cream/30" />
@@ -1199,6 +1347,7 @@ export default function TripDetailPage() {
             </div>
           ) : null
         ) : null}
+            </div>
 
         {/* Create Poll Modal */}
         {showCreatePoll && (
@@ -1421,15 +1570,385 @@ export default function TripDetailPage() {
           </div>
         )}
 
-        {/* Two-column layout for lodging + leaderboard */}
-        <div className="grid gap-4 lg:grid-cols-2">
-          {/* Lodging */}
-          <div className="rounded-[10px] border border-cream/[0.08] bg-cream/[0.04] p-5">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <Hotel className="h-4 w-4 text-cream/35" />
-                <h2 className="text-[15px] font-medium text-cream">Lodging</h2>
+        {/* ─── E. Schedule / Itinerary ─── */}
+        <div id="schedule-section" className="rounded-[10px] border border-cream/[0.08] bg-cream/[0.04] p-5">
+          <div className="flex items-center justify-between">
+            <h2 className="text-[13px] font-medium text-cream/40 uppercase tracking-wider">Schedule</h2>
+            {isCaptain && (
+              <button
+                onClick={() => {
+                  setShowAddEvent(!showAddEvent);
+                  if (!showAddEvent && trip.startDate) setEventDate(trip.startDate);
+                }}
+                className="inline-flex items-center gap-1.5 rounded-[10px] bg-coral px-3 py-2 text-[12px] font-medium text-cream transition-colors hover:bg-coral/90"
+              >
+                <Plus className="h-3.5 w-3.5" />
+                Add Event
+              </button>
+            )}
+          </div>
+
+          {showAddEvent && isCaptain && (
+            <form
+              onSubmit={handleAddEvent}
+              className="mt-4 rounded-[10px] border border-cream/10 bg-cream/[0.06] p-4"
+            >
+              <div className="grid gap-3 sm:grid-cols-2">
+                <div>
+                  <label className="block text-[11px] font-medium uppercase tracking-[1.2px] text-cream/40">Date *</label>
+                  <input type="date" required value={eventDate} onChange={(e) => setEventDate(e.target.value)} className="mt-1 block w-full rounded-[10px] border border-cream/10 bg-cream/[0.06] px-3 py-2 text-[13px] text-cream outline-none focus:border-coral/40" />
+                </div>
+                <div>
+                  <label className="block text-[11px] font-medium uppercase tracking-[1.2px] text-cream/40">Time</label>
+                  <input type="time" value={eventTime} onChange={(e) => setEventTime(e.target.value)} className="mt-1 block w-full rounded-[10px] border border-cream/10 bg-cream/[0.06] px-3 py-2 text-[13px] text-cream outline-none focus:border-coral/40" />
+                </div>
+                <div>
+                  <label className="block text-[11px] font-medium uppercase tracking-[1.2px] text-cream/40">Title *</label>
+                  <input type="text" required value={eventTitle} onChange={(e) => setEventTitle(e.target.value)} placeholder="TPC Scottsdale - Round 1" className="mt-1 block w-full rounded-[10px] border border-cream/10 bg-cream/[0.06] px-3 py-2 text-[13px] text-cream placeholder:text-cream/35 outline-none focus:border-coral/40" />
+                </div>
+                <div>
+                  <label className="block text-[11px] font-medium uppercase tracking-[1.2px] text-cream/40">Type</label>
+                  <select value={eventType} onChange={(e) => setEventType(e.target.value as ScheduleItem["type"])} className="mt-1 block w-full rounded-[10px] border border-cream/10 bg-cream/[0.06] px-3 py-2 text-[13px] text-cream outline-none focus:border-coral/40">
+                    {SCHEDULE_TYPES.map((t) => (<option key={t.value} value={t.value}>{t.emoji} {t.label}</option>))}
+                  </select>
+                </div>
+                <div className="sm:col-span-2">
+                  <label className="block text-[11px] font-medium uppercase tracking-[1.2px] text-cream/40">Description</label>
+                  <input type="text" value={eventDesc} onChange={(e) => setEventDesc(e.target.value)} placeholder="Optional details" className="mt-1 block w-full rounded-[10px] border border-cream/10 bg-cream/[0.06] px-3 py-2 text-[13px] text-cream placeholder:text-cream/35 outline-none focus:border-coral/40" />
+                </div>
               </div>
+              <div className="mt-4 flex gap-3">
+                <button type="submit" className="rounded-[10px] bg-coral px-4 py-2 text-[13px] font-medium text-cream hover:bg-coral/90">Add</button>
+                <button type="button" onClick={() => setShowAddEvent(false)} className="rounded-[10px] border border-cream/10 px-4 py-2 text-[13px] font-medium text-cream/50">Cancel</button>
+              </div>
+            </form>
+          )}
+
+          {liveSchedule.length === 0 ? (
+            <div className="mt-4 rounded-[10px] border border-dashed border-cream/20 p-6 text-center">
+              <p className="text-[13px] text-cream/30">No events yet. Start building your itinerary.</p>
+              {isCaptain && (
+                <div className="mt-3 flex items-center justify-center gap-3">
+                  <button
+                    onClick={() => {
+                      setEventType("tee_time");
+                      setShowAddEvent(true);
+                      if (trip.startDate) setEventDate(trip.startDate);
+                    }}
+                    className="border border-dashed border-cream/20 rounded-[10px] px-4 py-2 text-[13px] text-cream/40 hover:border-cream/30 hover:text-cream/60 transition-colors"
+                  >
+                    + Add Tee Time
+                  </button>
+                  <button
+                    onClick={() => {
+                      setEventType("activity");
+                      setShowAddEvent(true);
+                      if (trip.startDate) setEventDate(trip.startDate);
+                    }}
+                    className="border border-dashed border-cream/20 rounded-[10px] px-4 py-2 text-[13px] text-cream/40 hover:border-cream/30 hover:text-cream/60 transition-colors"
+                  >
+                    + Add Activity
+                  </button>
+                </div>
+              )}
+            </div>
+          ) : (
+            <div className="mt-4 space-y-6">
+              {scheduleDates.map((date, dateIdx) => {
+                const dayEvents = sortedSchedule.filter((e) => e.date === date);
+                const dayNum = dayNumberFor(date);
+                const dayLabel = dayNum > 0 ? `Day ${dayNum}` : "";
+                const prevDate = dateIdx > 0 ? scheduleDates[dateIdx - 1] : null;
+                const nextDate = dateIdx < scheduleDates.length - 1 ? scheduleDates[dateIdx + 1] : null;
+                return (
+                  <div key={date}>
+                    <h3 className="flex items-center gap-2 border-b border-cream/[0.06] pb-2 text-[11px] uppercase tracking-[1.2px]">
+                      {dayLabel && <span className="text-cream font-medium">{dayLabel}</span>}
+                      {dayLabel && <span className="text-cream/40">&mdash;</span>}
+                      <span className="text-cream/40">{formatDate(date)}</span>
+                    </h3>
+                    <div className="mt-2 space-y-1.5">
+                      {dayEvents.map((event, idx) => {
+                        const typeConfig = SCHEDULE_TYPES.find((t) => t.value === event.type);
+                        const isDragging = dragId === event.id;
+                        const isDragOver = dragOverId === event.id;
+                        return (
+                          <div
+                            key={event.id}
+                            draggable={isCaptain}
+                            onDragStart={isCaptain ? (e) => handleDragStart(e, event.id) : undefined}
+                            onDragOver={isCaptain ? (e) => handleDragOver(e, event.id) : undefined}
+                            onDrop={isCaptain ? (e) => handleDrop(e, event.id, dayEvents) : undefined}
+                            onDragEnd={() => { setDragId(null); setDragOverId(null); }}
+                            className={`group relative rounded-[10px] border-l-4 ${typeConfig?.border || "border-l-cream/20"} border border-cream/[0.08] bg-cream/[0.04] px-3 py-2.5 transition-all ${
+                              isDragging ? "opacity-40" : ""
+                            } ${isDragOver ? "ring-2 ring-coral ring-offset-1 ring-offset-dark" : ""} ${
+                              isCaptain ? "cursor-pointer hover:bg-cream/[0.06]" : ""
+                            }`}
+                            onClick={isCaptain ? () => openEditModal(event) : undefined}
+                          >
+                            <div className="flex items-center gap-2.5">
+                              {isCaptain && (
+                                <span
+                                  className="shrink-0 cursor-grab touch-none text-cream/20 hover:text-cream/40 active:cursor-grabbing min-w-[20px]"
+                                  onClick={(e) => e.stopPropagation()}
+                                  onMouseDown={(e) => e.stopPropagation()}
+                                >
+                                  <GripVertical className="h-4 w-4" />
+                                </span>
+                              )}
+                              <span className="shrink-0 text-base">{typeConfig?.emoji || "\uD83D\uDCCC"}</span>
+                              {event.time && (
+                                <span className="shrink-0 text-[12px] font-medium text-cream/50">
+                                  {formatTime(event.time)}
+                                </span>
+                              )}
+                              <span className="text-[13px] font-medium text-cream">
+                                {event.title}
+                              </span>
+                              <span className="flex-1" />
+                              {event.cost > 0 && (
+                                <span className="hidden shrink-0 text-[12px] font-medium text-cream/40 sm:block">
+                                  ${event.cost}/person
+                                </span>
+                              )}
+                              <span className={`hidden shrink-0 rounded-full px-2 py-0.5 text-[10px] font-medium sm:inline ${typeConfig?.color || "bg-cream/[0.08] text-cream/50"}`}>
+                                {typeConfig?.label || event.type}
+                              </span>
+                              {isCaptain && (
+                                <div className="flex shrink-0 items-center gap-0.5 opacity-0 transition-opacity group-hover:opacity-100" onClick={(e) => e.stopPropagation()}>
+                                  <button
+                                    onClick={() => handleMoveItem(event.id, "up", dayEvents)}
+                                    disabled={idx === 0}
+                                    className="rounded p-1 text-cream/20 hover:bg-cream/[0.06] hover:text-cream/50 disabled:opacity-30 min-w-[28px] min-h-[28px] flex items-center justify-center"
+                                    title="Move up"
+                                  >
+                                    <ChevronUp className="h-3.5 w-3.5" />
+                                  </button>
+                                  <button
+                                    onClick={() => handleMoveItem(event.id, "down", dayEvents)}
+                                    disabled={idx === dayEvents.length - 1}
+                                    className="rounded p-1 text-cream/20 hover:bg-cream/[0.06] hover:text-cream/50 disabled:opacity-30 min-w-[28px] min-h-[28px] flex items-center justify-center"
+                                    title="Move down"
+                                  >
+                                    <ChevronDown className="h-3.5 w-3.5" />
+                                  </button>
+                                  {prevDate && (
+                                    <button
+                                      onClick={() => handleQuickMove(event, prevDate)}
+                                      className="rounded p-1 text-cream/20 hover:bg-cream/[0.06] hover:text-cream/50 min-w-[28px] min-h-[28px] flex items-center justify-center"
+                                      title={`Move to ${formatDate(prevDate)}`}
+                                    >
+                                      <ChevronLeft className="h-3.5 w-3.5" />
+                                    </button>
+                                  )}
+                                  {nextDate && (
+                                    <button
+                                      onClick={() => handleQuickMove(event, nextDate)}
+                                      className="rounded p-1 text-cream/20 hover:bg-cream/[0.06] hover:text-cream/50 min-w-[28px] min-h-[28px] flex items-center justify-center"
+                                      title={`Move to ${formatDate(nextDate)}`}
+                                    >
+                                      <ChevronRight className="h-3.5 w-3.5" />
+                                    </button>
+                                  )}
+                                  <button
+                                    onClick={() => openEditModal(event)}
+                                    className="rounded p-1 text-cream/20 hover:bg-cream/[0.06] hover:text-cream/50 min-w-[28px] min-h-[28px] flex items-center justify-center"
+                                    title="Edit"
+                                  >
+                                    <Pencil className="h-3 w-3" />
+                                  </button>
+                                  <button
+                                    onClick={() => {
+                                      if (deleteConfirm === event.id) {
+                                        handleDeleteEvent(event.id);
+                                        setDeleteConfirm(null);
+                                      } else {
+                                        setDeleteConfirm(event.id);
+                                        setTimeout(() => setDeleteConfirm(null), 3000);
+                                      }
+                                    }}
+                                    className={`rounded p-1 min-w-[28px] min-h-[28px] flex items-center justify-center transition-colors ${
+                                      deleteConfirm === event.id
+                                        ? "bg-red-500/15 text-red-400"
+                                        : "text-cream/20 hover:bg-red-500/10 hover:text-red-400"
+                                    }`}
+                                    title={deleteConfirm === event.id ? "Click again to confirm" : "Delete"}
+                                  >
+                                    <Trash2 className="h-3 w-3" />
+                                  </button>
+                                </div>
+                              )}
+                            </div>
+                            {(event.cost > 0 || event.description || event.notes) && (
+                              <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-0.5 pl-0 text-[12px] text-cream/40" style={{ paddingLeft: isCaptain ? "28px" : "0" }}>
+                                {event.cost > 0 && (
+                                  <span className="sm:hidden">${event.cost}/person</span>
+                                )}
+                                {event.description && <span>{event.description}</span>}
+                                {event.notes && <span className="italic text-cream/30">{event.notes}</span>}
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+                    {isCaptain && (
+                      <>
+                        {addForDate === date ? (
+                          <div className="mt-2 rounded-[10px] border border-cream/10 bg-cream/[0.06] p-3">
+                            <div className="grid gap-2 sm:grid-cols-3">
+                              <input
+                                type="text"
+                                autoFocus
+                                value={addForm.title}
+                                onChange={(e) => setAddForm({ ...addForm, title: e.target.value })}
+                                placeholder="Event title *"
+                                className="col-span-1 rounded-[10px] border border-cream/10 bg-cream/[0.06] px-3 py-2 text-[13px] text-cream placeholder:text-cream/35 outline-none focus:border-coral/40"
+                              />
+                              <input
+                                type="time"
+                                value={addForm.time}
+                                onChange={(e) => setAddForm({ ...addForm, time: e.target.value })}
+                                className="rounded-[10px] border border-cream/10 bg-cream/[0.06] px-3 py-2 text-[13px] text-cream outline-none focus:border-coral/40"
+                              />
+                              <select
+                                value={addForm.type}
+                                onChange={(e) => setAddForm({ ...addForm, type: e.target.value })}
+                                className="rounded-[10px] border border-cream/10 bg-cream/[0.06] px-3 py-2 text-[13px] text-cream outline-none focus:border-coral/40"
+                              >
+                                {SCHEDULE_TYPES.map((t) => (<option key={t.value} value={t.value}>{t.emoji} {t.label}</option>))}
+                              </select>
+                            </div>
+                            <div className="mt-2 grid gap-2 sm:grid-cols-2">
+                              <input
+                                type="number"
+                                value={addForm.cost}
+                                onChange={(e) => setAddForm({ ...addForm, cost: e.target.value })}
+                                placeholder="$ Cost per person (optional)"
+                                className="rounded-[10px] border border-cream/10 bg-cream/[0.06] px-3 py-2 text-[13px] text-cream placeholder:text-cream/35 outline-none focus:border-coral/40"
+                              />
+                              <input
+                                type="text"
+                                value={addForm.notes}
+                                onChange={(e) => setAddForm({ ...addForm, notes: e.target.value })}
+                                placeholder="Notes (optional)"
+                                className="rounded-[10px] border border-cream/10 bg-cream/[0.06] px-3 py-2 text-[13px] text-cream placeholder:text-cream/35 outline-none focus:border-coral/40"
+                              />
+                            </div>
+                            <div className="mt-2 flex gap-2">
+                              <button
+                                onClick={handleAddForDay}
+                                disabled={addSaving || !addForm.title.trim()}
+                                className="inline-flex items-center gap-1 rounded-[10px] bg-coral px-3 py-2 text-[12px] font-medium text-cream hover:bg-coral/90 disabled:opacity-50"
+                              >
+                                {addSaving ? <Loader2 className="h-3 w-3 animate-spin" /> : <Plus className="h-3 w-3" />}
+                                Add
+                              </button>
+                              <button
+                                onClick={() => setAddForDate(null)}
+                                className="rounded-[10px] border border-cream/10 px-3 py-2 text-[12px] font-medium text-cream/50"
+                              >
+                                Cancel
+                              </button>
+                            </div>
+                          </div>
+                        ) : (
+                          <button
+                            onClick={() => openAddForDay(date, dayEvents)}
+                            className="mt-2 inline-flex items-center gap-1 rounded-[10px] border border-dashed border-cream/15 px-3 py-1.5 text-[12px] font-medium text-cream/40 transition-colors hover:border-cream/25 hover:text-cream/60"
+                          >
+                            <Plus className="h-3 w-3" />
+                            Add to {dayLabel || formatDate(date)}
+                          </button>
+                        )}
+                      </>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </div>
+
+        {/* ─── F. Budget / Expenses ─── */}
+        <div className="rounded-[10px] border border-cream/[0.08] bg-cream/[0.04] p-5">
+          <div className="flex items-center justify-between">
+            <h2 className="text-[13px] font-medium text-cream/40 uppercase tracking-wider mb-3">Budget</h2>
+            <Link
+              href={`/trips/${tripId}/expenses`}
+              className="text-[12px] font-medium text-coral hover:text-coral/80"
+            >
+              {expenses.length > 0 ? "View All" : "+ Add Expense"}
+            </Link>
+          </div>
+          {(() => {
+            const totalExpenses = expenses.reduce((sum, e) => sum + e.amount, 0);
+            const goingMembers = trip.members.filter((m) => m.rsvpStatus === "GOING").length || 1;
+            const scheduleCostPP = liveSchedule.reduce((sum, e) => sum + e.cost, 0);
+            const greenFees = expenses.filter((e) => e.description.toLowerCase().includes("green") || e.description.toLowerCase().includes("golf") || e.description.toLowerCase().includes("tee")).reduce((s, e) => s + e.amount, 0);
+            const lodgingExp = expenses.filter((e) => e.description.toLowerCase().includes("lodg") || e.description.toLowerCase().includes("hotel") || e.description.toLowerCase().includes("airbnb") || e.description.toLowerCase().includes("room")).reduce((s, e) => s + e.amount, 0);
+            const foodExp = expenses.filter((e) => e.description.toLowerCase().includes("food") || e.description.toLowerCase().includes("dinner") || e.description.toLowerCase().includes("drink") || e.description.toLowerCase().includes("bar") || e.description.toLowerCase().includes("restaurant")).reduce((s, e) => s + e.amount, 0);
+            const otherExp = totalExpenses - greenFees - lodgingExp - foodExp;
+            return (
+              <div className="space-y-3">
+                {scheduleCostPP > 0 && (
+                  <p className="text-[14px] text-cream">
+                    Estimated: <span className="font-medium">~${Math.round(scheduleCostPP).toLocaleString()}/person</span>
+                    <span className="text-cream/40 text-[13px] ml-1">(from itinerary)</span>
+                  </p>
+                )}
+                {totalExpenses > 0 ? (
+                  <>
+                    <p className="text-[14px] text-cream">
+                      Logged expenses: <span className="font-medium">${totalExpenses.toLocaleString()} total</span>
+                      <span className="text-cream/40 text-[13px] ml-1">(${Math.round(totalExpenses / goingMembers).toLocaleString()}/person)</span>
+                    </p>
+                    <div className="space-y-1.5 ml-1">
+                      {greenFees > 0 && (
+                        <div className="flex items-center gap-2 text-[13px] text-cream/50">
+                          <span>&#9971; Green fees</span>
+                          <span className="flex-1 border-b border-dotted border-cream/10" />
+                          <span>${greenFees.toLocaleString()} (${Math.round(greenFees / goingMembers)}/pp)</span>
+                        </div>
+                      )}
+                      {lodgingExp > 0 && (
+                        <div className="flex items-center gap-2 text-[13px] text-cream/50">
+                          <span>&#127968; Lodging</span>
+                          <span className="flex-1 border-b border-dotted border-cream/10" />
+                          <span>${lodgingExp.toLocaleString()} (${Math.round(lodgingExp / goingMembers)}/pp)</span>
+                        </div>
+                      )}
+                      {foodExp > 0 && (
+                        <div className="flex items-center gap-2 text-[13px] text-cream/50">
+                          <span>&#127869; Food/drinks</span>
+                          <span className="flex-1 border-b border-dotted border-cream/10" />
+                          <span>${foodExp.toLocaleString()} (${Math.round(foodExp / goingMembers)}/pp)</span>
+                        </div>
+                      )}
+                      {otherExp > 0 && (
+                        <div className="flex items-center gap-2 text-[13px] text-cream/50">
+                          <span>&#128204; Other</span>
+                          <span className="flex-1 border-b border-dotted border-cream/10" />
+                          <span>${otherExp.toLocaleString()}</span>
+                        </div>
+                      )}
+                    </div>
+                  </>
+                ) : (
+                  <p className="text-[13px] text-cream/30 py-4 text-center">
+                    Track expenses as you go. Split automatically.
+                  </p>
+                )}
+              </div>
+            );
+          })()}
+        </div>
+
+        {/* ─── G. Lodging Card ─── */}
+        <div id="lodging-section" className="rounded-[10px] border border-cream/[0.08] bg-cream/[0.04] p-5">
+            <div className="flex items-center justify-between">
+              <h2 className="text-[13px] font-medium text-cream/40 uppercase tracking-wider">Lodging</h2>
               <button
                 onClick={() => setEditingLodging(!editingLodging)}
                 className="text-[12px] font-medium text-cream/40 hover:text-cream/60"
@@ -1571,12 +2090,12 @@ export default function TripDetailPage() {
             )}
           </div>
 
-          {/* Leaderboard Preview */}
+          {/* ─── H. Leaderboard Preview ─── */}
           <div className="rounded-[10px] border border-cream/[0.08] bg-cream/[0.04] p-5">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <Medal className="h-4 w-4 text-cream/35" />
-                <h2 className="text-[15px] font-medium text-cream">
+                <h2 className="text-[13px] font-medium text-cream/40 uppercase tracking-wider">
                   Leaderboard
                 </h2>
               </div>
@@ -1646,7 +2165,6 @@ export default function TripDetailPage() {
               </div>
             )}
           </div>
-        </div>
 
         {/* Booking Checklist */}
         {totalBookable > 0 && (
@@ -1855,294 +2373,6 @@ export default function TripDetailPage() {
           </div>
         )}
 
-        {/* Schedule */}
-        <div className="rounded-[10px] border border-cream/[0.08] bg-cream/[0.04] p-5">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <CalendarDays className="h-4 w-4 text-cream/35" />
-              <h2 className="text-[15px] font-medium text-cream">Schedule</h2>
-            </div>
-            {isCaptain && (
-              <button
-                onClick={() => {
-                  setShowAddEvent(!showAddEvent);
-                  if (!showAddEvent && trip.startDate) setEventDate(trip.startDate);
-                }}
-                className="inline-flex items-center gap-1.5 rounded-[10px] bg-coral px-3 py-2 text-[12px] font-medium text-cream transition-colors hover:bg-coral/90"
-              >
-                <Plus className="h-3.5 w-3.5" />
-                Add Event
-              </button>
-            )}
-          </div>
-
-          {showAddEvent && isCaptain && (
-            <form
-              onSubmit={handleAddEvent}
-              className="mt-4 rounded-[10px] border border-cream/10 bg-cream/[0.06] p-4"
-            >
-              <div className="grid gap-3 sm:grid-cols-2">
-                <div>
-                  <label className="block text-[11px] font-medium uppercase tracking-[1.2px] text-cream/40">Date *</label>
-                  <input type="date" required value={eventDate} onChange={(e) => setEventDate(e.target.value)} className="mt-1 block w-full rounded-[10px] border border-cream/10 bg-cream/[0.06] px-3 py-2 text-[13px] text-cream outline-none focus:border-coral/40" />
-                </div>
-                <div>
-                  <label className="block text-[11px] font-medium uppercase tracking-[1.2px] text-cream/40">Time</label>
-                  <input type="time" value={eventTime} onChange={(e) => setEventTime(e.target.value)} className="mt-1 block w-full rounded-[10px] border border-cream/10 bg-cream/[0.06] px-3 py-2 text-[13px] text-cream outline-none focus:border-coral/40" />
-                </div>
-                <div>
-                  <label className="block text-[11px] font-medium uppercase tracking-[1.2px] text-cream/40">Title *</label>
-                  <input type="text" required value={eventTitle} onChange={(e) => setEventTitle(e.target.value)} placeholder="TPC Scottsdale - Round 1" className="mt-1 block w-full rounded-[10px] border border-cream/10 bg-cream/[0.06] px-3 py-2 text-[13px] text-cream placeholder:text-cream/35 outline-none focus:border-coral/40" />
-                </div>
-                <div>
-                  <label className="block text-[11px] font-medium uppercase tracking-[1.2px] text-cream/40">Type</label>
-                  <select value={eventType} onChange={(e) => setEventType(e.target.value as ScheduleItem["type"])} className="mt-1 block w-full rounded-[10px] border border-cream/10 bg-cream/[0.06] px-3 py-2 text-[13px] text-cream outline-none focus:border-coral/40">
-                    {SCHEDULE_TYPES.map((t) => (<option key={t.value} value={t.value}>{t.emoji} {t.label}</option>))}
-                  </select>
-                </div>
-                <div className="sm:col-span-2">
-                  <label className="block text-[11px] font-medium uppercase tracking-[1.2px] text-cream/40">Description</label>
-                  <input type="text" value={eventDesc} onChange={(e) => setEventDesc(e.target.value)} placeholder="Optional details" className="mt-1 block w-full rounded-[10px] border border-cream/10 bg-cream/[0.06] px-3 py-2 text-[13px] text-cream placeholder:text-cream/35 outline-none focus:border-coral/40" />
-                </div>
-              </div>
-              <div className="mt-4 flex gap-3">
-                <button type="submit" className="rounded-[10px] bg-coral px-4 py-2 text-[13px] font-medium text-cream hover:bg-coral/90">Add</button>
-                <button type="button" onClick={() => setShowAddEvent(false)} className="rounded-[10px] border border-cream/10 px-4 py-2 text-[13px] font-medium text-cream/50">Cancel</button>
-              </div>
-            </form>
-          )}
-
-          {liveSchedule.length === 0 ? (
-            <p className="mt-3 text-[13px] text-cream/30 text-center py-8">
-              No events scheduled yet.{isCaptain ? " Add tee times, dinners, and activities." : ""}
-            </p>
-          ) : (
-            <div className="mt-4 space-y-6">
-              {scheduleDates.map((date, dateIdx) => {
-                const dayEvents = sortedSchedule.filter((e) => e.date === date);
-                const dayNum = dayNumberFor(date);
-                const dayLabel = dayNum > 0 ? `Day ${dayNum}` : "";
-                const prevDate = dateIdx > 0 ? scheduleDates[dateIdx - 1] : null;
-                const nextDate = dateIdx < scheduleDates.length - 1 ? scheduleDates[dateIdx + 1] : null;
-                return (
-                  <div key={date}>
-                    <h3 className="flex items-center gap-2 border-b border-cream/[0.06] pb-2 text-[11px] uppercase tracking-[1.2px]">
-                      {dayLabel && <span className="text-cream font-medium">{dayLabel}</span>}
-                      {dayLabel && <span className="text-cream/40">&mdash;</span>}
-                      <span className="text-cream/40">{formatDate(date)}</span>
-                    </h3>
-                    <div className="mt-2 space-y-1.5">
-                      {dayEvents.map((event, idx) => {
-                        const typeConfig = SCHEDULE_TYPES.find((t) => t.value === event.type);
-                        const isDragging = dragId === event.id;
-                        const isDragOver = dragOverId === event.id;
-                        return (
-                          <div
-                            key={event.id}
-                            draggable={isCaptain}
-                            onDragStart={isCaptain ? (e) => handleDragStart(e, event.id) : undefined}
-                            onDragOver={isCaptain ? (e) => handleDragOver(e, event.id) : undefined}
-                            onDrop={isCaptain ? (e) => handleDrop(e, event.id, dayEvents) : undefined}
-                            onDragEnd={() => { setDragId(null); setDragOverId(null); }}
-                            className={`group relative rounded-[10px] border-l-4 ${typeConfig?.border || "border-l-cream/20"} border border-cream/[0.08] bg-cream/[0.04] px-3 py-2.5 transition-all ${
-                              isDragging ? "opacity-40" : ""
-                            } ${isDragOver ? "ring-2 ring-coral ring-offset-1 ring-offset-dark" : ""} ${
-                              isCaptain ? "cursor-pointer hover:bg-cream/[0.06]" : ""
-                            }`}
-                            onClick={isCaptain ? () => openEditModal(event) : undefined}
-                          >
-                            <div className="flex items-center gap-2.5">
-                              {/* Drag handle — captain only */}
-                              {isCaptain && (
-                                <span
-                                  className="shrink-0 cursor-grab touch-none text-cream/20 hover:text-cream/40 active:cursor-grabbing min-w-[20px]"
-                                  onClick={(e) => e.stopPropagation()}
-                                  onMouseDown={(e) => e.stopPropagation()}
-                                >
-                                  <GripVertical className="h-4 w-4" />
-                                </span>
-                              )}
-                              {/* Type emoji + time + title */}
-                              <span className="shrink-0 text-base">{typeConfig?.emoji || "\uD83D\uDCCC"}</span>
-                              {event.time && (
-                                <span className="shrink-0 text-[12px] font-medium text-cream/50">
-                                  {formatTime(event.time)}
-                                </span>
-                              )}
-                              <span className="text-[13px] font-medium text-cream">
-                                {event.title}
-                              </span>
-                              <span className="flex-1" />
-                              {event.cost > 0 && (
-                                <span className="hidden shrink-0 text-[12px] font-medium text-cream/40 sm:block">
-                                  ${event.cost}/person
-                                </span>
-                              )}
-                              <span className={`hidden shrink-0 rounded-full px-2 py-0.5 text-[10px] font-medium sm:inline ${typeConfig?.color || "bg-cream/[0.08] text-cream/50"}`}>
-                                {typeConfig?.label || event.type}
-                              </span>
-                              {/* Captain edit/delete + reorder */}
-                              {isCaptain && (
-                                <div className="flex shrink-0 items-center gap-0.5 opacity-0 transition-opacity group-hover:opacity-100" onClick={(e) => e.stopPropagation()}>
-                                  {/* Reorder arrows */}
-                                  <button
-                                    onClick={() => handleMoveItem(event.id, "up", dayEvents)}
-                                    disabled={idx === 0}
-                                    className="rounded p-1 text-cream/20 hover:bg-cream/[0.06] hover:text-cream/50 disabled:opacity-30 min-w-[28px] min-h-[28px] flex items-center justify-center"
-                                    title="Move up"
-                                  >
-                                    <ChevronUp className="h-3.5 w-3.5" />
-                                  </button>
-                                  <button
-                                    onClick={() => handleMoveItem(event.id, "down", dayEvents)}
-                                    disabled={idx === dayEvents.length - 1}
-                                    className="rounded p-1 text-cream/20 hover:bg-cream/[0.06] hover:text-cream/50 disabled:opacity-30 min-w-[28px] min-h-[28px] flex items-center justify-center"
-                                    title="Move down"
-                                  >
-                                    <ChevronDown className="h-3.5 w-3.5" />
-                                  </button>
-                                  {/* Quick day move */}
-                                  {prevDate && (
-                                    <button
-                                      onClick={() => handleQuickMove(event, prevDate)}
-                                      className="rounded p-1 text-cream/20 hover:bg-cream/[0.06] hover:text-cream/50 min-w-[28px] min-h-[28px] flex items-center justify-center"
-                                      title={`Move to ${formatDate(prevDate)}`}
-                                    >
-                                      <ChevronLeft className="h-3.5 w-3.5" />
-                                    </button>
-                                  )}
-                                  {nextDate && (
-                                    <button
-                                      onClick={() => handleQuickMove(event, nextDate)}
-                                      className="rounded p-1 text-cream/20 hover:bg-cream/[0.06] hover:text-cream/50 min-w-[28px] min-h-[28px] flex items-center justify-center"
-                                      title={`Move to ${formatDate(nextDate)}`}
-                                    >
-                                      <ChevronRight className="h-3.5 w-3.5" />
-                                    </button>
-                                  )}
-                                  {/* Edit icon */}
-                                  <button
-                                    onClick={() => openEditModal(event)}
-                                    className="rounded p-1 text-cream/20 hover:bg-cream/[0.06] hover:text-cream/50 min-w-[28px] min-h-[28px] flex items-center justify-center"
-                                    title="Edit"
-                                  >
-                                    <Pencil className="h-3 w-3" />
-                                  </button>
-                                  {/* Delete icon */}
-                                  <button
-                                    onClick={() => {
-                                      if (deleteConfirm === event.id) {
-                                        handleDeleteEvent(event.id);
-                                        setDeleteConfirm(null);
-                                      } else {
-                                        setDeleteConfirm(event.id);
-                                        setTimeout(() => setDeleteConfirm(null), 3000);
-                                      }
-                                    }}
-                                    className={`rounded p-1 min-w-[28px] min-h-[28px] flex items-center justify-center transition-colors ${
-                                      deleteConfirm === event.id
-                                        ? "bg-red-500/15 text-red-400"
-                                        : "text-cream/20 hover:bg-red-500/10 hover:text-red-400"
-                                    }`}
-                                    title={deleteConfirm === event.id ? "Click again to confirm" : "Delete"}
-                                  >
-                                    <Trash2 className="h-3 w-3" />
-                                  </button>
-                                </div>
-                              )}
-                            </div>
-                            {/* Second row: cost (mobile) + description/notes */}
-                            {(event.cost > 0 || event.description || event.notes) && (
-                              <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-0.5 pl-0 text-[12px] text-cream/40" style={{ paddingLeft: isCaptain ? "28px" : "0" }}>
-                                {event.cost > 0 && (
-                                  <span className="sm:hidden">${event.cost}/person</span>
-                                )}
-                                {event.description && <span>{event.description}</span>}
-                                {event.notes && <span className="italic text-cream/30">{event.notes}</span>}
-                              </div>
-                            )}
-                          </div>
-                        );
-                      })}
-                    </div>
-                    {/* Add to this day — captain only */}
-                    {isCaptain && (
-                      <>
-                        {addForDate === date ? (
-                          <div className="mt-2 rounded-[10px] border border-cream/10 bg-cream/[0.06] p-3">
-                            <div className="grid gap-2 sm:grid-cols-3">
-                              <input
-                                type="text"
-                                autoFocus
-                                value={addForm.title}
-                                onChange={(e) => setAddForm({ ...addForm, title: e.target.value })}
-                                placeholder="Event title *"
-                                className="col-span-1 rounded-[10px] border border-cream/10 bg-cream/[0.06] px-3 py-2 text-[13px] text-cream placeholder:text-cream/35 outline-none focus:border-coral/40"
-                              />
-                              <input
-                                type="time"
-                                value={addForm.time}
-                                onChange={(e) => setAddForm({ ...addForm, time: e.target.value })}
-                                className="rounded-[10px] border border-cream/10 bg-cream/[0.06] px-3 py-2 text-[13px] text-cream outline-none focus:border-coral/40"
-                              />
-                              <select
-                                value={addForm.type}
-                                onChange={(e) => setAddForm({ ...addForm, type: e.target.value })}
-                                className="rounded-[10px] border border-cream/10 bg-cream/[0.06] px-3 py-2 text-[13px] text-cream outline-none focus:border-coral/40"
-                              >
-                                {SCHEDULE_TYPES.map((t) => (<option key={t.value} value={t.value}>{t.emoji} {t.label}</option>))}
-                              </select>
-                            </div>
-                            <div className="mt-2 grid gap-2 sm:grid-cols-2">
-                              <input
-                                type="number"
-                                value={addForm.cost}
-                                onChange={(e) => setAddForm({ ...addForm, cost: e.target.value })}
-                                placeholder="$ Cost per person (optional)"
-                                className="rounded-[10px] border border-cream/10 bg-cream/[0.06] px-3 py-2 text-[13px] text-cream placeholder:text-cream/35 outline-none focus:border-coral/40"
-                              />
-                              <input
-                                type="text"
-                                value={addForm.notes}
-                                onChange={(e) => setAddForm({ ...addForm, notes: e.target.value })}
-                                placeholder="Notes (optional)"
-                                className="rounded-[10px] border border-cream/10 bg-cream/[0.06] px-3 py-2 text-[13px] text-cream placeholder:text-cream/35 outline-none focus:border-coral/40"
-                              />
-                            </div>
-                            <div className="mt-2 flex gap-2">
-                              <button
-                                onClick={handleAddForDay}
-                                disabled={addSaving || !addForm.title.trim()}
-                                className="inline-flex items-center gap-1 rounded-[10px] bg-coral px-3 py-2 text-[12px] font-medium text-cream hover:bg-coral/90 disabled:opacity-50"
-                              >
-                                {addSaving ? <Loader2 className="h-3 w-3 animate-spin" /> : <Plus className="h-3 w-3" />}
-                                Add
-                              </button>
-                              <button
-                                onClick={() => setAddForDate(null)}
-                                className="rounded-[10px] border border-cream/10 px-3 py-2 text-[12px] font-medium text-cream/50"
-                              >
-                                Cancel
-                              </button>
-                            </div>
-                          </div>
-                        ) : (
-                          <button
-                            onClick={() => openAddForDay(date, dayEvents)}
-                            className="mt-2 inline-flex items-center gap-1 rounded-[10px] border border-dashed border-cream/15 px-3 py-1.5 text-[12px] font-medium text-cream/40 transition-colors hover:border-cream/25 hover:text-cream/60"
-                          >
-                            <Plus className="h-3 w-3" />
-                            Add to {dayLabel || formatDate(date)}
-                          </button>
-                        )}
-                      </>
-                    )}
-                  </div>
-                );
-              })}
-            </div>
-          )}
-        </div>
 
           </>
         )}
