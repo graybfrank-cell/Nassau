@@ -48,6 +48,7 @@ export default function SettlementsPage() {
   const [settlements, setSettlements] = useState<Settlement[]>([]);
   const [loading, setLoading] = useState(true);
   const [updatingId, setUpdatingId] = useState<string | null>(null);
+  const [confirmingId, setConfirmingId] = useState<string | null>(null);
   const [activeFilter, setActiveFilter] = useState<string>("All");
 
   useEffect(() => {
@@ -113,8 +114,17 @@ export default function SettlementsPage() {
   }
 
   function openVenmo(payee: Profile, amount: string, note: string | null) {
-    const venmoUrl = `https://venmo.com/${payee.venmo_username}?txn=pay&amount=${amount}&note=${encodeURIComponent(note || "Nassau settlement")}`;
+    const venmoUrl = `https://venmo.com/pay?txn=pay&recipients=${payee.venmo_username}&amount=${amount}&note=${encodeURIComponent("Nassau - " + (note || "settlement"))}`;
     window.open(venmoUrl, "_blank");
+  }
+
+  function handleMarkAsPaid(id: string) {
+    if (confirmingId === id) {
+      setConfirmingId(null);
+      updateStatus(id, "paid");
+    } else {
+      setConfirmingId(id);
+    }
   }
 
   const youOweTotal = settlements
@@ -227,27 +237,29 @@ export default function SettlementsPage() {
                 key={s.id}
                 className="bg-[#27272A] rounded-xl p-4 border border-[#3F3F46]"
               >
-                {/* Top: Name + round/trip */}
+                {/* Top: Name + Amount */}
                 <div className="flex items-center justify-between">
                   <span className="font-bold text-[#F3EDE4]">
                     {otherPerson.full_name ||
                       otherPerson.email ||
                       "Unknown"}
                   </span>
-                  <span className="text-xs text-[#71717A]">
-                    {s.note || (s.round_id ? "Round" : s.trip_id ? "Trip" : "")}
+                  <span
+                    className={`text-xl font-black ${
+                      isOwed ? "text-[#0D7377]" : "text-[#D94F2B]"
+                    }`}
+                  >
+                    {isOwed ? "+" : "-"}$
+                    {parseFloat(s.amount).toFixed(2)}
                   </span>
                 </div>
 
-                {/* Middle: Amount */}
-                <p
-                  className={`text-xl font-black mt-2 ${
-                    isOwed ? "text-[#0D7377]" : "text-[#D94F2B]"
-                  }`}
-                >
-                  {isOwed ? "+" : "-"}$
-                  {parseFloat(s.amount).toFixed(2)}
-                </p>
+                {/* Round/trip note */}
+                {(s.note || s.round_id || s.trip_id) && (
+                  <p className="text-[12px] text-[#F3EDE4]/40 mt-1">
+                    {s.note || (s.round_id ? "Round" : s.trip_id ? "Trip" : "")}
+                  </p>
+                )}
 
                 {/* Bottom: Actions */}
                 <div className="mt-3">
@@ -257,33 +269,34 @@ export default function SettlementsPage() {
                       <span className="text-sm font-bold">Paid</span>
                     </div>
                   ) : s.payer_id === userId && s.status === "pending" ? (
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-2">
                       {s.payee.venmo_username && (
                         <button
                           onClick={() =>
                             openVenmo(s.payee, s.amount, s.note)
                           }
-                          className="inline-flex items-center gap-1.5 rounded-lg bg-[#D94F2B] px-4 py-2 text-sm font-bold text-white hover:bg-[#C44425] transition-colors"
+                          className="bg-[#D94F2B] text-[#F3EDE4] rounded-[10px] py-2.5 px-4 text-[13px] font-medium"
                         >
-                          <ExternalLink className="h-4 w-4" />
-                          Settle via Venmo →
+                          Settle Up via Venmo
                         </button>
                       )}
                       <button
-                        onClick={() => updateStatus(s.id, "paid")}
+                        onClick={() => handleMarkAsPaid(s.id)}
                         disabled={updatingId === s.id}
-                        className="text-sm text-[#71717A] hover:text-[#F3EDE4] transition-colors disabled:opacity-50"
+                        className="border border-[#F3EDE4]/10 text-[#F3EDE4]/50 rounded-[10px] py-2.5 px-4 text-[13px] font-medium hover:text-[#F3EDE4]/80 transition-colors disabled:opacity-50"
                       >
                         {updatingId === s.id
                           ? "Updating..."
-                          : "Mark as Paid"}
+                          : confirmingId === s.id
+                            ? "Are you sure?"
+                            : "Mark as Paid"}
                       </button>
                     </div>
                   ) : s.payee_id === userId && s.status === "paid" ? (
                     <button
                       onClick={() => updateStatus(s.id, "confirmed")}
                       disabled={updatingId === s.id}
-                      className="inline-flex items-center gap-1.5 rounded-lg bg-[#0D7377] px-3 py-1.5 text-sm font-bold text-white hover:bg-[#0B6165] transition-colors disabled:opacity-50"
+                      className="inline-flex items-center gap-1.5 rounded-[10px] bg-[#0D7377] px-4 py-2.5 text-[13px] font-medium text-[#F3EDE4] hover:bg-[#0B6165] transition-colors disabled:opacity-50"
                     >
                       <Check className="h-4 w-4" />
                       {updatingId === s.id
