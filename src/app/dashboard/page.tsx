@@ -6,7 +6,6 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import Image from "next/image";
 import {
-  Bell,
   Flag,
   Home,
   Trophy,
@@ -16,6 +15,7 @@ import {
   ChevronRight,
   DollarSign,
 } from "lucide-react";
+import TopBar from "@/components/TopBar";
 import type { DashboardData } from "@/types/dashboard";
 
 const EMPTY_DASHBOARD: DashboardData = {
@@ -189,25 +189,7 @@ export default function DashboardPage() {
         <div className="absolute inset-0 bg-gradient-to-b from-dark/80 via-dark/60 to-dark" />
         <div className="relative z-10 flex flex-col h-full">
           {/* ── TOP BAR ── */}
-          <div className="flex items-center justify-between px-6 py-4">
-            <span className="font-black text-xl uppercase tracking-tighter text-[#F3EDE4]">
-              NASSAU
-            </span>
-            <div className="flex items-center gap-3">
-              <Link href="/settlements" className="relative cursor-pointer transition-colors">
-                <Bell className="h-5 w-5 text-cream/40 hover:text-cream/60" />
-                {hasSettlements && (
-                  <div className="absolute -top-1 -right-1 h-2 w-2 rounded-full bg-coral" />
-                )}
-              </Link>
-              <Link href="/profile" className="h-8 w-8 rounded-full bg-gradient-to-br from-coral to-gold flex items-center justify-center text-[11px] font-medium text-dark">
-                {data.user.firstName[0]}
-                {data.user.fullName.split(" ").length > 1
-                  ? data.user.fullName.split(" ").slice(-1)[0][0]
-                  : ""}
-              </Link>
-            </div>
-          </div>
+          <TopBar />
           {/* ── GREETING ── */}
           <div className="mt-auto px-6 pb-5">
             <h1 className="font-black text-2xl text-[#F3EDE4]">

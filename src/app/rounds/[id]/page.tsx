@@ -58,6 +58,7 @@ import {
   Snowflake,
 } from "lucide-react";
 import { isWeatherStale } from "@/lib/weather";
+import TopBar from "@/components/TopBar";
 
 function formatFullDate(dateStr: string): string {
   const d = new Date(dateStr);
@@ -570,8 +571,9 @@ export default function RoundDashboardPage() {
   }
 
   return (
-    <div className="min-h-[calc(100vh-64px)] bg-dark px-4 py-10 sm:px-6">
-      <div className="mx-auto max-w-5xl">
+    <div className="min-h-[calc(100vh-64px)] bg-dark">
+      <TopBar />
+      <div className="mx-auto max-w-5xl px-4 pb-10 sm:px-6">
         <Link
           href="/rounds"
           className="inline-flex items-center gap-1.5 text-sm text-cream/50 transition-colors hover:text-cream/80"
