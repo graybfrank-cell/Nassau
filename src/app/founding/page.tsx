@@ -48,7 +48,7 @@ export default function FoundingMemberPage() {
         <div className="relative z-10 max-w-xl mx-auto w-full flex flex-col gap-6">
           <div>
             <span className="inline-block bg-[#D94F2B] text-white font-black text-[10px] tracking-widest px-4 py-1.5 rounded-full mb-6 uppercase">
-              47 SPOTS REMAINING
+              88 SPOTS REMAINING
             </span>
             <h1 className="text-5xl md:text-7xl font-black uppercase tracking-tighter text-[#F3EDE4] leading-none">
               FOUNDING
