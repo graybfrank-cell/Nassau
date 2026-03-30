@@ -62,6 +62,7 @@ import {
 } from "lucide-react";
 import RoundHub from "@/components/RoundHub";
 import TripPhotos from "@/components/trips/TripPhotos";
+import TopBar from "@/components/TopBar";
 
 const SCHEDULE_TYPES = [
   { value: "tee_time", label: "Tee Time", emoji: "\u26F3", color: "bg-coral/15 text-coral", border: "border-l-coral" },
@@ -936,8 +937,9 @@ export default function TripDetailPage() {
             priority
           />
           <div className="absolute inset-0 bg-gradient-to-b from-dark/80 via-dark/60 to-dark" />
-          <div className="relative z-10 flex h-full items-end px-5 pb-4">
-            <div className="flex items-center gap-3 w-full">
+          <div className="relative z-10 flex flex-col h-full">
+            <TopBar />
+            <div className="mt-auto px-5 pb-4 flex items-center gap-3 w-full">
               <Link
                 href="/trips"
                 className="flex h-9 w-9 items-center justify-center rounded-full border border-cream/[0.12] bg-dark/30 transition-colors hover:bg-cream/[0.06]"

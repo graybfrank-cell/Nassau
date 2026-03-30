@@ -5,7 +5,8 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { createClient } from "@/lib/supabase/client";
-import { Plus, Bell, Home, Trophy, Map, User } from "lucide-react";
+import { Plus, Home, Trophy, Map, User } from "lucide-react";
+import TopBar from "@/components/TopBar";
 
 interface TripMember {
   user_id: string;
@@ -133,8 +134,9 @@ export default function TripsPage() {
           priority
         />
         <div className="absolute inset-0 bg-gradient-to-b from-dark/80 via-dark/60 to-dark" />
-        <div className="relative z-10 flex h-full items-end px-6 pb-5">
-          <div>
+        <div className="relative z-10 flex flex-col h-full">
+          <TopBar />
+          <div className="mt-auto px-6 pb-5">
             <h1 className="text-[22px] font-medium text-[#F3EDE4] tracking-tight">My Trips</h1>
             <p className="text-[13px] text-[#F3EDE4]/50">
               {trips.length} trip{trips.length !== 1 ? "s" : ""}

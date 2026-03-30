@@ -14,6 +14,7 @@ import {
   X,
   Minus,
 } from 'lucide-react';
+import TopBar from '@/components/TopBar';
 
 // ============================================================
 // TYPES
@@ -705,21 +706,24 @@ export default function CreateTripPage() {
             priority
           />
           <div className="absolute inset-0 bg-gradient-to-b from-dark/80 via-dark/60 to-dark" />
-          <div className="relative z-10 flex h-full items-end px-5 pb-5">
-            <div className="flex items-center gap-3 w-full">
-              <button
-                onClick={goBack}
-                type="button"
-                className="flex h-9 w-9 items-center justify-center rounded-full border border-cream/[0.12] bg-dark/30 transition-colors hover:bg-cream/[0.06]"
-              >
-                <ArrowLeft className="h-[18px] w-[18px] text-cream" strokeWidth={2} />
-              </button>
-              <h1 className="flex-1 text-[22px] font-medium tracking-tight text-cream">
-                New trip
-              </h1>
-              <span className="text-[13px] text-cream/40">
-                Step {step} of {TOTAL_STEPS}
-              </span>
+          <div className="relative z-10 flex flex-col h-full">
+            <TopBar />
+            <div className="mt-auto px-5 pb-5">
+              <div className="flex items-center gap-3 w-full">
+                <button
+                  onClick={goBack}
+                  type="button"
+                  className="flex h-9 w-9 items-center justify-center rounded-full border border-cream/[0.12] bg-dark/30 transition-colors hover:bg-cream/[0.06]"
+                >
+                  <ArrowLeft className="h-[18px] w-[18px] text-cream" strokeWidth={2} />
+                </button>
+                <h1 className="flex-1 text-[22px] font-medium tracking-tight text-cream">
+                  New trip
+                </h1>
+                <span className="text-[13px] text-cream/40">
+                  Step {step} of {TOTAL_STEPS}
+                </span>
+              </div>
             </div>
           </div>
         </div>

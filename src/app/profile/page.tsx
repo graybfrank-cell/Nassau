@@ -6,7 +6,6 @@ import Link from "next/link";
 import Image from "next/image";
 import { createClient } from "@/lib/supabase/client";
 import {
-  Bell,
   Home,
   Trophy,
   Map,
@@ -15,6 +14,7 @@ import {
   Loader2,
   Check,
 } from "lucide-react";
+import TopBar from "@/components/TopBar";
 
 interface Profile {
   id: string;
@@ -146,18 +146,21 @@ export default function ProfilePage() {
           priority
         />
         <div className="absolute inset-0 bg-gradient-to-b from-dark/80 via-dark/60 to-dark" />
-        <div className="relative z-10 flex h-full items-end px-6 pb-5">
-          <div className="flex items-center gap-4">
-            <div className="w-16 h-16 bg-[#27272A] rounded-full flex items-center justify-center border-2 border-dark/50">
-              <span className="font-black text-xl text-[#F3EDE4]">
-                {getInitials(profile?.full_name)}
-              </span>
-            </div>
-            <div>
-              <h1 className="text-[22px] font-medium text-[#F3EDE4] tracking-tight">
-                {profile?.full_name || "User"}
-              </h1>
-              <p className="text-[13px] text-[#F3EDE4]/50">12 HDCP · Austin, TX</p>
+        <div className="relative z-10 flex flex-col h-full">
+          <TopBar />
+          <div className="mt-auto px-6 pb-5">
+            <div className="flex items-center gap-4">
+              <div className="w-16 h-16 bg-[#27272A] rounded-full flex items-center justify-center border-2 border-dark/50">
+                <span className="font-black text-xl text-[#F3EDE4]">
+                  {getInitials(profile?.full_name)}
+                </span>
+              </div>
+              <div>
+                <h1 className="text-[22px] font-medium text-[#F3EDE4] tracking-tight">
+                  {profile?.full_name || "User"}
+                </h1>
+                <p className="text-[13px] text-[#F3EDE4]/50">12 HDCP · Austin, TX</p>
+              </div>
             </div>
           </div>
         </div>

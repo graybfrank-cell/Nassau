@@ -3,6 +3,7 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { ArrowLeft, Search, Calendar, Clock, Check, Plus, Link2, X, MapPin } from 'lucide-react';
+import TopBar from '@/components/TopBar';
 
 interface GolfCourse {
   id: string;
@@ -547,16 +548,19 @@ export default function NewRoundPage() {
             priority
           />
           <div className="absolute inset-0 bg-gradient-to-b from-dark/80 via-dark/60 to-dark" />
-          <div className="relative z-10 flex h-full items-end px-5 pb-5">
-            <div className="flex items-center gap-3">
-              <button
-                onClick={() => router.back()}
-                type="button"
-                className="flex h-9 w-9 items-center justify-center rounded-full border border-cream/[0.12] bg-dark/30 transition-colors hover:bg-cream/[0.06]"
-              >
-                <ArrowLeft className="h-[18px] w-[18px] text-cream" strokeWidth={2} />
-              </button>
-              <h1 className="text-[22px] font-medium tracking-tight text-cream">New round</h1>
+          <div className="relative z-10 flex flex-col h-full">
+            <TopBar />
+            <div className="mt-auto px-5 pb-5">
+              <div className="flex items-center gap-3">
+                <button
+                  onClick={() => router.back()}
+                  type="button"
+                  className="flex h-9 w-9 items-center justify-center rounded-full border border-cream/[0.12] bg-dark/30 transition-colors hover:bg-cream/[0.06]"
+                >
+                  <ArrowLeft className="h-[18px] w-[18px] text-cream" strokeWidth={2} />
+                </button>
+                <h1 className="text-[22px] font-medium tracking-tight text-cream">New round</h1>
+              </div>
             </div>
           </div>
         </div>

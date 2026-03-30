@@ -3,6 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { ArrowLeft } from "lucide-react";
+import TopBar from "@/components/TopBar";
 
 const paths = [
   {
@@ -42,8 +43,9 @@ export default function NewTripPage() {
           priority
         />
         <div className="absolute inset-0 bg-gradient-to-b from-dark/80 via-dark/60 to-dark" />
-        <div className="relative z-10 flex h-full items-end px-5 pb-5">
-          <div>
+        <div className="relative z-10 flex flex-col h-full">
+          <TopBar />
+          <div className="mt-auto px-5 pb-5">
             <h1 className="text-[22px] font-medium text-cream tracking-tight">Plan Your Trip</h1>
             <p className="text-[13px] text-cream/50">How would you like to get started?</p>
           </div>
