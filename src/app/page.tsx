@@ -6,12 +6,12 @@ import AuthRedirect from "./auth-redirect";
 import { createServiceClient } from "@/lib/supabase/admin";
 
 export const metadata: Metadata = {
-  title: "Nassau — Plan Trips. Track Rounds. Settle Bets.",
+  title: "Nassau — Your Golf Trip, Handled.",
   description:
-    "The app for golf groups who actually play. Plan trips, track scores, settle bets — all in one place.",
+    "Nassau is the operating system for golf trips. Plan trips, coordinate your crew, track rounds, and settle bets — all in one app.",
   openGraph: {
-    title: "Nassau — Plan Trips. Track Rounds. Settle Bets.",
-    description: "The app for golf groups who actually play.",
+    title: "Nassau — Your Golf Trip, Handled.",
+    description: "The operating system for golf trips.",
     images: [
       "/api/og/default?title=Plan%20Trips.%0ATrack%20Rounds.%0ASettle%20Bets.&subtitle=The%20app%20for%20groups%20who%20actually%20play.",
     ],
@@ -132,16 +132,13 @@ export default async function Home() {
         {/* Content */}
         <div className="relative z-10 max-w-6xl">
           <h1 className="text-6xl font-black uppercase leading-none tracking-tighter text-[#F3EDE4] md:text-8xl lg:text-[120px]">
-            PLAN TRIPS.
-          </h1>
-          <h1 className="text-6xl font-black uppercase leading-none tracking-tighter text-[#F3EDE4] md:text-8xl lg:text-[120px]">
-            TRACK ROUNDS.
+            YOUR GOLF TRIP,
           </h1>
           <h1 className="text-6xl font-black uppercase leading-none tracking-tighter text-[#D94F2B] md:text-8xl lg:text-[120px]">
-            SETTLE BETS.
+            HANDLED.
           </h1>
           <p className="mt-4 max-w-lg text-lg text-[#F3EDE4]/70">
-            The app for groups who actually play. Any flight, any game, any bet.
+            The operating system for golf trips. From the first group text to the last settlement &mdash; one app.
           </p>
           <div className="mt-8 flex flex-col gap-4 sm:flex-row">
             <Link

@@ -22,12 +22,12 @@ export const metadata: Metadata = {
     template: "%s | Nassau",
   },
   description:
-    "Plan golf trips, track rounds, settle bets. The app for groups who actually play.",
+    "Nassau is the operating system for golf trips. Plan trips, coordinate your crew, track rounds, and settle bets — all in one app.",
   metadataBase: new URL("https://nassau.golf"),
   openGraph: {
     title: "Nassau — The Golf Trip Companion",
     description:
-      "Plan golf trips, track rounds, settle bets. The app for groups who actually play.",
+      "Nassau is the operating system for golf trips. Plan trips, coordinate your crew, track rounds, and settle bets — all in one app.",
     url: "https://nassau.golf",
     siteName: "Nassau",
     images: [
@@ -45,7 +45,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Nassau — The Golf Trip Companion",
     description:
-      "Plan golf trips, track rounds, settle bets. The app for groups who actually play.",
+      "Nassau is the operating system for golf trips. Plan trips, coordinate your crew, track rounds, and settle bets — all in one app.",
     images: ["/api/og/default?title=Nassau&subtitle=The Golf Trip Companion"],
     creator: "@UseNassauGolf",
   },
