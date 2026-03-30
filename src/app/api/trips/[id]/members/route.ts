@@ -2,6 +2,25 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getUser, getTripMembership, unauthorized, forbidden } from "@/lib/auth";
 
+export async function GET(
+  _req: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const user = await getUser();
+  if (!user) return unauthorized();
+
+  const { id: tripId } = await params;
+  const membership = await getTripMembership(tripId, user.id);
+  if (!membership) return forbidden();
+
+  const members = await prisma.tripMembers.findMany({
+    where: { trip_id: tripId },
+    orderBy: { created_at: "asc" },
+  });
+
+  return NextResponse.json(members);
+}
+
 export async function POST(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
