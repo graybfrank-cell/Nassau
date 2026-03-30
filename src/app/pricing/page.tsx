@@ -229,7 +229,7 @@ export default function PricingPage() {
           <div className="bg-[#18181B] rounded-2xl border-2 border-[#C9A54E] p-8 shadow-xl relative overflow-hidden max-w-xl mx-auto">
             <div className="absolute top-0 right-0 bg-[#C9A54E] px-4 py-1.5 rounded-bl-xl">
               <span className="text-[10px] font-black text-white uppercase">
-                LIMITED · 47 SPOTS
+                LIMITED · 88 SPOTS
               </span>
             </div>
             <p className="text-xs font-black uppercase tracking-widest text-[#C9A54E] mb-2">
@@ -248,12 +248,12 @@ export default function PricingPage() {
 
             {/* Progress bar */}
             <p className="text-[#F3EDE4]/40 text-xs mb-1">
-              47 of 100 spots remaining
+              88 of 100 spots remaining
             </p>
             <div className="h-1.5 bg-white/10 rounded-full overflow-hidden">
               <div
                 className="h-full bg-[#C9A54E] rounded-full"
-                style={{ width: "53%" }}
+                style={{ width: "12%" }}
               />
             </div>
 
@@ -278,7 +278,7 @@ export default function PricingPage() {
               CLAIM FOUNDING SPOT — $49.99/YR
             </Link>
             <p className="text-center text-xs text-[#F3EDE4]/40 mt-3">
-              Only 47 founding spots remaining. After April 1, this rate goes
+              Only 88 founding spots remaining. After April 1, this rate goes
               away forever.
             </p>
           </div>
