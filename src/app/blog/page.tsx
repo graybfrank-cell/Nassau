@@ -50,11 +50,11 @@ export default async function BlogIndex() {
   return (
     <div className="min-h-screen bg-white">
       {/* Nav */}
-      <nav className="border-b border-cream/[0.08] bg-[#18181B]">
+      <nav className="border-b border-cream/[0.08] bg-[#111111]">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
           <Link
             href="/"
-            className="text-xl font-extrabold tracking-tight text-[#D94F2B]"
+            className="text-xl font-extrabold tracking-tight text-[#2D5A3D]"
           >
             Nassau
           </Link>
@@ -82,7 +82,7 @@ export default async function BlogIndex() {
       </nav>
 
       {/* Hero header */}
-      <section className="bg-[#18181B] px-6 py-16 text-center">
+      <section className="bg-[#111111] px-6 py-16 text-center">
         <h1 className="text-4xl font-bold tracking-tight text-white sm:text-5xl">
           Golf Trip Intel
         </h1>
@@ -105,10 +105,10 @@ export default async function BlogIndex() {
                 href={`/blog/${featured.slug}`}
                 className="group mb-12 block overflow-hidden rounded-2xl border border-zinc-200 transition-shadow hover:shadow-lg"
               >
-                <div className="text-xs font-medium text-[#D94F2B] uppercase tracking-wider">
+                <div className="text-xs font-medium text-[#2D5A3D] uppercase tracking-wider">
                   {featured.target_keyword}
                 </div>
-                <h2 className="mt-2 text-lg font-semibold text-zinc-900 group-hover:text-[#D94F2B] transition-colors line-clamp-2">
+                <h2 className="mt-2 text-lg font-semibold text-zinc-900 group-hover:text-[#2D5A3D] transition-colors line-clamp-2">
                   {featured.title}
                 </h2>
                 <p className="mt-2 text-sm text-zinc-500 line-clamp-3">
@@ -146,7 +146,7 @@ export default async function BlogIndex() {
                         />
                       </div>
                     ) : (
-                      <div className="flex aspect-video items-center justify-center bg-gradient-to-br from-teal to-[#18181B]">
+                      <div className="flex aspect-video items-center justify-center bg-[#2F4F4F]">
                         <span className="text-4xl font-extrabold text-teal/20">
                           N
                         </span>

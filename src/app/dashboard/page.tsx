@@ -73,7 +73,7 @@ function formatShortDate(iso: string): string {
 function SkeletonBlock({ className }: { className?: string }) {
   return (
     <div
-      className={`animate-pulse rounded-xl bg-[#27272A] ${className ?? ""}`}
+      className={`animate-pulse rounded-xl bg-[#1A1A1A] ${className ?? ""}`}
     />
   );
 }
@@ -131,10 +131,7 @@ export default function DashboardPage() {
 
   if (loading || !data) {
     return (
-      <div
-        className="min-h-screen bg-[#18181B]"
-        style={{ fontFamily: "'Helvetica Neue', Arial, sans-serif" }}
-      >
+      <div className="min-h-screen bg-[#111111]">
         <DashboardSkeleton />
       </div>
     );
@@ -173,10 +170,7 @@ export default function DashboardPage() {
         }));
 
   return (
-    <div
-      className="min-h-screen bg-[#18181B] pb-32"
-      style={{ fontFamily: "'Helvetica Neue', Arial, sans-serif" }}
-    >
+    <div className="min-h-screen bg-[#111111] pb-32">
       {/* ── BANNER ── */}
       <div className="relative h-40 sm:h-48 overflow-hidden">
         <Image
@@ -186,38 +180,38 @@ export default function DashboardPage() {
           className="object-cover"
           priority
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-dark/80 via-dark/60 to-dark" />
+        <div className="absolute inset-0 bg-gradient-to-b from-[#111111]/80 via-[#111111]/60 to-[#111111]" />
         <div className="relative z-10 flex flex-col h-full">
           {/* ── TOP BAR ── */}
           <TopBar />
           {/* ── GREETING ── */}
           <div className="mt-auto px-6 pb-5">
-            <h1 className="font-black text-2xl text-[#F3EDE4]">
-              Hey, {data.user.firstName} 👋
+            <h1 className="font-headline text-[24px] font-medium text-[#F2F0EB]">
+              Hey, {data.user.firstName}
             </h1>
-            <p className="text-sm text-[#71717A]">{formatCurrentDate()}</p>
+            <p className="text-sm text-[#5C5C5C]">{formatCurrentDate()}</p>
           </div>
         </div>
       </div>
 
       {/* ── SETTLEMENTS BANNER ── */}
       {hasSettlements && firstOwing && (
-        <div className="mx-6 mt-4 rounded-xl bg-[#27272A] p-4 border-l-4 border-[#D94F2B]">
+        <div className="mx-6 mt-4 rounded-[10px] bg-[#1A1A1A] p-4 border-l-4 border-[#C4423B] shadow-sm">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <AlertCircle className="h-5 w-5 text-[#D94F2B] shrink-0" />
+              <AlertCircle className="h-5 w-5 text-[#C4423B] shrink-0" />
               <div>
-                <p className="font-bold text-[#F3EDE4] text-sm">
+                <p className="font-semibold text-[#F2F0EB] text-sm">
                   You owe {firstOwing.toUser} ${firstOwing.amount.toFixed(0)}
                 </p>
                 {firstOwing.roundNote && (
-                  <p className="text-xs text-[#71717A]">
+                  <p className="text-xs text-[#5C5C5C]">
                     From {firstOwing.roundNote}
                   </p>
                 )}
               </div>
             </div>
-            <Link href="/settlements" className="text-[#D94F2B] font-bold text-sm">
+            <Link href="/settlements" className="text-[#C4423B] font-semibold text-sm">
               Settle Up →
             </Link>
           </div>
@@ -225,19 +219,19 @@ export default function DashboardPage() {
       )}
 
       {/* ── QUICK STATS ROW ── */}
-      <div className="mx-6 mt-4 rounded-xl bg-[#27272A] p-4">
-        <div className="grid grid-cols-3 divide-x divide-[#3F3F46]">
+      <div className="mx-6 mt-4 rounded-[10px] bg-[#1A1A1A] p-4 shadow-sm">
+        <div className="grid grid-cols-3 divide-x divide-[#2A2A2A]">
           <div className="text-center">
-            <p className="font-black text-xl text-[#F3EDE4]">{totalRounds}</p>
-            <p className="text-xs uppercase text-[#71717A] tracking-wide">Rounds</p>
+            <p className="font-semibold text-[20px] text-[#F2F0EB]">{totalRounds}</p>
+            <p className="font-sans text-[11px] font-medium uppercase tracking-[0.08em] text-[#5C5C5C]">Rounds</p>
           </div>
           <div className="text-center">
-            <p className="font-black text-xl text-[#F3EDE4]">{avgScore}</p>
-            <p className="text-xs uppercase text-[#71717A] tracking-wide">Avg Score</p>
+            <p className="font-semibold text-[20px] text-[#F2F0EB]">{avgScore}</p>
+            <p className="font-sans text-[11px] font-medium uppercase tracking-[0.08em] text-[#5C5C5C]">Avg Score</p>
           </div>
           <div className="text-center">
-            <p className="font-black text-xl text-[#D94F2B]">${totalWon}</p>
-            <p className="text-xs uppercase text-[#71717A] tracking-wide">Won</p>
+            <p className="font-semibold text-[20px] text-[#2D5A3D]">${totalWon}</p>
+            <p className="font-sans text-[11px] font-medium uppercase tracking-[0.08em] text-[#5C5C5C]">Won</p>
           </div>
         </div>
       </div>
@@ -245,11 +239,11 @@ export default function DashboardPage() {
       {/* ── PRIMARY CTA ── */}
       <Link
         href="/rounds/new"
-        className="mx-6 mt-4 flex items-center justify-between rounded-xl bg-[#D94F2B] p-5 cursor-pointer hover:opacity-90"
+        className="mx-6 mt-4 flex items-center justify-between rounded-[10px] bg-[#2D5A3D] p-5 cursor-pointer hover:opacity-90"
       >
         <div>
-          <p className="font-black text-xl uppercase text-white leading-none">
-            START A ROUND
+          <p className="font-headline text-[20px] font-medium text-white leading-none">
+            Start a Round
           </p>
           <p className="text-sm text-white/70 mt-1">10 seconds to tee off</p>
         </div>
@@ -258,19 +252,19 @@ export default function DashboardPage() {
 
       {/* ── UPCOMING SECTION ── */}
       <div className="px-6 mt-6">
-        <p className="text-xs font-black uppercase tracking-widest text-[#0D7377] mb-3">
+        <p className="font-sans text-[11px] font-medium uppercase tracking-[0.08em] text-[#5C5C5C] mb-3">
           UPCOMING
         </p>
         {upcomingRound ? (
           <Link
             href={`/rounds/${upcomingRound.id}`}
-            className="block rounded-xl bg-[#27272A] p-4 border border-[#0D7377]/30"
+            className="block rounded-[10px] bg-[#1A1A1A] p-4 shadow-sm"
           >
-            <p className="font-bold text-[#F3EDE4]">{upcomingRound.courseName}</p>
+            <p className="font-semibold text-[#F2F0EB]">{upcomingRound.courseName}</p>
             {upcomingRound.courseLocation && (
-              <span className="text-[#F3EDE4]"> — {upcomingRound.courseLocation}</span>
+              <span className="text-[#F2F0EB]"> — {upcomingRound.courseLocation}</span>
             )}
-            <p className="text-sm text-[#71717A]">
+            <p className="text-sm text-[#8A8A8A]">
               {formatTeeTime(upcomingRound.teeTime)}
             </p>
             <div className="flex items-center justify-between mt-3">
@@ -278,7 +272,7 @@ export default function DashboardPage() {
                 {upcomingRound.players.slice(0, 4).map((p) => (
                   <div
                     key={p.id}
-                    className="h-7 w-7 rounded-full bg-[#3F3F46] border-2 border-[#27272A] flex items-center justify-center text-[10px] font-bold text-[#F3EDE4]"
+                    className="h-7 w-7 rounded-full bg-[#2F4F4F] border-2 border-[#1A1A1A] flex items-center justify-center text-[10px] font-medium text-[#F2F0EB]"
                   >
                     {p.name
                       .split(" ")
@@ -288,16 +282,16 @@ export default function DashboardPage() {
                   </div>
                 ))}
               </div>
-              <span className="text-[#0D7377] font-bold text-sm ml-auto">
+              <span className="text-[#2D5A3D] font-semibold text-sm ml-auto">
                 View Round →
               </span>
             </div>
           </Link>
         ) : (
-          <div className="rounded-xl bg-[#27272A] p-4 border border-[#0D7377]/30">
-            <p className="text-sm text-[#71717A]">
+          <div className="rounded-[10px] bg-[#1A1A1A] p-4 shadow-sm">
+            <p className="text-sm text-[#8A8A8A]">
               No upcoming rounds ·{" "}
-              <Link href="/rounds/new" className="text-[#0D7377] font-bold">
+              <Link href="/rounds/new" className="text-[#2D5A3D] font-semibold">
                 Start one now →
               </Link>
             </p>
@@ -307,11 +301,11 @@ export default function DashboardPage() {
 
       {/* ── RECENT ROUNDS SECTION ── */}
       <div className="px-6 mt-6">
-        <p className="text-xs font-black uppercase tracking-widest text-[#71717A] mb-3">
+        <p className="font-sans text-[11px] font-medium uppercase tracking-[0.08em] text-[#5C5C5C] mb-3">
           RECENT ROUNDS
         </p>
         {recentRoundsList.length > 0 ? (
-          <div className="divide-y divide-[#3F3F46]">
+          <div className="divide-y divide-[#2A2A2A]">
             {recentRoundsList.map((round) => (
               <Link
                 key={round.id}
@@ -319,23 +313,23 @@ export default function DashboardPage() {
                 className="flex items-center justify-between py-3"
               >
                 <div>
-                  <p className="font-bold text-[#F3EDE4]">{round.courseName}</p>
-                  <p className="text-xs text-[#71717A]">{formatShortDate(round.date)}</p>
+                  <p className="font-semibold text-[#F2F0EB]">{round.courseName}</p>
+                  <p className="text-xs text-[#8A8A8A]">{formatShortDate(round.date)}</p>
                 </div>
                 <div className="flex items-center gap-3">
-                  <span className="text-[#71717A]">{round.score}</span>
+                  <span className="text-[#8A8A8A]">{round.score}</span>
                   {round.moneyNet > 0 && (
-                    <span className="text-[#D94F2B] font-bold text-sm">
+                    <span className="text-[#2D5A3D] font-semibold text-sm">
                       You won ${round.moneyNet.toFixed(0)}
                     </span>
                   )}
-                  <ChevronRight className="h-4 w-4 text-[#71717A]" />
+                  <ChevronRight className="h-4 w-4 text-[#8A8A8A]" />
                 </div>
               </Link>
             ))}
           </div>
         ) : (
-          <p className="text-sm text-[#71717A]">
+          <p className="text-sm text-[#8A8A8A]">
             No rounds yet · Your history will appear here
           </p>
         )}
@@ -343,59 +337,59 @@ export default function DashboardPage() {
 
       {/* ── YOUR TRIPS SECTION ── */}
       <div className="px-6 mt-6">
-        <p className="text-xs font-black uppercase tracking-widest text-[#71717A] mb-3">
+        <p className="font-sans text-[11px] font-medium uppercase tracking-[0.08em] text-[#5C5C5C] mb-3">
           YOUR TRIPS
         </p>
-        <div className="rounded-xl bg-[#27272A] p-4">
-          <p className="font-bold text-[#F3EDE4]">Scottsdale Invitational</p>
-          <p className="text-sm text-[#71717A]">Apr 10–13 · 6 golfers</p>
-          <div className="h-1.5 bg-[#3F3F46] rounded-full mt-3">
-            <div className="h-1.5 bg-[#0D7377] rounded-full w-2/3" />
+        <div className="rounded-[10px] bg-[#1A1A1A] p-4 shadow-sm">
+          <p className="font-semibold text-[#F2F0EB]">Scottsdale Invitational</p>
+          <p className="text-sm text-[#8A8A8A]">Apr 10–13 · 6 golfers</p>
+          <div className="h-1.5 bg-[#2A2A2A] rounded-full mt-3">
+            <div className="h-1.5 bg-[#2D5A3D] rounded-full w-2/3" />
           </div>
-          <p className="text-xs text-[#0D7377] mt-1">4 of 6 paid</p>
+          <p className="text-xs text-[#2D5A3D] mt-1">4 of 6 paid</p>
         </div>
       </div>
 
       {/* ── SETTLEMENTS SECTION ── */}
       <div className="px-6 mt-6 mb-24">
-        <p className="text-xs font-black uppercase tracking-widest text-[#71717A] mb-3">
+        <p className="font-sans text-[11px] font-medium uppercase tracking-[0.08em] text-[#5C5C5C] mb-3">
           SETTLEMENTS
         </p>
         <Link
           href="/settlements"
-          className="flex items-center justify-between bg-[#27272A] rounded-xl p-4 border border-[#3F3F46] cursor-pointer hover:border-[#D94F2B] transition-colors"
+          className="flex items-center justify-between bg-[#1A1A1A] rounded-[10px] p-4 shadow-sm cursor-pointer hover:bg-[#1E1E1E] transition-colors"
         >
           <div className="flex items-center">
-            <DollarSign className="text-[#0D7377] w-5 h-5" />
-            <span className="font-bold text-[#F3EDE4] text-sm ml-3">
+            <DollarSign className="text-[#2D5A3D] w-5 h-5" />
+            <span className="font-semibold text-[#F2F0EB] text-sm ml-3">
               View Settlements
             </span>
             {hasSettlements && (
-              <span className="w-2 h-2 bg-[#D94F2B] rounded-full ml-2" />
+              <span className="w-2 h-2 bg-[#C4423B] rounded-full ml-2" />
             )}
           </div>
-          <ChevronRight className="text-[#71717A] w-4 h-4" />
+          <ChevronRight className="text-[#8A8A8A] w-4 h-4" />
         </Link>
       </div>
 
       {/* ── BOTTOM NAV ── */}
-      <nav className="fixed bottom-0 left-0 right-0 bg-[#18181B] border-t border-[#27272A] px-6 py-3">
+      <nav className="fixed bottom-0 left-0 right-0 bg-[#111111] border-t border-[#1A1A1A] px-6 py-3">
         <div className="grid grid-cols-4">
           <Link href="/dashboard" className="flex flex-col items-center gap-1">
-            <Home className="h-5 w-5 text-[#D94F2B]" />
-            <span className="text-xs uppercase font-bold text-[#D94F2B]">Home</span>
+            <Home className="h-5 w-5 text-[#2D5A3D]" />
+            <span className="text-xs uppercase font-medium text-[#2D5A3D]">Home</span>
           </Link>
           <Link href="/rounds" className="flex flex-col items-center gap-1">
-            <Trophy className="h-5 w-5 text-[#71717A]" />
-            <span className="text-xs uppercase font-bold text-[#71717A]">Rounds</span>
+            <Trophy className="h-5 w-5 text-[#8A8A8A]" />
+            <span className="text-xs uppercase font-medium text-[#8A8A8A]">Rounds</span>
           </Link>
           <Link href="/trips" className="flex flex-col items-center gap-1">
-            <Map className="h-5 w-5 text-[#71717A]" />
-            <span className="text-xs uppercase font-bold text-[#71717A]">Trips</span>
+            <Map className="h-5 w-5 text-[#8A8A8A]" />
+            <span className="text-xs uppercase font-medium text-[#8A8A8A]">Trips</span>
           </Link>
           <Link href="/profile" className="flex flex-col items-center gap-1">
-            <User className="h-5 w-5 text-[#71717A]" />
-            <span className="text-xs uppercase font-bold text-[#71717A]">Profile</span>
+            <User className="h-5 w-5 text-[#8A8A8A]" />
+            <span className="text-xs uppercase font-medium text-[#8A8A8A]">Profile</span>
           </Link>
         </div>
       </nav>
@@ -403,7 +397,7 @@ export default function DashboardPage() {
       {/* ── FLOATING BUTTON ── */}
       <Link
         href="/rounds/new"
-        className="fixed bottom-20 right-6 flex h-14 w-14 items-center justify-center rounded-full bg-[#D94F2B] shadow-lg shadow-[#D94F2B]/30"
+        className="fixed bottom-20 right-6 flex h-14 w-14 items-center justify-center rounded-full bg-[#2D5A3D] shadow-lg shadow-[#2D5A3D]/30"
       >
         <Flag className="h-6 w-6 text-white" />
       </Link>

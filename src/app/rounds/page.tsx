@@ -162,13 +162,13 @@ export default function RoundsPage() {
   }, [rounds, activeFilter, userId]);
 
   if (loading) return (
-    <div className="flex min-h-screen items-center justify-center bg-[#18181B]">
-      <p className="text-sm text-[#71717A]" style={{ fontFamily: "'Helvetica Neue', Arial, sans-serif" }}>Loading...</p>
+    <div className="flex min-h-screen items-center justify-center bg-[#111111]">
+      <p className="text-sm text-[#8A8A8A]">Loading...</p>
     </div>
   );
 
   return (
-    <div className="min-h-screen bg-[#18181B] pb-32" style={{ fontFamily: "'Helvetica Neue', Arial, sans-serif" }}>
+    <div className="min-h-screen bg-[#111111] pb-32">
       {/* ── BANNER ── */}
       <div className="relative h-40 sm:h-48 overflow-hidden">
         <Image
@@ -178,12 +178,12 @@ export default function RoundsPage() {
           className="object-cover"
           priority
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-dark/80 via-dark/60 to-dark" />
+        <div className="absolute inset-0 bg-gradient-to-b from-[#111111]/80 via-[#111111]/60 to-[#111111]" />
         <div className="relative z-10 flex flex-col h-full">
           <TopBar />
           <div className="mt-auto px-6 pb-5">
-            <h1 className="text-[22px] font-medium text-[#F3EDE4] tracking-tight">My Rounds</h1>
-            <p className="text-[13px] text-[#F3EDE4]/50">
+            <h1 className="font-headline text-[24px] font-medium text-[#F2F0EB] tracking-tight">My Rounds</h1>
+            <p className="text-[13px] text-[#8A8A8A]">
               {completedRounds.length} rounds played
             </p>
           </div>
@@ -191,21 +191,21 @@ export default function RoundsPage() {
       </div>
 
       {/* ── STATS ROW ── */}
-      <div className="mx-6 mt-4 bg-[#27272A] rounded-xl p-4">
-        <div className="grid grid-cols-3 divide-x divide-[#3F3F46]">
+      <div className="mx-6 mt-4 bg-[#1A1A1A] rounded-[10px] p-4 shadow-sm">
+        <div className="grid grid-cols-3 divide-x divide-[#2A2A2A]">
           <div className="text-center">
-            <div className="text-2xl font-black text-[#F3EDE4]">{completedRounds.length}</div>
-            <div className="text-xs uppercase text-[#71717A] font-bold mt-1">Rounds</div>
+            <div className="font-semibold text-[20px] text-[#F2F0EB]">{completedRounds.length}</div>
+            <div className="font-sans text-[11px] font-medium uppercase tracking-[0.08em] text-[#5C5C5C] mt-1">Rounds</div>
           </div>
           <div className="text-center">
-            <div className="text-2xl font-black text-[#F3EDE4]">
+            <div className="font-semibold text-[20px] text-[#F2F0EB]">
               {avgScore !== null ? (avgScore >= 0 ? `+${avgScore.toFixed(1)}` : avgScore.toFixed(1)) : "—"}
             </div>
-            <div className="text-xs uppercase text-[#71717A] font-bold mt-1">Avg Score</div>
+            <div className="font-sans text-[11px] font-medium uppercase tracking-[0.08em] text-[#5C5C5C] mt-1">Avg Score</div>
           </div>
           <div className="text-center">
-            <div className="text-2xl font-black text-[#D94F2B]">${Math.abs(netWon).toLocaleString()}</div>
-            <div className="text-xs uppercase text-[#71717A] font-bold mt-1">Won</div>
+            <div className="font-semibold text-[20px] text-[#2D5A3D]">${Math.abs(netWon).toLocaleString()}</div>
+            <div className="font-sans text-[11px] font-medium uppercase tracking-[0.08em] text-[#5C5C5C] mt-1">Won</div>
           </div>
         </div>
       </div>
@@ -216,10 +216,10 @@ export default function RoundsPage() {
           <button
             key={f.key}
             onClick={() => setActiveFilter(f.key)}
-            className={`text-xs font-black uppercase px-4 py-2 rounded-full whitespace-nowrap ${
+            className={`text-xs font-medium uppercase px-4 py-2 rounded-full whitespace-nowrap ${
               activeFilter === f.key
-                ? "bg-[#D94F2B] text-white"
-                : "border border-[#3F3F46] text-[#71717A]"
+                ? "bg-[#2D5A3D] text-white"
+                : "border border-[#2A2A2A] text-[#8A8A8A]"
             }`}
           >
             {f.label}
@@ -230,19 +230,19 @@ export default function RoundsPage() {
       {/* ── ROUNDS LIST ── */}
       <div className="px-6 mt-4 space-y-3">
         {filteredRounds.length === 0 && rounds.length === 0 ? (
-          <div className="bg-[#27272A] rounded-xl p-8 border border-[#3F3F46] text-center">
-            <p className="text-[#71717A] text-sm mb-4">No rounds yet</p>
+          <div className="bg-[#1A1A1A] rounded-[10px] p-8 shadow-sm text-center">
+            <p className="text-[#8A8A8A] text-sm mb-4">No rounds yet</p>
             <Link
               href="/rounds/new"
-              className="inline-flex items-center gap-2 bg-[#D94F2B] text-white font-bold text-sm px-5 py-2.5 rounded-lg"
+              className="inline-flex items-center gap-2 bg-[#2D5A3D] text-white font-semibold text-sm px-5 py-2.5 rounded-lg"
             >
               <Plus className="h-4 w-4" />
               Start Your First Round
             </Link>
           </div>
         ) : filteredRounds.length === 0 ? (
-          <div className="bg-[#27272A] rounded-xl p-8 border border-[#3F3F46] text-center">
-            <p className="text-[#71717A] text-sm">No rounds match this filter.</p>
+          <div className="bg-[#1A1A1A] rounded-[10px] p-8 shadow-sm text-center">
+            <p className="text-[#8A8A8A] text-sm">No rounds match this filter.</p>
           </div>
         ) : (
           filteredRounds.map((round) => (
@@ -254,29 +254,29 @@ export default function RoundsPage() {
       {/* ── NEW ROUND BUTTON ── */}
       <Link
         href="/rounds/new"
-        className="fixed bottom-20 right-6 flex h-14 w-14 items-center justify-center rounded-full bg-[#D94F2B] shadow-lg shadow-[#D94F2B]/30"
+        className="fixed bottom-20 right-6 flex h-14 w-14 items-center justify-center rounded-full bg-[#2D5A3D] shadow-lg shadow-[#2D5A3D]/30"
       >
         <Plus className="h-6 w-6 text-white" />
       </Link>
 
       {/* ── BOTTOM NAV ── */}
-      <nav className="fixed bottom-0 left-0 right-0 bg-[#18181B] border-t border-[#27272A] px-6 py-3">
+      <nav className="fixed bottom-0 left-0 right-0 bg-[#111111] border-t border-[#1A1A1A] px-6 py-3">
         <div className="grid grid-cols-4">
           <Link href="/dashboard" className="flex flex-col items-center gap-1">
-            <Home className="h-5 w-5 text-[#71717A]" />
-            <span className="text-xs uppercase font-bold text-[#71717A]">Home</span>
+            <Home className="h-5 w-5 text-[#8A8A8A]" />
+            <span className="text-xs uppercase font-medium text-[#8A8A8A]">Home</span>
           </Link>
           <Link href="/rounds" className="flex flex-col items-center gap-1">
-            <Trophy className="h-5 w-5 text-[#D94F2B]" />
-            <span className="text-xs uppercase font-bold text-[#D94F2B]">Rounds</span>
+            <Trophy className="h-5 w-5 text-[#2D5A3D]" />
+            <span className="text-xs uppercase font-medium text-[#2D5A3D]">Rounds</span>
           </Link>
           <Link href="/trips" className="flex flex-col items-center gap-1">
-            <Map className="h-5 w-5 text-[#71717A]" />
-            <span className="text-xs uppercase font-bold text-[#71717A]">Trips</span>
+            <Map className="h-5 w-5 text-[#8A8A8A]" />
+            <span className="text-xs uppercase font-medium text-[#8A8A8A]">Trips</span>
           </Link>
           <Link href="/profile" className="flex flex-col items-center gap-1">
-            <User className="h-5 w-5 text-[#71717A]" />
-            <span className="text-xs uppercase font-bold text-[#71717A]">Profile</span>
+            <User className="h-5 w-5 text-[#8A8A8A]" />
+            <span className="text-xs uppercase font-medium text-[#8A8A8A]">Profile</span>
           </Link>
         </div>
       </nav>
@@ -296,43 +296,43 @@ function RoundCard({ round, userId }: { round: GameRound; userId: string | undef
   const players = round.players || [];
 
   return (
-    <Link href={`/rounds/${round.id}`} className="block bg-[#27272A] rounded-xl p-4 border border-[#3F3F46]">
+    <Link href={`/rounds/${round.id}`} className="block bg-[#1A1A1A] rounded-[10px] p-4 shadow-sm">
       {/* Top row */}
       <div className="flex items-center justify-between">
-        <span className="font-bold text-[#F3EDE4]">{round.courseName}</span>
-        <span className="text-sm text-[#71717A]">{formatDate(round.teeTime)}</span>
+        <span className="font-semibold text-[#F2F0EB]">{round.courseName}</span>
+        <span className="text-sm text-[#8A8A8A]">{formatDate(round.teeTime)}</span>
       </div>
 
       {/* Middle row */}
       <div className="flex items-center gap-2 mt-2">
         {score !== null && (
           <span
-            className={`font-black text-lg px-3 py-1 rounded-lg ${
+            className={`font-semibold text-lg px-3 py-1 rounded-lg ${
               scoreDiff !== null && scoreDiff < 0
-                ? "bg-[#0D7377]/20 text-[#0D7377]"
-                : "bg-[#3F3F46] text-[#71717A]"
+                ? "bg-[#2D5A3D]/20 text-[#2D5A3D]"
+                : "bg-[#2A2A2A] text-[#8A8A8A]"
             }`}
           >
             {score}
           </span>
         )}
         {status === "in_progress" && (
-          <span className="bg-[#D94F2B]/20 text-[#D94F2B] font-bold text-xs px-2 py-1 rounded flex items-center gap-1">
-            <span className="h-1.5 w-1.5 rounded-full bg-[#D94F2B] animate-pulse" />
+          <span className="bg-[#2D5A3D]/20 text-[#2D5A3D] font-semibold text-xs px-2 py-1 rounded flex items-center gap-1">
+            <span className="h-1.5 w-1.5 rounded-full bg-[#2D5A3D] animate-pulse" />
             Live
           </span>
         )}
         {status === "upcoming" && (
-          <span className="bg-[#0D7377]/20 text-[#0D7377] font-bold text-xs px-2 py-1 rounded">
+          <span className="bg-[#2D5A3D]/20 text-[#2D5A3D] font-semibold text-xs px-2 py-1 rounded">
             Upcoming
           </span>
         )}
         {(won > 0 || lost > 0) && (
           <span
-            className={`font-bold text-xs px-2 py-1 rounded ${
+            className={`font-semibold text-xs px-2 py-1 rounded ${
               net >= 0
-                ? "bg-[#D94F2B]/20 text-[#D94F2B]"
-                : "bg-red-900/20 text-red-400"
+                ? "bg-[#2D5A3D]/20 text-[#2D5A3D]"
+                : "bg-[#C4423B]/20 text-[#C4423B]"
             }`}
           >
             {net >= 0 ? `Won $${net}` : `Lost $${Math.abs(net)}`}
@@ -346,18 +346,18 @@ function RoundCard({ round, userId }: { round: GameRound; userId: string | undef
           {players.slice(0, 4).map((p: any, i: number) => (
             <div
               key={p.id || i}
-              className="h-7 w-7 rounded-full bg-[#3F3F46] border-2 border-[#27272A] flex items-center justify-center text-[10px] font-bold text-[#F3EDE4]"
+              className="h-7 w-7 rounded-full bg-[#2F4F4F] border-2 border-[#1A1A1A] flex items-center justify-center text-[10px] font-medium text-[#F2F0EB]"
             >
               {(p.name || "?").charAt(0).toUpperCase()}
             </div>
           ))}
           {players.length > 4 && (
-            <div className="h-7 w-7 rounded-full bg-[#3F3F46] border-2 border-[#27272A] flex items-center justify-center text-[10px] font-bold text-[#71717A]">
+            <div className="h-7 w-7 rounded-full bg-[#2F4F4F] border-2 border-[#1A1A1A] flex items-center justify-center text-[10px] font-medium text-[#8A8A8A]">
               +{players.length - 4}
             </div>
           )}
         </div>
-        <span className="text-[#0D7377] font-bold text-sm">View Recap →</span>
+        <span className="text-[#2D5A3D] font-semibold text-sm">View Recap →</span>
       </div>
     </Link>
   );

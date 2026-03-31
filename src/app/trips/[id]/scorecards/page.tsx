@@ -155,7 +155,7 @@ export default function TripScorecardsPage() {
           </div>
           <button
             onClick={() => setShowForm(!showForm)}
-            className="inline-flex items-center gap-2 rounded-lg bg-[#D94F2B] px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[#B83D25]"
+            className="inline-flex items-center gap-2 rounded-lg bg-[#2D5A3D] px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[#244A32]"
           >
             <Plus className="h-4 w-4" />
             New Scorecard
@@ -194,7 +194,7 @@ export default function TripScorecardsPage() {
                   type="date"
                   value={date}
                   onChange={(e) => setDate(e.target.value)}
-                  className="mt-1 block w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm text-zinc-900 focus:border-[#D94F2B] focus:outline-none focus:ring-2 focus:ring-[#D94F2B]/20"
+                  className="mt-1 block w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm text-zinc-900 focus:border-[#2D5A3D] focus:outline-none focus:ring-2 focus:ring-[#2D5A3D]/20"
                 />
               </div>
               <div className="sm:col-span-2">
@@ -209,7 +209,7 @@ export default function TripScorecardsPage() {
                       onClick={() => toggleMember(member.id)}
                       className={`rounded-full px-3 py-1 text-sm font-medium transition-colors ${
                         selectedMembers.includes(member.id)
-                          ? "bg-emerald-100 text-[#D94F2B]"
+                          ? "bg-emerald-100 text-[#2D5A3D]"
                           : "bg-zinc-100 text-zinc-400"
                       }`}
                     >
@@ -223,7 +223,7 @@ export default function TripScorecardsPage() {
               <button
                 type="submit"
                 disabled={selectedMembers.length === 0}
-                className="rounded-lg bg-[#D94F2B] px-5 py-2 text-sm font-semibold text-white transition-colors hover:bg-[#B83D25] disabled:opacity-50"
+                className="rounded-lg bg-[#2D5A3D] px-5 py-2 text-sm font-semibold text-white transition-colors hover:bg-[#244A32] disabled:opacity-50"
               >
                 Start Round
               </button>
@@ -268,7 +268,7 @@ export default function TripScorecardsPage() {
                       {sc.courseName || "Untitled Round"}
                     </h3>
                     {sc.teeName && (
-                      <p className="text-xs text-[#D94F2B]">{sc.teeName} tees</p>
+                      <p className="text-xs text-[#2D5A3D]">{sc.teeName} tees</p>
                     )}
                     {sc.date && (
                       <p className="mt-1 text-sm text-zinc-400">{sc.date}</p>

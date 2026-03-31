@@ -150,7 +150,7 @@ export default function ReceiptScanner({
             <button
               onClick={handleScan}
               disabled={scanning}
-              className="inline-flex items-center gap-1.5 rounded-lg bg-[#D94F2B] px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-[#B83D25] disabled:opacity-50"
+              className="inline-flex items-center gap-1.5 rounded-lg bg-[#2D5A3D] px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-[#244A32] disabled:opacity-50"
             >
               {scanning ? (
                 <>

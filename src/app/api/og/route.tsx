@@ -102,7 +102,7 @@ export async function GET(req: NextRequest) {
                   width: "44px",
                   height: "44px",
                   borderRadius: "10px",
-                  background: "#D94F2B",
+                  background: "#2D5A3D",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
@@ -131,7 +131,7 @@ export async function GET(req: NextRequest) {
                   display: "flex",
                   alignItems: "center",
                   gap: "8px",
-                  background: "#D94F2B",
+                  background: "#2D5A3D",
                   padding: "6px 16px",
                   borderRadius: "999px",
                   fontSize: "14px",
@@ -294,7 +294,7 @@ export async function GET(req: NextRequest) {
                     style={{
                       fontSize: "16px",
                       fontWeight: 700,
-                      color: "#D94F2B",
+                      color: "#2D5A3D",
                     }}
                   >
                     {skinsWinner}
@@ -326,7 +326,7 @@ export async function GET(req: NextRequest) {
                     style={{
                       fontSize: "16px",
                       fontWeight: 700,
-                      color: "#D94F2B",
+                      color: "#2D5A3D",
                     }}
                   >
                     {nassauWinner}

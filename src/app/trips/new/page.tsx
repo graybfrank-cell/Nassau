@@ -42,12 +42,12 @@ export default function NewTripPage() {
           className="object-cover"
           priority
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-dark/80 via-dark/60 to-dark" />
+        <div className="absolute inset-0 bg-gradient-to-b from-[#111111]/80 via-[#111111]/60 to-[#111111]" />
         <div className="relative z-10 flex flex-col h-full">
           <TopBar />
           <div className="mt-auto px-5 pb-5">
-            <h1 className="text-[22px] font-medium text-cream tracking-tight">Plan Your Trip</h1>
-            <p className="text-[13px] text-cream/50">How would you like to get started?</p>
+            <h1 className="text-[22px] font-headline font-medium text-cream tracking-tight">Plan Your Trip</h1>
+            <p className="text-[13px] text-[#8A8A8A]">How would you like to get started?</p>
           </div>
         </div>
       </div>
@@ -56,7 +56,7 @@ export default function NewTripPage() {
         <div className="mx-auto max-w-2xl">
           <Link
             href="/dashboard"
-            className="inline-flex items-center gap-1.5 text-sm text-cream/50 transition-colors hover:text-cream/70"
+            className="inline-flex items-center gap-1.5 text-sm text-[#8A8A8A] transition-colors hover:text-cream/70"
           >
             <ArrowLeft className="h-4 w-4" />
             Back to Dashboard
@@ -67,20 +67,20 @@ export default function NewTripPage() {
               <Link
                 key={path.title}
                 href={path.href}
-                className="group relative block rounded-2xl border border-cream/10 bg-cream/[0.06] p-6 transition-all hover:border-coral/40 hover:bg-cream/[0.08]"
+                className="group relative block rounded-2xl border border-cream/10 bg-cream/[0.06] p-6 transition-all hover:border-[#2D5A3D]/40 hover:bg-cream/[0.08]"
               >
                 {!path.available && (
-                  <span className="absolute right-4 top-4 rounded-full bg-cream/10 px-2.5 py-0.5 text-xs font-medium text-cream/50">
+                  <span className="absolute right-4 top-4 rounded-full bg-cream/10 px-2.5 py-0.5 text-xs font-medium text-[#8A8A8A]">
                     Coming Soon
                   </span>
                 )}
                 <div className="flex items-start gap-4">
                   <span className="text-4xl">{path.emoji}</span>
                   <div>
-                    <h2 className="text-lg font-semibold text-cream group-hover:text-coral">
+                    <h2 className="text-lg font-semibold text-cream group-hover:text-[#2D5A3D]">
                       {path.title}
                     </h2>
-                    <p className="mt-1 text-sm text-cream/50">
+                    <p className="mt-1 text-sm text-[#8A8A8A]">
                       {path.description}
                     </p>
                   </div>

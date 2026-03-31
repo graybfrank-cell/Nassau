@@ -123,18 +123,16 @@ export default function ProfilePage() {
   if (loading) {
     return (
       <div
-        className="flex min-h-screen items-center justify-center bg-[#18181B]"
-        style={{ fontFamily: "'Helvetica Neue', Arial, sans-serif" }}
+        className="flex min-h-screen items-center justify-center bg-[#111111]"
       >
-        <Loader2 className="h-5 w-5 animate-spin text-[#71717A]" />
+        <Loader2 className="h-5 w-5 animate-spin text-[#8A8A8A]" />
       </div>
     );
   }
 
   return (
     <div
-      className="min-h-screen bg-[#18181B] pb-32"
-      style={{ fontFamily: "'Helvetica Neue', Arial, sans-serif" }}
+      className="min-h-screen bg-[#111111] pb-32"
     >
       {/* ── BANNER ── */}
       <div className="relative h-40 sm:h-48 overflow-hidden">
@@ -145,21 +143,21 @@ export default function ProfilePage() {
           className="object-cover"
           priority
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-dark/80 via-dark/60 to-dark" />
+        <div className="absolute inset-0 bg-gradient-to-b from-[#111111]/80 via-[#111111]/60 to-[#111111]" />
         <div className="relative z-10 flex flex-col h-full">
           <TopBar />
           <div className="mt-auto px-6 pb-5">
             <div className="flex items-center gap-4">
-              <div className="w-16 h-16 bg-[#27272A] rounded-full flex items-center justify-center border-2 border-dark/50">
-                <span className="font-black text-xl text-[#F3EDE4]">
+              <div className="w-16 h-16 bg-[#2F4F4F] rounded-full flex items-center justify-center border-2 border-dark/50">
+                <span className="font-semibold text-xl text-[#F2F0EB]">
                   {getInitials(profile?.full_name)}
                 </span>
               </div>
               <div>
-                <h1 className="text-[22px] font-medium text-[#F3EDE4] tracking-tight">
+                <h1 className="text-[22px] font-headline font-medium text-[#F2F0EB] tracking-tight">
                   {profile?.full_name || "User"}
                 </h1>
-                <p className="text-[13px] text-[#F3EDE4]/50">12 HDCP · Austin, TX</p>
+                <p className="text-[13px] text-[#F2F0EB]/50">12 HDCP · Austin, TX</p>
               </div>
             </div>
           </div>
@@ -167,29 +165,29 @@ export default function ProfilePage() {
       </div>
 
       {/* Stats Card */}
-      <div className="mx-6 mt-6 bg-[#27272A] rounded-xl p-4">
-        <div className="grid grid-cols-3 divide-x divide-[#3F3F46]">
+      <div className="mx-6 mt-6 bg-[#1A1A1A] rounded-[10px] shadow-sm p-4">
+        <div className="grid grid-cols-3 divide-x divide-[#2A2A2A]">
           <div className="text-center">
-            <p className="font-black text-2xl text-[#F3EDE4]">
+            <p className="font-semibold text-2xl text-[#F2F0EB]">
               {stats.rounds}
             </p>
-            <p className="text-xs text-[#71717A] uppercase font-bold mt-1">
+            <p className="font-sans text-[11px] font-medium uppercase tracking-[0.08em] text-[#5C5C5C] mt-1">
               Rounds
             </p>
           </div>
           <div className="text-center">
-            <p className="font-black text-2xl text-[#F3EDE4]">
+            <p className="font-semibold text-2xl text-[#F2F0EB]">
               {stats.avgScore || "—"}
             </p>
-            <p className="text-xs text-[#71717A] uppercase font-bold mt-1">
+            <p className="font-sans text-[11px] font-medium uppercase tracking-[0.08em] text-[#5C5C5C] mt-1">
               Avg Score
             </p>
           </div>
           <div className="text-center">
-            <p className="font-black text-2xl text-[#D94F2B]">
+            <p className="font-semibold text-2xl text-[#2D5A3D]">
               {stats.won}
             </p>
-            <p className="text-xs text-[#71717A] uppercase font-bold mt-1">
+            <p className="font-sans text-[11px] font-medium uppercase tracking-[0.08em] text-[#5C5C5C] mt-1">
               Won
             </p>
           </div>
@@ -199,17 +197,17 @@ export default function ProfilePage() {
       {/* Subscription Card */}
       {profile?.subscription_status &&
         profile.subscription_status !== "free" && (
-          <div className="mx-6 mt-4 bg-[#27272A] rounded-xl p-4 border-l-4 border-[#D94F2B]">
+          <div className="mx-6 mt-4 bg-[#1A1A1A] rounded-[10px] shadow-sm p-4 border-l-4 border-[#B8976A]">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs font-black uppercase text-[#D94F2B]">
+                <p className="text-xs font-semibold uppercase text-[#B8976A]">
                   Nassau Pro
                 </p>
-                <p className="text-sm text-[#71717A] mt-1">
+                <p className="text-sm text-[#B8976A] mt-1">
                   Founding Member
                 </p>
               </div>
-              <span className="text-[#0D7377] font-bold text-sm">
+              <span className="text-[#2D5A3D] font-bold text-sm">
                 Manage →
               </span>
             </div>
@@ -219,13 +217,13 @@ export default function ProfilePage() {
       {/* Editable Fields */}
       <form onSubmit={handleSave}>
         <div className="mx-6 mt-6">
-          <p className="text-xs font-black uppercase tracking-widest text-[#0D7377] mb-3">
+          <p className="font-sans text-[11px] font-medium uppercase tracking-[0.08em] text-[#5C5C5C] mb-3">
             Account
           </p>
 
           {/* Full Name */}
           <div className="mb-4">
-            <label className="text-xs text-[#71717A] uppercase mb-1 block">
+            <label className="text-xs text-[#8A8A8A] uppercase mb-1 block">
               Full Name
             </label>
             <input
@@ -233,17 +231,17 @@ export default function ProfilePage() {
               value={fullName}
               onChange={(e) => setFullName(e.target.value)}
               placeholder="Grayson Frank"
-              className="w-full bg-[#27272A] border border-[#3F3F46] rounded-lg px-4 py-3 text-[#F3EDE4] font-bold focus:border-[#D94F2B] focus:outline-none focus:ring-0 placeholder:text-[#71717A]"
+              className="w-full bg-[#1A1A1A] rounded-[10px] shadow-sm px-4 py-3 text-[#F2F0EB] font-bold focus:border-[#2D5A3D] focus:outline-none focus:ring-0 placeholder:text-[#8A8A8A]"
             />
           </div>
 
           {/* Venmo Username */}
           <div>
-            <label className="text-xs text-[#71717A] uppercase mb-1 block">
+            <label className="text-xs text-[#8A8A8A] uppercase mb-1 block">
               Venmo Username
             </label>
             <div className="relative">
-              <span className="absolute left-4 top-1/2 -translate-y-1/2 text-[#71717A] font-bold">
+              <span className="absolute left-4 top-1/2 -translate-y-1/2 text-[#8A8A8A] font-bold">
                 @
               </span>
               <input
@@ -251,10 +249,10 @@ export default function ProfilePage() {
                 value={venmoUsername}
                 onChange={(e) => setVenmoUsername(e.target.value)}
                 placeholder="John-Doe-42"
-                className="w-full bg-[#27272A] border border-[#3F3F46] rounded-lg pl-8 pr-4 py-3 text-[#F3EDE4] font-bold focus:border-[#D94F2B] focus:outline-none focus:ring-0 placeholder:text-[#71717A]"
+                className="w-full bg-[#1A1A1A] rounded-[10px] shadow-sm pl-8 pr-4 py-3 text-[#F2F0EB] font-bold focus:border-[#2D5A3D] focus:outline-none focus:ring-0 placeholder:text-[#8A8A8A]"
               />
             </div>
-            <p className="text-xs text-[#71717A] mt-1">
+            <p className="text-xs text-[#8A8A8A] mt-1">
               Used for quick settlements
             </p>
           </div>
@@ -265,7 +263,7 @@ export default function ProfilePage() {
           <button
             type="submit"
             disabled={saving}
-            className="w-full bg-[#D94F2B] text-white font-black uppercase py-3 rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50"
+            className="w-full bg-[#2D5A3D] text-white font-medium uppercase py-3 rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50"
           >
             {saving ? (
               <Loader2 className="h-4 w-4 animate-spin mx-auto" />
@@ -274,7 +272,7 @@ export default function ProfilePage() {
             )}
           </button>
           {saved && (
-            <p className="text-sm text-[#0D7377] text-center mt-2 flex items-center justify-center gap-1">
+            <p className="text-sm text-[#2D5A3D] text-center mt-2 flex items-center justify-center gap-1">
               <Check className="h-4 w-4" />
               Changes saved
             </p>
@@ -287,7 +285,7 @@ export default function ProfilePage() {
         <button
           onClick={handleSignOut}
           disabled={signingOut}
-          className="w-full border border-[#3F3F46] text-[#71717A] font-black uppercase py-3 rounded-lg mb-24 hover:border-[#D94F2B] hover:text-[#D94F2B] transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+          className="w-full border border-[#2A2A2A] text-[#8A8A8A] font-medium uppercase py-3 rounded-lg mb-24 hover:border-[#C4423B] hover:text-[#C4423B] transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
         >
           <LogOut className="h-4 w-4" />
           {signingOut ? "Signing Out..." : "Sign Out"}
@@ -295,14 +293,14 @@ export default function ProfilePage() {
       </div>
 
       {/* Bottom Nav — Profile active */}
-      <nav className="fixed bottom-0 left-0 right-0 bg-[#18181B] border-t border-[#27272A] px-6 py-3">
+      <nav className="fixed bottom-0 left-0 right-0 bg-[#111111] border-t border-[#1A1A1A] px-6 py-3">
         <div className="grid grid-cols-4">
           <Link
             href="/dashboard"
             className="flex flex-col items-center gap-1"
           >
-            <Home className="h-5 w-5 text-[#71717A]" />
-            <span className="text-xs uppercase font-bold text-[#71717A]">
+            <Home className="h-5 w-5 text-[#8A8A8A]" />
+            <span className="text-xs uppercase font-bold text-[#8A8A8A]">
               Home
             </span>
           </Link>
@@ -310,8 +308,8 @@ export default function ProfilePage() {
             href="/rounds"
             className="flex flex-col items-center gap-1"
           >
-            <Trophy className="h-5 w-5 text-[#71717A]" />
-            <span className="text-xs uppercase font-bold text-[#71717A]">
+            <Trophy className="h-5 w-5 text-[#8A8A8A]" />
+            <span className="text-xs uppercase font-bold text-[#8A8A8A]">
               Rounds
             </span>
           </Link>
@@ -319,8 +317,8 @@ export default function ProfilePage() {
             href="/trips"
             className="flex flex-col items-center gap-1"
           >
-            <Map className="h-5 w-5 text-[#71717A]" />
-            <span className="text-xs uppercase font-bold text-[#71717A]">
+            <Map className="h-5 w-5 text-[#8A8A8A]" />
+            <span className="text-xs uppercase font-bold text-[#8A8A8A]">
               Trips
             </span>
           </Link>
@@ -328,8 +326,8 @@ export default function ProfilePage() {
             href="/profile"
             className="flex flex-col items-center gap-1"
           >
-            <User className="h-5 w-5 text-[#D94F2B]" />
-            <span className="text-xs uppercase font-bold text-[#D94F2B]">
+            <User className="h-5 w-5 text-[#2D5A3D]" />
+            <span className="text-xs uppercase font-bold text-[#2D5A3D]">
               Profile
             </span>
           </Link>

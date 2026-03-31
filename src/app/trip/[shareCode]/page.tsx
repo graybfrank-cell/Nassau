@@ -229,7 +229,7 @@ export default function TripSharePage() {
 
   if (loading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-[#F3EDE4]">
+      <div className="flex min-h-screen items-center justify-center bg-[#F2F0EB]">
         <div className="flex flex-col items-center gap-3">
           <Loader2 className="h-6 w-6 animate-spin text-[#1A1A1A]/30" />
           <p className="text-sm text-[#1A1A1A]/40">Loading trip...</p>
@@ -240,10 +240,10 @@ export default function TripSharePage() {
 
   if (notFound) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-[#F3EDE4] px-6">
+      <div className="flex min-h-screen items-center justify-center bg-[#F2F0EB] px-6">
         <div className="text-center">
           <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-white shadow-sm">
-            <AlertCircle className="h-8 w-8 text-[#D94F2B]" />
+            <AlertCircle className="h-8 w-8 text-[#C4423B]" />
           </div>
           <h1 className="mt-5 text-xl font-bold text-[#1A1A1A]">
             Trip Not Found
@@ -253,7 +253,7 @@ export default function TripSharePage() {
           </p>
           <Link
             href="/"
-            className="mt-6 inline-block rounded-[10px] bg-[#D94F2B] px-6 py-3 text-sm font-semibold text-[#F3EDE4] hover:bg-[#B83D25] transition-colors"
+            className="mt-6 inline-block rounded-[10px] bg-[#2D5A3D] px-6 py-3 text-sm font-semibold text-[#F2F0EB] hover:bg-[#244A32] transition-colors"
           >
             Go to Nassau
           </Link>
@@ -316,7 +316,7 @@ export default function TripSharePage() {
   });
 
   return (
-    <div className="min-h-screen bg-[#F3EDE4]">
+    <div className="min-h-screen bg-[#F2F0EB]">
       {/* A. Hero Banner */}
       <div className="relative h-48 sm:h-56 overflow-hidden bg-[#1A1A1A]">
         {trip.destination && (
@@ -332,7 +332,7 @@ export default function TripSharePage() {
         )}
         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
         <div className="absolute inset-0 flex flex-col justify-end p-5 pb-8">
-          <h1 className="text-[24px] font-bold text-white leading-tight">
+          <h1 className="text-[24px] font-headline font-medium text-white leading-tight">
             {trip.name}
           </h1>
           <p className="mt-1 text-[14px] text-white/70">
@@ -352,7 +352,7 @@ export default function TripSharePage() {
         <div className="grid grid-cols-2 gap-3">
           {teeTimeCount > 0 && (
             <div className="flex items-center gap-2.5">
-              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#0D7377]/10">
+              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#2D5A3D]/10">
                 <span className="text-[14px]">&#9971;</span>
               </div>
               <div>
@@ -365,8 +365,8 @@ export default function TripSharePage() {
           )}
           {duration && (
             <div className="flex items-center gap-2.5">
-              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#0D7377]/10">
-                <Calendar className="h-4 w-4 text-[#0D7377]" />
+              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#2D5A3D]/10">
+                <Calendar className="h-4 w-4 text-[#2D5A3D]" />
               </div>
               <div>
                 <p className="text-[14px] font-semibold text-[#1A1A1A]">
@@ -379,8 +379,8 @@ export default function TripSharePage() {
             </div>
           )}
           <div className="flex items-center gap-2.5">
-            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#0D7377]/10">
-              <Users className="h-4 w-4 text-[#0D7377]" />
+            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#2D5A3D]/10">
+              <Users className="h-4 w-4 text-[#2D5A3D]" />
             </div>
             <div>
               <p className="text-[14px] font-semibold text-[#1A1A1A]">
@@ -391,8 +391,8 @@ export default function TripSharePage() {
           </div>
           {trip.destination && (
             <div className="flex items-center gap-2.5">
-              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#0D7377]/10">
-                <MapPin className="h-4 w-4 text-[#0D7377]" />
+              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#2D5A3D]/10">
+                <MapPin className="h-4 w-4 text-[#2D5A3D]" />
               </div>
               <div>
                 <p className="text-[14px] font-semibold text-[#1A1A1A] truncate max-w-[120px]">
@@ -408,17 +408,17 @@ export default function TripSharePage() {
       {/* C. Who's In (Social Proof) */}
       <div className="bg-white rounded-[10px] shadow-sm mx-5 mt-4 p-5">
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-[13px] font-bold text-[#1A1A1A]/60 uppercase tracking-wider">
+          <h2 className="font-sans text-[11px] font-medium uppercase tracking-[0.08em] text-[#5C5C5C]">
             Who&apos;s In
           </h2>
-          <span className="text-[12px] font-medium text-[#0D7377]">
+          <span className="text-[12px] font-medium text-[#2D5A3D]">
             {goingCount} of {targetSize} committed
           </span>
         </div>
         {/* Progress bar */}
         <div className="h-1.5 w-full rounded-full bg-[#1A1A1A]/5 mb-4">
           <div
-            className="h-1.5 rounded-full bg-[#0D7377] transition-all duration-500"
+            className="h-1.5 rounded-full bg-[#2D5A3D] transition-all duration-500"
             style={{
               width: `${Math.min(100, (goingCount / targetSize) * 100)}%`,
             }}
@@ -439,7 +439,7 @@ export default function TripSharePage() {
                   <span
                     className={`flex h-7 w-7 items-center justify-center rounded-full text-[12px] font-bold ${
                       isGoing
-                        ? "bg-[#0D7377]/10 text-[#0D7377]"
+                        ? "bg-[#2D5A3D]/10 text-[#2D5A3D]"
                         : isPending
                           ? "bg-[#1A1A1A]/5 text-[#1A1A1A]/30"
                           : "bg-red-50 text-red-400"
@@ -465,7 +465,7 @@ export default function TripSharePage() {
                     {m.name}
                   </span>
                   {m.role === "CAPTAIN" && (
-                    <span className="rounded-full bg-[#C9A54E]/15 px-2 py-0.5 text-[10px] font-semibold text-[#C9A54E]">
+                    <span className="rounded-full bg-[#B8976A]/15 px-2 py-0.5 text-[10px] font-semibold text-[#B8976A]">
                       Captain
                     </span>
                   )}
@@ -473,7 +473,7 @@ export default function TripSharePage() {
                 <span
                   className={`rounded-full px-2.5 py-1 text-[11px] font-semibold ${
                     isGoing
-                      ? "bg-[#0D7377]/10 text-[#0D7377]"
+                      ? "bg-[#2D5A3D]/10 text-[#2D5A3D]"
                       : isPending
                         ? "bg-[#1A1A1A]/5 text-[#1A1A1A]/40"
                         : "bg-red-50 text-red-400"
@@ -492,12 +492,12 @@ export default function TripSharePage() {
           })}
           {/* "You?" placeholder for non-members */}
           {!isMember && !userId && (
-            <div className="flex items-center justify-between rounded-lg px-3 py-2.5 border border-dashed border-[#D94F2B]/30">
+            <div className="flex items-center justify-between rounded-lg px-3 py-2.5 border border-dashed border-[#2D5A3D]/30">
               <div className="flex items-center gap-2.5">
-                <span className="flex h-7 w-7 items-center justify-center rounded-full bg-[#D94F2B]/10 text-[#D94F2B]">
+                <span className="flex h-7 w-7 items-center justify-center rounded-full bg-[#2D5A3D]/10 text-[#2D5A3D]">
                   <ChevronRight className="h-3.5 w-3.5" />
                 </span>
-                <span className="text-[15px] font-semibold text-[#D94F2B]">
+                <span className="text-[15px] font-semibold text-[#2D5A3D]">
                   You?
                 </span>
               </div>
@@ -510,7 +510,7 @@ export default function TripSharePage() {
       {/* D. Itinerary Preview */}
       {scheduleDates.length > 0 && (
         <div className="bg-white rounded-[10px] shadow-sm mx-5 mt-4 p-5">
-          <h2 className="text-[13px] font-bold text-[#1A1A1A]/60 uppercase tracking-wider mb-4">
+          <h2 className="font-sans text-[11px] font-medium uppercase tracking-[0.08em] text-[#5C5C5C] mb-4">
             The Plan
           </h2>
           <div className="space-y-3">
@@ -526,7 +526,7 @@ export default function TripSharePage() {
               return (
                 <div key={date}>
                   <div className="flex items-center gap-2 mb-1.5">
-                    <span className="text-[12px] font-bold text-[#0D7377]">
+                    <span className="text-[12px] font-bold text-[#2D5A3D]">
                       {dayLabel}
                     </span>
                     <span className="text-[11px] text-[#1A1A1A]/30">
@@ -565,18 +565,18 @@ export default function TripSharePage() {
 
       {/* Date Poll Section */}
       {poll && poll.status !== "locked" && poll.options.length > 0 && (
-        <div className="bg-white rounded-[10px] shadow-sm mx-5 mt-4 p-5 border-2 border-[#0D7377]/20">
+        <div className="bg-white rounded-[10px] shadow-sm mx-5 mt-4 p-5">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-2">
-              <Vote className="h-4 w-4 text-[#D94F2B]" />
-              <h2 className="text-[13px] font-bold text-[#1A1A1A]/60 uppercase tracking-wider">
+              <Vote className="h-4 w-4 text-[#2D5A3D]" />
+              <h2 className="font-sans text-[11px] font-medium uppercase tracking-[0.08em] text-[#5C5C5C]">
                 Vote on Dates
               </h2>
             </div>
             <span
               className={`rounded-full px-2.5 py-1 text-[11px] font-medium ${
                 pollActive
-                  ? "bg-[#0D7377]/10 text-[#0D7377]"
+                  ? "bg-[#2D5A3D]/10 text-[#2D5A3D]"
                   : "bg-[#1A1A1A]/5 text-[#1A1A1A]/40"
               }`}
             >
@@ -618,7 +618,7 @@ export default function TripSharePage() {
                   className="rounded-lg border border-[#1A1A1A]/10 p-3"
                 >
                   <div className="flex items-center gap-2">
-                    <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[#0D7377]/10 text-[11px] font-bold text-[#0D7377]">
+                    <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[#2D5A3D]/10 text-[11px] font-bold text-[#2D5A3D]">
                       {String.fromCharCode(65 + idx)}
                     </span>
                     <div>
@@ -639,9 +639,9 @@ export default function TripSharePage() {
                         {
                           value: "yes",
                           label: "Works",
-                          bg: "bg-[#0D7377]/5 text-[#0D7377] border-[#0D7377]/20",
+                          bg: "bg-[#2D5A3D]/5 text-[#2D5A3D] border-[#2D5A3D]/20",
                           active:
-                            "bg-[#0D7377]/15 ring-2 ring-[#0D7377]/30 text-[#0D7377]",
+                            "bg-[#2D5A3D]/15 ring-2 ring-[#2D5A3D]/30 text-[#2D5A3D]",
                         },
                         {
                           value: "maybe",
@@ -683,7 +683,7 @@ export default function TripSharePage() {
                       {yesVotes.map((v) => (
                         <span
                           key={v.userId}
-                          className="rounded-full bg-[#0D7377]/10 px-2 py-0.5 text-[10px] font-medium text-[#0D7377]"
+                          className="rounded-full bg-[#2D5A3D]/10 px-2 py-0.5 text-[10px] font-medium text-[#2D5A3D]"
                         >
                           {getMemberNameByUserId(v.userId)}
                         </span>
@@ -715,7 +715,7 @@ export default function TripSharePage() {
             <button
               onClick={handleSubmitPollVotes}
               disabled={pollVoting}
-              className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-[10px] bg-[#0D7377] px-5 py-3 text-[14px] font-semibold text-white transition-colors hover:bg-[#0B6164] disabled:opacity-50 min-h-[44px]"
+              className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-[10px] bg-[#2D5A3D] px-5 py-3 text-[14px] font-semibold text-white transition-colors hover:bg-[#244A32] disabled:opacity-50 min-h-[44px]"
             >
               {pollVoting ? (
                 <Loader2 className="h-4 w-4 animate-spin" />
@@ -730,7 +730,7 @@ export default function TripSharePage() {
             <div className="mt-4 text-center">
               <Link
                 href={`/login?returnTo=/trip/${shareCode}`}
-                className="inline-block rounded-[10px] bg-[#0D7377] px-6 py-3 text-[14px] font-semibold text-white hover:bg-[#0B6164] transition-colors"
+                className="inline-block rounded-[10px] bg-[#2D5A3D] px-6 py-3 text-[14px] font-semibold text-white hover:bg-[#244A32] transition-colors"
               >
                 Sign In to Vote
               </Link>
@@ -747,7 +747,7 @@ export default function TripSharePage() {
         </div>
       )}
       {success && (
-        <div className="mx-5 mt-4 flex items-center gap-2 rounded-[10px] bg-[#0D7377]/10 border border-[#0D7377]/20 px-4 py-3 text-[13px] text-[#0D7377]">
+        <div className="mx-5 mt-4 flex items-center gap-2 rounded-[10px] bg-[#2D5A3D]/10 border border-[#2D5A3D]/20 px-4 py-3 text-[13px] text-[#2D5A3D]">
           <Check className="h-4 w-4 shrink-0" />
           {success}
         </div>
@@ -757,8 +757,8 @@ export default function TripSharePage() {
       <div className="mx-5 mt-6">
         {userId ? (
           isCaptain ? (
-            <div className="rounded-[10px] bg-[#C9A54E]/10 border border-[#C9A54E]/20 px-5 py-4 text-center">
-              <p className="text-[14px] font-semibold text-[#C9A54E]">
+            <div className="rounded-[10px] bg-[#B8976A]/10 border border-[#B8976A]/20 px-5 py-4 text-center">
+              <p className="text-[14px] font-semibold text-[#B8976A]">
                 You&apos;re the captain &mdash; you&apos;re locked in!
               </p>
             </div>
@@ -783,8 +783,8 @@ export default function TripSharePage() {
                 disabled={rsvpLoading}
                 className={`w-full rounded-[10px] py-4 text-[18px] font-bold transition-colors disabled:opacity-50 shadow-lg ${
                   myMember?.rsvpStatus === "GOING"
-                    ? "bg-[#0D7377] text-white"
-                    : "bg-[#D94F2B] text-[#F3EDE4] hover:bg-[#B83D25]"
+                    ? "bg-[#2D5A3D] text-white"
+                    : "bg-[#2D5A3D] text-[#F2F0EB] hover:bg-[#244A32]"
                 }`}
               >
                 {rsvpLoading ? (
@@ -830,7 +830,7 @@ export default function TripSharePage() {
           <div className="space-y-2">
             <Link
               href={`/login?returnTo=/trip/${shareCode}`}
-              className="flex w-full items-center justify-center rounded-[10px] bg-[#D94F2B] py-4 text-[18px] font-bold text-[#F3EDE4] shadow-lg hover:bg-[#B83D25] transition-colors"
+              className="flex w-full items-center justify-center rounded-[10px] bg-[#2D5A3D] py-4 text-[18px] font-bold text-[#F2F0EB] shadow-lg hover:bg-[#244A32] transition-colors"
             >
               I&apos;M IN
             </Link>

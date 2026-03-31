@@ -138,7 +138,7 @@ export default function IntegrityPage() {
       <div className="min-h-screen bg-zinc-950 flex items-center justify-center">
         <div className="text-center">
           <p className="text-zinc-400 text-lg mb-4">Admin access required</p>
-          <Link href="/login" className="text-[#D94F2B] hover:underline">
+          <Link href="/login" className="text-[#2D5A3D] hover:underline">
             Sign in &rarr;
           </Link>
         </div>
@@ -169,7 +169,7 @@ export default function IntegrityPage() {
           <button
             onClick={() => { runCheck(); loadHistory(); }}
             disabled={loading}
-            className="px-4 py-2 rounded-lg text-sm font-medium transition-colors bg-[#D94F2B] hover:bg-[#c4441f] disabled:opacity-50"
+            className="px-4 py-2 rounded-lg text-sm font-medium transition-colors bg-[#2D5A3D] hover:bg-[#244A32] disabled:opacity-50"
           >
             {loading ? "Running..." : "Run Checks"}
           </button>
@@ -232,7 +232,7 @@ export default function IntegrityPage() {
         {/* ── Active issues ── */}
         {activeIssues.length > 0 && (
           <section>
-            <h2 className="text-lg font-semibold mb-4 text-[#D94F2B]">
+            <h2 className="text-lg font-semibold mb-4 text-[#2D5A3D]">
               Active Issues
             </h2>
             <div className="space-y-3">

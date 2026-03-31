@@ -80,15 +80,15 @@ function formatFullDate(dateStr: string): string {
 function StatusBadge({ status }: { status: string }) {
   if (status === "upcoming") {
     return (
-      <span className="inline-flex items-center rounded-full bg-teal/15 px-3 py-1 text-[11px] font-medium text-teal">
+      <span className="inline-flex items-center rounded-full bg-[#2D5A3D]/15 px-3 py-1 text-[11px] font-medium text-[#2D5A3D]">
         Upcoming
       </span>
     );
   }
   if (status === "in_progress") {
     return (
-      <span className="inline-flex items-center gap-1 rounded-full bg-coral/15 px-3 py-1 text-[11px] font-medium text-coral">
-        <span className="h-1.5 w-1.5 rounded-full bg-coral animate-pulse" />
+      <span className="inline-flex items-center gap-1 rounded-full bg-[#2D5A3D]/15 px-3 py-1 text-[11px] font-medium text-[#2D5A3D]">
+        <span className="h-1.5 w-1.5 rounded-full bg-[#2D5A3D] animate-pulse" />
         In Progress
       </span>
     );
@@ -225,7 +225,7 @@ export default function RoundDashboardPage() {
           </p>
           <Link
             href="/rounds"
-            className="mt-4 inline-block text-sm font-medium text-[#D94F2B]"
+            className="mt-4 inline-block text-sm font-medium text-[#2D5A3D]"
           >
             Back to Rounds
           </Link>
@@ -583,7 +583,7 @@ export default function RoundDashboardPage() {
         </Link>
 
         {error && (
-          <div className="mt-4 flex items-center gap-2 rounded-[10px] border border-coral/20 bg-coral/10 px-4 py-3 text-sm text-coral">
+          <div className="mt-4 flex items-center gap-2 rounded-[10px] border border-[#C4423B]/20 bg-[#C4423B]/10 px-4 py-3 text-sm text-[#C4423B]">
             <AlertCircle className="h-4 w-4 shrink-0" />
             {error}
           </div>
@@ -602,9 +602,9 @@ export default function RoundDashboardPage() {
               priority
             />
           )}
-          <div className="absolute inset-0 bg-gradient-to-b from-dark/80 via-dark/60 to-dark" />
+          <div className="absolute inset-0 bg-gradient-to-b from-[#111111]/80 via-[#111111]/60 to-[#111111]" />
           <div className="absolute bottom-4 left-4 z-10">
-            <h1 className="text-2xl font-bold text-white">{round.courseName}</h1>
+            <h1 className="text-2xl font-headline font-medium text-white">{round.courseName}</h1>
             <p className="text-sm text-white/60">
               {[
                 round.courseLayout,
@@ -651,11 +651,11 @@ export default function RoundDashboardPage() {
           <div className="flex items-start justify-between">
             <div>
               <div className="flex items-center gap-3">
-                <h1 className="text-2xl font-bold tracking-tight text-cream">
+                <h1 className="text-2xl font-headline font-medium tracking-tight text-cream">
                   {round.courseName}
                 </h1>
                 {round.courseLayout && (
-                  <span className="inline-flex items-center rounded-full bg-teal/15 px-2.5 py-0.5 text-xs font-medium text-teal">
+                  <span className="inline-flex items-center rounded-full bg-[#2D5A3D]/15 px-2.5 py-0.5 text-xs font-medium text-[#2D5A3D]">
                     {round.courseLayout}
                   </span>
                 )}
@@ -694,7 +694,7 @@ export default function RoundDashboardPage() {
                         onClick={() => handleStartingHoleChange(hole)}
                         className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${
                           round.startingHole === hole
-                            ? "bg-coral/15 text-coral"
+                            ? "bg-[#2D5A3D]/15 text-[#2D5A3D]"
                             : "bg-cream/[0.06] text-cream/50 hover:bg-cream/[0.08]"
                         }`}
                       >
@@ -710,7 +710,7 @@ export default function RoundDashboardPage() {
               {isCommissioner && round.status === "upcoming" && (
                 <button
                   onClick={handleStartRound}
-                  className="rounded-lg bg-coral px-3 py-1.5 text-xs font-semibold text-cream transition-colors hover:bg-[#B83D25]"
+                  className="rounded-lg bg-[#2D5A3D] px-3 py-1.5 text-xs font-semibold text-cream transition-colors hover:bg-[#234A31]"
                 >
                   Start Round
                 </button>
@@ -743,7 +743,7 @@ export default function RoundDashboardPage() {
               >
                 {copiedLink ? (
                   <>
-                    <Check className="h-3.5 w-3.5 text-coral" />
+                    <Check className="h-3.5 w-3.5 text-[#2D5A3D]" />
                     Copied!
                   </>
                 ) : (
@@ -756,7 +756,7 @@ export default function RoundDashboardPage() {
               {isCommissioner && (
                 <button
                   onClick={() => setShowAddPlayer(!showAddPlayer)}
-                  className="inline-flex items-center gap-1.5 rounded-lg border border-teal/30 bg-teal/10 px-3 py-1.5 text-xs font-semibold text-teal transition-colors hover:bg-teal/20"
+                  className="inline-flex items-center gap-1.5 rounded-lg border border-[#2D5A3D]/30 bg-[#2D5A3D]/10 px-3 py-1.5 text-xs font-semibold text-[#2D5A3D] transition-colors hover:bg-[#2D5A3D]/20"
                 >
                   <Plus className="h-3.5 w-3.5" />
                   Add Player
@@ -780,12 +780,12 @@ export default function RoundDashboardPage() {
                   value={newPlayerName}
                   onChange={(e) => setNewPlayerName(e.target.value)}
                   placeholder="Player name"
-                  className="mt-1 block w-full rounded-[10px] border border-cream/10 bg-transparent px-3 py-1.5 text-sm text-cream placeholder:text-cream/30 focus:border-coral/40 focus:outline-none focus:ring-2 focus:ring-coral/20"
+                  className="mt-1 block w-full rounded-[10px] border border-cream/10 bg-transparent px-3 py-1.5 text-sm text-cream placeholder:text-cream/30 focus:border-[#2D5A3D]/40 focus:outline-none focus:ring-2 focus:ring-[#2D5A3D]/20"
                 />
               </div>
               <button
                 type="submit"
-                className="rounded-md bg-coral px-4 py-1.5 text-sm font-medium text-cream hover:bg-[#B83D25]"
+                className="rounded-md bg-[#2D5A3D] px-4 py-1.5 text-sm font-medium text-cream hover:bg-[#234A31]"
               >
                 Add
               </button>
@@ -813,7 +813,7 @@ export default function RoundDashboardPage() {
                     {player.name}
                   </span>
                   {player.status === "confirmed" || player.role === "COMMISSIONER" ? (
-                    <CheckCircle2 className="h-3.5 w-3.5 text-coral" />
+                    <CheckCircle2 className="h-3.5 w-3.5 text-[#2D5A3D]" />
                   ) : player.status === "declined" ? (
                     <X className="h-3.5 w-3.5 text-red-400" />
                   ) : (
@@ -829,7 +829,7 @@ export default function RoundDashboardPage() {
                   player.role !== "COMMISSIONER" && (
                     <button
                       onClick={() => handleRemovePlayer(player.id)}
-                      className="rounded-md p-1 text-cream/30 opacity-0 transition-all hover:bg-coral/10 hover:text-coral group-hover:opacity-100"
+                      className="rounded-md p-1 text-cream/30 opacity-0 transition-all hover:bg-[#C4423B]/10 hover:text-[#C4423B] group-hover:opacity-100"
                     >
                       <X className="h-3.5 w-3.5" />
                     </button>
@@ -845,7 +845,7 @@ export default function RoundDashboardPage() {
             <p className="text-sm font-medium text-cream/50">Ready to tee off?</p>
             <button
               onClick={handleStartRound}
-              className="mt-3 w-full rounded-xl bg-coral py-5 text-lg font-bold text-cream transition-colors hover:bg-[#B83D25] active:scale-[0.98]"
+              className="mt-3 w-full rounded-xl bg-[#2D5A3D] py-5 text-lg font-bold text-cream transition-colors hover:bg-[#234A31] active:scale-[0.98]"
             >
               Start Round 🏌️
             </button>
@@ -865,13 +865,13 @@ export default function RoundDashboardPage() {
             <div
               className="text-7xl font-extrabold"
               style={{
-                color: "#D94F2B",
+                color: "#2D5A3D",
                 animation: "pulse 0.6s ease-in-out infinite",
               }}
             >
               N
             </div>
-            <p className="mt-4 text-lg font-bold" style={{ color: "#F3EDE4" }}>
+            <p className="mt-4 text-lg font-bold" style={{ color: "#F2F0EB" }}>
               Round Started
             </p>
             <style>{`@keyframes pulse { 0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.1); opacity: 0.85; } }`}</style>
@@ -942,7 +942,7 @@ export default function RoundDashboardPage() {
             {isCommissioner && round.skinsGame && (
               <button
                 onClick={handleRemoveSkinsGame}
-                className="inline-flex items-center gap-1 text-xs text-coral/60 hover:text-coral"
+                className="inline-flex items-center gap-1 text-xs text-[#C4423B]/60 hover:text-[#C4423B]"
               >
                 <Trash2 className="h-3 w-3" />
                 Remove
@@ -974,7 +974,7 @@ export default function RoundDashboardPage() {
                       onClick={() => setSkinsBuyIn(String(amount))}
                       className={`rounded-full px-3 py-1.5 text-xs font-medium transition-colors ${
                         skinsBuyIn === String(amount)
-                          ? "bg-coral/15 text-coral"
+                          ? "bg-[#2D5A3D]/15 text-[#2D5A3D]"
                           : "bg-cream/[0.06] text-cream/50 hover:bg-cream/[0.08]"
                       }`}
                     >
@@ -988,14 +988,14 @@ export default function RoundDashboardPage() {
                       min="1"
                       value={skinsBuyIn}
                       onChange={(e) => setSkinsBuyIn(e.target.value)}
-                      className="w-20 rounded-lg border border-cream/10 bg-transparent py-1.5 pl-6 pr-2 text-xs text-cream focus:border-coral/40 focus:outline-none focus:ring-1 focus:ring-coral/20"
+                      className="w-20 rounded-lg border border-cream/10 bg-transparent py-1.5 pl-6 pr-2 text-xs text-cream focus:border-[#2D5A3D]/40 focus:outline-none focus:ring-1 focus:ring-[#2D5A3D]/20"
                     />
                   </div>
                 </div>
                 <div className="mt-3 flex gap-2">
                   <button
                     onClick={handleAddSkinsGame}
-                    className="rounded-md bg-coral px-4 py-1.5 text-xs font-medium text-cream hover:bg-[#B83D25]"
+                    className="rounded-md bg-[#2D5A3D] px-4 py-1.5 text-xs font-medium text-cream hover:bg-[#234A31]"
                   >
                     Create Skins Game
                   </button>
@@ -1010,7 +1010,7 @@ export default function RoundDashboardPage() {
             ) : (
               <button
                 onClick={() => setShowAddSkins(true)}
-                className="inline-flex items-center gap-1.5 rounded-lg border border-dashed border-cream/10 px-4 py-3 text-sm font-medium text-cream/50 transition-colors hover:border-teal/30 hover:text-teal w-full justify-center"
+                className="inline-flex items-center gap-1.5 rounded-lg border border-dashed border-cream/10 px-4 py-3 text-sm font-medium text-cream/50 transition-colors hover:border-[#2D5A3D]/30 hover:text-[#2D5A3D] w-full justify-center"
               >
                 <Plus className="h-4 w-4" />
                 Add Skins Game
@@ -1034,7 +1034,7 @@ export default function RoundDashboardPage() {
             {isCommissioner && round.nassauBet && (
               <button
                 onClick={handleRemoveNassauBet}
-                className="inline-flex items-center gap-1 text-xs text-coral/60 hover:text-coral"
+                className="inline-flex items-center gap-1 text-xs text-[#C4423B]/60 hover:text-[#C4423B]"
               >
                 <Trash2 className="h-3 w-3" />
                 Remove
@@ -1072,7 +1072,7 @@ export default function RoundDashboardPage() {
                       onClick={() => setNassauBetAmount(String(amount))}
                       className={`rounded-full px-3 py-1.5 text-xs font-medium transition-colors ${
                         nassauBetAmount === String(amount)
-                          ? "bg-coral/15 text-coral"
+                          ? "bg-[#2D5A3D]/15 text-[#2D5A3D]"
                           : "bg-cream/[0.06] text-cream/50 hover:bg-cream/[0.08]"
                       }`}
                     >
@@ -1086,7 +1086,7 @@ export default function RoundDashboardPage() {
                       min="1"
                       value={nassauBetAmount}
                       onChange={(e) => setNassauBetAmount(e.target.value)}
-                      className="w-20 rounded-lg border border-cream/10 bg-transparent py-1.5 pl-6 pr-2 text-xs text-cream focus:border-coral/40 focus:outline-none focus:ring-1 focus:ring-coral/20"
+                      className="w-20 rounded-lg border border-cream/10 bg-transparent py-1.5 pl-6 pr-2 text-xs text-cream focus:border-[#2D5A3D]/40 focus:outline-none focus:ring-1 focus:ring-[#2D5A3D]/20"
                     />
                   </div>
                 </div>
@@ -1097,7 +1097,7 @@ export default function RoundDashboardPage() {
                 <div className="mt-3 flex gap-2">
                   <button
                     onClick={handleAddNassauBet}
-                    className="rounded-md bg-coral px-4 py-1.5 text-xs font-medium text-cream hover:bg-[#B83D25]"
+                    className="rounded-md bg-[#2D5A3D] px-4 py-1.5 text-xs font-medium text-cream hover:bg-[#234A31]"
                   >
                     Create Nassau Bet
                   </button>
@@ -1112,7 +1112,7 @@ export default function RoundDashboardPage() {
             ) : (
               <button
                 onClick={() => setShowAddNassau(true)}
-                className="inline-flex items-center gap-1.5 rounded-lg border border-dashed border-cream/10 px-4 py-3 text-sm font-medium text-cream/50 transition-colors hover:border-teal/30 hover:text-teal w-full justify-center"
+                className="inline-flex items-center gap-1.5 rounded-lg border border-dashed border-cream/10 px-4 py-3 text-sm font-medium text-cream/50 transition-colors hover:border-[#2D5A3D]/30 hover:text-[#2D5A3D] w-full justify-center"
               >
                 <Plus className="h-4 w-4" />
                 Add Nassau Bet
@@ -1159,7 +1159,7 @@ export default function RoundDashboardPage() {
             {isCommissioner && (
               <button
                 onClick={handleRecalculate}
-                className="text-xs font-medium text-coral hover:text-coral/80"
+                className="text-xs font-medium text-[#2D5A3D] hover:text-[#2D5A3D]/80"
               >
                 Recalculate
               </button>
@@ -1204,7 +1204,7 @@ export default function RoundDashboardPage() {
             >
               {copiedLink ? (
                 <>
-                  <Check className="h-4 w-4 text-coral" />
+                  <Check className="h-4 w-4 text-[#2D5A3D]" />
                   Copied!
                 </>
               ) : (
@@ -1220,7 +1220,7 @@ export default function RoundDashboardPage() {
             >
               {copiedSummary ? (
                 <>
-                  <Check className="h-4 w-4 text-coral" />
+                  <Check className="h-4 w-4 text-[#2D5A3D]" />
                   Copied!
                 </>
               ) : (

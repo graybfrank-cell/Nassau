@@ -261,8 +261,8 @@ function AuthGate({ tripTitle, onClose }: { tripTitle: string; onClose: () => vo
       <div className="relative bg-[#FDFAF5] rounded-2xl w-full max-w-sm p-8 shadow-2xl border border-[#E2D9CC]"
         onClick={(e) => e.stopPropagation()} style={{ animation: "fadeInScale 0.25s ease-out" }}>
         <div className="text-center mb-6">
-          <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-[#D94F2B]/10 mb-4">
-            <span className="text-2xl font-black text-[#D94F2B]">N</span>
+          <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-[#2D5A3D]/10 mb-4">
+            <span className="text-2xl font-semibold text-[#2D5A3D]">N</span>
           </div>
           <h2 className="text-xl font-bold text-[#1A1A1A]">Sign in to plan this trip</h2>
           <p className="text-sm text-[#5A4F45] mt-2 leading-relaxed">
@@ -270,16 +270,16 @@ function AuthGate({ tripTitle, onClose }: { tripTitle: string; onClose: () => vo
             Create your free account to save it.
           </p>
         </div>
-        <div className="bg-[#D94F2B]/8 border border-[#D94F2B]/20 rounded-xl p-3 mb-5 text-center">
-          <p className="text-xs font-semibold text-[#B83D25] uppercase tracking-wide mb-1">Your first trip is free</p>
+        <div className="bg-[#2D5A3D]/8 border border-[#2D5A3D]/20 rounded-xl p-3 mb-5 text-center">
+          <p className="text-xs font-semibold text-[#2D5A3D] uppercase tracking-wide mb-1">Your first trip is free</p>
           <p className="text-xs text-[#5A4F45]">No credit card required to get started</p>
         </div>
         <Link href="/login?redirect=/explore"
-          className="block w-full py-3.5 rounded-xl bg-[#D94F2B] text-white text-center font-bold text-sm hover:bg-[#c4442a] transition-colors shadow-lg shadow-[#D94F2B]/20 mb-2">
+          className="block w-full py-3.5 rounded-xl bg-[#2D5A3D] text-white text-center font-bold text-sm hover:bg-[#244B33] transition-colors shadow-lg shadow-[#2D5A3D]/20 mb-2">
           Create Free Account →
         </Link>
         <Link href="/login?redirect=/explore"
-          className="block w-full py-3 rounded-xl border border-[#E2D9CC] text-[#1A1A1A] text-center font-medium text-sm hover:bg-[#F3EDE4] transition-colors mb-3">
+          className="block w-full py-3 rounded-xl border border-[#E2D9CC] text-[#1A1A1A] text-center font-medium text-sm hover:bg-[#F2F0EB] transition-colors mb-3">
           Sign In
         </Link>
         <button onClick={onClose} className="block w-full text-xs text-[#8A8078] hover:text-[#1A1A1A] transition-colors text-center">
@@ -301,7 +301,7 @@ function PaywallModal({ tripTitle, onClose, onPerTrip }: {
       <div className="relative bg-[#FDFAF5] rounded-2xl w-full max-w-sm p-8 shadow-2xl border border-[#E2D9CC]"
         onClick={(e) => e.stopPropagation()} style={{ animation: "fadeInScale 0.25s ease-out" }}>
         <div className="text-center mb-6">
-          <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-[#D94F2B]/10 mb-4">
+          <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-[#2D5A3D]/10 mb-4">
             <span className="text-2xl">⛳</span>
           </div>
           <h2 className="text-xl font-bold text-[#1A1A1A]">Ready for another trip?</h2>
@@ -312,19 +312,19 @@ function PaywallModal({ tripTitle, onClose, onPerTrip }: {
         </div>
         {/* Per-trip */}
         <button onClick={onPerTrip}
-          className="w-full rounded-xl border-2 border-[#E2D9CC] hover:border-[#D94F2B]/50 bg-white p-4 text-left mb-3 transition-all">
+          className="w-full rounded-xl border-2 border-[#E2D9CC] hover:border-[#2D5A3D]/50 bg-white p-4 text-left mb-3 transition-all">
           <div className="flex items-center justify-between mb-0.5">
             <span className="font-bold text-[#1A1A1A] text-sm">Per-Trip Pass</span>
-            <span className="text-lg font-black text-[#1A1A1A]">$9.99</span>
+            <span className="text-lg font-semibold text-[#1A1A1A]">$9.99</span>
           </div>
           <p className="text-xs text-[#5A4F45]">One trip, full access. No subscription needed.</p>
         </button>
         {/* Pro */}
         <Link href="/login?plan=pro"
-          className="block w-full rounded-xl bg-[#D94F2B] p-4 text-left mb-4 shadow-lg shadow-[#D94F2B]/20 hover:bg-[#c4442a] transition-colors">
+          className="block w-full rounded-xl bg-[#2D5A3D] p-4 text-left mb-4 shadow-lg shadow-[#2D5A3D]/20 hover:bg-[#244B33] transition-colors">
           <div className="flex items-center justify-between mb-0.5">
             <span className="font-bold text-white text-sm">Nassau Pro</span>
-            <div><span className="text-lg font-black text-white">$6.99</span><span className="text-white/70 text-xs">/mo</span></div>
+            <div><span className="text-lg font-semibold text-white">$6.99</span><span className="text-white/70 text-xs">/mo</span></div>
           </div>
           <p className="text-xs text-white/80">Unlimited trips · $49.99/yr · 30-day free trial</p>
         </Link>
@@ -517,7 +517,7 @@ function TripModal({ trip, onClose }: { trip: TripData; onClose: () => void }) {
           {/* Stats */}
           <div className="grid grid-cols-3 gap-3 mb-5">
             {[{ label: "Duration", value: `${trip.nights} nights` }, { label: "Rounds", value: `${trip.courses} courses` }, { label: "Best Time", value: trip.best }].map((s) => (
-              <div key={s.label} className="bg-[#F3EDE4] rounded-xl p-3 text-center border border-[#E2D9CC]">
+              <div key={s.label} className="bg-[#F2F0EB] rounded-xl p-3 text-center border border-[#E2D9CC]">
                 <div className="text-xs text-[#8A8078] mb-1">{s.label}</div>
                 <div className="text-sm font-semibold text-[#1A1A1A]">{s.value}</div>
               </div>
@@ -542,7 +542,7 @@ function TripModal({ trip, onClose }: { trip: TripData; onClose: () => void }) {
               </h3>
               <div className="space-y-3">
                 {(trip.itinerary.days || []).map((day) => (
-                  <div key={day.day} className="bg-[#F3EDE4] rounded-xl p-3 border border-[#E2D9CC]">
+                  <div key={day.day} className="bg-[#F2F0EB] rounded-xl p-3 border border-[#E2D9CC]">
                     <div className="text-xs font-semibold mb-2 text-[#1A1A1A]">Day {day.day}: {day.title}</div>
                     <div className="space-y-1.5">
                       {(day.items || []).map((item, idx) => (
@@ -566,7 +566,7 @@ function TripModal({ trip, onClose }: { trip: TripData; onClose: () => void }) {
               <h3 className="text-sm font-bold mb-2 text-[#1A1A1A]">Top Courses</h3>
               <div className="space-y-2">
                 {trip.topCourses.slice(0, 4).map((c) => (
-                  <div key={c.name} className="flex items-center justify-between text-xs bg-[#F3EDE4] rounded-lg px-3 py-2 border border-[#E2D9CC]">
+                  <div key={c.name} className="flex items-center justify-between text-xs bg-[#F2F0EB] rounded-lg px-3 py-2 border border-[#E2D9CC]">
                     <div>
                       <div className="font-medium text-[#1A1A1A]">{c.name}</div>
                       {c.difficulty && <span className="text-[#8A8078]">{c.difficulty}</span>}
@@ -579,10 +579,10 @@ function TripModal({ trip, onClose }: { trip: TripData; onClose: () => void }) {
           )}
 
           {/* Price */}
-          <div className="bg-[#F3EDE4] rounded-xl p-4 mb-5 border border-[#E2D9CC]">
+          <div className="bg-[#F2F0EB] rounded-xl p-4 mb-5 border border-[#E2D9CC]">
             <div className="flex items-center justify-between">
               <div>
-                <div className="text-xs text-[#B83D25] font-medium">Estimated total</div>
+                <div className="text-xs text-[#2D5A3D] font-medium">Estimated total</div>
                 <div className="text-2xl font-bold text-[#1A1A1A]">
                   ${trip.cost.toLocaleString()}<span className="text-sm font-normal text-[#8A8078]"> /person</span>
                 </div>
@@ -609,7 +609,7 @@ function TripModal({ trip, onClose }: { trip: TripData; onClose: () => void }) {
           {/* CTA */}
           <button onClick={handlePlanTrip} disabled={creating}
             className="w-full py-3.5 rounded-xl text-white font-bold text-base transition-all duration-200 hover:opacity-90 active:scale-[0.98] disabled:opacity-60"
-            style={{ backgroundColor: "#D94F2B" }}>
+            style={{ backgroundColor: "#2D5A3D" }}>
             {creating ? "Checking your account..." : "Plan This Trip →"}
           </button>
           <p className="text-center text-xs text-[#8A8078] mt-2">First trip free · No card required to start</p>
@@ -645,7 +645,7 @@ export default function NassauExplore() {
   const activeFilterCount = [selectedVibe, selectedRegion, selectedPrice].filter(f => f !== "All").length;
 
   return (
-    <div className="min-h-screen" style={{ backgroundColor: "#F3EDE4" }}>
+    <div className="min-h-screen" style={{ backgroundColor: "#F2F0EB" }}>
       <style>{`
         @keyframes slideUp { from { transform: translateY(100px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
@@ -661,8 +661,8 @@ export default function NassauExplore() {
 
       {/* HERO */}
       <div className="max-w-7xl mx-auto px-4 pt-8 pb-4">
-        <p className="text-xs font-semibold text-[#B83D25] uppercase tracking-widest mb-1">Nassau</p>
-        <h1 className="text-3xl sm:text-4xl font-black mb-2 text-[#1A1A1A]">Explore Golf Trips</h1>
+        <p className="font-sans text-[11px] font-medium uppercase tracking-[0.08em] text-[#5C5C5C] mb-1">Nassau</p>
+        <h1 className="font-headline text-3xl sm:text-4xl font-medium mb-2 text-[#1A1A1A]">Explore Golf Trips</h1>
         <p className="text-[#5A4F45] text-base max-w-xl">
           50 curated trips across 50 destinations. Find your next round, or let us plan one for you.
         </p>
@@ -673,19 +673,19 @@ export default function NassauExplore() {
         <div className="mb-3">
           <input type="text" placeholder="Search destinations..." value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full sm:w-72 px-4 py-2.5 rounded-xl border border-[#E2D9CC] bg-[#FDFAF5] text-sm text-[#1A1A1A] placeholder-[#8A8078] focus:outline-none focus:border-[#D94F2B] transition-colors" />
+            className="w-full sm:w-72 px-4 py-2.5 rounded-xl border border-[#E2D9CC] bg-[#FDFAF5] text-sm text-[#1A1A1A] placeholder-[#8A8078] focus:outline-none focus:border-[#2D5A3D] transition-colors" />
         </div>
 
         <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-hide">
           <button onClick={() => setShowFilters(!showFilters)}
             className="flex items-center gap-1.5 px-3.5 py-2 rounded-full text-sm font-semibold border-2 transition whitespace-nowrap"
             style={{
-              borderColor: activeFilterCount > 0 ? "#D94F2B" : "#E2D9CC",
-              backgroundColor: activeFilterCount > 0 ? "#D94F2B" : "#FDFAF5",
+              borderColor: activeFilterCount > 0 ? "#2D5A3D" : "#E2D9CC",
+              backgroundColor: activeFilterCount > 0 ? "#2D5A3D" : "#FDFAF5",
               color: activeFilterCount > 0 ? "white" : "#5A4F45",
             }}>
             ☰ Filters{activeFilterCount > 0 && (
-              <span className="bg-white text-[#D94F2B] w-5 h-5 rounded-full text-xs flex items-center justify-center font-bold ml-1">
+              <span className="bg-white text-[#2D5A3D] w-5 h-5 rounded-full text-xs flex items-center justify-center font-bold ml-1">
                 {activeFilterCount}
               </span>
             )}
@@ -694,8 +694,8 @@ export default function NassauExplore() {
             <button key={v} onClick={() => setSelectedVibe(selectedVibe === v ? "All" : v)}
               className="px-3.5 py-2 rounded-full text-sm font-medium border transition whitespace-nowrap"
               style={{
-                borderColor: selectedVibe === v ? "#D94F2B" : "#E2D9CC",
-                backgroundColor: selectedVibe === v ? "#D94F2B" : "#FDFAF5",
+                borderColor: selectedVibe === v ? "#2D5A3D" : "#E2D9CC",
+                backgroundColor: selectedVibe === v ? "#2D5A3D" : "#FDFAF5",
                 color: selectedVibe === v ? "white" : "#5A4F45",
               }}>
               {v}
@@ -712,7 +712,7 @@ export default function NassauExplore() {
                   {REGIONS.map((r) => (
                     <button key={r} onClick={() => setSelectedRegion(r)}
                       className="px-2.5 py-1 rounded-full text-xs font-medium border transition"
-                      style={{ borderColor: selectedRegion === r ? "#D94F2B" : "#E2D9CC", backgroundColor: selectedRegion === r ? "#D94F2B" : "transparent", color: selectedRegion === r ? "white" : "#5A4F45" }}>
+                      style={{ borderColor: selectedRegion === r ? "#2D5A3D" : "#E2D9CC", backgroundColor: selectedRegion === r ? "#2D5A3D" : "transparent", color: selectedRegion === r ? "white" : "#5A4F45" }}>
                       {r}
                     </button>
                   ))}
@@ -724,7 +724,7 @@ export default function NassauExplore() {
                   {PRICES.map((p) => (
                     <button key={p} onClick={() => setSelectedPrice(p)}
                       className="px-2.5 py-1 rounded-full text-xs font-medium border transition"
-                      style={{ borderColor: selectedPrice === p ? "#D94F2B" : "#E2D9CC", backgroundColor: selectedPrice === p ? "#D94F2B" : "transparent", color: selectedPrice === p ? "white" : "#5A4F45" }}>
+                      style={{ borderColor: selectedPrice === p ? "#2D5A3D" : "#E2D9CC", backgroundColor: selectedPrice === p ? "#2D5A3D" : "transparent", color: selectedPrice === p ? "white" : "#5A4F45" }}>
                       {p}
                     </button>
                   ))}
@@ -733,7 +733,7 @@ export default function NassauExplore() {
             </div>
             {activeFilterCount > 0 && (
               <button onClick={() => { setSelectedVibe("All"); setSelectedRegion("All"); setSelectedPrice("All"); }}
-                className="mt-3 text-xs text-[#8A8078] hover:text-[#D94F2B] underline transition-colors">
+                className="mt-3 text-xs text-[#8A8078] hover:text-[#2D5A3D] underline transition-colors">
                 Clear all filters
               </button>
             )}
@@ -758,7 +758,7 @@ export default function NassauExplore() {
             <h3 className="text-xl font-bold mb-2 text-[#1A1A1A]">No trips match those filters</h3>
             <p className="text-[#8A8078] text-sm">Try adjusting your filters or search query</p>
             <button onClick={() => { setSelectedVibe("All"); setSelectedRegion("All"); setSelectedPrice("All"); setSearchQuery(""); }}
-              className="mt-4 px-5 py-2 rounded-full text-sm font-semibold text-white bg-[#D94F2B] hover:bg-[#c4442a] transition-colors">
+              className="mt-4 px-5 py-2 rounded-full text-sm font-semibold text-white bg-[#2D5A3D] hover:bg-[#244B33] transition-colors">
               Reset Filters
             </button>
           </div>
@@ -768,22 +768,22 @@ export default function NassauExplore() {
       {/* BOTTOM CTA */}
       <div className="border-t border-[#E2D9CC] py-12 bg-[#1A1A1A]">
         <div className="max-w-7xl mx-auto px-4 text-center">
-          <h2 className="text-2xl sm:text-3xl font-bold text-white mb-3">Don&apos;t see your perfect trip?</h2>
+          <h2 className="font-headline text-2xl sm:text-3xl font-medium text-white mb-3">Don&apos;t see your perfect trip?</h2>
           <p className="text-zinc-400 text-sm mb-6 max-w-md mx-auto">
             Tell Nassau what you&apos;re looking for and we&apos;ll build a custom trip for your crew in under 60 seconds.
           </p>
           <a href="/trips/create/ai"
-            className="inline-block px-8 py-3.5 rounded-full text-base font-bold bg-[#D94F2B] text-white hover:bg-[#c4442a] transition-colors hover:shadow-xl">
+            className="inline-block px-8 py-3.5 rounded-full text-base font-bold bg-[#2D5A3D] text-white hover:bg-[#244B33] transition-colors hover:shadow-xl">
             Plan My Trip ✨
           </a>
         </div>
       </div>
 
       {/* FOOTER */}
-      <footer className="border-t border-[#E2D9CC] px-6 py-8 bg-[#F3EDE4]">
+      <footer className="border-t border-[#E2D9CC] px-6 py-8 bg-[#F2F0EB]">
         <div className="mx-auto max-w-5xl flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <span className="text-lg font-extrabold text-[#D94F2B] tracking-tight">Nassau</span>
+            <span className="font-headline text-lg font-medium text-[#2D5A3D] tracking-tight">Nassau</span>
             <span className="text-xs text-[#5A4F45]">Plan trips. Track rounds. Settle bets.</span>
           </div>
           <div className="flex items-center gap-6 text-xs text-[#5A4F45]">

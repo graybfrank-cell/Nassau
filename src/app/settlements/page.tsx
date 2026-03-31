@@ -143,8 +143,7 @@ export default function SettlementsPage() {
 
   return (
     <div
-      className="min-h-screen bg-[#18181B] pb-32"
-      style={{ fontFamily: "'Helvetica Neue', Arial, sans-serif" }}
+      className="min-h-screen bg-[#111111] pb-32"
     >
       {/* ── BANNER ── */}
       <div className="relative h-40 sm:h-48 overflow-hidden">
@@ -155,33 +154,33 @@ export default function SettlementsPage() {
           className="object-cover"
           priority
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-dark/80 via-dark/60 to-dark" />
+        <div className="absolute inset-0 bg-gradient-to-b from-[#111111]/80 via-[#111111]/60 to-[#111111]" />
         <div className="relative z-10 flex flex-col h-full">
           <TopBar />
           <div className="mt-auto px-6 pb-5">
-            <h1 className="text-[22px] font-medium text-[#F3EDE4] tracking-tight">Settlements</h1>
-            <p className="text-[13px] text-[#F3EDE4]/50">Who owes who. Settle up fast.</p>
+            <h1 className="text-[22px] font-headline font-medium text-[#F2F0EB] tracking-tight">Settlements</h1>
+            <p className="text-[13px] text-[#F2F0EB]/50">Who owes who. Settle up fast.</p>
           </div>
         </div>
       </div>
 
       {/* Summary Card */}
       {!loading && (
-        <div className="bg-[#27272A] rounded-xl p-4 mx-6 mt-4">
+        <div className="bg-[#1A1A1A] rounded-[10px] shadow-sm p-4 mx-6 mt-4">
           <div className="grid grid-cols-2">
             <div>
-              <p className="text-xs uppercase text-[#71717A] font-bold">
+              <p className="font-sans text-[11px] font-medium uppercase tracking-[0.08em] text-[#5C5C5C]">
                 You Owe
               </p>
-              <p className="font-black text-2xl text-[#D94F2B]">
+              <p className="font-semibold text-2xl text-[#C4423B]">
                 ${youOweTotal.toFixed(2)}
               </p>
             </div>
             <div>
-              <p className="text-xs uppercase text-[#71717A] font-bold">
+              <p className="font-sans text-[11px] font-medium uppercase tracking-[0.08em] text-[#5C5C5C]">
                 Owed to You
               </p>
-              <p className="font-black text-2xl text-[#0D7377]">
+              <p className="font-semibold text-2xl text-[#2D5A3D]">
                 ${owedToYouTotal.toFixed(2)}
               </p>
             </div>
@@ -195,10 +194,10 @@ export default function SettlementsPage() {
           <button
             key={filter}
             onClick={() => setActiveFilter(filter)}
-            className={`text-xs font-black uppercase px-4 py-2 rounded-full whitespace-nowrap ${
+            className={`text-xs font-medium uppercase px-4 py-2 rounded-full whitespace-nowrap ${
               activeFilter === filter
-                ? "bg-[#D94F2B] text-white"
-                : "border border-[#3F3F46] text-[#71717A]"
+                ? "bg-[#2D5A3D] text-white"
+                : "border border-[#2A2A2A] text-[#8A8A8A]"
             }`}
           >
             {filter}
@@ -213,7 +212,7 @@ export default function SettlementsPage() {
             {[1, 2, 3].map((i) => (
               <div
                 key={i}
-                className="animate-pulse rounded-xl bg-[#27272A] p-4 space-y-3"
+                className="animate-pulse rounded-[10px] bg-[#1A1A1A] p-4 space-y-3"
               >
                 <div className="h-4 w-32 rounded bg-zinc-700" />
                 <div className="h-6 w-20 rounded bg-zinc-700" />
@@ -223,7 +222,7 @@ export default function SettlementsPage() {
           </>
         ) : filtered.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-20 text-center">
-            <p className="text-lg text-[#71717A]">All settled up 🤝</p>
+            <p className="text-lg text-[#8A8A8A]">All settled up 🤝</p>
           </div>
         ) : (
           filtered.map((s) => {
@@ -235,18 +234,18 @@ export default function SettlementsPage() {
             return (
               <div
                 key={s.id}
-                className="bg-[#27272A] rounded-xl p-4 border border-[#3F3F46]"
+                className="bg-[#1A1A1A] rounded-[10px] shadow-sm p-4"
               >
                 {/* Top: Name + Amount */}
                 <div className="flex items-center justify-between">
-                  <span className="font-bold text-[#F3EDE4]">
+                  <span className="font-bold text-[#F2F0EB]">
                     {otherPerson.full_name ||
                       otherPerson.email ||
                       "Unknown"}
                   </span>
                   <span
-                    className={`text-xl font-black ${
-                      isOwed ? "text-[#0D7377]" : "text-[#D94F2B]"
+                    className={`text-xl font-semibold ${
+                      isOwed ? "text-[#2D5A3D]" : "text-[#C4423B]"
                     }`}
                   >
                     {isOwed ? "+" : "-"}$
@@ -256,7 +255,7 @@ export default function SettlementsPage() {
 
                 {/* Round/trip note */}
                 {(s.note || s.round_id || s.trip_id) && (
-                  <p className="text-[12px] text-[#F3EDE4]/40 mt-1">
+                  <p className="text-[12px] text-[#F2F0EB]/40 mt-1">
                     {s.note || (s.round_id ? "Round" : s.trip_id ? "Trip" : "")}
                   </p>
                 )}
@@ -264,7 +263,7 @@ export default function SettlementsPage() {
                 {/* Bottom: Actions */}
                 <div className="mt-3">
                   {isPaid ? (
-                    <div className="flex items-center gap-1.5 text-[#0D7377]">
+                    <div className="flex items-center gap-1.5 text-[#2D5A3D]">
                       <CheckCircle2 className="h-4 w-4" />
                       <span className="text-sm font-bold">Paid</span>
                     </div>
@@ -275,7 +274,7 @@ export default function SettlementsPage() {
                           onClick={() =>
                             openVenmo(s.payee, s.amount, s.note)
                           }
-                          className="bg-[#D94F2B] text-[#F3EDE4] rounded-[10px] py-2.5 px-4 text-[13px] font-medium"
+                          className="bg-[#C4423B] text-[#F2F0EB] rounded-[10px] py-2.5 px-4 text-[13px] font-medium"
                         >
                           Settle Up via Venmo
                         </button>
@@ -283,7 +282,7 @@ export default function SettlementsPage() {
                       <button
                         onClick={() => handleMarkAsPaid(s.id)}
                         disabled={updatingId === s.id}
-                        className="border border-[#F3EDE4]/10 text-[#F3EDE4]/50 rounded-[10px] py-2.5 px-4 text-[13px] font-medium hover:text-[#F3EDE4]/80 transition-colors disabled:opacity-50"
+                        className="border border-[#F2F0EB]/10 text-[#F2F0EB]/50 rounded-[10px] py-2.5 px-4 text-[13px] font-medium hover:text-[#F2F0EB]/80 transition-colors disabled:opacity-50"
                       >
                         {updatingId === s.id
                           ? "Updating..."
@@ -296,7 +295,7 @@ export default function SettlementsPage() {
                     <button
                       onClick={() => updateStatus(s.id, "confirmed")}
                       disabled={updatingId === s.id}
-                      className="inline-flex items-center gap-1.5 rounded-[10px] bg-[#0D7377] px-4 py-2.5 text-[13px] font-medium text-[#F3EDE4] hover:bg-[#0B6165] transition-colors disabled:opacity-50"
+                      className="inline-flex items-center gap-1.5 rounded-[10px] bg-[#2D5A3D] px-4 py-2.5 text-[13px] font-medium text-[#F2F0EB] hover:opacity-90 transition-colors disabled:opacity-50"
                     >
                       <Check className="h-4 w-4" />
                       {updatingId === s.id
@@ -312,14 +311,14 @@ export default function SettlementsPage() {
       </div>
 
       {/* Bottom Nav */}
-      <nav className="fixed bottom-0 left-0 right-0 bg-[#18181B] border-t border-[#27272A] px-6 py-3">
+      <nav className="fixed bottom-0 left-0 right-0 bg-[#111111] border-t border-[#1A1A1A] px-6 py-3">
         <div className="grid grid-cols-4">
           <Link
             href="/dashboard"
             className="flex flex-col items-center gap-1"
           >
-            <Home className="h-5 w-5 text-[#71717A]" />
-            <span className="text-xs uppercase font-bold text-[#71717A]">
+            <Home className="h-5 w-5 text-[#8A8A8A]" />
+            <span className="text-xs uppercase font-bold text-[#8A8A8A]">
               Home
             </span>
           </Link>
@@ -327,8 +326,8 @@ export default function SettlementsPage() {
             href="/rounds"
             className="flex flex-col items-center gap-1"
           >
-            <Trophy className="h-5 w-5 text-[#71717A]" />
-            <span className="text-xs uppercase font-bold text-[#71717A]">
+            <Trophy className="h-5 w-5 text-[#8A8A8A]" />
+            <span className="text-xs uppercase font-bold text-[#8A8A8A]">
               Rounds
             </span>
           </Link>
@@ -336,8 +335,8 @@ export default function SettlementsPage() {
             href="/trips"
             className="flex flex-col items-center gap-1"
           >
-            <Map className="h-5 w-5 text-[#71717A]" />
-            <span className="text-xs uppercase font-bold text-[#71717A]">
+            <Map className="h-5 w-5 text-[#8A8A8A]" />
+            <span className="text-xs uppercase font-bold text-[#8A8A8A]">
               Trips
             </span>
           </Link>
@@ -345,8 +344,8 @@ export default function SettlementsPage() {
             href="/profile"
             className="flex flex-col items-center gap-1"
           >
-            <User className="h-5 w-5 text-[#71717A]" />
-            <span className="text-xs uppercase font-bold text-[#71717A]">
+            <User className="h-5 w-5 text-[#8A8A8A]" />
+            <span className="text-xs uppercase font-bold text-[#8A8A8A]">
               Profile
             </span>
           </Link>

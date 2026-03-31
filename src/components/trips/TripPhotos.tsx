@@ -138,7 +138,7 @@ export default function TripPhotos({
         <p className="mt-3 text-sm text-zinc-400">
           No photos yet. Be the first to capture the trip.
         </p>
-        <label className="mt-4 inline-flex cursor-pointer items-center gap-2 rounded-lg bg-[#D94F2B] px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-[#c4442a]">
+        <label className="mt-4 inline-flex cursor-pointer items-center gap-2 rounded-lg bg-[#2D5A3D] px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-[#244A32]">
           <Upload className="h-4 w-4" />
           Upload Photo
           <input
@@ -187,7 +187,7 @@ export default function TripPhotos({
       {uploading && (
         <div className="mb-4 h-1 w-full overflow-hidden rounded-full bg-zinc-800">
           <div
-            className="h-full rounded-full bg-[#D94F2B] transition-all duration-300"
+            className="h-full rounded-full bg-[#2D5A3D] transition-all duration-300"
             style={{ width: `${uploadProgress}%` }}
           />
         </div>

@@ -85,7 +85,7 @@ export default function OnboardingPage() {
   if (checkingAuth) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-zinc-950">
-        <div className="h-8 w-8 animate-spin rounded-full border-2 border-zinc-700 border-t-[#D94F2B]" />
+        <div className="h-8 w-8 animate-spin rounded-full border-2 border-zinc-700 border-t-[#2D5A3D]" />
       </div>
     );
   }
@@ -100,7 +100,7 @@ export default function OnboardingPage() {
               key={i}
               className={`flex h-8 w-8 items-center justify-center rounded-full text-xs font-bold transition-colors ${
                 i + 1 === step
-                  ? "bg-[#D94F2B] text-white"
+                  ? "bg-[#2D5A3D] text-white"
                   : i + 1 < step
                     ? "bg-emerald-600 text-white"
                     : "bg-zinc-800 text-zinc-500"
@@ -161,7 +161,7 @@ export default function OnboardingPage() {
             {step < 3 ? (
               <button
                 onClick={handleNext}
-                className="flex items-center gap-1.5 rounded-lg bg-[#D94F2B] px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[#c4442a]"
+                className="flex items-center gap-1.5 rounded-lg bg-[#2D5A3D] px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[#244A32]"
               >
                 Continue
                 <ChevronRight className="h-4 w-4" />
@@ -180,7 +180,7 @@ export default function OnboardingPage() {
                 <button
                   onClick={handleComplete}
                   disabled={submitting}
-                  className="flex items-center gap-1.5 rounded-lg bg-[#D94F2B] px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[#c4442a] disabled:opacity-50"
+                  className="flex items-center gap-1.5 rounded-lg bg-[#2D5A3D] px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[#244A32] disabled:opacity-50"
                 >
                   {submitting ? "Setting up..." : "Let's Go"}
                   {!submitting && <ChevronRight className="h-4 w-4" />}
@@ -210,7 +210,7 @@ function StepName({
   return (
     <div>
       <div className="mb-1 flex h-10 w-10 items-center justify-center rounded-xl bg-zinc-800">
-        <User className="h-5 w-5 text-[#D94F2B]" />
+        <User className="h-5 w-5 text-[#2D5A3D]" />
       </div>
       <h2 className="mt-4 text-xl font-bold text-white">
         What&apos;s your name?
@@ -225,7 +225,7 @@ function StepName({
         onKeyDown={(e) => e.key === "Enter" && onSubmit()}
         placeholder="Full name"
         autoFocus
-        className="mt-4 w-full rounded-lg border border-zinc-700 bg-zinc-800 px-4 py-3 text-sm text-white placeholder-zinc-500 outline-none transition-colors focus:border-[#D94F2B]"
+        className="mt-4 w-full rounded-lg border border-zinc-700 bg-zinc-800 px-4 py-3 text-sm text-white placeholder-zinc-500 outline-none transition-colors focus:border-[#2D5A3D]"
       />
     </div>
   );
@@ -243,7 +243,7 @@ function StepVenmo({
   return (
     <div>
       <div className="mb-1 flex h-10 w-10 items-center justify-center rounded-xl bg-zinc-800">
-        <DollarSign className="h-5 w-5 text-[#D94F2B]" />
+        <DollarSign className="h-5 w-5 text-[#2D5A3D]" />
       </div>
       <h2 className="mt-4 text-xl font-bold text-white">
         Add your Venmo @username
@@ -260,7 +260,7 @@ function StepVenmo({
           onKeyDown={(e) => e.key === "Enter" && onSubmit()}
           placeholder="username"
           autoFocus
-          className="w-full rounded-lg border border-zinc-700 bg-zinc-800 px-4 py-3 text-sm text-white placeholder-zinc-500 outline-none transition-colors focus:border-[#D94F2B]"
+          className="w-full rounded-lg border border-zinc-700 bg-zinc-800 px-4 py-3 text-sm text-white placeholder-zinc-500 outline-none transition-colors focus:border-[#2D5A3D]"
         />
       </div>
       <p className="mt-3 text-xs text-zinc-500">
@@ -280,7 +280,7 @@ function StepHandicap({
   return (
     <div>
       <div className="mb-1 flex h-10 w-10 items-center justify-center rounded-xl bg-zinc-800">
-        <Target className="h-5 w-5 text-[#D94F2B]" />
+        <Target className="h-5 w-5 text-[#2D5A3D]" />
       </div>
       <h2 className="mt-4 text-xl font-bold text-white">
         What&apos;s your handicap?
@@ -295,7 +295,7 @@ function StepHandicap({
         onChange={(e) => onChange(e.target.value)}
         placeholder="e.g. 12.4"
         autoFocus
-        className="mt-4 w-full rounded-lg border border-zinc-700 bg-zinc-800 px-4 py-3 text-sm text-white placeholder-zinc-500 outline-none transition-colors focus:border-[#D94F2B]"
+        className="mt-4 w-full rounded-lg border border-zinc-700 bg-zinc-800 px-4 py-3 text-sm text-white placeholder-zinc-500 outline-none transition-colors focus:border-[#2D5A3D]"
       />
     </div>
   );

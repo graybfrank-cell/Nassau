@@ -67,7 +67,7 @@ export default function ReferralCard() {
           Invite your crew
         </h3>
         {referralCount > 0 && (
-          <span className="rounded-full bg-emerald-100 px-3 py-1 text-sm font-medium text-[#D94F2B]">
+          <span className="rounded-full bg-emerald-100 px-3 py-1 text-sm font-medium text-[#2D5A3D]">
             {referralCount} friend{referralCount !== 1 ? "s" : ""} joined
           </span>
         )}
@@ -84,7 +84,7 @@ export default function ReferralCard() {
         </div>
         <button
           onClick={handleCopy}
-          className="inline-flex items-center gap-1.5 rounded-lg bg-[#D94F2B] px-4 py-2 text-sm font-semibold text-white hover:bg-[#B83D25] transition-colors"
+          className="inline-flex items-center gap-1.5 rounded-lg bg-[#2D5A3D] px-4 py-2 text-sm font-semibold text-white hover:bg-[#244A32] transition-colors"
         >
           {copied ? (
             <>

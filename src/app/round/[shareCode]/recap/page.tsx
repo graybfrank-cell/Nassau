@@ -126,7 +126,7 @@ export default function RecapPage() {
 
   if (loading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-[#F3EDE4]">
+      <div className="flex min-h-screen items-center justify-center bg-[#F2F0EB]">
         <p className="text-sm text-[#6A6058]">Loading recap...</p>
       </div>
     );
@@ -134,7 +134,7 @@ export default function RecapPage() {
 
   if (!data || data.status !== "completed") {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-[#F3EDE4]">
+      <div className="flex min-h-screen items-center justify-center bg-[#F2F0EB]">
         <div className="text-center">
           <h2 className="text-lg font-semibold text-[#1A1A1A]">
             Recap not available
@@ -144,7 +144,7 @@ export default function RecapPage() {
           </p>
           <Link
             href={`/round/${shareCode}`}
-            className="mt-4 inline-block text-sm font-medium text-[#D94F2B]"
+            className="mt-4 inline-block text-sm font-medium text-[#2D5A3D]"
           >
             View Round
           </Link>
@@ -222,7 +222,7 @@ export default function RecapPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#F3EDE4] pb-12">
+    <div className="min-h-screen bg-[#F2F0EB] pb-12">
       {/* ── Hero ── */}
       <div className="relative overflow-hidden">
         {data.course_photo_url ? (
@@ -269,7 +269,7 @@ export default function RecapPage() {
               Final Leaderboard
             </p>
           </div>
-          <div className="divide-y divide-[#F3EDE4]">
+          <div className="divide-y divide-[#F2F0EB]">
             {leaderboard.map((p, idx) => (
               <div
                 key={p.id}
@@ -281,8 +281,8 @@ export default function RecapPage() {
                   <span
                     className={`flex h-8 w-8 items-center justify-center rounded-full text-xs font-bold ${
                       idx === 0
-                        ? "bg-[#D94F2B] text-white"
-                        : "bg-[#F3EDE4] text-[#8A8078]"
+                        ? "bg-[#2D5A3D] text-white"
+                        : "bg-[#F2F0EB] text-[#8A8078]"
                     }`}
                   >
                     {idx === 0 ? (
@@ -351,7 +351,7 @@ export default function RecapPage() {
             )}
 
             {/* Payouts */}
-            <div className="border-t border-[#F3EDE4] pt-3 space-y-1.5">
+            <div className="border-t border-[#F2F0EB] pt-3 space-y-1.5">
               {Object.entries(skinsPayouts)
                 .filter(([, v]) => v !== 0)
                 .sort(([, a], [, b]) => b - a)
@@ -386,7 +386,7 @@ export default function RecapPage() {
             <div className="space-y-2">
               {/* Front 9 */}
               {nassauResults.frontNine && (
-                <div className="flex items-center justify-between rounded-lg bg-[#F3EDE4] px-3 py-2">
+                <div className="flex items-center justify-between rounded-lg bg-[#F2F0EB] px-3 py-2">
                   <span className="text-xs font-semibold text-[#8A8078]">
                     Front 9
                   </span>
@@ -402,7 +402,7 @@ export default function RecapPage() {
               )}
               {/* Back 9 */}
               {nassauResults.backNine && (
-                <div className="flex items-center justify-between rounded-lg bg-[#F3EDE4] px-3 py-2">
+                <div className="flex items-center justify-between rounded-lg bg-[#F2F0EB] px-3 py-2">
                   <span className="text-xs font-semibold text-[#8A8078]">
                     Back 9
                   </span>
@@ -418,7 +418,7 @@ export default function RecapPage() {
               )}
               {/* Total */}
               {nassauResults.overall && (
-                <div className="flex items-center justify-between rounded-lg bg-[#F3EDE4] px-3 py-2">
+                <div className="flex items-center justify-between rounded-lg bg-[#F2F0EB] px-3 py-2">
                   <span className="text-xs font-semibold text-[#8A8078]">
                     Overall
                   </span>
@@ -436,7 +436,7 @@ export default function RecapPage() {
 
             {/* Nassau payouts */}
             {nassauResults.payouts && (
-              <div className="mt-3 border-t border-[#F3EDE4] pt-3 space-y-1.5">
+              <div className="mt-3 border-t border-[#F2F0EB] pt-3 space-y-1.5">
                 {Object.entries(nassauResults.payouts)
                   .filter(([, v]) => v !== 0)
                   .sort(([, a], [, b]) => b - a)
@@ -475,10 +475,10 @@ export default function RecapPage() {
                 return (
                   <div
                     key={idx}
-                    className="flex items-center justify-between rounded-lg bg-[#F3EDE4] px-3 py-2.5"
+                    className="flex items-center justify-between rounded-lg bg-[#F2F0EB] px-3 py-2.5"
                   >
                     <div>
-                      <p className="text-xs font-bold text-[#D94F2B]">
+                      <p className="text-xs font-bold text-[#2D5A3D]">
                         {emoji} {award.title}
                       </p>
                       <p className="text-sm font-medium text-[#1A1A1A]">
@@ -515,7 +515,7 @@ export default function RecapPage() {
                   <div
                     key={s.id}
                     className={`flex items-center justify-between rounded-lg px-3 py-2.5 ${
-                      isSettled ? "bg-emerald-50" : "bg-[#F3EDE4]"
+                      isSettled ? "bg-emerald-50" : "bg-[#F2F0EB]"
                     }`}
                   >
                     <div className="text-sm">
@@ -543,7 +543,7 @@ export default function RecapPage() {
                               href={venmoLink}
                               target={isMobile ? undefined : "_blank"}
                               rel={isMobile ? undefined : "noopener noreferrer"}
-                              className="inline-flex items-center gap-1 rounded-full bg-[#D94F2B] px-2.5 py-1 text-[10px] font-bold text-white transition-colors hover:bg-[#c4442a]"
+                              className="inline-flex items-center gap-1 rounded-full bg-[#2D5A3D] px-2.5 py-1 text-[10px] font-bold text-white transition-colors hover:bg-[#244A32]"
                             >
                               <DollarSign className="h-2.5 w-2.5" />
                               Pay ${s.amount.toFixed(0)} on Venmo
@@ -552,7 +552,7 @@ export default function RecapPage() {
                           <button
                             onClick={() => handleSettle(s.id)}
                             disabled={settlingId === s.id}
-                            className="inline-flex items-center gap-1 rounded-full border border-[#E2D9CC] bg-white px-2 py-0.5 text-[10px] font-bold text-[#6A6058] transition-colors hover:bg-[#F3EDE4] disabled:opacity-50"
+                            className="inline-flex items-center gap-1 rounded-full border border-[#E2D9CC] bg-white px-2 py-0.5 text-[10px] font-bold text-[#6A6058] transition-colors hover:bg-[#F2F0EB] disabled:opacity-50"
                           >
                             <Check className="h-2.5 w-2.5" />
                             {settlingId === s.id ? "..." : "Mark Paid"}
@@ -571,11 +571,11 @@ export default function RecapPage() {
         <div className="mt-6 flex gap-3">
           <button
             onClick={handleShare}
-            className="flex-1 rounded-xl border border-[#E2D9CC] bg-white py-3.5 text-sm font-bold text-[#1A1A1A] transition-colors hover:bg-[#F3EDE4] active:scale-[0.98]"
+            className="flex-1 rounded-xl border border-[#E2D9CC] bg-white py-3.5 text-sm font-bold text-[#1A1A1A] transition-colors hover:bg-[#F2F0EB] active:scale-[0.98]"
           >
             {copied ? (
               <span className="inline-flex items-center justify-center gap-1">
-                <Check className="h-4 w-4 text-[#D94F2B]" />
+                <Check className="h-4 w-4 text-[#2D5A3D]" />
                 Copied!
               </span>
             ) : (
@@ -587,7 +587,7 @@ export default function RecapPage() {
           </button>
           <Link
             href="/rounds/new"
-            className="flex-1 rounded-xl bg-[#D94F2B] py-3.5 text-center text-sm font-bold text-white transition-colors hover:bg-[#c4442a] active:scale-[0.98]"
+            className="flex-1 rounded-xl bg-[#2D5A3D] py-3.5 text-center text-sm font-bold text-white transition-colors hover:bg-[#244A32] active:scale-[0.98]"
           >
             Play Again
           </Link>

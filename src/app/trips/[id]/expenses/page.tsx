@@ -417,7 +417,7 @@ export default function ExpensesPage() {
             <button
               onClick={() => (showForm ? resetForm() : openForm())}
               disabled={trip.members.length === 0}
-              className="inline-flex items-center gap-2 rounded-lg bg-[#D94F2B] px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[#B83D25] disabled:opacity-40 disabled:cursor-not-allowed"
+              className="inline-flex items-center gap-2 rounded-lg bg-[#2D5A3D] px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[#244A32] disabled:opacity-40 disabled:cursor-not-allowed"
             >
               <Plus className="h-4 w-4" />
               Add Expense
@@ -443,14 +443,14 @@ export default function ExpensesPage() {
           <div className="mt-6 rounded-xl border-2 border-emerald-200 bg-emerald-50/30 p-6 shadow-sm">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <Receipt className="h-5 w-5 text-[#D94F2B]" />
+                <Receipt className="h-5 w-5 text-[#2D5A3D]" />
                 <h2 className="text-lg font-semibold text-zinc-900">
                   Receipt Scanned
                 </h2>
                 {scannedReceipt.confidence && (
                   <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${
                     scannedReceipt.confidence === "high"
-                      ? "bg-emerald-100 text-[#D94F2B]"
+                      ? "bg-emerald-100 text-[#2D5A3D]"
                       : scannedReceipt.confidence === "medium"
                         ? "bg-amber-100 text-amber-700"
                         : "bg-red-100 text-red-700"
@@ -504,7 +504,7 @@ export default function ExpensesPage() {
                   type="text"
                   value={scanDescription}
                   onChange={(e) => setScanDescription(e.target.value)}
-                  className="mt-1 block w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-[#D94F2B] focus:outline-none focus:ring-2 focus:ring-[#D94F2B]/20"
+                  className="mt-1 block w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-[#2D5A3D] focus:outline-none focus:ring-2 focus:ring-[#2D5A3D]/20"
                 />
               </div>
               {/* Amount */}
@@ -516,7 +516,7 @@ export default function ExpensesPage() {
                   step="0.01"
                   value={scanAmount}
                   onChange={(e) => setScanAmount(e.target.value)}
-                  className="mt-1 block w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-[#D94F2B] focus:outline-none focus:ring-2 focus:ring-[#D94F2B]/20"
+                  className="mt-1 block w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-[#2D5A3D] focus:outline-none focus:ring-2 focus:ring-[#2D5A3D]/20"
                 />
               </div>
             </div>
@@ -532,7 +532,7 @@ export default function ExpensesPage() {
                     onClick={() => setScanCategory(scanCategory === cat.label ? null : cat.label)}
                     className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${
                       scanCategory === cat.label
-                        ? "bg-emerald-100 text-[#D94F2B] ring-2 ring-[#D94F2B]/30"
+                        ? "bg-emerald-100 text-[#2D5A3D] ring-2 ring-[#2D5A3D]/30"
                         : "bg-zinc-100 text-zinc-600 hover:bg-zinc-200"
                     }`}
                   >
@@ -548,7 +548,7 @@ export default function ExpensesPage() {
               <select
                 value={scanPaidBy}
                 onChange={(e) => handleScanPaidByChange(e.target.value)}
-                className="mt-1 block w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm text-zinc-900 focus:border-[#D94F2B] focus:outline-none focus:ring-2 focus:ring-[#D94F2B]/20"
+                className="mt-1 block w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm text-zinc-900 focus:border-[#2D5A3D] focus:outline-none focus:ring-2 focus:ring-[#2D5A3D]/20"
               >
                 <option value="">Select who paid</option>
                 {trip.members.map((m) => (
@@ -566,7 +566,7 @@ export default function ExpensesPage() {
                   onClick={() => handleScanSplitModeChange("equal")}
                   className={`rounded-full px-3.5 py-1.5 text-sm font-medium transition-colors ${
                     scanSplitMode === "equal"
-                      ? "bg-emerald-100 text-[#D94F2B] ring-2 ring-[#D94F2B]/30"
+                      ? "bg-emerald-100 text-[#2D5A3D] ring-2 ring-[#2D5A3D]/30"
                       : "bg-zinc-100 text-zinc-600 hover:bg-zinc-200"
                   }`}
                 >
@@ -577,7 +577,7 @@ export default function ExpensesPage() {
                   onClick={() => handleScanSplitModeChange("custom")}
                   className={`rounded-full px-3.5 py-1.5 text-sm font-medium transition-colors ${
                     scanSplitMode === "custom"
-                      ? "bg-emerald-100 text-[#D94F2B] ring-2 ring-[#D94F2B]/30"
+                      ? "bg-emerald-100 text-[#2D5A3D] ring-2 ring-[#2D5A3D]/30"
                       : "bg-zinc-100 text-zinc-600 hover:bg-zinc-200"
                   }`}
                 >
@@ -588,7 +588,7 @@ export default function ExpensesPage() {
                   onClick={() => handleScanSplitModeChange("self")}
                   className={`rounded-full px-3.5 py-1.5 text-sm font-medium transition-colors ${
                     scanSplitMode === "self"
-                      ? "bg-emerald-100 text-[#D94F2B] ring-2 ring-[#D94F2B]/30"
+                      ? "bg-emerald-100 text-[#2D5A3D] ring-2 ring-[#2D5A3D]/30"
                       : "bg-zinc-100 text-zinc-600 hover:bg-zinc-200"
                   }`}
                 >
@@ -626,7 +626,7 @@ export default function ExpensesPage() {
                           setScanSplitAmong(trip.members.map((m) => m.id));
                         }
                       }}
-                      className="text-xs font-medium text-[#D94F2B] hover:text-[#D94F2B]"
+                      className="text-xs font-medium text-[#2D5A3D] hover:text-[#2D5A3D]"
                     >
                       {scanSplitAmong.length === trip.members.length ? "Deselect All" : "Select All"}
                     </button>
@@ -639,7 +639,7 @@ export default function ExpensesPage() {
                         onClick={() => handleScanSplitToggle(m.id)}
                         className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${
                           scanSplitAmong.includes(m.id)
-                            ? "bg-emerald-100 text-[#D94F2B]"
+                            ? "bg-emerald-100 text-[#2D5A3D]"
                             : "bg-zinc-100 text-zinc-500 hover:bg-zinc-200"
                         }`}
                       >
@@ -663,7 +663,7 @@ export default function ExpensesPage() {
               <button
                 onClick={handleConfirmScan}
                 disabled={!isScanFormValid || scanSaving}
-                className="inline-flex items-center gap-2 rounded-lg bg-[#D94F2B] px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[#B83D25] disabled:opacity-40 disabled:cursor-not-allowed"
+                className="inline-flex items-center gap-2 rounded-lg bg-[#2D5A3D] px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[#244A32] disabled:opacity-40 disabled:cursor-not-allowed"
               >
                 {scanSaving ? (
                   <Loader2 className="h-4 w-4 animate-spin" />
@@ -693,7 +693,7 @@ export default function ExpensesPage() {
         {/* Scanning indicator (when no receipt is loaded yet) */}
         {scanning && !scannedReceipt && (
           <div className="mt-6 flex items-center justify-center gap-3 rounded-xl border border-zinc-200 bg-white p-8 shadow-sm">
-            <Loader2 className="h-6 w-6 animate-spin text-[#D94F2B]" />
+            <Loader2 className="h-6 w-6 animate-spin text-[#2D5A3D]" />
             <div>
               <p className="text-sm font-medium text-zinc-900">Reading receipt...</p>
               <p className="text-xs text-zinc-400">This usually takes a few seconds</p>
@@ -736,7 +736,7 @@ export default function ExpensesPage() {
                     onClick={() => handleCategorySelect(cat.label)}
                     className={`rounded-full px-3.5 py-1.5 text-sm font-medium transition-colors ${
                       selectedCategory === cat.label
-                        ? "bg-emerald-100 text-[#D94F2B] ring-2 ring-[#D94F2B]/30"
+                        ? "bg-emerald-100 text-[#2D5A3D] ring-2 ring-[#2D5A3D]/30"
                         : "bg-zinc-100 text-zinc-600 hover:bg-zinc-200"
                     }`}
                   >
@@ -763,7 +763,7 @@ export default function ExpensesPage() {
                       ? `e.g. ${selectedCategory} at...`
                       : "Pick a category or type a title"
                 }
-                className="mt-1 block w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-[#D94F2B] focus:outline-none focus:ring-2 focus:ring-[#D94F2B]/20"
+                className="mt-1 block w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-[#2D5A3D] focus:outline-none focus:ring-2 focus:ring-[#2D5A3D]/20"
               />
             </div>
 
@@ -780,7 +780,7 @@ export default function ExpensesPage() {
                 value={amount}
                 onChange={(e) => setAmount(e.target.value)}
                 placeholder="0.00"
-                className="mt-1 block w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-[#D94F2B] focus:outline-none focus:ring-2 focus:ring-[#D94F2B]/20"
+                className="mt-1 block w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-[#2D5A3D] focus:outline-none focus:ring-2 focus:ring-[#2D5A3D]/20"
               />
               <div className="mt-2 flex flex-wrap gap-1.5">
                 {QUICK_AMOUNTS.map((qa) => (
@@ -790,7 +790,7 @@ export default function ExpensesPage() {
                     onClick={() => setAmount(String(qa))}
                     className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${
                       amount === String(qa)
-                        ? "bg-emerald-100 text-[#D94F2B]"
+                        ? "bg-emerald-100 text-[#2D5A3D]"
                         : "bg-zinc-100 text-zinc-500 hover:bg-zinc-200"
                     }`}
                   >
@@ -809,7 +809,7 @@ export default function ExpensesPage() {
                 required
                 value={paidBy}
                 onChange={(e) => handlePaidByChange(e.target.value)}
-                className="mt-1 block w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm text-zinc-900 focus:border-[#D94F2B] focus:outline-none focus:ring-2 focus:ring-[#D94F2B]/20"
+                className="mt-1 block w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm text-zinc-900 focus:border-[#2D5A3D] focus:outline-none focus:ring-2 focus:ring-[#2D5A3D]/20"
               >
                 <option value="">Select who paid</option>
                 {trip.members.map((m) => (
@@ -831,7 +831,7 @@ export default function ExpensesPage() {
                   onClick={() => handleSplitModeChange("equal")}
                   className={`rounded-full px-3.5 py-1.5 text-sm font-medium transition-colors ${
                     splitMode === "equal"
-                      ? "bg-emerald-100 text-[#D94F2B] ring-2 ring-[#D94F2B]/30"
+                      ? "bg-emerald-100 text-[#2D5A3D] ring-2 ring-[#2D5A3D]/30"
                       : "bg-zinc-100 text-zinc-600 hover:bg-zinc-200"
                   }`}
                 >
@@ -842,7 +842,7 @@ export default function ExpensesPage() {
                   onClick={() => handleSplitModeChange("custom")}
                   className={`rounded-full px-3.5 py-1.5 text-sm font-medium transition-colors ${
                     splitMode === "custom"
-                      ? "bg-emerald-100 text-[#D94F2B] ring-2 ring-[#D94F2B]/30"
+                      ? "bg-emerald-100 text-[#2D5A3D] ring-2 ring-[#2D5A3D]/30"
                       : "bg-zinc-100 text-zinc-600 hover:bg-zinc-200"
                   }`}
                 >
@@ -853,7 +853,7 @@ export default function ExpensesPage() {
                   onClick={() => handleSplitModeChange("self")}
                   className={`rounded-full px-3.5 py-1.5 text-sm font-medium transition-colors ${
                     splitMode === "self"
-                      ? "bg-emerald-100 text-[#D94F2B] ring-2 ring-[#D94F2B]/30"
+                      ? "bg-emerald-100 text-[#2D5A3D] ring-2 ring-[#2D5A3D]/30"
                       : "bg-zinc-100 text-zinc-600 hover:bg-zinc-200"
                   }`}
                 >
@@ -888,7 +888,7 @@ export default function ExpensesPage() {
                     <button
                       type="button"
                       onClick={handleSelectAll}
-                      className="text-xs font-medium text-[#D94F2B] hover:text-[#D94F2B]"
+                      className="text-xs font-medium text-[#2D5A3D] hover:text-[#2D5A3D]"
                     >
                       {splitAmong.length === trip.members.length
                         ? "Deselect All"
@@ -903,7 +903,7 @@ export default function ExpensesPage() {
                         onClick={() => handleSplitToggle(m.id)}
                         className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${
                           splitAmong.includes(m.id)
-                            ? "bg-emerald-100 text-[#D94F2B]"
+                            ? "bg-emerald-100 text-[#2D5A3D]"
                             : "bg-zinc-100 text-zinc-500 hover:bg-zinc-200"
                         }`}
                       >
@@ -926,7 +926,7 @@ export default function ExpensesPage() {
               <button
                 type="submit"
                 disabled={!isFormValid}
-                className="rounded-lg bg-[#D94F2B] px-5 py-2 text-sm font-semibold text-white transition-colors hover:bg-[#B83D25] disabled:opacity-40 disabled:cursor-not-allowed"
+                className="rounded-lg bg-[#2D5A3D] px-5 py-2 text-sm font-semibold text-white transition-colors hover:bg-[#244A32] disabled:opacity-40 disabled:cursor-not-allowed"
               >
                 Add Expense
               </button>
@@ -1003,7 +1003,7 @@ export default function ExpensesPage() {
                     {" pays "}
                     <span className="font-medium">{getMemberName(s.to)}</span>
                   </p>
-                  <span className="text-sm font-semibold text-[#D94F2B]">
+                  <span className="text-sm font-semibold text-[#2D5A3D]">
                     ${s.amount.toFixed(2)}
                   </span>
                 </div>

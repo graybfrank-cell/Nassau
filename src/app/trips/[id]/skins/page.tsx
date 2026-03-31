@@ -281,7 +281,7 @@ export default function SkinsPage() {
           </div>
           <button
             onClick={() => setShowForm(!showForm)}
-            className="inline-flex items-center gap-2 rounded-lg bg-[#D94F2B] px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[#B83D25]"
+            className="inline-flex items-center gap-2 rounded-lg bg-[#2D5A3D] px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[#244A32]"
           >
             <Plus className="h-4 w-4" />
             New Game
@@ -320,7 +320,7 @@ export default function SkinsPage() {
                   value={gameName}
                   onChange={(e) => setGameName(e.target.value)}
                   placeholder="Saturday Skins"
-                  className="mt-1 block w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-[#D94F2B] focus:outline-none focus:ring-2 focus:ring-[#D94F2B]/20"
+                  className="mt-1 block w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-[#2D5A3D] focus:outline-none focus:ring-2 focus:ring-[#2D5A3D]/20"
                 />
               </div>
               <div>
@@ -333,7 +333,7 @@ export default function SkinsPage() {
                   step="0.01"
                   value={stake}
                   onChange={(e) => setStake(e.target.value)}
-                  className="mt-1 block w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm text-zinc-900 focus:border-[#D94F2B] focus:outline-none focus:ring-2 focus:ring-[#D94F2B]/20"
+                  className="mt-1 block w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm text-zinc-900 focus:border-[#2D5A3D] focus:outline-none focus:ring-2 focus:ring-[#2D5A3D]/20"
                 />
               </div>
               <div className="sm:col-span-2">
@@ -348,7 +348,7 @@ export default function SkinsPage() {
                       onClick={() => togglePlayer(m.id)}
                       className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${
                         selectedPlayers.includes(m.id)
-                          ? "bg-emerald-100 text-[#D94F2B]"
+                          ? "bg-emerald-100 text-[#2D5A3D]"
                           : "bg-zinc-100 text-zinc-500 hover:bg-zinc-200"
                       }`}
                     >
@@ -362,7 +362,7 @@ export default function SkinsPage() {
               <button
                 type="submit"
                 disabled={selectedPlayers.length < 2}
-                className="rounded-lg bg-[#D94F2B] px-5 py-2 text-sm font-semibold text-white transition-colors hover:bg-[#B83D25] disabled:cursor-not-allowed disabled:opacity-50"
+                className="rounded-lg bg-[#2D5A3D] px-5 py-2 text-sm font-semibold text-white transition-colors hover:bg-[#244A32] disabled:cursor-not-allowed disabled:opacity-50"
               >
                 Create Game
               </button>
@@ -490,14 +490,14 @@ export default function SkinsPage() {
                                             e.target.value
                                           )
                                         }
-                                        className="w-12 rounded border border-zinc-200 px-1.5 py-1 text-center text-xs text-zinc-900 focus:border-[#D94F2B] focus:outline-none focus:ring-1 focus:ring-[#D94F2B]/20"
+                                        className="w-12 rounded border border-zinc-200 px-1.5 py-1 text-center text-xs text-zinc-900 focus:border-[#2D5A3D] focus:outline-none focus:ring-1 focus:ring-[#2D5A3D]/20"
                                         placeholder="-"
                                       />
                                     </td>
                                   ))}
                                   <td className="px-2 py-1.5 text-center text-xs">
                                     {result?.winner ? (
-                                      <span className="font-semibold text-[#D94F2B]">
+                                      <span className="font-semibold text-[#2D5A3D]">
                                         {getMemberName(result.winner)}
                                         {result.skinsValue > 1 &&
                                           ` (${result.skinsValue})`}
@@ -547,7 +547,7 @@ export default function SkinsPage() {
                                     <span
                                       className={`text-sm font-semibold ${
                                         (t?.winnings || 0) > 0
-                                          ? "text-[#D94F2B]"
+                                          ? "text-[#2D5A3D]"
                                           : "text-zinc-400"
                                       }`}
                                     >
@@ -588,7 +588,7 @@ export default function SkinsPage() {
                                         {getMemberName(s.to)}
                                       </span>
                                     </p>
-                                    <span className="text-sm font-semibold text-[#D94F2B]">
+                                    <span className="text-sm font-semibold text-[#2D5A3D]">
                                       {currency.format(s.amount)}
                                     </span>
                                   </div>
