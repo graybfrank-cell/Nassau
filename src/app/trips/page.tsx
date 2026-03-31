@@ -53,14 +53,14 @@ function tripStatus(trip: Trip): string {
 function statusColor(status: string) {
   switch (status.toLowerCase()) {
     case "planning":
-      return "bg-[#0D7377] text-white";
+      return "bg-[#2D5A3D] text-white";
     case "confirmed":
     case "upcoming":
-      return "bg-[#D94F2B] text-white";
+      return "bg-[#2D5A3D] text-white";
     case "completed":
-      return "bg-[#3F3F46] text-[#71717A]";
+      return "bg-[#2A2A2A] text-[#8A8A8A]";
     default:
-      return "bg-[#3F3F46] text-[#71717A]";
+      return "bg-[#2A2A2A] text-[#8A8A8A]";
   }
 }
 
@@ -114,15 +114,14 @@ export default function TripsPage() {
 
   if (loading)
     return (
-      <div className="flex min-h-screen items-center justify-center bg-[#18181B]">
-        <p className="text-sm text-[#71717A]">Loading...</p>
+      <div className="flex min-h-screen items-center justify-center bg-[#111111]">
+        <p className="text-sm text-[#8A8A8A]">Loading...</p>
       </div>
     );
 
   return (
     <div
-      className="min-h-screen bg-[#18181B] pb-32"
-      style={{ fontFamily: "'Helvetica Neue', Arial, sans-serif" }}
+      className="min-h-screen bg-[#111111] pb-32"
     >
       {/* ── BANNER ── */}
       <div className="relative h-40 sm:h-48 overflow-hidden">
@@ -133,12 +132,12 @@ export default function TripsPage() {
           className="object-cover"
           priority
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-dark/80 via-dark/60 to-dark" />
+        <div className="absolute inset-0 bg-gradient-to-b from-[#111111]/80 via-[#111111]/60 to-[#111111]" />
         <div className="relative z-10 flex flex-col h-full">
           <TopBar />
           <div className="mt-auto px-6 pb-5">
-            <h1 className="text-[22px] font-medium text-[#F3EDE4] tracking-tight">My Trips</h1>
-            <p className="text-[13px] text-[#F3EDE4]/50">
+            <h1 className="text-[22px] font-headline font-medium text-[#F2F0EB] tracking-tight">My Trips</h1>
+            <p className="text-[13px] text-[#8A8A8A]">
               {trips.length} trip{trips.length !== 1 ? "s" : ""}
             </p>
           </div>
@@ -149,13 +148,13 @@ export default function TripsPage() {
       <div className="px-6 mt-4">
         <Link
           href="/explore"
-          className="flex items-center justify-between rounded-[10px] border border-[#0D7377]/20 bg-[#0D7377]/[0.06] p-4"
+          className="flex items-center justify-between rounded-[10px] border border-[#2D5A3D]/20 bg-[#2D5A3D]/[0.06] p-4"
         >
           <div>
-            <p className="text-sm font-semibold text-[#F3EDE4]">Explore 50+ golf destinations</p>
-            <p className="text-xs text-[#71717A] mt-0.5">Browse curated trips and start planning</p>
+            <p className="text-sm font-semibold text-[#F2F0EB]">Explore 50+ golf destinations</p>
+            <p className="text-xs text-[#8A8A8A] mt-0.5">Browse curated trips and start planning</p>
           </div>
-          <span className="text-[#0D7377] text-lg font-bold">→</span>
+          <span className="text-[#2D5A3D] text-lg font-bold">→</span>
         </Link>
       </div>
 
@@ -165,10 +164,10 @@ export default function TripsPage() {
           <button
             key={filter}
             onClick={() => setActiveFilter(filter)}
-            className={`text-xs font-black uppercase px-4 py-2 rounded-full whitespace-nowrap ${
+            className={`text-xs font-semibold uppercase px-4 py-2 rounded-full whitespace-nowrap ${
               activeFilter === filter
-                ? "bg-[#D94F2B] text-white"
-                : "border border-[#3F3F46] text-[#71717A]"
+                ? "bg-[#2D5A3D] text-white"
+                : "border border-[#2A2A2A] text-[#8A8A8A]"
             }`}
           >
             {filter}
@@ -179,11 +178,11 @@ export default function TripsPage() {
       {/* ── TRIP CARDS ── */}
       <div className="px-6 mt-4 space-y-4">
         {filteredTrips.length === 0 ? (
-          <div className="bg-[#27272A] rounded-xl p-8 text-center border border-[#3F3F46]">
-            <p className="text-[#71717A] mb-4">No trips yet</p>
+          <div className="bg-[#1A1A1A] rounded-[10px] p-8 text-center shadow-sm">
+            <p className="text-[#8A8A8A] mb-4">No trips yet</p>
             <Link
               href="/trips/new"
-              className="inline-flex items-center gap-2 bg-[#D94F2B] text-white font-bold text-sm px-5 py-2.5 rounded-lg"
+              className="inline-flex items-center gap-2 bg-[#2D5A3D] text-white font-bold text-sm px-5 py-2.5 rounded-lg"
             >
               <Plus className="h-4 w-4" />
               Plan Your First Trip
@@ -208,15 +207,15 @@ export default function TripsPage() {
               <Link
                 key={trip.id}
                 href={`/trips/${trip.id}`}
-                className="block bg-[#27272A] rounded-xl overflow-hidden border border-[#3F3F46]"
+                className="block bg-[#1A1A1A] rounded-[10px] overflow-hidden shadow-sm"
               >
                 {/* Photo area */}
                 <div className="bg-gradient-to-br from-[#1a1a2e] to-[#16213e] h-32 relative overflow-hidden">
-                  <span className="font-black text-xl uppercase text-[#F3EDE4] absolute bottom-4 left-4">
+                  <span className="font-headline font-medium text-xl uppercase text-[#F2F0EB] absolute bottom-4 left-4">
                     {trip.name}
                   </span>
                   <span
-                    className={`absolute top-3 right-3 text-[10px] font-black uppercase px-2 py-1 rounded ${statusColor(status)}`}
+                    className={`absolute top-3 right-3 text-[10px] font-semibold uppercase px-2 py-1 rounded ${statusColor(status)}`}
                   >
                     {status}
                   </span>
@@ -225,7 +224,7 @@ export default function TripsPage() {
                 {/* Details */}
                 <div className="p-4">
                   {(trip.destination || trip.start_date) && (
-                    <p className="text-sm text-[#71717A]">
+                    <p className="text-sm text-[#8A8A8A]">
                       {trip.destination}
                       {trip.destination && trip.start_date && " · "}
                       {formatDateRange(trip.start_date, trip.end_date)}
@@ -238,7 +237,7 @@ export default function TripsPage() {
                       {trip.members.slice(0, 4).map((m, i) => (
                         <div
                           key={m.user_id || i}
-                          className="h-6 w-6 rounded-full bg-[#3F3F46] border-2 border-[#27272A] flex items-center justify-center text-[10px] font-bold text-[#F3EDE4]"
+                          className="h-6 w-6 rounded-full bg-[#2F4F4F] border-2 border-[#1A1A1A] flex items-center justify-center text-[10px] font-bold text-[#F2F0EB]"
                         >
                           {(m.user?.full_name || m.user?.email || "?")
                             .charAt(0)
@@ -246,12 +245,12 @@ export default function TripsPage() {
                         </div>
                       ))}
                       {memberCount > 4 && (
-                        <div className="h-6 w-6 rounded-full bg-[#3F3F46] border-2 border-[#27272A] flex items-center justify-center text-[10px] font-bold text-[#71717A]">
+                        <div className="h-6 w-6 rounded-full bg-[#2F4F4F] border-2 border-[#1A1A1A] flex items-center justify-center text-[10px] font-bold text-[#8A8A8A]">
                           +{memberCount - 4}
                         </div>
                       )}
                     </div>
-                    <span className="text-xs text-[#71717A]">
+                    <span className="text-xs text-[#8A8A8A]">
                       {memberCount} golfer{memberCount !== 1 ? "s" : ""}
                     </span>
                   </div>
@@ -259,19 +258,19 @@ export default function TripsPage() {
                   {/* Progress bar */}
                   {showProgress && (
                     <>
-                      <div className="h-1.5 bg-[#3F3F46] rounded-full mt-3">
+                      <div className="h-1.5 bg-[#2A2A2A] rounded-full mt-3">
                         <div
-                          className="h-1.5 bg-[#0D7377] rounded-full"
+                          className="h-1.5 bg-[#2D5A3D] rounded-full"
                           style={{ width: `${progressPct}%` }}
                         />
                       </div>
-                      <p className="text-xs text-[#0D7377] mt-1">
+                      <p className="text-xs text-[#2D5A3D] mt-1">
                         {paidCount} of {totalCount} paid
                       </p>
                     </>
                   )}
 
-                  <p className="text-[#0D7377] font-bold text-sm mt-2">
+                  <p className="text-[#2D5A3D] font-bold text-sm mt-2">
                     View Trip →
                   </p>
                 </div>
@@ -284,29 +283,29 @@ export default function TripsPage() {
       {/* ── NEW TRIP BUTTON ── */}
       <Link
         href="/trips/new"
-        className="fixed bottom-20 right-6 flex h-14 w-14 items-center justify-center rounded-full bg-[#D94F2B] shadow-lg shadow-[#D94F2B]/30"
+        className="fixed bottom-20 right-6 flex h-14 w-14 items-center justify-center rounded-full bg-[#2D5A3D] shadow-lg shadow-[#2D5A3D]/30"
       >
         <Plus className="h-6 w-6 text-white" />
       </Link>
 
       {/* ── BOTTOM NAV ── */}
-      <nav className="fixed bottom-0 left-0 right-0 bg-[#18181B] border-t border-[#27272A] px-6 py-3">
+      <nav className="fixed bottom-0 left-0 right-0 bg-[#111111] border-t border-[#1A1A1A] px-6 py-3">
         <div className="grid grid-cols-4">
           <Link href="/dashboard" className="flex flex-col items-center gap-1">
-            <Home className="h-5 w-5 text-[#71717A]" />
-            <span className="text-xs uppercase font-bold text-[#71717A]">Home</span>
+            <Home className="h-5 w-5 text-[#8A8A8A]" />
+            <span className="text-xs uppercase font-bold text-[#8A8A8A]">Home</span>
           </Link>
           <Link href="/rounds" className="flex flex-col items-center gap-1">
-            <Trophy className="h-5 w-5 text-[#71717A]" />
-            <span className="text-xs uppercase font-bold text-[#71717A]">Rounds</span>
+            <Trophy className="h-5 w-5 text-[#8A8A8A]" />
+            <span className="text-xs uppercase font-bold text-[#8A8A8A]">Rounds</span>
           </Link>
           <Link href="/trips" className="flex flex-col items-center gap-1">
-            <Map className="h-5 w-5 text-[#D94F2B]" />
-            <span className="text-xs uppercase font-bold text-[#D94F2B]">Trips</span>
+            <Map className="h-5 w-5 text-[#2D5A3D]" />
+            <span className="text-xs uppercase font-bold text-[#2D5A3D]">Trips</span>
           </Link>
           <Link href="/profile" className="flex flex-col items-center gap-1">
-            <User className="h-5 w-5 text-[#71717A]" />
-            <span className="text-xs uppercase font-bold text-[#71717A]">Profile</span>
+            <User className="h-5 w-5 text-[#8A8A8A]" />
+            <span className="text-xs uppercase font-bold text-[#8A8A8A]">Profile</span>
           </Link>
         </div>
       </nav>

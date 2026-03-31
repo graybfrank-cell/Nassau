@@ -457,7 +457,7 @@ export default function AITripPlanningPage() {
           <h2 className="text-xl font-bold text-zinc-900">{msg.title}</h2>
           <p className="mt-2 text-sm text-zinc-500">{msg.subtitle}. This takes about {msg.time}.</p>
           <div className="mt-6">
-            <Loader2 className="mx-auto h-6 w-6 animate-spin text-[#D94F2B]" />
+            <Loader2 className="mx-auto h-6 w-6 animate-spin text-[#2D5A3D]" />
           </div>
         </div>
       </div>
@@ -505,7 +505,7 @@ export default function AITripPlanningPage() {
               <h3 className="text-sm font-semibold uppercase tracking-wide text-zinc-400">Cost Breakdown (per person)</h3>
               <div className="mt-4 space-y-3">
                 {[
-                  { label: "Golf", value: breakdown.golf, color: "bg-[#D94F2B]" },
+                  { label: "Golf", value: breakdown.golf, color: "bg-[#2D5A3D]" },
                   { label: "Lodging", value: breakdown.lodging, color: "bg-blue-500" },
                   { label: "Food", value: breakdown.food, color: "bg-amber-500" },
                   { label: "Transport", value: breakdown.transport, color: "bg-purple-500" },
@@ -540,7 +540,7 @@ export default function AITripPlanningPage() {
               <div className="mt-3 space-y-3">
                 {finalTrip.courses.map((c, i) => (
                   <div key={i} className="flex items-start gap-3">
-                    <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-emerald-100 text-xs font-bold text-[#D94F2B]">
+                    <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-emerald-100 text-xs font-bold text-[#2D5A3D]">
                       D{c.day}
                     </span>
                     <div className="flex-1">
@@ -569,7 +569,7 @@ export default function AITripPlanningPage() {
                         <div key={i} className="flex items-center justify-between text-xs">
                           <div className="flex items-center gap-2">
                             <span className="w-16 text-zinc-400">{item.time}</span>
-                            <span className={item.type === "tee_time" ? "font-medium text-[#D94F2B]" : "text-zinc-600"}>
+                            <span className={item.type === "tee_time" ? "font-medium text-[#2D5A3D]" : "text-zinc-600"}>
                               {item.title}
                             </span>
                           </div>
@@ -612,7 +612,7 @@ export default function AITripPlanningPage() {
             <button
               onClick={chooseTrip}
               disabled={creating}
-              className="flex-1 rounded-lg bg-[#D94F2B] py-3 text-sm font-bold text-white shadow-lg hover:bg-[#B83D25] disabled:opacity-50"
+              className="flex-1 rounded-lg bg-[#2D5A3D] py-3 text-sm font-bold text-white shadow-lg hover:bg-[#244A32] disabled:opacity-50"
             >
               {creating ? (
                 <span className="inline-flex items-center gap-2"><Loader2 className="h-4 w-4 animate-spin" /> Creating Trip...</span>
@@ -658,12 +658,12 @@ export default function AITripPlanningPage() {
                         key={opt.value}
                         onClick={() => setFollowupAnswers((prev) => ({ ...prev, [q.id]: opt.value }))}
                         className={`w-full rounded-xl border-2 p-4 text-left transition-all ${
-                          selected ? "border-[#D94F2B] bg-emerald-50" : "border-zinc-200 hover:border-[#D94F2B]/40"
+                          selected ? "border-[#2D5A3D] bg-emerald-50" : "border-zinc-200 hover:border-[#2D5A3D]/40"
                         }`}
                       >
                         <div className="flex items-center justify-between">
                           <span className="text-sm font-medium text-zinc-800">{opt.label}</span>
-                          {selected && <Check className="h-4 w-4 text-[#D94F2B]" />}
+                          {selected && <Check className="h-4 w-4 text-[#2D5A3D]" />}
                         </div>
                         {opt.detail && <p className="mt-1 text-xs text-zinc-500">{opt.detail}</p>}
                       </button>
@@ -681,7 +681,7 @@ export default function AITripPlanningPage() {
           <button
             onClick={buildTrip}
             disabled={!allAnswered}
-            className="mt-8 w-full rounded-xl bg-[#D94F2B] py-3.5 text-base font-bold text-white shadow-lg hover:bg-[#B83D25] disabled:opacity-50"
+            className="mt-8 w-full rounded-xl bg-[#2D5A3D] py-3.5 text-base font-bold text-white shadow-lg hover:bg-[#244A32] disabled:opacity-50"
           >
             Build My Trip &rarr;
           </button>
@@ -708,7 +708,7 @@ export default function AITripPlanningPage() {
           {/* Preference pills */}
           <div className="mt-4 flex flex-wrap justify-center gap-2">
             {vibe && (
-              <span className="rounded-full bg-emerald-100 px-3 py-1 text-xs font-medium text-[#D94F2B]">
+              <span className="rounded-full bg-emerald-100 px-3 py-1 text-xs font-medium text-[#2D5A3D]">
                 {VIBES.find((v) => v.id === vibe)?.emoji} {VIBES.find((v) => v.id === vibe)?.label}
               </span>
             )}
@@ -730,7 +730,7 @@ export default function AITripPlanningPage() {
                 <div
                   key={concept.id}
                   className={`rounded-2xl border-2 bg-white shadow-sm overflow-hidden transition-all ${
-                    isSelected ? "border-[#D94F2B] ring-2 ring-emerald-200" : "border-zinc-200"
+                    isSelected ? "border-[#2D5A3D] ring-2 ring-emerald-200" : "border-zinc-200"
                   }`}
                 >
                   <div className="p-5">
@@ -767,7 +767,7 @@ export default function AITripPlanningPage() {
                         <ul className="mt-1.5 space-y-1">
                           {concept.top_courses.map((name, i) => (
                             <li key={i} className="flex items-center gap-2 text-sm text-zinc-700">
-                              <span className="flex h-5 w-5 items-center justify-center rounded-full bg-emerald-100 text-[10px] font-bold text-[#D94F2B]">{i + 1}</span>
+                              <span className="flex h-5 w-5 items-center justify-center rounded-full bg-emerald-100 text-[10px] font-bold text-[#2D5A3D]">{i + 1}</span>
                               {name}
                             </li>
                           ))}
@@ -782,7 +782,7 @@ export default function AITripPlanningPage() {
                         <ul className="mt-1.5 space-y-1">
                           {concept.highlights.map((h, i) => (
                             <li key={i} className="flex items-start gap-2 text-xs text-zinc-600">
-                              <span className="mt-0.5 text-[#D94F2B]">&bull;</span> {h}
+                              <span className="mt-0.5 text-[#2D5A3D]">&bull;</span> {h}
                             </li>
                           ))}
                         </ul>
@@ -804,8 +804,8 @@ export default function AITripPlanningPage() {
                       onClick={() => toggleConceptSelection(concept.id)}
                       className={`w-full rounded-lg py-2 text-sm font-semibold transition-colors ${
                         isSelected
-                          ? "bg-[#D94F2B] text-white"
-                          : "border border-zinc-300 bg-white text-zinc-700 hover:border-[#D94F2B]/40 hover:text-[#D94F2B]"
+                          ? "bg-[#2D5A3D] text-white"
+                          : "border border-zinc-300 bg-white text-zinc-700 hover:border-[#2D5A3D]/40 hover:text-[#2D5A3D]"
                       }`}
                     >
                       {isSelected ? (
@@ -825,7 +825,7 @@ export default function AITripPlanningPage() {
             <button
               onClick={requestFollowup}
               disabled={selectedConceptIds.size === 0}
-              className="rounded-xl bg-[#D94F2B] px-8 py-3.5 text-base font-bold text-white shadow-lg transition-all hover:bg-[#B83D25] disabled:opacity-50"
+              className="rounded-xl bg-[#2D5A3D] px-8 py-3.5 text-base font-bold text-white shadow-lg transition-all hover:bg-[#244A32] disabled:opacity-50"
             >
               Tell Me More &rarr;
             </button>
@@ -887,7 +887,7 @@ export default function AITripPlanningPage() {
               <div className="mt-4 grid grid-cols-2 gap-3">
                 {VIBES.map((v) => (
                   <button key={v.id} onClick={() => selectVibe(v.id)}
-                    className={`rounded-xl border-2 p-4 text-left transition-all hover:border-[#D94F2B]/40 hover:shadow-md ${vibe === v.id ? "border-[#D94F2B] bg-emerald-50" : "border-zinc-200 bg-white"}`}>
+                    className={`rounded-xl border-2 p-4 text-left transition-all hover:border-[#2D5A3D]/40 hover:shadow-md ${vibe === v.id ? "border-[#2D5A3D] bg-emerald-50" : "border-zinc-200 bg-white"}`}>
                     <span className="text-2xl">{v.emoji}</span>
                     <p className="mt-1 text-sm font-semibold text-zinc-800">{v.label}</p>
                   </button>
@@ -902,7 +902,7 @@ export default function AITripPlanningPage() {
               <div className="mt-4 flex flex-wrap gap-3">
                 {GROUP_SIZES.map((n) => (
                   <button key={n} onClick={() => selectGroupSize(n)}
-                    className={`rounded-full px-6 py-3 text-sm font-semibold transition-all hover:border-[#D94F2B]/40 hover:shadow-md ${groupSize === n ? "border-2 border-[#D94F2B] bg-emerald-50 text-[#D94F2B]" : "border-2 border-zinc-200 bg-white text-zinc-700"}`}>
+                    className={`rounded-full px-6 py-3 text-sm font-semibold transition-all hover:border-[#2D5A3D]/40 hover:shadow-md ${groupSize === n ? "border-2 border-[#2D5A3D] bg-emerald-50 text-[#2D5A3D]" : "border-2 border-zinc-200 bg-white text-zinc-700"}`}>
                     {n}
                   </button>
                 ))}
@@ -917,8 +917,8 @@ export default function AITripPlanningPage() {
               <div className="mt-4 grid grid-cols-2 gap-3">
                 {BUDGETS.map((b) => (
                   <button key={b.id} onClick={() => selectBudget(b.id)}
-                    className={`rounded-xl border-2 p-4 text-left transition-all hover:border-[#D94F2B]/40 hover:shadow-md ${budgetTier === b.id ? "border-[#D94F2B] bg-emerald-50" : "border-zinc-200 bg-white"}`}>
-                    <span className="text-lg font-bold text-[#D94F2B]">{b.icon}</span>
+                    className={`rounded-xl border-2 p-4 text-left transition-all hover:border-[#2D5A3D]/40 hover:shadow-md ${budgetTier === b.id ? "border-[#2D5A3D] bg-emerald-50" : "border-zinc-200 bg-white"}`}>
+                    <span className="text-lg font-bold text-[#2D5A3D]">{b.icon}</span>
                     <p className="mt-1 text-sm font-semibold text-zinc-800">{b.label}</p>
                     <p className="text-xs text-zinc-500">{b.desc}</p>
                   </button>
@@ -934,7 +934,7 @@ export default function AITripPlanningPage() {
               <div className="mt-4 flex flex-wrap gap-2">
                 {SEASONS.map((s) => (
                   <button key={s.id} onClick={() => selectSeason(s.id)}
-                    className={`rounded-full px-4 py-2 text-sm font-medium transition-all ${season === s.id ? "border-2 border-[#D94F2B] bg-emerald-50 text-[#D94F2B]" : "border-2 border-zinc-200 bg-white text-zinc-600 hover:border-[#D94F2B]/40"}`}>
+                    className={`rounded-full px-4 py-2 text-sm font-medium transition-all ${season === s.id ? "border-2 border-[#2D5A3D] bg-emerald-50 text-[#2D5A3D]" : "border-2 border-zinc-200 bg-white text-zinc-600 hover:border-[#2D5A3D]/40"}`}>
                     {s.label}
                   </button>
                 ))}
@@ -955,7 +955,7 @@ export default function AITripPlanningPage() {
                 </div>
               </div>
               {startDate && endDate && (
-                <button onClick={confirmDates} className="mt-4 w-full rounded-lg bg-[#D94F2B] py-2.5 text-sm font-semibold text-white hover:bg-[#B83D25]">Continue with these dates</button>
+                <button onClick={confirmDates} className="mt-4 w-full rounded-lg bg-[#2D5A3D] py-2.5 text-sm font-semibold text-white hover:bg-[#244A32]">Continue with these dates</button>
               )}
               <button onClick={() => setQuestionStep(3)} className="mt-6 text-sm text-zinc-400 hover:text-zinc-600">&larr; Back</button>
             </div>
@@ -970,13 +970,13 @@ export default function AITripPlanningPage() {
                   const maxed = priorities.length >= 3 && !selected;
                   return (
                     <button key={p.id} onClick={() => togglePriority(p.id)} disabled={maxed}
-                      className={`rounded-full px-4 py-2 text-sm font-medium transition-all ${selected ? "border-2 border-[#D94F2B] bg-emerald-50 text-[#D94F2B]" : maxed ? "border-2 border-zinc-100 bg-zinc-50 text-zinc-300 cursor-not-allowed" : "border-2 border-zinc-200 bg-white text-zinc-600 hover:border-[#D94F2B]/40"}`}>
+                      className={`rounded-full px-4 py-2 text-sm font-medium transition-all ${selected ? "border-2 border-[#2D5A3D] bg-emerald-50 text-[#2D5A3D]" : maxed ? "border-2 border-zinc-100 bg-zinc-50 text-zinc-300 cursor-not-allowed" : "border-2 border-zinc-200 bg-white text-zinc-600 hover:border-[#2D5A3D]/40"}`}>
                       {p.emoji} {p.id}
                     </button>
                   );
                 })}
               </div>
-              <button onClick={() => setQuestionStep(6)} disabled={priorities.length === 0} className="mt-6 w-full rounded-lg bg-[#D94F2B] py-2.5 text-sm font-semibold text-white hover:bg-[#B83D25] disabled:opacity-50">Continue</button>
+              <button onClick={() => setQuestionStep(6)} disabled={priorities.length === 0} className="mt-6 w-full rounded-lg bg-[#2D5A3D] py-2.5 text-sm font-semibold text-white hover:bg-[#244A32] disabled:opacity-50">Continue</button>
               <button onClick={() => setQuestionStep(4)} className="mt-3 w-full text-sm text-zinc-400 hover:text-zinc-600">&larr; Back</button>
             </div>
           )}
@@ -987,8 +987,8 @@ export default function AITripPlanningPage() {
               <p className="mt-1 text-sm text-zinc-500">Previous destinations, must-play courses, group quirks... (optional)</p>
               <textarea value={notes} onChange={(e) => setNotes(e.target.value)}
                 placeholder="We played Scottsdale last year, so looking for something new. One guy in the group can't walk 18..."
-                rows={4} className="mt-3 w-full rounded-lg border border-zinc-300 px-4 py-3 text-sm placeholder:text-zinc-400 focus:border-[#D94F2B] focus:outline-none focus:ring-1 focus:ring-[#D94F2B]" />
-              <button onClick={generateConcepts} className="mt-6 w-full rounded-xl bg-[#D94F2B] py-3.5 text-base font-bold text-white shadow-lg transition-all hover:bg-[#B83D25] hover:shadow-xl">
+                rows={4} className="mt-3 w-full rounded-lg border border-zinc-300 px-4 py-3 text-sm placeholder:text-zinc-400 focus:border-[#2D5A3D] focus:outline-none focus:ring-1 focus:ring-[#2D5A3D]" />
+              <button onClick={generateConcepts} className="mt-6 w-full rounded-xl bg-[#2D5A3D] py-3.5 text-base font-bold text-white shadow-lg transition-all hover:bg-[#244A32] hover:shadow-xl">
                 Find My Trip &rarr;
               </button>
               <button onClick={() => setQuestionStep(5)} className="mt-3 w-full text-sm text-zinc-400 hover:text-zinc-600">&larr; Back</button>
@@ -1009,7 +1009,7 @@ function AnsweredBubble({ label, value, onEdit }: { label: string; value: string
         <p className="text-xs text-zinc-400">{label}</p>
         <p className="text-sm font-medium text-zinc-700">{value}</p>
       </div>
-      <button onClick={onEdit} className="text-xs text-[#D94F2B] hover:text-[#D94F2B]">Edit</button>
+      <button onClick={onEdit} className="text-xs text-[#2D5A3D] hover:text-[#2D5A3D]">Edit</button>
     </div>
   );
 }

@@ -94,7 +94,7 @@ export default function InvitePage() {
           <p className="mt-2 text-sm text-zinc-500">{error}</p>
           <button
             onClick={() => router.push("/")}
-            className="mt-6 text-sm font-medium text-[#D94F2B] hover:text-[#D94F2B]"
+            className="mt-6 text-sm font-medium text-[#2D5A3D] hover:text-[#2D5A3D]"
           >
             Go to Nassau
           </button>
@@ -157,7 +157,7 @@ export default function InvitePage() {
             {needsLogin ? (
               <button
                 onClick={handleLogin}
-                className="w-full rounded-lg bg-[#D94F2B] px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[#B83D25]"
+                className="w-full rounded-lg bg-[#2D5A3D] px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[#244A32]"
               >
                 Sign in to join this trip
               </button>
@@ -165,7 +165,7 @@ export default function InvitePage() {
               <button
                 onClick={handleJoin}
                 disabled={joining}
-                className="w-full rounded-lg bg-[#D94F2B] px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[#B83D25] disabled:cursor-not-allowed disabled:opacity-50"
+                className="w-full rounded-lg bg-[#2D5A3D] px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[#244A32] disabled:cursor-not-allowed disabled:opacity-50"
               >
                 {joining ? "Joining..." : "Join Trip"}
               </button>

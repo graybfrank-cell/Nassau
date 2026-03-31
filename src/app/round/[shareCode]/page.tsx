@@ -255,7 +255,7 @@ export default function RoundSharePage() {
 
   if (loading) {
     return (
-      <div className="flex min-h-[calc(100vh-64px)] items-center justify-center bg-[#F3EDE4]">
+      <div className="flex min-h-[calc(100vh-64px)] items-center justify-center bg-[#F2F0EB]">
         <p className="text-sm text-[#6A6058]">Loading...</p>
       </div>
     );
@@ -263,7 +263,7 @@ export default function RoundSharePage() {
 
   if (!data) {
     return (
-      <div className="flex min-h-[calc(100vh-64px)] items-center justify-center bg-[#F3EDE4]">
+      <div className="flex min-h-[calc(100vh-64px)] items-center justify-center bg-[#F2F0EB]">
         <div className="text-center">
           <h2 className="text-lg font-semibold text-[#1A1A1A]">
             Round not found
@@ -273,7 +273,7 @@ export default function RoundSharePage() {
           </p>
           <Link
             href="/"
-            className="mt-4 inline-block text-sm font-medium text-[#D94F2B]"
+            className="mt-4 inline-block text-sm font-medium text-[#2D5A3D]"
           >
             Go Home
           </Link>
@@ -293,7 +293,7 @@ export default function RoundSharePage() {
         : "invite";
 
   return (
-    <div className="min-h-[calc(100vh-64px)] bg-[#F3EDE4] px-4 py-8">
+    <div className="min-h-[calc(100vh-64px)] bg-[#F2F0EB] px-4 py-8">
       <div className="mx-auto max-w-lg">
         {/* ── Course Hero ── */}
         <div className="overflow-hidden rounded-2xl">
@@ -394,7 +394,7 @@ export default function RoundSharePage() {
                     key={p.id}
                     className={`inline-flex items-center gap-1 rounded-full px-3 py-1 text-sm font-medium ${
                       p.status === "confirmed" || p.role === "COMMISSIONER"
-                        ? "bg-[#F3EDE4] text-[#1A1A1A]"
+                        ? "bg-[#F2F0EB] text-[#1A1A1A]"
                         : "bg-zinc-100 text-zinc-400"
                     }`}
                   >
@@ -428,13 +428,13 @@ export default function RoundSharePage() {
                     onChange={(e) => setVenmoInput(e.target.value)}
                     onKeyDown={(e) => e.key === "Enter" && handleSaveVenmoAndJoin()}
                     placeholder="username"
-                    className="flex-1 rounded-lg border border-[#E2D9CC] bg-white px-3 py-2 text-sm text-[#1A1A1A] placeholder-[#8A8078] outline-none focus:border-[#D94F2B]"
+                    className="flex-1 rounded-lg border border-[#E2D9CC] bg-white px-3 py-2 text-sm text-[#1A1A1A] placeholder-[#8A8078] outline-none focus:border-[#2D5A3D]"
                     autoFocus
                   />
                   <button
                     onClick={handleSaveVenmoAndJoin}
                     disabled={savingVenmo}
-                    className="rounded-lg bg-[#D94F2B] px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-[#c4442a] disabled:opacity-50"
+                    className="rounded-lg bg-[#2D5A3D] px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-[#244A32] disabled:opacity-50"
                   >
                     {savingVenmo ? "..." : "Save & Join"}
                   </button>
@@ -446,7 +446,7 @@ export default function RoundSharePage() {
               <button
                 onClick={handleJoin}
                 disabled={joining}
-                className="mt-6 w-full rounded-xl bg-[#D94F2B] py-3.5 text-sm font-bold text-white transition-colors hover:bg-[#c4442a] disabled:opacity-50 active:scale-[0.98]"
+                className="mt-6 w-full rounded-xl bg-[#2D5A3D] py-3.5 text-sm font-bold text-white transition-colors hover:bg-[#244A32] disabled:opacity-50 active:scale-[0.98]"
               >
                 {joining
                   ? "Joining..."
@@ -462,20 +462,20 @@ export default function RoundSharePage() {
         {state === "live" && (
           <>
             <div className="mt-4 flex items-center gap-2">
-              <span className="h-2 w-2 rounded-full bg-[#D94F2B] animate-pulse" />
-              <span className="text-sm font-semibold text-[#D94F2B]">
+              <span className="h-2 w-2 rounded-full bg-[#2D5A3D] animate-pulse" />
+              <span className="text-sm font-semibold text-[#2D5A3D]">
                 Round in progress
               </span>
             </div>
 
             {/* Live Leaderboard */}
             <div className="mt-3 rounded-xl border border-[#E2D9CC] bg-white overflow-hidden">
-              <div className="border-b border-[#E2D9CC] bg-[#F3EDE4] px-4 py-2">
+              <div className="border-b border-[#E2D9CC] bg-[#F2F0EB] px-4 py-2">
                 <p className="text-xs font-bold uppercase tracking-wider text-[#8A8078]">
                   Leaderboard
                 </p>
               </div>
-              <div className="divide-y divide-[#F3EDE4]">
+              <div className="divide-y divide-[#F2F0EB]">
                 {confirmedPlayers
                   .map((p) => {
                     const sc = data.scorecards.find(
@@ -498,8 +498,8 @@ export default function RoundSharePage() {
                         <span
                           className={`flex h-6 w-6 items-center justify-center rounded-full text-xs font-bold ${
                             idx === 0 && p.total > 0
-                              ? "bg-[#D94F2B] text-white"
-                              : "bg-[#F3EDE4] text-[#8A8078]"
+                              ? "bg-[#2D5A3D] text-white"
+                              : "bg-[#F2F0EB] text-[#8A8078]"
                           }`}
                         >
                           {idx + 1}
@@ -554,7 +554,7 @@ export default function RoundSharePage() {
 
             <button
               onClick={handleJoin}
-              className="mt-6 w-full rounded-xl bg-[#D94F2B] py-3.5 text-sm font-bold text-white transition-colors hover:bg-[#c4442a] active:scale-[0.98]"
+              className="mt-6 w-full rounded-xl bg-[#2D5A3D] py-3.5 text-sm font-bold text-white transition-colors hover:bg-[#244A32] active:scale-[0.98]"
             >
               {userId ? "Open Round" : "Sign Up to Follow"}
             </button>
@@ -571,7 +571,7 @@ export default function RoundSharePage() {
                   Final Scores
                 </p>
               </div>
-              <div className="divide-y divide-[#F3EDE4]">
+              <div className="divide-y divide-[#F2F0EB]">
                 {confirmedPlayers
                   .map((p) => {
                     const sc = data.scorecards.find(
@@ -602,8 +602,8 @@ export default function RoundSharePage() {
                         <span
                           className={`flex h-7 w-7 items-center justify-center rounded-full text-xs font-bold ${
                             idx === 0
-                              ? "bg-[#D94F2B] text-white"
-                              : "bg-[#F3EDE4] text-[#8A8078]"
+                              ? "bg-[#2D5A3D] text-white"
+                              : "bg-[#F2F0EB] text-[#8A8078]"
                           }`}
                         >
                           {idx === 0 ? (
@@ -648,10 +648,10 @@ export default function RoundSharePage() {
                   {data.awards.map((award, idx) => (
                     <div
                       key={idx}
-                      className="flex items-center justify-between rounded-lg bg-[#F3EDE4] px-3 py-2"
+                      className="flex items-center justify-between rounded-lg bg-[#F2F0EB] px-3 py-2"
                     >
                       <div>
-                        <p className="text-xs font-bold text-[#D94F2B]">
+                        <p className="text-xs font-bold text-[#2D5A3D]">
                           {award.title}
                         </p>
                         <p className="text-sm font-medium text-[#1A1A1A]">
@@ -702,7 +702,7 @@ export default function RoundSharePage() {
             {/* View Full Recap link */}
             <Link
               href={`/round/${shareCode}/recap`}
-              className="mt-4 flex items-center justify-center gap-1.5 rounded-xl border border-[#D94F2B] bg-white py-3 text-sm font-bold text-[#D94F2B] transition-colors hover:bg-[#D94F2B]/5 active:scale-[0.98]"
+              className="mt-4 flex items-center justify-center gap-1.5 rounded-xl border border-[#2D5A3D] bg-white py-3 text-sm font-bold text-[#2D5A3D] transition-colors hover:bg-[#2D5A3D]/5 active:scale-[0.98]"
             >
               View Full Recap
               <ChevronRight className="h-4 w-4" />
@@ -712,11 +712,11 @@ export default function RoundSharePage() {
             <div className="mt-3 flex gap-3">
               <button
                 onClick={handleShare}
-                className="flex-1 rounded-xl border border-[#E2D9CC] bg-white py-3 text-sm font-bold text-[#1A1A1A] transition-colors hover:bg-[#F3EDE4] active:scale-[0.98]"
+                className="flex-1 rounded-xl border border-[#E2D9CC] bg-white py-3 text-sm font-bold text-[#1A1A1A] transition-colors hover:bg-[#F2F0EB] active:scale-[0.98]"
               >
                 {copied ? (
                   <span className="inline-flex items-center gap-1">
-                    <Check className="h-4 w-4 text-[#D94F2B]" />
+                    <Check className="h-4 w-4 text-[#2D5A3D]" />
                     Copied!
                   </span>
                 ) : (
@@ -728,7 +728,7 @@ export default function RoundSharePage() {
               </button>
               <Link
                 href="/rounds/new"
-                className="flex-1 rounded-xl bg-[#D94F2B] py-3 text-center text-sm font-bold text-white transition-colors hover:bg-[#c4442a] active:scale-[0.98]"
+                className="flex-1 rounded-xl bg-[#2D5A3D] py-3 text-center text-sm font-bold text-white transition-colors hover:bg-[#244A32] active:scale-[0.98]"
               >
                 Play Again
               </Link>
@@ -754,7 +754,7 @@ export default function RoundSharePage() {
 function StateBadge({ state }: { state: "invite" | "live" | "recap" }) {
   if (state === "live") {
     return (
-      <span className="inline-flex items-center gap-1 rounded-full bg-[#D94F2B] px-2.5 py-0.5 text-xs font-bold text-white">
+      <span className="inline-flex items-center gap-1 rounded-full bg-[#2D5A3D] px-2.5 py-0.5 text-xs font-bold text-white">
         <span className="h-1.5 w-1.5 rounded-full bg-white animate-pulse" />
         LIVE
       </span>

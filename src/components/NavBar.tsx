@@ -36,13 +36,13 @@ export default function NavBar({ user }: { user: User }) {
   return (
     <nav
       className={`fixed left-0 right-0 top-0 z-50 flex h-16 items-center justify-between px-6 transition-all duration-300 ${
-        scrolled ? "bg-[#F3EDE4] shadow-sm" : "bg-transparent"
+        scrolled ? "bg-[#F2F0EB] shadow-sm" : "bg-transparent"
       }`}
     >
       <Link href="/" className="flex items-center gap-2">
         <span
-          className={`text-xl font-black uppercase tracking-tighter transition-colors ${
-            scrolled ? "text-[#18181B]" : "text-white"
+          className={`text-xl font-semibold uppercase tracking-tighter transition-colors ${
+            scrolled ? "text-[#111111]" : "text-white"
           }`}
         >
           NASSAU
@@ -55,7 +55,7 @@ export default function NavBar({ user }: { user: User }) {
               href="/dashboard"
               className={`text-sm font-medium transition-colors ${
                 scrolled
-                  ? "text-[#18181B] hover:text-[#D94F2B]"
+                  ? "text-[#111111] hover:text-[#2D5A3D]"
                   : "text-white/80 hover:text-white"
               }`}
             >
@@ -65,7 +65,7 @@ export default function NavBar({ user }: { user: User }) {
               href="/rounds"
               className={`text-sm font-medium transition-colors ${
                 scrolled
-                  ? "text-[#18181B] hover:text-[#D94F2B]"
+                  ? "text-[#111111] hover:text-[#2D5A3D]"
                   : "text-white/80 hover:text-white"
               }`}
             >
@@ -76,8 +76,8 @@ export default function NavBar({ user }: { user: User }) {
                 type="submit"
                 className={`rounded-lg border px-3 py-1.5 text-xs font-medium transition-colors ${
                   scrolled
-                    ? "border-[#18181B]/20 text-[#18181B] hover:border-[#D94F2B]"
-                    : "border-white/30 text-white hover:border-[#D94F2B]"
+                    ? "border-[#111111]/20 text-[#111111] hover:border-[#2D5A3D]"
+                    : "border-white/30 text-white hover:border-[#2D5A3D]"
                 }`}
               >
                 Sign Out
@@ -89,14 +89,14 @@ export default function NavBar({ user }: { user: User }) {
             <Link
               href="/login"
               className={`text-sm font-bold transition-colors ${
-                scrolled ? "text-[#D94F2B]" : "text-[#D94F2B]"
+                scrolled ? "text-[#2D5A3D]" : "text-[#2D5A3D]"
               }`}
             >
               Login
             </Link>
             <Link
               href="/login"
-              className="rounded-lg bg-[#D94F2B] px-4 py-2 text-sm font-black uppercase text-white transition-colors hover:bg-[#c4442a]"
+              className="rounded-lg bg-[#2D5A3D] px-4 py-2 text-sm font-semibold uppercase text-white transition-colors hover:bg-[#244A32]"
             >
               Get Started Free
             </Link>

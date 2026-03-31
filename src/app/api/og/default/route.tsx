@@ -21,7 +21,7 @@ export async function GET(req: NextRequest) {
           flexDirection: "column",
           justifyContent: "flex-end",
           padding: "60px",
-          backgroundColor: "#18181B",
+          backgroundColor: "#111111",
           fontFamily: "Helvetica Neue, Arial, sans-serif",
         }}
       >
@@ -33,7 +33,7 @@ export async function GET(req: NextRequest) {
             left: 0,
             right: 0,
             height: "6px",
-            backgroundColor: "#D94F2B",
+            backgroundColor: "#2D5A3D",
           }}
         />
 
@@ -45,7 +45,7 @@ export async function GET(req: NextRequest) {
             left: "60px",
             fontSize: "24px",
             fontWeight: 700,
-            color: "#F3EDE4",
+            color: "#F2F0EB",
             letterSpacing: "4px",
           }}
         >
@@ -66,7 +66,7 @@ export async function GET(req: NextRequest) {
                   type === "round"
                     ? "rgba(217,79,43,0.15)"
                     : "rgba(13,115,119,0.15)",
-                color: type === "round" ? "#D94F2B" : "#0D7377",
+                color: type === "round" ? "#2D5A3D" : "#2D5A3D",
                 padding: "8px 20px",
                 borderRadius: "20px",
                 fontSize: "16px",
@@ -83,7 +83,7 @@ export async function GET(req: NextRequest) {
           style={{
             fontSize: title.length > 30 ? "48px" : "56px",
             fontWeight: 700,
-            color: "#F3EDE4",
+            color: "#F2F0EB",
             lineHeight: 1.1,
             marginBottom: "12px",
           }}

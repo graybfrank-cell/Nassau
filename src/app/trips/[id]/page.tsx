@@ -65,13 +65,13 @@ import TripPhotos from "@/components/trips/TripPhotos";
 import TopBar from "@/components/TopBar";
 
 const SCHEDULE_TYPES = [
-  { value: "tee_time", label: "Tee Time", emoji: "\u26F3", color: "bg-coral/15 text-coral", border: "border-l-coral" },
-  { value: "dinner", label: "Dining", emoji: "\uD83C\uDF7D\uFE0F", color: "bg-teal/15 text-teal", border: "border-l-teal" },
+  { value: "tee_time", label: "Tee Time", emoji: "\u26F3", color: "bg-[#2D5A3D]/15 text-[#2D5A3D]", border: "border-l-[#2D5A3D]" },
+  { value: "dinner", label: "Dining", emoji: "\uD83C\uDF7D\uFE0F", color: "bg-[#2D5A3D]/15 text-[#2D5A3D]", border: "border-l-[#2D5A3D]" },
   { value: "activity", label: "Activity", emoji: "\uD83C\uDFAF", color: "bg-cream/[0.40] text-cream", border: "border-l-cream/40" },
   { value: "travel", label: "Travel", emoji: "\u2708\uFE0F", color: "bg-purple-500/15 text-purple-400", border: "border-l-purple-400" },
   { value: "lodging", label: "Lodging", emoji: "\uD83C\uDFE8", color: "bg-amber-500/15 text-amber-400", border: "border-l-amber-400" },
   { value: "entertainment", label: "Entertainment", emoji: "\uD83C\uDF89", color: "bg-pink-500/15 text-pink-400", border: "border-l-pink-400" },
-  { value: "other", label: "Other", emoji: "\uD83D\uDCCC", color: "bg-cream/[0.20] text-cream/50", border: "border-l-cream/20" },
+  { value: "other", label: "Other", emoji: "\uD83D\uDCCC", color: "bg-cream/[0.20] text-[#8A8A8A]", border: "border-l-cream/20" },
 ] as const;
 
 const EMPTY_LODGING: Lodging = {
@@ -771,7 +771,7 @@ export default function TripDetailPage() {
   if (loading) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-dark">
-        <div className="h-5 w-5 animate-spin rounded-full border-2 border-cream/20 border-t-coral" />
+        <div className="h-5 w-5 animate-spin rounded-full border-2 border-cream/20 border-t-[#2D5A3D]" />
       </div>
     );
   }
@@ -781,10 +781,10 @@ export default function TripDetailPage() {
       <div className="flex min-h-screen items-center justify-center bg-dark">
         <div className="text-center">
           <h2 className="text-lg font-medium text-cream">Trip not found</h2>
-          <p className="mt-2 text-[13px] text-cream/40">This trip may have been deleted.</p>
+          <p className="mt-2 text-[13px] text-[#8A8A8A]">This trip may have been deleted.</p>
           <Link
             href="/trips"
-            className="mt-4 inline-block text-[13px] font-medium text-coral hover:text-coral/80"
+            className="mt-4 inline-block text-[13px] font-medium text-[#2D5A3D] hover:text-[#2D5A3D]/80"
           >
             Back to Trips
           </Link>
@@ -910,21 +910,21 @@ export default function TripDetailPage() {
       title: "Skins",
       desc: `${skinsCount} game${skinsCount !== 1 ? "s" : ""} played`,
       href: `/trips/${tripId}/skins`,
-      color: "bg-gold/15 text-gold",
+      color: "bg-[#B8976A]/15 text-[#B8976A]",
     },
     {
       icon: ClipboardList,
       title: "Scorecards",
       desc: `${scorecardCount} round${scorecardCount !== 1 ? "s" : ""} scored`,
       href: `/trips/${tripId}/scorecards`,
-      color: "bg-teal/15 text-teal",
+      color: "bg-[#2D5A3D]/15 text-[#2D5A3D]",
     },
     {
       icon: Medal,
       title: "Leaderboard",
       desc: "Standings & rankings",
       href: `/trips/${tripId}/leaderboard`,
-      color: "bg-coral/15 text-coral",
+      color: "bg-[#2D5A3D]/15 text-[#2D5A3D]",
     },
   ];
 
@@ -940,7 +940,7 @@ export default function TripDetailPage() {
             className="object-cover"
             priority
           />
-          <div className="absolute inset-0 bg-gradient-to-b from-dark/80 via-dark/60 to-dark" />
+          <div className="absolute inset-0 bg-gradient-to-b from-[#111111]/80 via-[#111111]/60 to-[#111111]" />
           <div className="relative z-10 flex flex-col h-full">
             <TopBar />
             <div className="mt-auto px-5 pb-4 flex items-center gap-3 w-full">
@@ -962,7 +962,7 @@ export default function TripDetailPage() {
                       if (e.key === "Enter") (e.target as HTMLInputElement).blur();
                       if (e.key === "Escape") { setEditingName(false); }
                     }}
-                    className="w-full rounded-[10px] border border-coral/40 bg-cream/[0.06] px-3 py-1 text-[22px] font-medium tracking-tight text-cream outline-none"
+                    className="w-full rounded-[10px] border border-[#2D5A3D]/40 bg-cream/[0.06] px-3 py-1 text-[22px] font-medium tracking-tight text-cream outline-none"
                   />
                 ) : (
                   <h1
@@ -971,11 +971,11 @@ export default function TripDetailPage() {
                   >
                     {trip.name}
                     {isCaptain && (
-                      <Pencil className="ml-2 inline h-3.5 w-3.5 text-cream/30" />
+                      <Pencil className="ml-2 inline h-3.5 w-3.5 text-[#5C5C5C]" />
                     )}
                   </h1>
                 )}
-                <p className="text-[13px] text-cream/50 truncate">
+                <p className="text-[13px] text-[#8A8A8A] truncate">
                   {[
                     trip.destination,
                     trip.startDate && trip.endDate
@@ -989,8 +989,8 @@ export default function TripDetailPage() {
                 disabled={inviteLoading}
                 className={`flex items-center gap-1.5 rounded-[10px] border px-4 py-2 text-[13px] font-medium transition-all ${
                   copied
-                    ? "border-coral/50 text-coral"
-                    : "border-teal/30 bg-teal/10 text-teal hover:bg-teal/15"
+                    ? "border-[#2D5A3D]/50 text-[#2D5A3D]"
+                    : "border-[#2D5A3D]/30 bg-[#2D5A3D]/10 text-[#2D5A3D] hover:bg-[#2D5A3D]/15"
                 }`}
               >
                 {copied ? (
@@ -1014,7 +1014,7 @@ export default function TripDetailPage() {
         {/* Travel info (below banner) */}
         <div className="px-5 pb-4">
           <div className="ml-12">
-            <p className="text-[13px] text-cream/50 sr-only">
+            <p className="text-[13px] text-[#8A8A8A] sr-only">
               {[
                 trip.destination,
                 trip.startDate && trip.endDate
@@ -1038,7 +1038,7 @@ export default function TripDetailPage() {
                 )}
                 <button
                   onClick={() => setEditingTravel(true)}
-                  className="text-cream/20 hover:text-cream/50"
+                  className="text-cream/20 hover:text-[#8A8A8A]"
                 >
                   <Pencil className="h-2.5 w-2.5" />
                 </button>
@@ -1047,7 +1047,7 @@ export default function TripDetailPage() {
             {!trip.arrivalTime && !trip.departureTime && !editingTravel && (
               <button
                 onClick={() => setEditingTravel(true)}
-                className="mt-1 text-[12px] font-medium text-cream/30 hover:text-cream/50"
+                className="mt-1 text-[12px] font-medium text-[#5C5C5C] hover:text-[#8A8A8A]"
               >
                 + Add arrival / departure times
               </button>
@@ -1058,7 +1058,7 @@ export default function TripDetailPage() {
                 className="mt-2 flex flex-wrap items-end gap-2"
               >
                 <div>
-                  <label className="block text-[11px] font-medium uppercase tracking-[1.2px] text-cream/40">
+                  <label className="block text-[11px] font-medium uppercase tracking-[1.2px] text-[#8A8A8A]">
                     Arrival
                   </label>
                   <input
@@ -1066,11 +1066,11 @@ export default function TripDetailPage() {
                     value={arrivalTime}
                     onChange={(e) => setArrivalTime(e.target.value)}
                     placeholder="Fri 3/14 at 2:30 PM"
-                    className="mt-1 block w-44 rounded-[10px] border border-cream/10 bg-cream/[0.06] px-3 py-2 text-[13px] text-cream placeholder:text-cream/35 outline-none focus:border-coral/40"
+                    className="mt-1 block w-44 rounded-[10px] border border-cream/10 bg-cream/[0.06] px-3 py-2 text-[13px] text-cream placeholder:text-cream/35 outline-none focus:border-[#2D5A3D]/40"
                   />
                 </div>
                 <div>
-                  <label className="block text-[11px] font-medium uppercase tracking-[1.2px] text-cream/40">
+                  <label className="block text-[11px] font-medium uppercase tracking-[1.2px] text-[#8A8A8A]">
                     Departure
                   </label>
                   <input
@@ -1078,19 +1078,19 @@ export default function TripDetailPage() {
                     value={departureTime}
                     onChange={(e) => setDepartureTime(e.target.value)}
                     placeholder="Sun 3/16 at 6:00 PM"
-                    className="mt-1 block w-44 rounded-[10px] border border-cream/10 bg-cream/[0.06] px-3 py-2 text-[13px] text-cream placeholder:text-cream/35 outline-none focus:border-coral/40"
+                    className="mt-1 block w-44 rounded-[10px] border border-cream/10 bg-cream/[0.06] px-3 py-2 text-[13px] text-cream placeholder:text-cream/35 outline-none focus:border-[#2D5A3D]/40"
                   />
                 </div>
                 <button
                   type="submit"
-                  className="rounded-[10px] bg-coral px-3 py-2 text-[13px] font-medium text-cream hover:bg-coral/90"
+                  className="rounded-[10px] bg-[#2D5A3D] px-3 py-2 text-[13px] font-medium text-cream hover:bg-[#2D5A3D]/90"
                 >
                   Save
                 </button>
                 <button
                   type="button"
                   onClick={() => setEditingTravel(false)}
-                  className="rounded-[10px] border border-cream/10 p-2 text-cream/40 hover:text-cream/60"
+                  className="rounded-[10px] border border-cream/10 p-2 text-[#8A8A8A] hover:text-cream/60"
                 >
                   <X className="h-4 w-4" />
                 </button>
@@ -1114,8 +1114,8 @@ export default function TripDetailPage() {
                 onClick={() => setActiveTab(tab.key)}
                 className={`shrink-0 border-b-2 px-4 py-3 text-[13px] font-medium transition-colors ${
                   activeTab === tab.key
-                    ? 'border-coral text-coral'
-                    : 'border-transparent text-cream/40 hover:text-cream/60'
+                    ? 'border-[#2D5A3D] text-[#2D5A3D]'
+                    : 'border-transparent text-[#8A8A8A] hover:text-cream/60'
                 }`}
               >
                 {tab.label}
@@ -1154,7 +1154,7 @@ export default function TripDetailPage() {
                 if (daysAway === 0) {
                   return (
                     <div className="text-center py-2">
-                      <p className="text-[28px] font-bold text-coral">IT&apos;S GO TIME</p>
+                      <p className="text-[28px] font-bold text-[#2D5A3D]">IT&apos;S GO TIME</p>
                     </div>
                   );
                 }
@@ -1166,7 +1166,7 @@ export default function TripDetailPage() {
                     onClick={() => { setShowCreatePoll(true); setPollStep(1); }}
                     className="block w-full text-center py-2"
                   >
-                    <p className="text-[28px] font-bold text-cream/40 hover:text-coral transition-colors">SET YOUR DATES &rarr;</p>
+                    <p className="text-[28px] font-bold text-[#8A8A8A] hover:text-[#2D5A3D] transition-colors">SET YOUR DATES &rarr;</p>
                   </button>
                 );
               }
@@ -1196,11 +1196,11 @@ export default function TripDetailPage() {
               return (
                 <div className="rounded-[10px] border border-cream/[0.08] bg-cream/[0.04] p-5">
                   <div className="flex items-center justify-between mb-3">
-                    <h2 className="text-[13px] font-medium text-cream/40 uppercase tracking-wider">Trip Readiness &mdash; {completedCount} of {milestones.length} complete</h2>
-                    <span className="text-[13px] font-medium text-cream/50">{pct}%</span>
+                    <h2 className="text-[13px] font-medium text-[#8A8A8A] uppercase tracking-wider">Trip Readiness &mdash; {completedCount} of {milestones.length} complete</h2>
+                    <span className="text-[13px] font-medium text-[#8A8A8A]">{pct}%</span>
                   </div>
                   <div className="h-2 w-full bg-cream/10 rounded-full overflow-hidden">
-                    <div className="h-2 bg-coral rounded-full transition-all duration-500" style={{ width: `${pct}%` }} />
+                    <div className="h-2 bg-[#2D5A3D] rounded-full transition-all duration-500" style={{ width: `${pct}%` }} />
                   </div>
                   <div className="mt-4 space-y-2">
                     {milestones.map((m, idx) => (
@@ -1215,11 +1215,11 @@ export default function TripDetailPage() {
                         }}
                       >
                         {m.done ? (
-                          <CheckCircle2 className="h-4 w-4 text-teal shrink-0" />
+                          <CheckCircle2 className="h-4 w-4 text-[#2D5A3D] shrink-0" />
                         ) : (
-                          <Circle className="h-4 w-4 text-cream/30 shrink-0" />
+                          <Circle className="h-4 w-4 text-[#5C5C5C] shrink-0" />
                         )}
-                        <span className={`text-[13px] ${m.done ? "text-cream/50 line-through" : "text-cream"}`}>{m.label}</span>
+                        <span className={`text-[13px] ${m.done ? "text-[#8A8A8A] line-through" : "text-cream"}`}>{m.label}</span>
                       </button>
                     ))}
                   </div>
@@ -1246,7 +1246,7 @@ export default function TripDetailPage() {
                   {stats.map((s) => (
                     <div key={s.label} className="rounded-[10px] bg-cream/[0.04] border border-cream/[0.08] p-3 text-center">
                       <p className="text-[18px] font-medium text-cream">{s.value}</p>
-                      <p className="text-[11px] uppercase tracking-[1.2px] text-cream/40">{s.label}</p>
+                      <p className="text-[11px] uppercase tracking-[1.2px] text-[#8A8A8A]">{s.label}</p>
                     </div>
                   ))}
                 </div>
@@ -1255,21 +1255,21 @@ export default function TripDetailPage() {
 
             {/* ─── D. Crew Status ─── */}
             <div id="crew-section" className="rounded-[10px] border border-cream/[0.08] bg-cream/[0.04] p-5">
-              <h2 className="text-[13px] font-medium text-cream/40 uppercase tracking-wider mb-3">The Crew</h2>
+              <h2 className="text-[13px] font-medium text-[#8A8A8A] uppercase tracking-wider mb-3">The Crew</h2>
               <div className="divide-y divide-cream/[0.06]">
                 {trip.members.map((m) => {
                   const status = (m.rsvpStatus || "PENDING").toUpperCase();
                   const statusConfig = status === "GOING"
-                    ? { label: "Going", cls: "bg-teal/20 text-teal" }
+                    ? { label: "Going", cls: "bg-[#2D5A3D]/20 text-[#2D5A3D]" }
                     : status === "DECLINED"
-                      ? { label: "Declined", cls: "bg-coral/20 text-coral" }
-                      : { label: "Pending", cls: "bg-cream/10 text-cream/50" };
+                      ? { label: "Declined", cls: "bg-[#C4423B]/20 text-[#C4423B]" }
+                      : { label: "Pending", cls: "bg-cream/10 text-[#8A8A8A]" };
                   const roleLabel = m.role === "CAPTAIN" ? "Captain" : m.role === "CO_CAPTAIN" ? "Co-Captain" : "Player";
                   return (
                     <div key={m.id} className="flex items-center justify-between py-3">
                       <div className="flex items-center gap-3 min-w-0">
                         <span className="text-[14px] font-medium text-cream truncate">{m.name}</span>
-                        <span className="text-[12px] text-cream/30 shrink-0">{roleLabel}</span>
+                        <span className="text-[12px] text-[#5C5C5C] shrink-0">{roleLabel}</span>
                       </div>
                       <div className="flex items-center gap-2 shrink-0">
                         <span className={`rounded-full px-2.5 py-0.5 text-[11px] font-medium ${statusConfig.cls}`}>
@@ -1285,7 +1285,7 @@ export default function TripDetailPage() {
                               setNudgeToast(true);
                               setTimeout(() => setNudgeToast(false), 2000);
                             }}
-                            className="border border-coral/30 text-coral text-[11px] rounded-full px-3 py-1 hover:bg-coral/10 transition-colors"
+                            className="border border-[#C4423B]/30 text-[#C4423B] text-[11px] rounded-full px-3 py-1 hover:bg-[#C4423B]/10 transition-colors"
                           >
                             Nudge
                           </button>
@@ -1297,7 +1297,7 @@ export default function TripDetailPage() {
               </div>
               {/* Nudge toast */}
               {nudgeToast && (
-                <div className="mt-3 rounded-[10px] border border-teal/30 bg-teal/10 px-4 py-2 text-[13px] text-teal text-center">
+                <div className="mt-3 rounded-[10px] border border-[#2D5A3D]/30 bg-[#2D5A3D]/10 px-4 py-2 text-[13px] text-[#2D5A3D] text-center">
                   Copied to clipboard
                 </div>
               )}
@@ -1306,9 +1306,9 @@ export default function TripDetailPage() {
             {/* ─── Date Poll Section ─── */}
             <div id="dates-section">
         {datePoll?.status === "locked" && trip.startDate && trip.endDate ? (
-          <div className="rounded-[10px] border border-teal/30 bg-teal/10 p-5">
+          <div className="rounded-[10px] border border-[#2D5A3D]/30 bg-[#2D5A3D]/10 p-5">
             <div className="flex items-center gap-2">
-              <Lock className="h-5 w-5 text-teal" />
+              <Lock className="h-5 w-5 text-[#2D5A3D]" />
               <h2 className="text-[15px] font-medium text-cream">Trip Dates Locked</h2>
             </div>
             <p className="mt-2 text-[13px] text-cream/60">
@@ -1334,14 +1334,14 @@ export default function TripDetailPage() {
         ) : !trip.startDate && !trip.endDate && !datePoll ? (
           currentUserId && trip.members.some((m) => m.userId === currentUserId && (m.role === "CAPTAIN" || m.role === "CO_CAPTAIN")) ? (
             <div className="rounded-[10px] border border-dashed border-cream/15 p-6 text-center">
-              <CalendarDays className="mx-auto h-8 w-8 text-cream/30" />
+              <CalendarDays className="mx-auto h-8 w-8 text-[#5C5C5C]" />
               <h2 className="mt-3 text-[15px] font-medium text-cream">When&apos;s the trip?</h2>
-              <p className="mt-1 text-[13px] text-cream/40">
+              <p className="mt-1 text-[13px] text-[#8A8A8A]">
                 Pick a few possible date windows and let the crew vote.
               </p>
               <button
                 onClick={() => { setShowCreatePoll(true); setPollStep(1); }}
-                className="mt-4 inline-flex items-center gap-2 rounded-[10px] bg-coral px-5 py-3 text-[14px] font-medium text-cream transition-colors hover:bg-coral/90"
+                className="mt-4 inline-flex items-center gap-2 rounded-[10px] bg-[#2D5A3D] px-5 py-3 text-[14px] font-medium text-cream transition-colors hover:bg-[#2D5A3D]/90"
               >
                 <Vote className="h-4 w-4" />
                 Set Up Date Poll
@@ -1358,14 +1358,14 @@ export default function TripDetailPage() {
             onClick={() => setShowCreatePoll(false)}
           >
             <div
-              className="w-full max-w-lg rounded-t-2xl sm:rounded-2xl bg-[#1e1e21] p-6 shadow-xl max-h-[90vh] overflow-y-auto animate-[slideUp_200ms_ease-out]"
+              className="w-full max-w-lg rounded-t-2xl sm:rounded-2xl bg-[#1A1A1A] p-6 shadow-xl max-h-[90vh] overflow-y-auto animate-[slideUp_200ms_ease-out]"
               onClick={(e) => e.stopPropagation()}
             >
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-[17px] font-medium text-cream">
                   {pollStep === 1 ? "Trip Duration" : pollStep === 2 ? "Pick Date Windows" : "Confirm & Send"}
                 </h3>
-                <button onClick={() => setShowCreatePoll(false)} className="flex h-8 w-8 items-center justify-center rounded-full text-cream/40 hover:bg-cream/10">
+                <button onClick={() => setShowCreatePoll(false)} className="flex h-8 w-8 items-center justify-center rounded-full text-[#8A8A8A] hover:bg-cream/10">
                   <X className="h-4 w-4" strokeWidth={2} />
                 </button>
               </div>
@@ -1373,7 +1373,7 @@ export default function TripDetailPage() {
               {/* Step 1: Nights */}
               {pollStep === 1 && (
                 <div>
-                  <p className="text-[13px] text-cream/40 mb-4">How many nights is this trip?</p>
+                  <p className="text-[13px] text-[#8A8A8A] mb-4">How many nights is this trip?</p>
                   <div className="flex flex-wrap gap-2">
                     {[2, 3, 4, 5, 6, 7].map((n) => (
                       <button
@@ -1381,7 +1381,7 @@ export default function TripDetailPage() {
                         onClick={() => setPollNights(n)}
                         className={`rounded-full px-4 py-2.5 text-[13px] font-medium transition-all min-h-[44px] ${
                           pollNights === n
-                            ? "border border-coral/50 bg-coral/12 text-coral"
+                            ? "border border-[#2D5A3D]/50 bg-[#2D5A3D]/12 text-[#2D5A3D]"
                             : "border border-cream/10 bg-cream/[0.06] text-cream/60 hover:border-cream/20"
                         }`}
                       >
@@ -1392,7 +1392,7 @@ export default function TripDetailPage() {
                   <button
                     onClick={handleFetchSuggestions}
                     disabled={pollLoadingSuggestions}
-                    className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-[10px] bg-coral px-5 py-3.5 text-[14px] font-medium text-cream transition-colors hover:bg-coral/90 disabled:opacity-50"
+                    className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-[10px] bg-[#2D5A3D] px-5 py-3.5 text-[14px] font-medium text-cream transition-colors hover:bg-[#2D5A3D]/90 disabled:opacity-50"
                   >
                     {pollLoadingSuggestions ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
                     {pollLoadingSuggestions ? "Getting suggestions..." : "Next — Pick Dates"}
@@ -1404,12 +1404,12 @@ export default function TripDetailPage() {
               {pollStep === 2 && (
                 <div>
                   {pollSuggestions?.bestMonths?.length > 0 && (
-                    <div className="mb-4 rounded-[10px] border border-teal/20 bg-teal/10 p-3 text-[13px]">
-                      <p className="font-medium text-teal">
+                    <div className="mb-4 rounded-[10px] border border-[#2D5A3D]/20 bg-[#2D5A3D]/10 p-3 text-[13px]">
+                      <p className="font-medium text-[#2D5A3D]">
                         Best months for {pollSuggestions.destination || trip.destination}: {pollSuggestions.bestMonths.join(", ")}
                       </p>
                       {pollSuggestions.avoidMonths?.length > 0 && (
-                        <p className="mt-1 text-cream/50">
+                        <p className="mt-1 text-[#8A8A8A]">
                           Avoid: {pollSuggestions.avoidMonths.join(", ")}{pollSuggestions.avoidReason ? ` — ${pollSuggestions.avoidReason}` : ""}
                         </p>
                       )}
@@ -1418,7 +1418,7 @@ export default function TripDetailPage() {
 
                   {pollSuggestions?.suggestions?.length > 0 && (
                     <div className="mb-4">
-                      <p className="mb-2 text-[11px] font-medium uppercase tracking-[1.2px] text-cream/40">Suggested windows</p>
+                      <p className="mb-2 text-[11px] font-medium uppercase tracking-[1.2px] text-[#8A8A8A]">Suggested windows</p>
                       <div className="flex flex-wrap gap-2">
                         {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                         {pollSuggestions.suggestions.map((s: any, i: number) => {
@@ -1435,13 +1435,13 @@ export default function TripDetailPage() {
                               }}
                               className={`rounded-[10px] border px-3 py-2 text-left text-[13px] transition-colors ${
                                 isSelected
-                                  ? "border-coral/50 bg-coral/12 text-coral"
+                                  ? "border-[#2D5A3D]/50 bg-[#2D5A3D]/12 text-[#2D5A3D]"
                                   : "border-cream/10 bg-cream/[0.06] text-cream/60 hover:border-cream/20"
                               }`}
                             >
                               <span className="font-medium">{s.label}</span>
                               {s.tag && (
-                                <span className="ml-2 text-[12px] text-cream/40">{s.tag}</span>
+                                <span className="ml-2 text-[12px] text-[#8A8A8A]">{s.tag}</span>
                               )}
                             </button>
                           );
@@ -1454,29 +1454,29 @@ export default function TripDetailPage() {
                     {pollDraftOptions.map((opt, idx) => (
                       <div key={idx} className="rounded-[10px] border border-cream/[0.08] bg-cream/[0.04] p-3">
                         <div className="flex items-center justify-between mb-2">
-                          <span className="text-[11px] font-medium uppercase tracking-[1.2px] text-cream/40">Option {String.fromCharCode(65 + idx)}</span>
+                          <span className="text-[11px] font-medium uppercase tracking-[1.2px] text-[#8A8A8A]">Option {String.fromCharCode(65 + idx)}</span>
                           {pollDraftOptions.length > 2 && (
                             <button onClick={() => handleRemovePollOption(idx)} className="text-[12px] text-red-400 hover:text-red-300">Remove</button>
                           )}
                         </div>
                         <div className="grid gap-2 sm:grid-cols-2">
                           <div>
-                            <label className="block text-[11px] text-cream/40">Start date</label>
+                            <label className="block text-[11px] text-[#8A8A8A]">Start date</label>
                             <input
                               type="date"
                               value={opt.start_date}
                               onChange={(e) => handlePollOptionDateChange(idx, e.target.value)}
                               min={addDaysISO(new Date().toISOString().split("T")[0], 7)}
-                              className="mt-1 block w-full rounded-[10px] border border-cream/10 bg-cream/[0.06] px-3 py-2 text-[13px] text-cream outline-none focus:border-coral/40"
+                              className="mt-1 block w-full rounded-[10px] border border-cream/10 bg-cream/[0.06] px-3 py-2 text-[13px] text-cream outline-none focus:border-[#2D5A3D]/40"
                             />
                           </div>
                           <div>
-                            <label className="block text-[11px] text-cream/40">End date</label>
+                            <label className="block text-[11px] text-[#8A8A8A]">End date</label>
                             <input
                               type="date"
                               value={opt.end_date}
                               readOnly
-                              className="mt-1 block w-full rounded-[10px] border border-cream/[0.08] bg-cream/[0.04] px-3 py-2 text-[13px] text-cream/50"
+                              className="mt-1 block w-full rounded-[10px] border border-cream/[0.08] bg-cream/[0.04] px-3 py-2 text-[13px] text-[#8A8A8A]"
                             />
                           </div>
                         </div>
@@ -1491,7 +1491,7 @@ export default function TripDetailPage() {
                             });
                           }}
                           placeholder='Optional label (e.g. "Spring Break")'
-                          className="mt-2 block w-full rounded-[10px] border border-cream/10 bg-cream/[0.06] px-3 py-2 text-[13px] text-cream placeholder:text-cream/35 outline-none focus:border-coral/40"
+                          className="mt-2 block w-full rounded-[10px] border border-cream/10 bg-cream/[0.06] px-3 py-2 text-[13px] text-cream placeholder:text-cream/35 outline-none focus:border-[#2D5A3D]/40"
                         />
                       </div>
                     ))}
@@ -1500,7 +1500,7 @@ export default function TripDetailPage() {
                   {pollDraftOptions.length < 5 && (
                     <button
                       onClick={handleAddPollOption}
-                      className="mt-3 inline-flex items-center gap-1 text-[13px] font-medium text-coral hover:text-coral/80"
+                      className="mt-3 inline-flex items-center gap-1 text-[13px] font-medium text-[#2D5A3D] hover:text-[#2D5A3D]/80"
                     >
                       <Plus className="h-3.5 w-3.5" />
                       Add Option
@@ -1510,14 +1510,14 @@ export default function TripDetailPage() {
                   <div className="mt-5 flex gap-3">
                     <button
                       onClick={() => setPollStep(1)}
-                      className="rounded-[10px] border border-cream/10 px-4 py-2.5 text-[13px] font-medium text-cream/50"
+                      className="rounded-[10px] border border-cream/10 px-4 py-2.5 text-[13px] font-medium text-[#8A8A8A]"
                     >
                       Back
                     </button>
                     <button
                       onClick={() => setPollStep(3)}
                       disabled={pollDraftOptions.filter((o) => o.start_date && o.end_date).length < 2}
-                      className="flex-1 rounded-[10px] bg-coral px-5 py-2.5 text-[13px] font-medium text-cream transition-colors hover:bg-coral/90 disabled:opacity-40"
+                      className="flex-1 rounded-[10px] bg-[#2D5A3D] px-5 py-2.5 text-[13px] font-medium text-cream transition-colors hover:bg-[#2D5A3D]/90 disabled:opacity-40"
                     >
                       Review & Send
                     </button>
@@ -1528,20 +1528,20 @@ export default function TripDetailPage() {
               {/* Step 3: Confirm */}
               {pollStep === 3 && (
                 <div>
-                  <p className="text-[13px] text-cream/40 mb-4">
+                  <p className="text-[13px] text-[#8A8A8A] mb-4">
                     Your crew will have <strong className="text-cream/60">72 hours</strong> to vote. Everyone with an email on file gets notified.
                   </p>
                   <div className="space-y-2">
                     {pollDraftOptions.filter((o) => o.start_date && o.end_date).map((opt, idx) => (
                       <div key={idx} className="flex items-center gap-3 rounded-[10px] border border-cream/[0.08] bg-cream/[0.04] px-4 py-3">
-                        <span className="flex h-7 w-7 items-center justify-center rounded-full bg-coral/15 text-[12px] font-bold text-coral">
+                        <span className="flex h-7 w-7 items-center justify-center rounded-full bg-[#2D5A3D]/15 text-[12px] font-bold text-[#2D5A3D]">
                           {String.fromCharCode(65 + idx)}
                         </span>
                         <div>
                           <p className="text-[13px] font-medium text-cream">
                             {formatDateShort(opt.start_date)} — {formatDateShort(opt.end_date)}
                           </p>
-                          <p className="text-[12px] text-cream/40">
+                          <p className="text-[12px] text-[#8A8A8A]">
                             {pollNights} night{pollNights !== 1 ? "s" : ""}
                             {opt.label ? ` · "${opt.label}"` : ""}
                           </p>
@@ -1553,14 +1553,14 @@ export default function TripDetailPage() {
                   <div className="mt-5 flex gap-3">
                     <button
                       onClick={() => setPollStep(2)}
-                      className="rounded-[10px] border border-cream/10 px-4 py-2.5 text-[13px] font-medium text-cream/50"
+                      className="rounded-[10px] border border-cream/10 px-4 py-2.5 text-[13px] font-medium text-[#8A8A8A]"
                     >
                       Back
                     </button>
                     <button
                       onClick={handleCreatePoll}
                       disabled={pollCreating}
-                      className="flex-1 inline-flex items-center justify-center gap-2 rounded-[10px] bg-coral px-5 py-3 text-[14px] font-medium text-cream transition-colors hover:bg-coral/90 disabled:opacity-50"
+                      className="flex-1 inline-flex items-center justify-center gap-2 rounded-[10px] bg-[#2D5A3D] px-5 py-3 text-[14px] font-medium text-cream transition-colors hover:bg-[#2D5A3D]/90 disabled:opacity-50"
                     >
                       {pollCreating ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
                       {pollCreating ? "Creating..." : "Send Poll to Crew"}
@@ -1575,14 +1575,14 @@ export default function TripDetailPage() {
         {/* ─── E. Schedule / Itinerary ─── */}
         <div id="schedule-section" className="rounded-[10px] border border-cream/[0.08] bg-cream/[0.04] p-5">
           <div className="flex items-center justify-between">
-            <h2 className="text-[13px] font-medium text-cream/40 uppercase tracking-wider">Schedule</h2>
+            <h2 className="text-[13px] font-medium text-[#8A8A8A] uppercase tracking-wider">Schedule</h2>
             {isCaptain && (
               <button
                 onClick={() => {
                   setShowAddEvent(!showAddEvent);
                   if (!showAddEvent && trip.startDate) setEventDate(trip.startDate);
                 }}
-                className="inline-flex items-center gap-1.5 rounded-[10px] bg-coral px-3 py-2 text-[12px] font-medium text-cream transition-colors hover:bg-coral/90"
+                className="inline-flex items-center gap-1.5 rounded-[10px] bg-[#2D5A3D] px-3 py-2 text-[12px] font-medium text-cream transition-colors hover:bg-[#2D5A3D]/90"
               >
                 <Plus className="h-3.5 w-3.5" />
                 Add Event
@@ -1597,38 +1597,38 @@ export default function TripDetailPage() {
             >
               <div className="grid gap-3 sm:grid-cols-2">
                 <div>
-                  <label className="block text-[11px] font-medium uppercase tracking-[1.2px] text-cream/40">Date *</label>
-                  <input type="date" required value={eventDate} onChange={(e) => setEventDate(e.target.value)} className="mt-1 block w-full rounded-[10px] border border-cream/10 bg-cream/[0.06] px-3 py-2 text-[13px] text-cream outline-none focus:border-coral/40" />
+                  <label className="block text-[11px] font-medium uppercase tracking-[1.2px] text-[#8A8A8A]">Date *</label>
+                  <input type="date" required value={eventDate} onChange={(e) => setEventDate(e.target.value)} className="mt-1 block w-full rounded-[10px] border border-cream/10 bg-cream/[0.06] px-3 py-2 text-[13px] text-cream outline-none focus:border-[#2D5A3D]/40" />
                 </div>
                 <div>
-                  <label className="block text-[11px] font-medium uppercase tracking-[1.2px] text-cream/40">Time</label>
-                  <input type="time" value={eventTime} onChange={(e) => setEventTime(e.target.value)} className="mt-1 block w-full rounded-[10px] border border-cream/10 bg-cream/[0.06] px-3 py-2 text-[13px] text-cream outline-none focus:border-coral/40" />
+                  <label className="block text-[11px] font-medium uppercase tracking-[1.2px] text-[#8A8A8A]">Time</label>
+                  <input type="time" value={eventTime} onChange={(e) => setEventTime(e.target.value)} className="mt-1 block w-full rounded-[10px] border border-cream/10 bg-cream/[0.06] px-3 py-2 text-[13px] text-cream outline-none focus:border-[#2D5A3D]/40" />
                 </div>
                 <div>
-                  <label className="block text-[11px] font-medium uppercase tracking-[1.2px] text-cream/40">Title *</label>
-                  <input type="text" required value={eventTitle} onChange={(e) => setEventTitle(e.target.value)} placeholder="TPC Scottsdale - Round 1" className="mt-1 block w-full rounded-[10px] border border-cream/10 bg-cream/[0.06] px-3 py-2 text-[13px] text-cream placeholder:text-cream/35 outline-none focus:border-coral/40" />
+                  <label className="block text-[11px] font-medium uppercase tracking-[1.2px] text-[#8A8A8A]">Title *</label>
+                  <input type="text" required value={eventTitle} onChange={(e) => setEventTitle(e.target.value)} placeholder="TPC Scottsdale - Round 1" className="mt-1 block w-full rounded-[10px] border border-cream/10 bg-cream/[0.06] px-3 py-2 text-[13px] text-cream placeholder:text-cream/35 outline-none focus:border-[#2D5A3D]/40" />
                 </div>
                 <div>
-                  <label className="block text-[11px] font-medium uppercase tracking-[1.2px] text-cream/40">Type</label>
-                  <select value={eventType} onChange={(e) => setEventType(e.target.value as ScheduleItem["type"])} className="mt-1 block w-full rounded-[10px] border border-cream/10 bg-cream/[0.06] px-3 py-2 text-[13px] text-cream outline-none focus:border-coral/40">
+                  <label className="block text-[11px] font-medium uppercase tracking-[1.2px] text-[#8A8A8A]">Type</label>
+                  <select value={eventType} onChange={(e) => setEventType(e.target.value as ScheduleItem["type"])} className="mt-1 block w-full rounded-[10px] border border-cream/10 bg-cream/[0.06] px-3 py-2 text-[13px] text-cream outline-none focus:border-[#2D5A3D]/40">
                     {SCHEDULE_TYPES.map((t) => (<option key={t.value} value={t.value}>{t.emoji} {t.label}</option>))}
                   </select>
                 </div>
                 <div className="sm:col-span-2">
-                  <label className="block text-[11px] font-medium uppercase tracking-[1.2px] text-cream/40">Description</label>
-                  <input type="text" value={eventDesc} onChange={(e) => setEventDesc(e.target.value)} placeholder="Optional details" className="mt-1 block w-full rounded-[10px] border border-cream/10 bg-cream/[0.06] px-3 py-2 text-[13px] text-cream placeholder:text-cream/35 outline-none focus:border-coral/40" />
+                  <label className="block text-[11px] font-medium uppercase tracking-[1.2px] text-[#8A8A8A]">Description</label>
+                  <input type="text" value={eventDesc} onChange={(e) => setEventDesc(e.target.value)} placeholder="Optional details" className="mt-1 block w-full rounded-[10px] border border-cream/10 bg-cream/[0.06] px-3 py-2 text-[13px] text-cream placeholder:text-cream/35 outline-none focus:border-[#2D5A3D]/40" />
                 </div>
               </div>
               <div className="mt-4 flex gap-3">
-                <button type="submit" className="rounded-[10px] bg-coral px-4 py-2 text-[13px] font-medium text-cream hover:bg-coral/90">Add</button>
-                <button type="button" onClick={() => setShowAddEvent(false)} className="rounded-[10px] border border-cream/10 px-4 py-2 text-[13px] font-medium text-cream/50">Cancel</button>
+                <button type="submit" className="rounded-[10px] bg-[#2D5A3D] px-4 py-2 text-[13px] font-medium text-cream hover:bg-[#2D5A3D]/90">Add</button>
+                <button type="button" onClick={() => setShowAddEvent(false)} className="rounded-[10px] border border-cream/10 px-4 py-2 text-[13px] font-medium text-[#8A8A8A]">Cancel</button>
               </div>
             </form>
           )}
 
           {liveSchedule.length === 0 ? (
             <div className="mt-4 rounded-[10px] border border-dashed border-cream/20 p-6 text-center">
-              <p className="text-[13px] text-cream/30">No events yet. Start building your itinerary.</p>
+              <p className="text-[13px] text-[#5C5C5C]">No events yet. Start building your itinerary.</p>
               {isCaptain && (
                 <div className="mt-3 flex items-center justify-center gap-3">
                   <button
@@ -1637,7 +1637,7 @@ export default function TripDetailPage() {
                       setShowAddEvent(true);
                       if (trip.startDate) setEventDate(trip.startDate);
                     }}
-                    className="border border-dashed border-cream/20 rounded-[10px] px-4 py-2 text-[13px] text-cream/40 hover:border-cream/30 hover:text-cream/60 transition-colors"
+                    className="border border-dashed border-cream/20 rounded-[10px] px-4 py-2 text-[13px] text-[#8A8A8A] hover:border-cream/30 hover:text-cream/60 transition-colors"
                   >
                     + Add Tee Time
                   </button>
@@ -1647,7 +1647,7 @@ export default function TripDetailPage() {
                       setShowAddEvent(true);
                       if (trip.startDate) setEventDate(trip.startDate);
                     }}
-                    className="border border-dashed border-cream/20 rounded-[10px] px-4 py-2 text-[13px] text-cream/40 hover:border-cream/30 hover:text-cream/60 transition-colors"
+                    className="border border-dashed border-cream/20 rounded-[10px] px-4 py-2 text-[13px] text-[#8A8A8A] hover:border-cream/30 hover:text-cream/60 transition-colors"
                   >
                     + Add Activity
                   </button>
@@ -1666,8 +1666,8 @@ export default function TripDetailPage() {
                   <div key={date}>
                     <h3 className="flex items-center gap-2 border-b border-cream/[0.06] pb-2 text-[11px] uppercase tracking-[1.2px]">
                       {dayLabel && <span className="text-cream font-medium">{dayLabel}</span>}
-                      {dayLabel && <span className="text-cream/40">&mdash;</span>}
-                      <span className="text-cream/40">{formatDate(date)}</span>
+                      {dayLabel && <span className="text-[#8A8A8A]">&mdash;</span>}
+                      <span className="text-[#8A8A8A]">{formatDate(date)}</span>
                     </h3>
                     <div className="mt-2 space-y-1.5">
                       {dayEvents.map((event, idx) => {
@@ -1684,7 +1684,7 @@ export default function TripDetailPage() {
                             onDragEnd={() => { setDragId(null); setDragOverId(null); }}
                             className={`group relative rounded-[10px] border-l-4 ${typeConfig?.border || "border-l-cream/20"} border border-cream/[0.08] bg-cream/[0.04] px-3 py-2.5 transition-all ${
                               isDragging ? "opacity-40" : ""
-                            } ${isDragOver ? "ring-2 ring-coral ring-offset-1 ring-offset-dark" : ""} ${
+                            } ${isDragOver ? "ring-2 ring-[#2D5A3D] ring-offset-1 ring-offset-dark" : ""} ${
                               isCaptain ? "cursor-pointer hover:bg-cream/[0.06]" : ""
                             }`}
                             onClick={isCaptain ? () => openEditModal(event) : undefined}
@@ -1692,7 +1692,7 @@ export default function TripDetailPage() {
                             <div className="flex items-center gap-2.5">
                               {isCaptain && (
                                 <span
-                                  className="shrink-0 cursor-grab touch-none text-cream/20 hover:text-cream/40 active:cursor-grabbing min-w-[20px]"
+                                  className="shrink-0 cursor-grab touch-none text-cream/20 hover:text-[#8A8A8A] active:cursor-grabbing min-w-[20px]"
                                   onClick={(e) => e.stopPropagation()}
                                   onMouseDown={(e) => e.stopPropagation()}
                                 >
@@ -1701,7 +1701,7 @@ export default function TripDetailPage() {
                               )}
                               <span className="shrink-0 text-base">{typeConfig?.emoji || "\uD83D\uDCCC"}</span>
                               {event.time && (
-                                <span className="shrink-0 text-[12px] font-medium text-cream/50">
+                                <span className="shrink-0 text-[12px] font-medium text-[#8A8A8A]">
                                   {formatTime(event.time)}
                                 </span>
                               )}
@@ -1710,11 +1710,11 @@ export default function TripDetailPage() {
                               </span>
                               <span className="flex-1" />
                               {event.cost > 0 && (
-                                <span className="hidden shrink-0 text-[12px] font-medium text-cream/40 sm:block">
+                                <span className="hidden shrink-0 text-[12px] font-medium text-[#8A8A8A] sm:block">
                                   ${event.cost}/person
                                 </span>
                               )}
-                              <span className={`hidden shrink-0 rounded-full px-2 py-0.5 text-[10px] font-medium sm:inline ${typeConfig?.color || "bg-cream/[0.08] text-cream/50"}`}>
+                              <span className={`hidden shrink-0 rounded-full px-2 py-0.5 text-[10px] font-medium sm:inline ${typeConfig?.color || "bg-cream/[0.08] text-[#8A8A8A]"}`}>
                                 {typeConfig?.label || event.type}
                               </span>
                               {isCaptain && (
@@ -1722,7 +1722,7 @@ export default function TripDetailPage() {
                                   <button
                                     onClick={() => handleMoveItem(event.id, "up", dayEvents)}
                                     disabled={idx === 0}
-                                    className="rounded p-1 text-cream/20 hover:bg-cream/[0.06] hover:text-cream/50 disabled:opacity-30 min-w-[28px] min-h-[28px] flex items-center justify-center"
+                                    className="rounded p-1 text-cream/20 hover:bg-cream/[0.06] hover:text-[#8A8A8A] disabled:opacity-30 min-w-[28px] min-h-[28px] flex items-center justify-center"
                                     title="Move up"
                                   >
                                     <ChevronUp className="h-3.5 w-3.5" />
@@ -1730,7 +1730,7 @@ export default function TripDetailPage() {
                                   <button
                                     onClick={() => handleMoveItem(event.id, "down", dayEvents)}
                                     disabled={idx === dayEvents.length - 1}
-                                    className="rounded p-1 text-cream/20 hover:bg-cream/[0.06] hover:text-cream/50 disabled:opacity-30 min-w-[28px] min-h-[28px] flex items-center justify-center"
+                                    className="rounded p-1 text-cream/20 hover:bg-cream/[0.06] hover:text-[#8A8A8A] disabled:opacity-30 min-w-[28px] min-h-[28px] flex items-center justify-center"
                                     title="Move down"
                                   >
                                     <ChevronDown className="h-3.5 w-3.5" />
@@ -1738,7 +1738,7 @@ export default function TripDetailPage() {
                                   {prevDate && (
                                     <button
                                       onClick={() => handleQuickMove(event, prevDate)}
-                                      className="rounded p-1 text-cream/20 hover:bg-cream/[0.06] hover:text-cream/50 min-w-[28px] min-h-[28px] flex items-center justify-center"
+                                      className="rounded p-1 text-cream/20 hover:bg-cream/[0.06] hover:text-[#8A8A8A] min-w-[28px] min-h-[28px] flex items-center justify-center"
                                       title={`Move to ${formatDate(prevDate)}`}
                                     >
                                       <ChevronLeft className="h-3.5 w-3.5" />
@@ -1747,7 +1747,7 @@ export default function TripDetailPage() {
                                   {nextDate && (
                                     <button
                                       onClick={() => handleQuickMove(event, nextDate)}
-                                      className="rounded p-1 text-cream/20 hover:bg-cream/[0.06] hover:text-cream/50 min-w-[28px] min-h-[28px] flex items-center justify-center"
+                                      className="rounded p-1 text-cream/20 hover:bg-cream/[0.06] hover:text-[#8A8A8A] min-w-[28px] min-h-[28px] flex items-center justify-center"
                                       title={`Move to ${formatDate(nextDate)}`}
                                     >
                                       <ChevronRight className="h-3.5 w-3.5" />
@@ -1755,7 +1755,7 @@ export default function TripDetailPage() {
                                   )}
                                   <button
                                     onClick={() => openEditModal(event)}
-                                    className="rounded p-1 text-cream/20 hover:bg-cream/[0.06] hover:text-cream/50 min-w-[28px] min-h-[28px] flex items-center justify-center"
+                                    className="rounded p-1 text-cream/20 hover:bg-cream/[0.06] hover:text-[#8A8A8A] min-w-[28px] min-h-[28px] flex items-center justify-center"
                                     title="Edit"
                                   >
                                     <Pencil className="h-3 w-3" />
@@ -1783,12 +1783,12 @@ export default function TripDetailPage() {
                               )}
                             </div>
                             {(event.cost > 0 || event.description || event.notes) && (
-                              <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-0.5 pl-0 text-[12px] text-cream/40" style={{ paddingLeft: isCaptain ? "28px" : "0" }}>
+                              <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-0.5 pl-0 text-[12px] text-[#8A8A8A]" style={{ paddingLeft: isCaptain ? "28px" : "0" }}>
                                 {event.cost > 0 && (
                                   <span className="sm:hidden">${event.cost}/person</span>
                                 )}
                                 {event.description && <span>{event.description}</span>}
-                                {event.notes && <span className="italic text-cream/30">{event.notes}</span>}
+                                {event.notes && <span className="italic text-[#5C5C5C]">{event.notes}</span>}
                               </div>
                             )}
                           </div>
@@ -1806,18 +1806,18 @@ export default function TripDetailPage() {
                                 value={addForm.title}
                                 onChange={(e) => setAddForm({ ...addForm, title: e.target.value })}
                                 placeholder="Event title *"
-                                className="col-span-1 rounded-[10px] border border-cream/10 bg-cream/[0.06] px-3 py-2 text-[13px] text-cream placeholder:text-cream/35 outline-none focus:border-coral/40"
+                                className="col-span-1 rounded-[10px] border border-cream/10 bg-cream/[0.06] px-3 py-2 text-[13px] text-cream placeholder:text-cream/35 outline-none focus:border-[#2D5A3D]/40"
                               />
                               <input
                                 type="time"
                                 value={addForm.time}
                                 onChange={(e) => setAddForm({ ...addForm, time: e.target.value })}
-                                className="rounded-[10px] border border-cream/10 bg-cream/[0.06] px-3 py-2 text-[13px] text-cream outline-none focus:border-coral/40"
+                                className="rounded-[10px] border border-cream/10 bg-cream/[0.06] px-3 py-2 text-[13px] text-cream outline-none focus:border-[#2D5A3D]/40"
                               />
                               <select
                                 value={addForm.type}
                                 onChange={(e) => setAddForm({ ...addForm, type: e.target.value })}
-                                className="rounded-[10px] border border-cream/10 bg-cream/[0.06] px-3 py-2 text-[13px] text-cream outline-none focus:border-coral/40"
+                                className="rounded-[10px] border border-cream/10 bg-cream/[0.06] px-3 py-2 text-[13px] text-cream outline-none focus:border-[#2D5A3D]/40"
                               >
                                 {SCHEDULE_TYPES.map((t) => (<option key={t.value} value={t.value}>{t.emoji} {t.label}</option>))}
                               </select>
@@ -1828,28 +1828,28 @@ export default function TripDetailPage() {
                                 value={addForm.cost}
                                 onChange={(e) => setAddForm({ ...addForm, cost: e.target.value })}
                                 placeholder="$ Cost per person (optional)"
-                                className="rounded-[10px] border border-cream/10 bg-cream/[0.06] px-3 py-2 text-[13px] text-cream placeholder:text-cream/35 outline-none focus:border-coral/40"
+                                className="rounded-[10px] border border-cream/10 bg-cream/[0.06] px-3 py-2 text-[13px] text-cream placeholder:text-cream/35 outline-none focus:border-[#2D5A3D]/40"
                               />
                               <input
                                 type="text"
                                 value={addForm.notes}
                                 onChange={(e) => setAddForm({ ...addForm, notes: e.target.value })}
                                 placeholder="Notes (optional)"
-                                className="rounded-[10px] border border-cream/10 bg-cream/[0.06] px-3 py-2 text-[13px] text-cream placeholder:text-cream/35 outline-none focus:border-coral/40"
+                                className="rounded-[10px] border border-cream/10 bg-cream/[0.06] px-3 py-2 text-[13px] text-cream placeholder:text-cream/35 outline-none focus:border-[#2D5A3D]/40"
                               />
                             </div>
                             <div className="mt-2 flex gap-2">
                               <button
                                 onClick={handleAddForDay}
                                 disabled={addSaving || !addForm.title.trim()}
-                                className="inline-flex items-center gap-1 rounded-[10px] bg-coral px-3 py-2 text-[12px] font-medium text-cream hover:bg-coral/90 disabled:opacity-50"
+                                className="inline-flex items-center gap-1 rounded-[10px] bg-[#2D5A3D] px-3 py-2 text-[12px] font-medium text-cream hover:bg-[#2D5A3D]/90 disabled:opacity-50"
                               >
                                 {addSaving ? <Loader2 className="h-3 w-3 animate-spin" /> : <Plus className="h-3 w-3" />}
                                 Add
                               </button>
                               <button
                                 onClick={() => setAddForDate(null)}
-                                className="rounded-[10px] border border-cream/10 px-3 py-2 text-[12px] font-medium text-cream/50"
+                                className="rounded-[10px] border border-cream/10 px-3 py-2 text-[12px] font-medium text-[#8A8A8A]"
                               >
                                 Cancel
                               </button>
@@ -1858,7 +1858,7 @@ export default function TripDetailPage() {
                         ) : (
                           <button
                             onClick={() => openAddForDay(date, dayEvents)}
-                            className="mt-2 inline-flex items-center gap-1 rounded-[10px] border border-dashed border-cream/15 px-3 py-1.5 text-[12px] font-medium text-cream/40 transition-colors hover:border-cream/25 hover:text-cream/60"
+                            className="mt-2 inline-flex items-center gap-1 rounded-[10px] border border-dashed border-cream/15 px-3 py-1.5 text-[12px] font-medium text-[#8A8A8A] transition-colors hover:border-cream/25 hover:text-cream/60"
                           >
                             <Plus className="h-3 w-3" />
                             Add to {dayLabel || formatDate(date)}
@@ -1876,10 +1876,10 @@ export default function TripDetailPage() {
         {/* ─── F. Budget / Expenses ─── */}
         <div className="rounded-[10px] border border-cream/[0.08] bg-cream/[0.04] p-5">
           <div className="flex items-center justify-between">
-            <h2 className="text-[13px] font-medium text-cream/40 uppercase tracking-wider mb-3">Budget</h2>
+            <h2 className="text-[13px] font-medium text-[#8A8A8A] uppercase tracking-wider mb-3">Budget</h2>
             <Link
               href={`/trips/${tripId}/expenses`}
-              className="text-[12px] font-medium text-coral hover:text-coral/80"
+              className="text-[12px] font-medium text-[#2D5A3D] hover:text-[#2D5A3D]/80"
             >
               {expenses.length > 0 ? "View All" : "+ Add Expense"}
             </Link>
@@ -1897,39 +1897,39 @@ export default function TripDetailPage() {
                 {scheduleCostPP > 0 && (
                   <p className="text-[14px] text-cream">
                     Estimated: <span className="font-medium">~${Math.round(scheduleCostPP).toLocaleString()}/person</span>
-                    <span className="text-cream/40 text-[13px] ml-1">(from itinerary)</span>
+                    <span className="text-[#8A8A8A] text-[13px] ml-1">(from itinerary)</span>
                   </p>
                 )}
                 {totalExpenses > 0 ? (
                   <>
                     <p className="text-[14px] text-cream">
                       Logged expenses: <span className="font-medium">${totalExpenses.toLocaleString()} total</span>
-                      <span className="text-cream/40 text-[13px] ml-1">(${Math.round(totalExpenses / goingMembers).toLocaleString()}/person)</span>
+                      <span className="text-[#8A8A8A] text-[13px] ml-1">(${Math.round(totalExpenses / goingMembers).toLocaleString()}/person)</span>
                     </p>
                     <div className="space-y-1.5 ml-1">
                       {greenFees > 0 && (
-                        <div className="flex items-center gap-2 text-[13px] text-cream/50">
+                        <div className="flex items-center gap-2 text-[13px] text-[#8A8A8A]">
                           <span>&#9971; Green fees</span>
                           <span className="flex-1 border-b border-dotted border-cream/10" />
                           <span>${greenFees.toLocaleString()} (${Math.round(greenFees / goingMembers)}/pp)</span>
                         </div>
                       )}
                       {lodgingExp > 0 && (
-                        <div className="flex items-center gap-2 text-[13px] text-cream/50">
+                        <div className="flex items-center gap-2 text-[13px] text-[#8A8A8A]">
                           <span>&#127968; Lodging</span>
                           <span className="flex-1 border-b border-dotted border-cream/10" />
                           <span>${lodgingExp.toLocaleString()} (${Math.round(lodgingExp / goingMembers)}/pp)</span>
                         </div>
                       )}
                       {foodExp > 0 && (
-                        <div className="flex items-center gap-2 text-[13px] text-cream/50">
+                        <div className="flex items-center gap-2 text-[13px] text-[#8A8A8A]">
                           <span>&#127869; Food/drinks</span>
                           <span className="flex-1 border-b border-dotted border-cream/10" />
                           <span>${foodExp.toLocaleString()} (${Math.round(foodExp / goingMembers)}/pp)</span>
                         </div>
                       )}
                       {otherExp > 0 && (
-                        <div className="flex items-center gap-2 text-[13px] text-cream/50">
+                        <div className="flex items-center gap-2 text-[13px] text-[#8A8A8A]">
                           <span>&#128204; Other</span>
                           <span className="flex-1 border-b border-dotted border-cream/10" />
                           <span>${otherExp.toLocaleString()}</span>
@@ -1938,7 +1938,7 @@ export default function TripDetailPage() {
                     </div>
                   </>
                 ) : (
-                  <p className="text-[13px] text-cream/30 py-4 text-center">
+                  <p className="text-[13px] text-[#5C5C5C] py-4 text-center">
                     Track expenses as you go. Split automatically.
                   </p>
                 )}
@@ -1950,10 +1950,10 @@ export default function TripDetailPage() {
         {/* ─── G. Lodging Card ─── */}
         <div id="lodging-section" className="rounded-[10px] border border-cream/[0.08] bg-cream/[0.04] p-5">
             <div className="flex items-center justify-between">
-              <h2 className="text-[13px] font-medium text-cream/40 uppercase tracking-wider">Lodging</h2>
+              <h2 className="text-[13px] font-medium text-[#8A8A8A] uppercase tracking-wider">Lodging</h2>
               <button
                 onClick={() => setEditingLodging(!editingLodging)}
-                className="text-[12px] font-medium text-cream/40 hover:text-cream/60"
+                className="text-[12px] font-medium text-[#8A8A8A] hover:text-cream/60"
               >
                 {editingLodging ? "Cancel" : hasLodging ? <Pencil className="h-3.5 w-3.5" /> : "Add"}
               </button>
@@ -1968,7 +1968,7 @@ export default function TripDetailPage() {
                     setLodgingForm({ ...lodgingForm, name: e.target.value })
                   }
                   placeholder="Hotel / Rental name"
-                  className="block w-full rounded-[10px] border border-cream/10 bg-cream/[0.06] px-3 py-2 text-[13px] text-cream placeholder:text-cream/35 outline-none focus:border-coral/40"
+                  className="block w-full rounded-[10px] border border-cream/10 bg-cream/[0.06] px-3 py-2 text-[13px] text-cream placeholder:text-cream/35 outline-none focus:border-[#2D5A3D]/40"
                 />
                 <input
                   type="text"
@@ -1977,11 +1977,11 @@ export default function TripDetailPage() {
                     setLodgingForm({ ...lodgingForm, address: e.target.value })
                   }
                   placeholder="Address"
-                  className="block w-full rounded-[10px] border border-cream/10 bg-cream/[0.06] px-3 py-2 text-[13px] text-cream placeholder:text-cream/35 outline-none focus:border-coral/40"
+                  className="block w-full rounded-[10px] border border-cream/10 bg-cream/[0.06] px-3 py-2 text-[13px] text-cream placeholder:text-cream/35 outline-none focus:border-[#2D5A3D]/40"
                 />
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-[11px] font-medium uppercase tracking-[1.2px] text-cream/40">
+                    <label className="block text-[11px] font-medium uppercase tracking-[1.2px] text-[#8A8A8A]">
                       Check-in
                     </label>
                     <input
@@ -1991,11 +1991,11 @@ export default function TripDetailPage() {
                         setLodgingForm({ ...lodgingForm, checkIn: e.target.value })
                       }
                       placeholder="3:00 PM"
-                      className="mt-1 block w-full rounded-[10px] border border-cream/10 bg-cream/[0.06] px-3 py-2 text-[13px] text-cream placeholder:text-cream/35 outline-none focus:border-coral/40"
+                      className="mt-1 block w-full rounded-[10px] border border-cream/10 bg-cream/[0.06] px-3 py-2 text-[13px] text-cream placeholder:text-cream/35 outline-none focus:border-[#2D5A3D]/40"
                     />
                   </div>
                   <div>
-                    <label className="block text-[11px] font-medium uppercase tracking-[1.2px] text-cream/40">
+                    <label className="block text-[11px] font-medium uppercase tracking-[1.2px] text-[#8A8A8A]">
                       Check-out
                     </label>
                     <input
@@ -2005,7 +2005,7 @@ export default function TripDetailPage() {
                         setLodgingForm({ ...lodgingForm, checkOut: e.target.value })
                       }
                       placeholder="11:00 AM"
-                      className="mt-1 block w-full rounded-[10px] border border-cream/10 bg-cream/[0.06] px-3 py-2 text-[13px] text-cream placeholder:text-cream/35 outline-none focus:border-coral/40"
+                      className="mt-1 block w-full rounded-[10px] border border-cream/10 bg-cream/[0.06] px-3 py-2 text-[13px] text-cream placeholder:text-cream/35 outline-none focus:border-[#2D5A3D]/40"
                     />
                   </div>
                 </div>
@@ -2020,7 +2020,7 @@ export default function TripDetailPage() {
                       })
                     }
                     placeholder="Confirmation #"
-                    className="block w-full rounded-[10px] border border-cream/10 bg-cream/[0.06] px-3 py-2 text-[13px] text-cream placeholder:text-cream/35 outline-none focus:border-coral/40"
+                    className="block w-full rounded-[10px] border border-cream/10 bg-cream/[0.06] px-3 py-2 text-[13px] text-cream placeholder:text-cream/35 outline-none focus:border-[#2D5A3D]/40"
                   />
                   <input
                     type="text"
@@ -2029,7 +2029,7 @@ export default function TripDetailPage() {
                       setLodgingForm({ ...lodgingForm, phone: e.target.value })
                     }
                     placeholder="Phone"
-                    className="block w-full rounded-[10px] border border-cream/10 bg-cream/[0.06] px-3 py-2 text-[13px] text-cream placeholder:text-cream/35 outline-none focus:border-coral/40"
+                    className="block w-full rounded-[10px] border border-cream/10 bg-cream/[0.06] px-3 py-2 text-[13px] text-cream placeholder:text-cream/35 outline-none focus:border-[#2D5A3D]/40"
                   />
                 </div>
                 <textarea
@@ -2039,11 +2039,11 @@ export default function TripDetailPage() {
                   }
                   placeholder="Notes (WiFi password, gate code, etc.)"
                   rows={2}
-                  className="block w-full rounded-[10px] border border-cream/10 bg-cream/[0.06] px-3 py-2 text-[13px] text-cream placeholder:text-cream/35 outline-none focus:border-coral/40"
+                  className="block w-full rounded-[10px] border border-cream/10 bg-cream/[0.06] px-3 py-2 text-[13px] text-cream placeholder:text-cream/35 outline-none focus:border-[#2D5A3D]/40"
                 />
                 <button
                   type="submit"
-                  className="rounded-[10px] bg-coral px-4 py-2 text-[13px] font-medium text-cream hover:bg-coral/90"
+                  className="rounded-[10px] bg-[#2D5A3D] px-4 py-2 text-[13px] font-medium text-cream hover:bg-[#2D5A3D]/90"
                 >
                   Save
                 </button>
@@ -2054,13 +2054,13 @@ export default function TripDetailPage() {
                   {trip.lodging.name}
                 </p>
                 {trip.lodging.address && (
-                  <div className="flex items-start gap-1.5 text-[13px] text-cream/50">
+                  <div className="flex items-start gap-1.5 text-[13px] text-[#8A8A8A]">
                     <MapPin className="mt-0.5 h-3.5 w-3.5 shrink-0 text-cream/35" />
                     {trip.lodging.address}
                   </div>
                 )}
                 {(trip.lodging.checkIn || trip.lodging.checkOut) && (
-                  <div className="flex items-center gap-1.5 text-[13px] text-cream/50">
+                  <div className="flex items-center gap-1.5 text-[13px] text-[#8A8A8A]">
                     <Clock className="h-3.5 w-3.5 text-cream/35" />
                     {trip.lodging.checkIn && `In: ${trip.lodging.checkIn}`}
                     {trip.lodging.checkIn && trip.lodging.checkOut && " · "}
@@ -2068,25 +2068,25 @@ export default function TripDetailPage() {
                   </div>
                 )}
                 {trip.lodging.confirmationNumber && (
-                  <div className="flex items-center gap-1.5 text-[13px] text-cream/50">
+                  <div className="flex items-center gap-1.5 text-[13px] text-[#8A8A8A]">
                     <Hash className="h-3.5 w-3.5 text-cream/35" />
                     {trip.lodging.confirmationNumber}
                   </div>
                 )}
                 {trip.lodging.phone && (
-                  <div className="flex items-center gap-1.5 text-[13px] text-cream/50">
+                  <div className="flex items-center gap-1.5 text-[13px] text-[#8A8A8A]">
                     <Phone className="h-3.5 w-3.5 text-cream/35" />
                     {trip.lodging.phone}
                   </div>
                 )}
                 {trip.lodging.notes && (
-                  <p className="mt-1 rounded-[10px] bg-cream/[0.04] px-3 py-2 text-[12px] text-cream/40">
+                  <p className="mt-1 rounded-[10px] bg-cream/[0.04] px-3 py-2 text-[12px] text-[#8A8A8A]">
                     {trip.lodging.notes}
                   </p>
                 )}
               </div>
             ) : (
-              <p className="mt-3 text-[13px] text-cream/30 text-center py-8">
+              <p className="mt-3 text-[13px] text-[#5C5C5C] text-center py-8">
                 No lodging info yet. Tap Add to enter details.
               </p>
             )}
@@ -2097,14 +2097,14 @@ export default function TripDetailPage() {
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <Medal className="h-4 w-4 text-cream/35" />
-                <h2 className="text-[13px] font-medium text-cream/40 uppercase tracking-wider">
+                <h2 className="text-[13px] font-medium text-[#8A8A8A] uppercase tracking-wider">
                   Leaderboard
                 </h2>
               </div>
               {leaderboard.length > 0 && (
                 <Link
                   href={`/trips/${tripId}/leaderboard`}
-                  className="text-[12px] font-medium text-coral hover:text-coral/80"
+                  className="text-[12px] font-medium text-[#2D5A3D] hover:text-[#2D5A3D]/80"
                 >
                   View Full
                 </Link>
@@ -2112,7 +2112,7 @@ export default function TripDetailPage() {
             </div>
 
             {leaderboard.length === 0 ? (
-              <p className="mt-3 text-[13px] text-cream/30 text-center py-8">
+              <p className="mt-3 text-[13px] text-[#5C5C5C] text-center py-8">
                 No scores yet. Start a scorecard to see standings.
               </p>
             ) : (
@@ -2121,19 +2121,19 @@ export default function TripDetailPage() {
                   <div
                     key={entry.name}
                     className={`flex items-center justify-between rounded-lg px-3 py-2 ${
-                      idx === 0 ? "bg-gold/10" : ""
+                      idx === 0 ? "bg-[#B8976A]/10" : ""
                     }`}
                   >
                     <div className="flex items-center gap-2.5">
                       <span
                         className={`w-5 text-center text-[12px] font-bold ${
                           idx === 0
-                            ? "text-gold"
+                            ? "text-[#B8976A]"
                             : idx === 1
-                              ? "text-cream/40"
+                              ? "text-[#8A8A8A]"
                               : idx === 2
                                 ? "text-amber-600"
-                                : "text-cream/30"
+                                : "text-[#5C5C5C]"
                         }`}
                       >
                         {idx + 1}
@@ -2149,9 +2149,9 @@ export default function TripDetailPage() {
                       <span
                         className={`text-[13px] font-bold ${
                           entry.vsPar > 0
-                            ? "text-coral"
+                            ? "text-[#C4423B]"
                             : entry.vsPar < 0
-                              ? "text-teal"
+                              ? "text-[#2D5A3D]"
                               : "text-cream/60"
                         }`}
                       >
@@ -2176,7 +2176,7 @@ export default function TripDetailPage() {
                 <CheckCircle2 className="h-4 w-4 text-cream/35" />
                 <h2 className="text-[15px] font-medium text-cream">Booking Checklist</h2>
               </div>
-              <span className="text-[12px] font-medium text-cream/40">
+              <span className="text-[12px] font-medium text-[#8A8A8A]">
                 {bookedCount} of {totalBookable} booked
               </span>
             </div>
@@ -2185,7 +2185,7 @@ export default function TripDetailPage() {
             <div className="mt-3">
               <div className="h-1.5 w-full overflow-hidden rounded-full bg-cream/[0.08]">
                 <div
-                  className="h-full rounded-full bg-coral transition-all duration-500"
+                  className="h-full rounded-full bg-[#2D5A3D] transition-all duration-500"
                   style={{ width: `${totalBookable > 0 ? (bookedCount / totalBookable) * 100 : 0}%` }}
                 />
               </div>
@@ -2193,7 +2193,7 @@ export default function TripDetailPage() {
 
             {/* Celebration state */}
             {allBooked ? (
-              <div className="mt-5 rounded-[10px] border border-teal/30 bg-teal/10 px-5 py-4 text-center">
+              <div className="mt-5 rounded-[10px] border border-[#2D5A3D]/30 bg-[#2D5A3D]/10 px-5 py-4 text-center">
                 <p className="text-[14px] font-medium text-cream">
                   Everything&apos;s booked! Your crew is all set.
                 </p>
@@ -2202,7 +2202,7 @@ export default function TripDetailPage() {
               <div className="mt-5 space-y-6">
                 {checklistGroups.map((group) => (
                   <div key={group.label}>
-                    <h3 className="text-[11px] font-medium uppercase tracking-[1.2px] text-cream/40">
+                    <h3 className="text-[11px] font-medium uppercase tracking-[1.2px] text-[#8A8A8A]">
                       {group.icon} {group.label}
                     </h3>
                     <div className="mt-2 space-y-2">
@@ -2216,7 +2216,7 @@ export default function TripDetailPage() {
                             key={item.id}
                             className={`rounded-[10px] border px-4 py-3 transition-colors ${
                               isBooked
-                                ? "border-teal/20 bg-teal/5"
+                                ? "border-[#2D5A3D]/20 bg-[#2D5A3D]/5"
                                 : "border-cream/[0.08] bg-cream/[0.04]"
                             }`}
                           >
@@ -2228,15 +2228,15 @@ export default function TripDetailPage() {
                                   title={isBooked ? "Mark as needs booking" : "Mark as booked"}
                                 >
                                   {isBooked ? (
-                                    <CheckCircle2 className="h-5 w-5 text-teal" />
+                                    <CheckCircle2 className="h-5 w-5 text-[#2D5A3D]" />
                                   ) : (
-                                    <Circle className="h-5 w-5 text-cream/20 hover:text-coral" />
+                                    <Circle className="h-5 w-5 text-cream/20 hover:text-[#2D5A3D]" />
                                   )}
                                 </button>
                               ) : (
                                 <span className="mt-0.5 shrink-0">
                                   {isBooked ? (
-                                    <CheckCircle2 className="h-5 w-5 text-teal" />
+                                    <CheckCircle2 className="h-5 w-5 text-[#2D5A3D]" />
                                   ) : (
                                     <Circle className="h-5 w-5 text-cream/20" />
                                   )}
@@ -2246,18 +2246,18 @@ export default function TripDetailPage() {
                                 <div className="flex items-center gap-2">
                                   <span
                                     className={`text-[13px] font-medium ${
-                                      isBooked ? "text-cream/50 line-through" : "text-cream"
+                                      isBooked ? "text-[#8A8A8A] line-through" : "text-cream"
                                     }`}
                                   >
                                     {item.title}
                                   </span>
                                   {isBooked && (
-                                    <span className="rounded-full bg-teal/15 px-2 py-0.5 text-[10px] font-medium text-teal">
+                                    <span className="rounded-full bg-[#2D5A3D]/15 px-2 py-0.5 text-[10px] font-medium text-[#2D5A3D]">
                                       Booked
                                     </span>
                                   )}
                                 </div>
-                                <div className="mt-0.5 flex flex-wrap items-center gap-x-3 gap-y-0.5 text-[12px] text-cream/40">
+                                <div className="mt-0.5 flex flex-wrap items-center gap-x-3 gap-y-0.5 text-[12px] text-[#8A8A8A]">
                                   {item.cost > 0 && <span>${item.cost}/pp</span>}
                                   {dayLabel && item.time && (
                                     <span>
@@ -2271,7 +2271,7 @@ export default function TripDetailPage() {
 
                             {/* Contact info row */}
                             {!isBooked && (
-                              <div className="mt-2 ml-8 flex flex-wrap items-center gap-x-4 gap-y-1.5 text-[12px] text-cream/40">
+                              <div className="mt-2 ml-8 flex flex-wrap items-center gap-x-4 gap-y-1.5 text-[12px] text-[#8A8A8A]">
                                 {isCaptain ? (
                                   <>
                                     <InlineContactField
@@ -2309,7 +2309,7 @@ export default function TripDetailPage() {
                                           href={item.website.startsWith("http") ? item.website : `https://${item.website}`}
                                           target="_blank"
                                           rel="noopener noreferrer"
-                                          className="text-coral underline hover:text-coral/80"
+                                          className="text-[#2D5A3D] underline hover:text-[#2D5A3D]/80"
                                         >
                                           {item.website.replace(/^https?:\/\//, "")}
                                           <ExternalLink className="ml-0.5 inline h-2.5 w-2.5" />
@@ -2325,7 +2325,7 @@ export default function TripDetailPage() {
                                   </>
                                 )}
                                 {bookBy && (
-                                  <span className="text-cream/30">
+                                  <span className="text-[#5C5C5C]">
                                     Book by: {bookBy} ({weeksBefore} before trip)
                                   </span>
                                 )}
@@ -2343,7 +2343,7 @@ export default function TripDetailPage() {
             {/* Lodging booking reminder */}
             {hasLodging && trip.lodging.name && (
               <div className="mt-5 border-t border-cream/[0.06] pt-4">
-                <h3 className="text-[11px] font-medium uppercase tracking-[1.2px] text-cream/40">
+                <h3 className="text-[11px] font-medium uppercase tracking-[1.2px] text-[#8A8A8A]">
                   LODGING
                 </h3>
                 <div className="mt-2 rounded-[10px] border border-cream/[0.08] bg-cream/[0.04] px-4 py-3">
@@ -2352,16 +2352,16 @@ export default function TripDetailPage() {
                     <span className="font-medium text-cream">{trip.lodging.name}</span>
                   </div>
                   {trip.lodging.phone && (
-                    <div className="mt-1 ml-6 flex items-center gap-1.5 text-[12px] text-cream/40">
+                    <div className="mt-1 ml-6 flex items-center gap-1.5 text-[12px] text-[#8A8A8A]">
                       <Phone className="h-3 w-3" />
                       {trip.lodging.phone}
                     </div>
                   )}
                   {trip.lodging.notes && (
-                    <p className="mt-1 ml-6 text-[12px] text-cream/30">{trip.lodging.notes}</p>
+                    <p className="mt-1 ml-6 text-[12px] text-[#5C5C5C]">{trip.lodging.notes}</p>
                   )}
                   {trip.startDate && (
-                    <p className="mt-1 ml-6 text-[12px] text-cream/30">
+                    <p className="mt-1 ml-6 text-[12px] text-[#5C5C5C]">
                       Book by: {(() => {
                         const start = new Date(trip.startDate + "T12:00:00");
                         start.setDate(start.getDate() - 14);
@@ -2387,14 +2387,14 @@ export default function TripDetailPage() {
             onClick={() => setEditingItem(null)}
           >
             <div
-              className="w-full max-w-lg rounded-t-2xl sm:rounded-2xl bg-[#1e1e21] p-6 shadow-xl max-h-[90vh] overflow-y-auto animate-[slideUp_200ms_ease-out]"
+              className="w-full max-w-lg rounded-t-2xl sm:rounded-2xl bg-[#1A1A1A] p-6 shadow-xl max-h-[90vh] overflow-y-auto animate-[slideUp_200ms_ease-out]"
               onClick={(e) => e.stopPropagation()}
             >
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-[17px] font-medium text-cream">Edit Event</h3>
                 <button
                   onClick={() => setEditingItem(null)}
-                  className="flex h-8 w-8 items-center justify-center rounded-full text-cream/40 hover:bg-cream/10"
+                  className="flex h-8 w-8 items-center justify-center rounded-full text-[#8A8A8A] hover:bg-cream/10"
                 >
                   <X className="h-4 w-4" strokeWidth={2} />
                 </button>
@@ -2402,16 +2402,16 @@ export default function TripDetailPage() {
 
               <div className="space-y-3">
                 <div>
-                  <label className="block text-[11px] font-medium uppercase tracking-[1.2px] text-cream/40">Title *</label>
-                  <input type="text" value={editForm.title} onChange={(e) => setEditForm({ ...editForm, title: e.target.value })} className="mt-1 block w-full rounded-[10px] border border-cream/10 bg-cream/[0.06] px-3 py-2 text-[13px] text-cream outline-none focus:border-coral/40" />
+                  <label className="block text-[11px] font-medium uppercase tracking-[1.2px] text-[#8A8A8A]">Title *</label>
+                  <input type="text" value={editForm.title} onChange={(e) => setEditForm({ ...editForm, title: e.target.value })} className="mt-1 block w-full rounded-[10px] border border-cream/10 bg-cream/[0.06] px-3 py-2 text-[13px] text-cream outline-none focus:border-[#2D5A3D]/40" />
                 </div>
                 <div className="grid gap-3 sm:grid-cols-2">
                   <div>
-                    <label className="block text-[11px] font-medium uppercase tracking-[1.2px] text-cream/40">Time</label>
-                    <input type="time" value={editForm.time} onChange={(e) => setEditForm({ ...editForm, time: e.target.value })} className="mt-1 block w-full rounded-[10px] border border-cream/10 bg-cream/[0.06] px-3 py-2 text-[13px] text-cream outline-none focus:border-coral/40" />
+                    <label className="block text-[11px] font-medium uppercase tracking-[1.2px] text-[#8A8A8A]">Time</label>
+                    <input type="time" value={editForm.time} onChange={(e) => setEditForm({ ...editForm, time: e.target.value })} className="mt-1 block w-full rounded-[10px] border border-cream/10 bg-cream/[0.06] px-3 py-2 text-[13px] text-cream outline-none focus:border-[#2D5A3D]/40" />
                   </div>
                   <div>
-                    <label className="block text-[11px] font-medium uppercase tracking-[1.2px] text-cream/40">Type</label>
+                    <label className="block text-[11px] font-medium uppercase tracking-[1.2px] text-[#8A8A8A]">Type</label>
                     <div className="mt-1 flex flex-wrap gap-1.5">
                       {SCHEDULE_TYPES.map((t) => (
                         <button
@@ -2420,8 +2420,8 @@ export default function TripDetailPage() {
                           onClick={() => setEditForm({ ...editForm, type: t.value })}
                           className={`rounded-full px-2.5 py-1 text-[12px] font-medium transition-all min-h-[32px] ${
                             editForm.type === t.value
-                              ? `${t.color} ring-2 ring-offset-1 ring-offset-[#1e1e21] ring-current`
-                              : "bg-cream/[0.06] text-cream/50 hover:bg-cream/[0.08]"
+                              ? `${t.color} ring-2 ring-offset-1 ring-offset-[#1A1A1A] ring-current`
+                              : "bg-cream/[0.06] text-[#8A8A8A] hover:bg-cream/[0.08]"
                           }`}
                         >
                           {t.emoji} {t.label}
@@ -2431,25 +2431,25 @@ export default function TripDetailPage() {
                   </div>
                 </div>
                 <div>
-                  <label className="block text-[11px] font-medium uppercase tracking-[1.2px] text-cream/40">Day</label>
+                  <label className="block text-[11px] font-medium uppercase tracking-[1.2px] text-[#8A8A8A]">Day</label>
                   {tripDates.length > 0 ? (
-                    <select value={editForm.date} onChange={(e) => setEditForm({ ...editForm, date: e.target.value })} className="mt-1 block w-full rounded-[10px] border border-cream/10 bg-cream/[0.06] px-3 py-2 text-[13px] text-cream outline-none focus:border-coral/40">
+                    <select value={editForm.date} onChange={(e) => setEditForm({ ...editForm, date: e.target.value })} className="mt-1 block w-full rounded-[10px] border border-cream/10 bg-cream/[0.06] px-3 py-2 text-[13px] text-cream outline-none focus:border-[#2D5A3D]/40">
                       {tripDates.map((td) => (<option key={td.date} value={td.date}>{td.label}</option>))}
                     </select>
                   ) : (
-                    <input type="date" value={editForm.date} onChange={(e) => setEditForm({ ...editForm, date: e.target.value })} className="mt-1 block w-full rounded-[10px] border border-cream/10 bg-cream/[0.06] px-3 py-2 text-[13px] text-cream outline-none focus:border-coral/40" />
+                    <input type="date" value={editForm.date} onChange={(e) => setEditForm({ ...editForm, date: e.target.value })} className="mt-1 block w-full rounded-[10px] border border-cream/10 bg-cream/[0.06] px-3 py-2 text-[13px] text-cream outline-none focus:border-[#2D5A3D]/40" />
                   )}
                 </div>
                 <div>
-                  <label className="block text-[11px] font-medium uppercase tracking-[1.2px] text-cream/40">Est. cost per person</label>
+                  <label className="block text-[11px] font-medium uppercase tracking-[1.2px] text-[#8A8A8A]">Est. cost per person</label>
                   <div className="relative mt-1">
                     <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[13px] text-cream/35">$</span>
-                    <input type="number" value={editForm.cost} onChange={(e) => setEditForm({ ...editForm, cost: e.target.value })} placeholder="0" className="block w-full rounded-[10px] border border-cream/10 bg-cream/[0.06] pl-7 pr-3 py-2 text-[13px] text-cream placeholder:text-cream/35 outline-none focus:border-coral/40" />
+                    <input type="number" value={editForm.cost} onChange={(e) => setEditForm({ ...editForm, cost: e.target.value })} placeholder="0" className="block w-full rounded-[10px] border border-cream/10 bg-cream/[0.06] pl-7 pr-3 py-2 text-[13px] text-cream placeholder:text-cream/35 outline-none focus:border-[#2D5A3D]/40" />
                   </div>
                 </div>
                 <div>
-                  <label className="block text-[11px] font-medium uppercase tracking-[1.2px] text-cream/40">Notes</label>
-                  <textarea value={editForm.notes} onChange={(e) => setEditForm({ ...editForm, notes: e.target.value })} rows={2} placeholder="Optional notes..." className="mt-1 block w-full rounded-md border border-cream/10 px-3 py-2 text-sm text-cream placeholder:text-cream/40 focus:border-[#D94F2B] focus:outline-none focus:ring-2 focus:ring-[#D94F2B]/20" />
+                  <label className="block text-[11px] font-medium uppercase tracking-[1.2px] text-[#8A8A8A]">Notes</label>
+                  <textarea value={editForm.notes} onChange={(e) => setEditForm({ ...editForm, notes: e.target.value })} rows={2} placeholder="Optional notes..." className="mt-1 block w-full rounded-md border border-cream/10 px-3 py-2 text-sm text-cream placeholder:text-[#8A8A8A] focus:border-[#2D5A3D] focus:outline-none focus:ring-2 focus:ring-[#2D5A3D]/20" />
                 </div>
               </div>
 
@@ -2458,14 +2458,14 @@ export default function TripDetailPage() {
                 <button
                   onClick={handleEditSave}
                   disabled={editSaving || !editForm.title.trim()}
-                  className="inline-flex items-center gap-1.5 rounded-[10px] bg-coral px-5 py-3 text-[14px] font-medium text-cream transition-colors hover:bg-coral/90 disabled:opacity-50 min-h-[44px]"
+                  className="inline-flex items-center gap-1.5 rounded-[10px] bg-[#2D5A3D] px-5 py-3 text-[14px] font-medium text-cream transition-colors hover:bg-[#2D5A3D]/90 disabled:opacity-50 min-h-[44px]"
                 >
                   {editSaving && <Loader2 className="h-4 w-4 animate-spin" />}
                   Save
                 </button>
                 <button
                   onClick={() => setEditingItem(null)}
-                  className="rounded-[10px] border border-cream/10 px-4 py-3 text-[14px] font-medium text-cream/50 min-h-[44px]"
+                  className="rounded-[10px] border border-cream/10 px-4 py-3 text-[14px] font-medium text-[#8A8A8A] min-h-[44px]"
                 >
                   Cancel
                 </button>
@@ -2485,7 +2485,7 @@ export default function TripDetailPage() {
                     </button>
                     <button
                       onClick={() => setDeleteConfirm(null)}
-                      className="text-[12px] text-cream/40 hover:text-cream/60"
+                      className="text-[12px] text-[#8A8A8A] hover:text-cream/60"
                     >
                       Cancel
                     </button>
@@ -2529,14 +2529,14 @@ export default function TripDetailPage() {
             <div className="flex items-center gap-2">
               <button
                 onClick={() => setShowInvite(!showInvite)}
-                className="inline-flex items-center gap-1.5 rounded-[10px] border border-teal/30 bg-teal/10 px-3 py-2 text-[12px] font-medium text-teal transition-colors hover:bg-teal/15"
+                className="inline-flex items-center gap-1.5 rounded-[10px] border border-[#2D5A3D]/30 bg-[#2D5A3D]/10 px-3 py-2 text-[12px] font-medium text-[#2D5A3D] transition-colors hover:bg-[#2D5A3D]/15"
               >
                 <Mail className="h-3.5 w-3.5" />
                 Invite
               </button>
               <button
                 onClick={() => setShowAddMember(!showAddMember)}
-                className="inline-flex items-center gap-1.5 rounded-[10px] bg-coral px-3 py-2 text-[12px] font-medium text-cream transition-colors hover:bg-coral/90"
+                className="inline-flex items-center gap-1.5 rounded-[10px] bg-[#2D5A3D] px-3 py-2 text-[12px] font-medium text-cream transition-colors hover:bg-[#2D5A3D]/90"
               >
                 <Plus className="h-3.5 w-3.5" />
                 Add
@@ -2546,12 +2546,12 @@ export default function TripDetailPage() {
 
           {/* Invite success toast */}
           {inviteSuccess && (
-            <div className="mt-3 flex items-center gap-2 rounded-[10px] border border-teal/30 bg-teal/10 px-4 py-2.5 text-[13px] text-teal">
+            <div className="mt-3 flex items-center gap-2 rounded-[10px] border border-[#2D5A3D]/30 bg-[#2D5A3D]/10 px-4 py-2.5 text-[13px] text-[#2D5A3D]">
               <Check className="h-4 w-4 shrink-0" />
               {inviteSuccess}
               <button
                 onClick={() => setInviteSuccess(null)}
-                className="ml-auto text-teal/50 hover:text-teal"
+                className="ml-auto text-[#2D5A3D]/50 hover:text-[#2D5A3D]"
               >
                 <X className="h-3.5 w-3.5" />
               </button>
@@ -2564,7 +2564,7 @@ export default function TripDetailPage() {
               onSubmit={handleInviteEmails}
               className="mt-4 rounded-[10px] border border-cream/10 bg-cream/[0.06] p-4"
             >
-              <label className="block text-[11px] font-medium uppercase tracking-[1.2px] text-cream/40">
+              <label className="block text-[11px] font-medium uppercase tracking-[1.2px] text-[#8A8A8A]">
                 Email addresses (comma or newline separated)
               </label>
               <textarea
@@ -2572,13 +2572,13 @@ export default function TripDetailPage() {
                 onChange={(e) => setInviteEmails(e.target.value)}
                 rows={3}
                 placeholder={"john@example.com, mike@example.com\nor paste multiple emails..."}
-                className="mt-1 block w-full rounded-[10px] border border-cream/10 bg-cream/[0.06] px-3 py-2 text-[13px] text-cream placeholder:text-cream/35 outline-none focus:border-coral/40"
+                className="mt-1 block w-full rounded-[10px] border border-cream/10 bg-cream/[0.06] px-3 py-2 text-[13px] text-cream placeholder:text-cream/35 outline-none focus:border-[#2D5A3D]/40"
               />
               <div className="mt-3 flex gap-3">
                 <button
                   type="submit"
                   disabled={inviteSending || !inviteEmails.trim()}
-                  className="inline-flex items-center gap-1.5 rounded-[10px] bg-coral px-4 py-2 text-[13px] font-medium text-cream hover:bg-coral/90 disabled:opacity-50"
+                  className="inline-flex items-center gap-1.5 rounded-[10px] bg-[#2D5A3D] px-4 py-2 text-[13px] font-medium text-cream hover:bg-[#2D5A3D]/90 disabled:opacity-50"
                 >
                   {inviteSending ? (
                     <RotateCw className="h-3.5 w-3.5 animate-spin" />
@@ -2590,7 +2590,7 @@ export default function TripDetailPage() {
                 <button
                   type="button"
                   onClick={() => setShowInvite(false)}
-                  className="rounded-[10px] border border-cream/10 px-4 py-2 text-[13px] font-medium text-cream/50"
+                  className="rounded-[10px] border border-cream/10 px-4 py-2 text-[13px] font-medium text-[#8A8A8A]"
                 >
                   Cancel
                 </button>
@@ -2605,7 +2605,7 @@ export default function TripDetailPage() {
               className="mt-4 flex items-end gap-3 rounded-[10px] border border-cream/10 bg-cream/[0.06] p-4"
             >
               <div className="flex-1">
-                <label className="block text-[11px] font-medium uppercase tracking-[1.2px] text-cream/40">
+                <label className="block text-[11px] font-medium uppercase tracking-[1.2px] text-[#8A8A8A]">
                   Name
                 </label>
                 <input
@@ -2614,11 +2614,11 @@ export default function TripDetailPage() {
                   value={memberName}
                   onChange={(e) => setMemberName(e.target.value)}
                   placeholder="John Smith"
-                  className="mt-1 block w-full rounded-[10px] border border-cream/10 bg-cream/[0.06] px-3 py-2 text-[13px] text-cream placeholder:text-cream/35 outline-none focus:border-coral/40"
+                  className="mt-1 block w-full rounded-[10px] border border-cream/10 bg-cream/[0.06] px-3 py-2 text-[13px] text-cream placeholder:text-cream/35 outline-none focus:border-[#2D5A3D]/40"
                 />
               </div>
               <div className="w-24">
-                <label className="block text-[11px] font-medium uppercase tracking-[1.2px] text-cream/40">
+                <label className="block text-[11px] font-medium uppercase tracking-[1.2px] text-[#8A8A8A]">
                   Handicap
                 </label>
                 <input
@@ -2626,19 +2626,19 @@ export default function TripDetailPage() {
                   value={memberHandicap}
                   onChange={(e) => setMemberHandicap(e.target.value)}
                   placeholder="12"
-                  className="mt-1 block w-full rounded-[10px] border border-cream/10 bg-cream/[0.06] px-3 py-2 text-[13px] text-cream placeholder:text-cream/35 outline-none focus:border-coral/40"
+                  className="mt-1 block w-full rounded-[10px] border border-cream/10 bg-cream/[0.06] px-3 py-2 text-[13px] text-cream placeholder:text-cream/35 outline-none focus:border-[#2D5A3D]/40"
                 />
               </div>
               <button
                 type="submit"
-                className="rounded-[10px] bg-coral px-4 py-2 text-[13px] font-medium text-cream hover:bg-coral/90"
+                className="rounded-[10px] bg-[#2D5A3D] px-4 py-2 text-[13px] font-medium text-cream hover:bg-[#2D5A3D]/90"
               >
                 Add
               </button>
               <button
                 type="button"
                 onClick={() => setShowAddMember(false)}
-                className="rounded-[10px] border border-cream/10 p-2 text-cream/40 hover:text-cream/60"
+                className="rounded-[10px] border border-cream/10 p-2 text-[#8A8A8A] hover:text-cream/60"
               >
                 <X className="h-4 w-4" />
               </button>
@@ -2647,7 +2647,7 @@ export default function TripDetailPage() {
 
           {/* Member List */}
           {trip.members.length === 0 ? (
-            <p className="mt-4 text-[13px] text-cream/30">
+            <p className="mt-4 text-[13px] text-[#5C5C5C]">
               No members yet. Add players or invite by email.
             </p>
           ) : (
@@ -2655,10 +2655,10 @@ export default function TripDetailPage() {
               {trip.members.map((member) => {
                 const rsvp = member.rsvpStatus || "PENDING";
                 const badgeMap: Record<string, { color: string; label: string }> = {
-                  GOING: { color: "bg-teal/15 text-teal border border-teal/30", label: "Going" },
+                  GOING: { color: "bg-[#2D5A3D]/15 text-[#2D5A3D] border border-[#2D5A3D]/30", label: "Going" },
                   MAYBE: { color: "bg-yellow-500/15 text-yellow-400 border border-yellow-500/30", label: "Maybe" },
-                  DECLINED: { color: "bg-coral/10 text-coral/60 border border-coral/20", label: "Declined" },
-                  PENDING: { color: "bg-cream/[0.06] text-cream/50 border border-cream/10", label: "Pending" },
+                  DECLINED: { color: "bg-[#C4423B]/10 text-[#C4423B]/60 border border-[#C4423B]/20", label: "Declined" },
+                  PENDING: { color: "bg-cream/[0.06] text-[#8A8A8A] border border-cream/10", label: "Pending" },
                 };
                 const badge = badgeMap[rsvp] || badgeMap.PENDING;
                 const isMemberCaptain = member.role === "CAPTAIN";
@@ -2669,7 +2669,7 @@ export default function TripDetailPage() {
                     className="group flex items-center gap-3 border-b border-cream/[0.06] py-3 last:border-0"
                   >
                     <div className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-[13px] font-medium ${
-                      isMemberCaptain ? "bg-gradient-to-br from-coral to-gold text-dark" : "bg-teal text-cream"
+                      isMemberCaptain ? "bg-[#B8976A] text-dark" : "bg-[#2F4F4F] text-cream"
                     }`}>
                       {member.name.split(" ").map((n) => n[0]).join("").toUpperCase().slice(0, 2)}
                     </div>
@@ -2679,7 +2679,7 @@ export default function TripDetailPage() {
                           {member.name}
                         </span>
                         {isMemberCaptain && (
-                          <span className="text-[12px] text-cream/40">Commissioner</span>
+                          <span className="text-[12px] text-[#8A8A8A]">Commissioner</span>
                         )}
                       </div>
                       <span className="text-[12px] text-cream/35">
@@ -2693,7 +2693,7 @@ export default function TripDetailPage() {
                     </span>
                     <button
                       onClick={() => handleRemoveMember(member.id)}
-                      className="shrink-0 rounded-full p-1 text-cream/15 opacity-0 transition-all hover:bg-cream/10 hover:text-cream/40 group-hover:opacity-100"
+                      className="shrink-0 rounded-full p-1 text-cream/15 opacity-0 transition-all hover:bg-cream/10 hover:text-[#8A8A8A] group-hover:opacity-100"
                     >
                       <X className="h-3.5 w-3.5" />
                     </button>
@@ -2711,13 +2711,13 @@ export default function TripDetailPage() {
         {activeTab === 'money' && (
           <>
             <div className="rounded-[10px] border border-cream/[0.08] bg-cream/[0.04] p-5 text-center">
-              <DollarSign className="mx-auto h-8 w-8 text-cream/30" />
-              <p className="mt-3 text-[13px] text-cream/40">
+              <DollarSign className="mx-auto h-8 w-8 text-[#5C5C5C]" />
+              <p className="mt-3 text-[13px] text-[#8A8A8A]">
                 Track expenses, splits, and settlements.
               </p>
               <Link
                 href={`/trips/${tripId}/expenses`}
-                className="mt-4 inline-flex items-center gap-2 rounded-[10px] bg-coral px-5 py-3 text-[14px] font-medium text-cream transition-colors hover:bg-coral/90"
+                className="mt-4 inline-flex items-center gap-2 rounded-[10px] bg-[#2D5A3D] px-5 py-3 text-[14px] font-medium text-cream transition-colors hover:bg-[#2D5A3D]/90"
               >
                 {expenseCount > 0 ? `View ${expenseCount} Expense${expenseCount !== 1 ? 's' : ''}` : 'Add Expenses'}
                 <ChevronRight className="h-4 w-4" />
@@ -2728,12 +2728,12 @@ export default function TripDetailPage() {
                 href={`/trips/${tripId}/skins`}
                 className="flex items-center gap-4 rounded-[10px] border border-cream/[0.08] bg-cream/[0.04] p-4 transition-colors hover:bg-cream/[0.06]"
               >
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px] bg-gold/15 text-gold">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px] bg-[#B8976A]/15 text-[#B8976A]">
                   <Trophy className="h-5 w-5" />
                 </div>
                 <div className="flex-1">
                   <h3 className="text-[14px] font-medium text-cream">Skins</h3>
-                  <p className="text-[12px] text-cream/40">{skinsCount} game{skinsCount !== 1 ? 's' : ''} played</p>
+                  <p className="text-[12px] text-[#8A8A8A]">{skinsCount} game{skinsCount !== 1 ? 's' : ''} played</p>
                 </div>
                 <ChevronRight className="h-4 w-4 text-cream/20" />
               </Link>
@@ -2763,18 +2763,18 @@ export default function TripDetailPage() {
                     <Medal className="h-4 w-4 text-cream/35" />
                     <h2 className="text-[15px] font-medium text-cream">Leaderboard</h2>
                   </div>
-                  <Link href={`/trips/${tripId}/leaderboard`} className="text-[12px] font-medium text-coral hover:text-coral/80">
+                  <Link href={`/trips/${tripId}/leaderboard`} className="text-[12px] font-medium text-[#2D5A3D] hover:text-[#2D5A3D]/80">
                     View Full
                   </Link>
                 </div>
                 <div className="mt-3 space-y-1">
                   {leaderboard.slice(0, 5).map((entry, idx) => (
-                    <div key={entry.name} className={`flex items-center justify-between rounded-lg px-3 py-2 ${idx === 0 ? "bg-gold/10" : ""}`}>
+                    <div key={entry.name} className={`flex items-center justify-between rounded-lg px-3 py-2 ${idx === 0 ? "bg-[#B8976A]/10" : ""}`}>
                       <div className="flex items-center gap-2.5">
-                        <span className={`w-5 text-center text-[12px] font-bold ${idx === 0 ? "text-gold" : "text-cream/30"}`}>{idx + 1}</span>
+                        <span className={`w-5 text-center text-[12px] font-bold ${idx === 0 ? "text-[#B8976A]" : "text-[#5C5C5C]"}`}>{idx + 1}</span>
                         <span className="text-[13px] font-medium text-cream">{entry.name}</span>
                       </div>
-                      <span className={`text-[13px] font-bold ${entry.vsPar > 0 ? "text-coral" : entry.vsPar < 0 ? "text-teal" : "text-cream/60"}`}>
+                      <span className={`text-[13px] font-bold ${entry.vsPar > 0 ? "text-[#C4423B]" : entry.vsPar < 0 ? "text-[#2D5A3D]" : "text-cream/60"}`}>
                         {entry.vsPar > 0 ? `+${entry.vsPar}` : entry.vsPar === 0 ? "E" : entry.vsPar}
                       </span>
                     </div>
@@ -2798,9 +2798,9 @@ export default function TripDetailPage() {
               </div>
               <div className="flex-1">
                 <h3 className="text-[14px] font-medium text-cream">{card.title}</h3>
-                <p className="text-[12px] text-cream/40">{card.desc}</p>
+                <p className="text-[12px] text-[#8A8A8A]">{card.desc}</p>
               </div>
-              <ChevronRight className="h-4 w-4 text-cream/20 transition-colors group-hover:text-cream/40" />
+              <ChevronRight className="h-4 w-4 text-cream/20 transition-colors group-hover:text-[#8A8A8A]" />
             </Link>
           ))}
         </div>
@@ -2889,7 +2889,7 @@ function InlineContactField({
           onBlur={handleBlur}
           onKeyDown={handleKeyDown}
           placeholder={label}
-          className="w-40 rounded-lg border border-coral/40 bg-cream/[0.06] px-1.5 py-0.5 text-[12px] text-cream outline-none focus:border-coral"
+          className="w-40 rounded-lg border border-[#2D5A3D]/40 bg-cream/[0.06] px-1.5 py-0.5 text-[12px] text-cream outline-none focus:border-[#2D5A3D]"
         />
       </span>
     );
@@ -2904,7 +2904,7 @@ function InlineContactField({
             href={value.startsWith("http") ? value : `https://${value}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-coral underline hover:text-coral/80"
+            className="text-[#2D5A3D] underline hover:text-[#2D5A3D]/80"
           >
             {value.replace(/^https?:\/\//, "")}
             <ExternalLink className="ml-0.5 inline h-2.5 w-2.5" />
@@ -2914,7 +2914,7 @@ function InlineContactField({
         )}
         <button
           onClick={() => { setDraft(value); setEditing(true); }}
-          className="text-cream/20 hover:text-cream/40"
+          className="text-cream/20 hover:text-[#8A8A8A]"
         >
           <Pencil className="h-2.5 w-2.5" />
         </button>
@@ -2925,7 +2925,7 @@ function InlineContactField({
   return (
     <button
       onClick={() => { setDraft(""); setEditing(true); }}
-      className="inline-flex items-center gap-1 text-cream/25 hover:text-cream/50"
+      className="inline-flex items-center gap-1 text-cream/25 hover:text-[#8A8A8A]"
     >
       {icon}
       <span className="underline">{label}</span>
@@ -3120,16 +3120,16 @@ function DatePollVotingCard({
   }
 
   return (
-    <div className={`rounded-[10px] border ${isActive ? "border-teal/30" : "border-cream/[0.08]"} bg-cream/[0.04] p-5`}>
+    <div className={`rounded-[10px] border ${isActive ? "border-[#2D5A3D]/30" : "border-cream/[0.08]"} bg-cream/[0.04] p-5`}>
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <Vote className="h-5 w-5 text-coral" />
+          <Vote className="h-5 w-5 text-[#2D5A3D]" />
           <h2 className="text-[15px] font-medium text-cream">
             {isActive ? "Vote on Trip Dates" : "Date Poll Results"}
           </h2>
         </div>
         <span className={`rounded-full px-2.5 py-1 text-[12px] font-medium ${
-          isActive ? "bg-teal/15 text-teal" : "bg-cream/[0.08] text-cream/40"
+          isActive ? "bg-[#2D5A3D]/15 text-[#2D5A3D]" : "bg-cream/[0.08] text-[#8A8A8A]"
         }`}>
           {isActive ? formatCountdown(poll.deadline) : "Voting closed"}
         </span>
@@ -3139,11 +3139,11 @@ function DatePollVotingCard({
       <div className="mt-3 flex items-center gap-2">
         <div className="h-1.5 flex-1 rounded-full bg-cream/[0.08] overflow-hidden">
           <div
-            className="h-full rounded-full bg-coral transition-all"
+            className="h-full rounded-full bg-[#2D5A3D] transition-all"
             style={{ width: `${totalMembers > 0 ? (votedCount / totalMembers) * 100 : 0}%` }}
           />
         </div>
-        <span className="text-xs text-cream/50">{votedCount} of {totalMembers} voted</span>
+        <span className="text-xs text-[#8A8A8A]">{votedCount} of {totalMembers} voted</span>
       </div>
 
       {/* Options */}
@@ -3166,7 +3166,7 @@ function DatePollVotingCard({
             <div
               key={opt.id}
               className={`rounded-lg border ${
-                isBest && (isClosed || votedCount >= 2) ? "border-[#D94F2B]/40 bg-teal/5" : "border-cream/[0.08]"
+                isBest && (isClosed || votedCount >= 2) ? "border-[#2D5A3D]/40 bg-[#2D5A3D]/5" : "border-cream/[0.08]"
               } p-4`}
             >
               <div className="flex items-start justify-between">
@@ -3179,13 +3179,13 @@ function DatePollVotingCard({
                       {startStr} — {endStr}
                     </p>
                   </div>
-                  <p className="mt-0.5 ml-8 text-xs text-cream/50">
+                  <p className="mt-0.5 ml-8 text-xs text-[#8A8A8A]">
                     {startDay}–{endDay} · {nights} night{nights !== 1 ? "s" : ""}
                     {opt.label ? ` · "${opt.label}"` : ""}
                   </p>
                 </div>
                 {isBest && (isClosed || votedCount >= 2) && (
-                  <span className="rounded-full bg-teal/15 px-2 py-0.5 text-[10px] font-semibold text-coral">
+                  <span className="rounded-full bg-[#2D5A3D]/15 px-2 py-0.5 text-[10px] font-semibold text-[#2D5A3D]">
                     Best match
                   </span>
                 )}
@@ -3242,14 +3242,14 @@ function DatePollVotingCard({
                       <button
                         onClick={() => onLock(opt.id)}
                         disabled={locking}
-                        className="inline-flex items-center gap-1 rounded-md bg-coral px-3 py-1.5 text-xs font-medium text-white hover:bg-[#B83D25] disabled:opacity-50"
+                        className="inline-flex items-center gap-1 rounded-md bg-[#2D5A3D] px-3 py-1.5 text-xs font-medium text-white hover:bg-[#2D5A3D]/90 disabled:opacity-50"
                       >
                         {locking ? <Loader2 className="h-3 w-3 animate-spin" /> : <Lock className="h-3 w-3" />}
                         {locking ? "Locking..." : "Confirm"}
                       </button>
                       <button
                         onClick={() => onLockConfirm(null)}
-                        className="text-xs text-cream/40 hover:text-cream/60"
+                        className="text-xs text-[#8A8A8A] hover:text-cream/60"
                       >
                         Cancel
                       </button>
@@ -3257,7 +3257,7 @@ function DatePollVotingCard({
                   ) : (
                     <button
                       onClick={() => onLockConfirm(opt.id)}
-                      className="inline-flex items-center gap-1.5 text-xs font-medium text-coral hover:text-coral/80"
+                      className="inline-flex items-center gap-1.5 text-xs font-medium text-[#2D5A3D] hover:text-[#2D5A3D]/80"
                     >
                       <Lock className="h-3 w-3" />
                       Lock In These Dates
@@ -3272,7 +3272,7 @@ function DatePollVotingCard({
 
       {/* Best match summary */}
       {bestOption && votedCount >= 2 && (
-        <p className="mt-3 text-xs text-cream/50">
+        <p className="mt-3 text-xs text-[#8A8A8A]">
           {"\uD83D\uDCA1"} Best match: Option {String.fromCharCode(65 + options.findIndex((o) => o.id === bestOption.id))}
           {" "}({bestOption.yesCount} {"\u2705"}{bestOption.noCount > 0 ? `, ${bestOption.noCount} \u274C` : ""})
         </p>
@@ -3283,7 +3283,7 @@ function DatePollVotingCard({
         <button
           onClick={handleSubmitVotes}
           disabled={voting}
-          className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-lg bg-coral px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[#B83D25] disabled:opacity-50 min-h-[44px]"
+          className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-lg bg-[#2D5A3D] px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[#2D5A3D]/90 disabled:opacity-50 min-h-[44px]"
         >
           {voting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Check className="h-4 w-4" />}
           {voting ? "Submitting..." : "Submit Votes"}
@@ -3292,7 +3292,7 @@ function DatePollVotingCard({
 
       {/* All voted message */}
       {votedCount === totalMembers && totalMembers > 0 && isActive && (
-        <p className="mt-3 text-center text-xs text-coral font-medium">
+        <p className="mt-3 text-center text-xs text-[#2D5A3D] font-medium">
           Everyone&apos;s voted! {isCaptain ? "You can lock in dates now." : "Waiting for the captain to lock in dates."}
         </p>
       )}

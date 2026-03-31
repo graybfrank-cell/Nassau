@@ -24,17 +24,17 @@ import {
 // Design tokens
 // ---------------------------------------------------------------------------
 const C = {
-  bg: "#18181B",
-  cream: "#F3EDE4",
-  coral: "#D94F2B",
-  teal: "#0D7377",
-  gold: "#C9A54E",
-  surface: "#27272A",
-  muted: "#71717A",
-  dimmed: "#3F3F46",
+  bg: "#111111",
+  cream: "#F2F0EB",
+  coral: "#2D5A3D",
+  teal: "#2D5A3D",
+  gold: "#B8976A",
+  surface: "#1A1A1A",
+  muted: "#8A8A8A",
+  dimmed: "#2A2A2A",
 } as const;
 
-const FONT = "'Helvetica Neue', Arial, sans-serif";
+// Font handled by Tailwind config
 
 const DEFAULT_PARS = [4, 4, 4, 3, 5, 4, 3, 4, 5, 4, 4, 3, 5, 4, 4, 3, 4, 5];
 const DEFAULT_YARDAGES = [
@@ -245,7 +245,7 @@ export default function LiveScorecardPage() {
     return (
       <div
         className="flex min-h-screen items-center justify-center"
-        style={{ backgroundColor: C.bg, fontFamily: FONT }}
+        style={{ backgroundColor: C.bg }}
       >
         <p style={{ color: C.muted }} className="text-sm">
           Loading...
@@ -258,7 +258,7 @@ export default function LiveScorecardPage() {
     return (
       <div
         className="flex min-h-screen flex-col items-center justify-center gap-4"
-        style={{ backgroundColor: C.bg, fontFamily: FONT }}
+        style={{ backgroundColor: C.bg }}
       >
         <h2 className="text-lg font-semibold" style={{ color: C.cream }}>
           Round not found
@@ -411,7 +411,7 @@ export default function LiveScorecardPage() {
   return (
     <div
       className="min-h-screen pb-36"
-      style={{ backgroundColor: C.bg, fontFamily: FONT }}
+      style={{ backgroundColor: C.bg }}
     >
       {/* ----------------------------------------------------------------- */}
       {/* TOP BAR                                                            */}
@@ -421,7 +421,7 @@ export default function LiveScorecardPage() {
           {/* Left: Course name + live indicator */}
           <div>
             <h1
-              className="text-lg font-black uppercase tracking-wide"
+              className="text-lg font-semibold uppercase tracking-wide"
               style={{ color: C.cream }}
             >
               {round.courseName || "LIVE ROUND"}
@@ -443,7 +443,7 @@ export default function LiveScorecardPage() {
           {/* Right: Current hole */}
           <div className="text-right">
             <span
-              className="text-xl font-black"
+              className="text-xl font-semibold"
               style={{ color: C.coral }}
             >
               HOLE {currentHoleNumber}
@@ -571,7 +571,7 @@ export default function LiveScorecardPage() {
                                     holeIndex: i,
                                   })
                                 }
-                                className="mx-auto flex h-7 w-7 items-center justify-center rounded text-xs font-black"
+                                className="mx-auto flex h-7 w-7 items-center justify-center rounded text-xs font-semibold"
                                 style={{
                                   backgroundColor: isEmpty
                                     ? "transparent"
@@ -609,7 +609,7 @@ export default function LiveScorecardPage() {
           style={{ backgroundColor: C.surface }}
         >
           <h3
-            className="mb-3 text-xs font-black uppercase"
+            className="mb-3 text-xs font-semibold uppercase"
             style={{ color: C.teal }}
           >
             SKINS
@@ -664,7 +664,7 @@ export default function LiveScorecardPage() {
           </div>
 
           <p
-            className="mt-3 text-sm font-black"
+            className="mt-3 text-sm font-semibold"
             style={{ color: C.coral }}
           >
             Pot: ${skinsPot} &middot; {skinsCarryoverCount} carryover
@@ -682,7 +682,7 @@ export default function LiveScorecardPage() {
           style={{ backgroundColor: C.surface }}
         >
           <h3
-            className="mb-3 text-xs font-black uppercase"
+            className="mb-3 text-xs font-semibold uppercase"
             style={{ color: C.teal }}
           >
             NASSAU
@@ -741,7 +741,7 @@ export default function LiveScorecardPage() {
       <div className="fixed bottom-20 left-4 right-4 z-30">
         <button
           onClick={openPostScores}
-          className="w-full rounded-xl py-4 font-black uppercase tracking-wide text-white"
+          className="w-full rounded-xl py-4 font-semibold uppercase tracking-wide text-white"
           style={{ backgroundColor: C.coral }}
         >
           POST SCORES FOR HOLE {currentHoleNumber} &rarr;
@@ -797,7 +797,7 @@ export default function LiveScorecardPage() {
                     HOLE {hIdx + 1} &middot; PAR {par} &middot; {yds} YDS
                   </p>
                   <p
-                    className="mb-6 text-center text-2xl font-black"
+                    className="mb-6 text-center text-2xl font-semibold"
                     style={{ color: C.coral }}
                   >
                     {player?.name ?? "Player"}
@@ -821,7 +821,7 @@ export default function LiveScorecardPage() {
                             color: isSelected ? "#FFFFFF" : C.cream,
                           }}
                         >
-                          <div className="text-xl font-black">{score}</div>
+                          <div className="text-xl font-semibold">{score}</div>
                           <div
                             className="mt-0.5 text-[10px] uppercase"
                             style={{

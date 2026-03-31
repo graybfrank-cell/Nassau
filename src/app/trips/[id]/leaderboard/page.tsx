@@ -139,7 +139,7 @@ export default function LeaderboardPage() {
             </p>
             <Link
               href={`/trips/${tripId}/scorecards`}
-              className="mt-4 inline-block text-sm font-medium text-[#D94F2B] hover:text-[#D94F2B]"
+              className="mt-4 inline-block text-sm font-medium text-[#2D5A3D] hover:text-[#2D5A3D]"
             >
               Go to Scorecards
             </Link>

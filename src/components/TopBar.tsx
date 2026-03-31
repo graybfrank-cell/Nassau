@@ -35,19 +35,19 @@ export default function TopBar() {
   return (
     <div className="flex items-center justify-between px-5 py-3">
       <Link href="/dashboard">
-        <span className="text-xl font-black uppercase tracking-tighter text-cream">
-          NASSAU
+        <span className="font-headline text-[20px] font-medium tracking-[0.02em] text-[#F2F0EB]">
+          Nassau
         </span>
       </Link>
       <div className="flex items-center gap-3">
         <Link href="/settlements" className="relative">
-          <Bell className="h-5 w-5 text-cream/40 hover:text-cream/60 transition-colors cursor-pointer" />
+          <Bell className="h-5 w-5 text-[#8A8A8A] hover:text-[#F2F0EB]/60 transition-colors cursor-pointer" />
           {hasUnsettled && (
-            <div className="absolute -top-1 -right-1 h-2 w-2 rounded-full bg-coral" />
+            <div className="absolute -top-1 -right-1 h-2 w-2 rounded-full bg-[#C4423B]" />
           )}
         </Link>
         <Link href="/profile">
-          <div className="h-8 w-8 rounded-full bg-gradient-to-br from-coral to-gold flex items-center justify-center text-[11px] font-medium text-dark">
+          <div className="h-8 w-8 rounded-full bg-[#2F4F4F] flex items-center justify-center text-[11px] font-medium text-[#F2F0EB]">
             {initials}
           </div>
         </Link>

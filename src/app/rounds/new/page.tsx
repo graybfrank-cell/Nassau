@@ -278,7 +278,7 @@ function PlayerList({
   return (
     <div>
       <div className="flex items-center gap-3 border-b border-cream/[0.06] py-3">
-        <div className="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-coral to-gold text-[13px] font-medium text-dark">
+        <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[#2F4F4F] text-[13px] font-medium text-[#F2F0EB]">
           {initials}
         </div>
         <div className="flex-1">
@@ -412,7 +412,7 @@ function AddPlayerModal({
 
 function SectionLabel({ children }: { children: React.ReactNode }) {
   return (
-    <label className="mb-2.5 block text-[11px] font-medium uppercase tracking-[1.2px] text-cream/40">
+    <label className="mb-2.5 block font-sans text-[11px] font-medium uppercase tracking-[0.08em] text-[#5C5C5C]">
       {children}
     </label>
   );
@@ -547,7 +547,7 @@ export default function NewRoundPage() {
             className="object-cover"
             priority
           />
-          <div className="absolute inset-0 bg-gradient-to-b from-dark/80 via-dark/60 to-dark" />
+          <div className="absolute inset-0 bg-gradient-to-b from-[#111111]/80 via-[#111111]/60 to-[#111111]" />
           <div className="relative z-10 flex flex-col h-full">
             <TopBar />
             <div className="mt-auto px-5 pb-5">
@@ -559,7 +559,7 @@ export default function NewRoundPage() {
                 >
                   <ArrowLeft className="h-[18px] w-[18px] text-cream" strokeWidth={2} />
                 </button>
-                <h1 className="text-[22px] font-medium tracking-tight text-cream">New round</h1>
+                <h1 className="font-headline text-[24px] font-medium tracking-tight text-[#F2F0EB]">New Round</h1>
               </div>
             </div>
           </div>

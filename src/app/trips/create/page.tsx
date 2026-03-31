@@ -78,7 +78,7 @@ function ProgressBar({ step, total }: { step: number; total: number }) {
         <div
           key={i}
           className={`h-[3px] flex-1 rounded-full transition-colors duration-300 ${
-            i < step ? 'bg-coral' : 'bg-cream/10'
+            i < step ? 'bg-[#2D5A3D]' : 'bg-cream/10'
           }`}
         />
       ))}
@@ -92,7 +92,7 @@ function ProgressBar({ step, total }: { step: number; total: number }) {
 
 function SectionLabel({ children }: { children: React.ReactNode }) {
   return (
-    <label className="mb-2.5 block text-[11px] font-medium uppercase tracking-[1.2px] text-cream/40">
+    <label className="mb-2.5 block font-sans text-[11px] font-medium uppercase tracking-[0.08em] text-[#5C5C5C]">
       {children}
     </label>
   );
@@ -123,11 +123,11 @@ function StepWhereWhen({
 }) {
   return (
     <div className="px-5">
-      <h2 className="mb-1 text-[20px] font-medium text-cream">Where & when?</h2>
-      <p className="mb-6 text-[13px] text-cream/40">Pick a destination and dates for your trip.</p>
+      <h2 className="mb-1 text-[20px] font-headline font-medium text-cream">Where & when?</h2>
+      <p className="mb-6 text-[13px] text-[#8A8A8A]">Pick a destination and dates for your trip.</p>
 
       <SectionLabel>Destination</SectionLabel>
-      <div className="mb-5 flex items-center gap-3 rounded-[10px] border border-cream/10 bg-cream/[0.06] px-4 py-3.5 focus-within:border-coral/40">
+      <div className="mb-5 flex items-center gap-3 rounded-[10px] border border-cream/10 bg-cream/[0.06] px-4 py-3.5 focus-within:border-[#2D5A3D]/40">
         <MapPin className="h-[18px] w-[18px] shrink-0 text-cream/35" strokeWidth={1.8} />
         <input
           type="text"
@@ -147,7 +147,7 @@ function StepWhereWhen({
             type="button"
             className={`rounded-full px-4 py-2.5 text-[13px] font-medium transition-all ${
               timeFrame === tf.key
-                ? 'border border-coral/50 bg-coral/12 text-coral'
+                ? 'border border-[#2D5A3D]/50 bg-[#2D5A3D]/12 text-[#2D5A3D]'
                 : 'border border-cream/10 bg-cream/[0.06] text-cream/60 hover:border-cream/20'
             }`}
           >
@@ -156,12 +156,12 @@ function StepWhereWhen({
         ))}
       </div>
 
-      <p className="mb-2 text-[12px] text-cream/30">Or pick exact dates:</p>
+      <p className="mb-2 text-[12px] text-[#5C5C5C]">Or pick exact dates:</p>
       <div className="grid grid-cols-2 gap-2.5">
-        <label className="cursor-pointer rounded-[10px] border border-cream/10 bg-cream/[0.06] p-3.5 transition-colors focus-within:border-coral/40">
-          <p className="mb-1 text-[11px] uppercase tracking-[0.5px] text-cream/40">Start</p>
+        <label className="cursor-pointer rounded-[10px] border border-cream/10 bg-cream/[0.06] p-3.5 transition-colors focus-within:border-[#2D5A3D]/40">
+          <p className="mb-1 text-[11px] uppercase tracking-[0.5px] text-[#8A8A8A]">Start</p>
           <div className="flex items-center gap-2">
-            <Calendar className="h-3.5 w-3.5 text-cream/50" strokeWidth={1.8} />
+            <Calendar className="h-3.5 w-3.5 text-[#8A8A8A]" strokeWidth={1.8} />
             <span className="text-[14px] font-medium text-cream">
               {startDate
                 ? new Date(startDate + 'T12:00:00').toLocaleDateString('en-US', {
@@ -179,10 +179,10 @@ function StepWhereWhen({
           />
         </label>
 
-        <label className="cursor-pointer rounded-[10px] border border-cream/10 bg-cream/[0.06] p-3.5 transition-colors focus-within:border-coral/40">
-          <p className="mb-1 text-[11px] uppercase tracking-[0.5px] text-cream/40">End</p>
+        <label className="cursor-pointer rounded-[10px] border border-cream/10 bg-cream/[0.06] p-3.5 transition-colors focus-within:border-[#2D5A3D]/40">
+          <p className="mb-1 text-[11px] uppercase tracking-[0.5px] text-[#8A8A8A]">End</p>
           <div className="flex items-center gap-2">
-            <Calendar className="h-3.5 w-3.5 text-cream/50" strokeWidth={1.8} />
+            <Calendar className="h-3.5 w-3.5 text-[#8A8A8A]" strokeWidth={1.8} />
             <span className="text-[14px] font-medium text-cream">
               {endDate
                 ? new Date(endDate + 'T12:00:00').toLocaleDateString('en-US', {
@@ -239,8 +239,8 @@ function StepCrew({
 
   return (
     <div className="px-5">
-      <h2 className="mb-1 text-[20px] font-medium text-cream">The crew</h2>
-      <p className="mb-6 text-[13px] text-cream/40">How many golfers and what&apos;s the budget?</p>
+      <h2 className="mb-1 text-[20px] font-headline font-medium text-cream">The crew</h2>
+      <p className="mb-6 text-[13px] text-[#8A8A8A]">How many golfers and what&apos;s the budget?</p>
 
       <SectionLabel>Golfers</SectionLabel>
       <div className="mb-6 flex items-center gap-4">
@@ -255,7 +255,7 @@ function StepCrew({
           <span className="block text-[32px] font-medium leading-none text-cream">
             {golferCount}
           </span>
-          <span className="mt-1 block text-[12px] text-cream/40">
+          <span className="mt-1 block text-[12px] text-[#8A8A8A]">
             {getGroupLabel(golferCount)}
           </span>
         </div>
@@ -277,20 +277,20 @@ function StepCrew({
             type="button"
             className={`flex-1 rounded-[10px] p-3.5 text-center transition-all ${
               budget === opt.tier
-                ? 'border border-coral/50 bg-coral/12'
+                ? 'border border-[#2D5A3D]/50 bg-[#2D5A3D]/12'
                 : 'border border-cream/10 bg-cream/[0.06]'
             }`}
           >
             <p
               className={`text-[14px] font-medium ${
-                budget === opt.tier ? 'text-coral' : 'text-cream/60'
+                budget === opt.tier ? 'text-[#2D5A3D]' : 'text-cream/60'
               }`}
             >
               {opt.label}
             </p>
             <p
               className={`mt-1 text-[11px] ${
-                budget === opt.tier ? 'text-coral/60' : 'text-cream/30'
+                budget === opt.tier ? 'text-[#2D5A3D]/60' : 'text-[#5C5C5C]'
               }`}
             >
               {opt.range}
@@ -307,14 +307,14 @@ function StepCrew({
               key={player.id}
               className="flex animate-slideDown items-center gap-3 border-b border-cream/[0.06] py-2.5"
             >
-              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-teal text-[12px] font-medium text-cream">
+              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#2F4F4F] text-[12px] font-medium text-cream">
                 {player.name[0].toUpperCase()}
               </div>
               <span className="flex-1 text-[14px] text-cream">{player.name}</span>
               <button
                 onClick={() => onRemovePlayer(player.id)}
                 type="button"
-                className="text-cream/25 hover:text-cream/50"
+                className="text-[#5C5C5C] hover:text-[#8A8A8A]"
               >
                 <X className="h-3.5 w-3.5" strokeWidth={2} />
               </button>
@@ -327,7 +327,7 @@ function StepCrew({
         <button
           onClick={() => onShowAddModal(true)}
           type="button"
-          className="flex flex-1 items-center justify-center gap-1.5 rounded-[10px] border border-dashed border-cream/15 bg-transparent py-3 text-[13px] font-medium text-cream/50 transition-colors hover:border-cream/25 hover:text-cream/70"
+          className="flex flex-1 items-center justify-center gap-1.5 rounded-[10px] border border-dashed border-cream/15 bg-transparent py-3 text-[13px] font-medium text-[#8A8A8A] transition-colors hover:border-cream/25 hover:text-cream/70"
         >
           <Plus className="h-4 w-4" strokeWidth={2} />
           Add players
@@ -337,8 +337,8 @@ function StepCrew({
           type="button"
           className={`flex items-center gap-1.5 rounded-[10px] border px-4 py-3 text-[13px] font-medium transition-all ${
             inviteLinkCopied
-              ? 'border-coral/50 text-coral'
-              : 'border-teal/30 bg-teal/10 text-teal hover:bg-teal/15'
+              ? 'border-[#2D5A3D]/50 text-[#2D5A3D]'
+              : 'border-[#2D5A3D]/30 bg-[#2D5A3D]/10 text-[#2D5A3D] hover:bg-[#2D5A3D]/15'
           }`}
         >
           {inviteLinkCopied ? (
@@ -355,7 +355,7 @@ function StepCrew({
         </button>
       </div>
 
-      <p className="mt-2 text-[12px] text-cream/25">
+      <p className="mt-2 text-[12px] text-[#5C5C5C]">
         You can also add players after creating the trip.
       </p>
     </div>
@@ -412,15 +412,15 @@ function StepNameCustomize({
 
   return (
     <div className="px-5">
-      <h2 className="mb-1 text-[20px] font-medium text-cream">Name your trip</h2>
-      <p className="mb-6 text-[13px] text-cream/40">Give it a name and set the vibe.</p>
+      <h2 className="mb-1 text-[20px] font-headline font-medium text-cream">Name your trip</h2>
+      <p className="mb-6 text-[13px] text-[#8A8A8A]">Give it a name and set the vibe.</p>
 
       <SectionLabel>Trip name</SectionLabel>
       <input
         type="text"
         value={tripName}
         onChange={(e) => onTripNameChange(e.target.value)}
-        className="mb-3 w-full rounded-[10px] border border-cream/10 bg-cream/[0.06] px-4 py-3.5 text-[16px] font-medium text-cream outline-none focus:border-coral/40"
+        className="mb-3 w-full rounded-[10px] border border-cream/10 bg-cream/[0.06] px-4 py-3.5 text-[16px] font-medium text-cream outline-none focus:border-[#2D5A3D]/40"
       />
       <div className="mb-6 flex flex-wrap gap-2">
         {nameSuggestions.map((name) => (
@@ -428,7 +428,7 @@ function StepNameCustomize({
             key={name}
             onClick={() => onTripNameChange(name)}
             type="button"
-            className="rounded-lg border border-cream/10 bg-cream/[0.06] px-3 py-2 text-[12px] text-cream/50 transition-colors hover:text-cream/70"
+            className="rounded-lg border border-cream/10 bg-cream/[0.06] px-3 py-2 text-[12px] text-[#8A8A8A] transition-colors hover:text-cream/70"
           >
             {name}
           </button>
@@ -444,7 +444,7 @@ function StepNameCustomize({
             type="button"
             className={`rounded-full px-4 py-2.5 text-[13px] font-medium transition-all ${
               vibe === opt.type
-                ? 'border border-coral/50 bg-coral/12 text-coral'
+                ? 'border border-[#2D5A3D]/50 bg-[#2D5A3D]/12 text-[#2D5A3D]'
                 : 'border border-cream/10 bg-cream/[0.06] text-cream/60 hover:border-cream/20'
             }`}
           >
@@ -459,31 +459,31 @@ function StepNameCustomize({
         value={notes}
         onChange={(e) => onNotesChange(e.target.value)}
         placeholder="Anything the crew should know..."
-        className="mb-6 w-full rounded-[10px] border border-cream/10 bg-cream/[0.06] px-4 py-3.5 text-[14px] text-cream placeholder:text-cream/35 outline-none focus:border-coral/40"
+        className="mb-6 w-full rounded-[10px] border border-cream/10 bg-cream/[0.06] px-4 py-3.5 text-[14px] text-cream placeholder:text-cream/35 outline-none focus:border-[#2D5A3D]/40"
       />
 
       {/* Trip summary card */}
       <div className="rounded-[10px] border border-cream/[0.08] bg-cream/[0.04] p-4">
-        <p className="mb-3 text-[11px] font-medium uppercase tracking-[1.2px] text-cream/40">
+        <p className="mb-3 text-[11px] font-medium uppercase tracking-[1.2px] text-[#8A8A8A]">
           Trip summary
         </p>
         <div className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-2 text-[13px]">
-          <span className="text-cream/40">Where</span>
+          <span className="text-[#8A8A8A]">Where</span>
           <span className="font-medium text-cream">{destination || 'Not set'}</span>
 
-          <span className="text-cream/40">When</span>
+          <span className="text-[#8A8A8A]">When</span>
           <span className="text-cream">{whenLabel}</span>
 
-          <span className="text-cream/40">Crew</span>
+          <span className="text-[#8A8A8A]">Crew</span>
           <span className="text-cream">{golferCount} golfers</span>
 
-          <span className="text-cream/40">Budget</span>
+          <span className="text-[#8A8A8A]">Budget</span>
           <span className="text-cream">{budgetLabel}</span>
 
           {vibe && (
             <>
-              <span className="text-cream/40">Vibe</span>
-              <span className="font-medium text-coral">
+              <span className="text-[#8A8A8A]">Vibe</span>
+              <span className="font-medium text-[#2D5A3D]">
                 {VIBE_OPTIONS.find((v) => v.type === vibe)?.label || vibe}
               </span>
             </>
@@ -527,13 +527,13 @@ function AddPlayerModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/60 sm:items-center">
-      <div className="w-full max-w-[420px] animate-slideUp rounded-t-2xl bg-[#1e1e21] p-6 sm:rounded-2xl">
+      <div className="w-full max-w-[420px] animate-slideUp rounded-t-2xl bg-[#1A1A1A] p-6 sm:rounded-2xl">
         <div className="mb-5 flex items-center justify-between">
           <h3 className="text-[17px] font-medium text-cream">Add player</h3>
           <button
             onClick={onClose}
             type="button"
-            className="flex h-8 w-8 items-center justify-center rounded-full text-cream/40 hover:bg-cream/10"
+            className="flex h-8 w-8 items-center justify-center rounded-full text-[#8A8A8A] hover:bg-cream/10"
           >
             <X className="h-4 w-4" strokeWidth={2} />
           </button>
@@ -545,13 +545,13 @@ function AddPlayerModal({
           onChange={(e) => setName(e.target.value)}
           onKeyDown={(e) => e.key === 'Enter' && handleSubmit()}
           placeholder="Player name or email"
-          className="mb-4 w-full rounded-[10px] border border-cream/10 bg-cream/[0.06] px-4 py-3.5 text-[15px] text-cream placeholder:text-cream/35 outline-none focus:border-coral/40"
+          className="mb-4 w-full rounded-[10px] border border-cream/10 bg-cream/[0.06] px-4 py-3.5 text-[15px] text-cream placeholder:text-cream/35 outline-none focus:border-[#2D5A3D]/40"
         />
         <div className="flex gap-3">
           <button
             onClick={onClose}
             type="button"
-            className="flex-1 rounded-[10px] border border-cream/10 py-3.5 text-[14px] font-medium text-cream/50"
+            className="flex-1 rounded-[10px] border border-cream/10 py-3.5 text-[14px] font-medium text-[#8A8A8A]"
           >
             Cancel
           </button>
@@ -559,7 +559,7 @@ function AddPlayerModal({
             onClick={handleSubmit}
             type="button"
             disabled={!name.trim()}
-            className="flex-1 rounded-[10px] bg-coral py-3.5 text-[14px] font-medium text-cream transition-opacity disabled:opacity-40"
+            className="flex-1 rounded-[10px] bg-[#2D5A3D] py-3.5 text-[14px] font-medium text-cream transition-opacity disabled:opacity-40"
           >
             Add
           </button>
@@ -705,7 +705,7 @@ export default function CreateTripPage() {
             className="object-cover"
             priority
           />
-          <div className="absolute inset-0 bg-gradient-to-b from-dark/80 via-dark/60 to-dark" />
+          <div className="absolute inset-0 bg-gradient-to-b from-[#111111]/80 via-[#111111]/60 to-[#111111]" />
           <div className="relative z-10 flex flex-col h-full">
             <TopBar />
             <div className="mt-auto px-5 pb-5">
@@ -717,10 +717,10 @@ export default function CreateTripPage() {
                 >
                   <ArrowLeft className="h-[18px] w-[18px] text-cream" strokeWidth={2} />
                 </button>
-                <h1 className="flex-1 text-[22px] font-medium tracking-tight text-cream">
+                <h1 className="flex-1 text-[22px] font-headline font-medium tracking-tight text-cream">
                   New trip
                 </h1>
-                <span className="text-[13px] text-cream/40">
+                <span className="text-[13px] text-[#8A8A8A]">
                   Step {step} of {TOTAL_STEPS}
                 </span>
               </div>
@@ -784,7 +784,7 @@ export default function CreateTripPage() {
               <button
                 onClick={goBack}
                 type="button"
-                className="rounded-[10px] border border-cream/12 px-5 py-4 text-[15px] font-medium text-cream/50"
+                className="rounded-[10px] border border-cream/12 px-5 py-4 text-[15px] font-medium text-[#8A8A8A]"
               >
                 Back
               </button>
@@ -795,8 +795,8 @@ export default function CreateTripPage() {
               type="button"
               className={`flex-1 rounded-[10px] py-4 text-[16px] font-medium tracking-tight text-cream transition-all ${
                 canProceed && !isSubmitting
-                  ? 'bg-coral hover:bg-coral/90 active:scale-[0.99]'
-                  : 'bg-coral/40 cursor-not-allowed'
+                  ? 'bg-[#2D5A3D] hover:bg-[#2D5A3D]/90 active:scale-[0.99]'
+                  : 'bg-[#2D5A3D]/40 cursor-not-allowed'
               }`}
             >
               {isSubmitting

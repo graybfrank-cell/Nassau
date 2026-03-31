@@ -186,7 +186,7 @@ function SegmentSection({
           return (
             <span
               key={playerId}
-              className={`text-sm ${isWinner ? "font-bold text-[#D94F2B]" : "text-zinc-700"}`}
+              className={`text-sm ${isWinner ? "font-bold text-[#2D5A3D]" : "text-zinc-700"}`}
             >
               {isWinner && "\u{1F3C6} "}
               {player?.name}: {score}
@@ -275,7 +275,7 @@ export default function NassauBetCalculator({
                   <span
                     className={`text-sm font-semibold ${
                       net > 0
-                        ? "text-[#D94F2B]"
+                        ? "text-[#2D5A3D]"
                         : net < 0
                           ? "text-red-500"
                           : "text-zinc-400"

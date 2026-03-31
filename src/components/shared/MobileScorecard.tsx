@@ -51,7 +51,7 @@ function getScoreTextStyle(score: number, par: number): React.CSSProperties {
   const diff = score - par;
   if (diff <= -2) return { color: "#FFD700", filter: "drop-shadow(0 0 6px #FFD700)" };
   if (diff === -1) return { color: "#22C55E" };
-  if (diff === 0) return { color: "#F3EDE4" };
+  if (diff === 0) return { color: "#F2F0EB" };
   if (diff === 1) return { color: "#FCA5A5" };
   if (diff === 2) return { color: "#EF4444" };
   return { color: "#991B1B" };
@@ -228,7 +228,7 @@ export default function MobileScorecard({
               onClick={() => goToHole(position)}
               className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-xs font-semibold transition-colors ${
                 position === currentHolePosition
-                  ? "bg-[#D94F2B] text-white"
+                  ? "bg-[#2D5A3D] text-white"
                   : allScored
                     ? "bg-zinc-700 text-zinc-300"
                     : "bg-zinc-800 text-zinc-500"
@@ -364,7 +364,7 @@ export default function MobileScorecard({
                           onClick={() => handleQuickScore(player.id, score)}
                           className={`flex h-11 flex-1 items-center justify-center rounded-lg text-sm font-bold transition-all active:scale-95 ${
                             isActive
-                              ? "bg-[#D94F2B] text-white ring-2 ring-[#D94F2B]/30"
+                              ? "bg-[#2D5A3D] text-white ring-2 ring-[#2D5A3D]/30"
                               : "bg-zinc-800 text-zinc-300 hover:bg-zinc-700"
                           }`}
                         >
@@ -385,7 +385,7 @@ export default function MobileScorecard({
             <div
               className="h-full rounded-full"
               style={{
-                backgroundColor: "#D94F2B",
+                backgroundColor: "#2D5A3D",
                 animation: "shrinkBar 800ms linear forwards",
               }}
             />
@@ -457,7 +457,7 @@ export default function MobileScorecard({
                   <span
                     className={`flex h-5 w-5 items-center justify-center rounded-full text-[10px] font-bold ${
                       idx === 0 && p.total > 0
-                        ? "bg-[#D94F2B] text-white"
+                        ? "bg-[#2D5A3D] text-white"
                         : "bg-zinc-800 text-zinc-500"
                     }`}
                   >

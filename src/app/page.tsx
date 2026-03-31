@@ -60,7 +60,7 @@ async function RecentArticles() {
 
   if (!posts || posts.length === 0) {
     return (
-      <p className="py-8 text-center text-[#71717A]">Articles coming soon.</p>
+      <p className="py-8 text-center text-[#8A8A8A]">Articles coming soon.</p>
     );
   }
 
@@ -81,23 +81,23 @@ async function RecentArticles() {
               />
             </div>
           ) : (
-            <div className="flex aspect-video items-center justify-center bg-[#18181B]">
-              <span className="text-4xl font-black text-[#D94F2B]/20">N</span>
+            <div className="flex aspect-video items-center justify-center bg-[#111111]">
+              <span className="text-4xl font-semibold text-[#2D5A3D]/20">N</span>
             </div>
           )}
           <div className="p-5">
             {post.tags?.[0] && (
-              <span className="rounded-full bg-[#0D7377]/10 px-2.5 py-0.5 text-xs font-medium text-[#0D7377]">
+              <span className="rounded-full bg-[#2D5A3D]/10 px-2.5 py-0.5 text-xs font-medium text-[#2D5A3D]">
                 {post.tags[0]}
               </span>
             )}
-            <h3 className="mt-2 font-black text-[#18181B] transition-colors group-hover:text-[#D94F2B] line-clamp-2">
+            <h3 className="mt-2 font-semibold text-[#111111] transition-colors group-hover:text-[#2D5A3D] line-clamp-2">
               {post.title}
             </h3>
-            <p className="mt-1 text-sm text-[#71717A] line-clamp-2">
+            <p className="mt-1 text-sm text-[#8A8A8A] line-clamp-2">
               {post.meta_description}
             </p>
-            <div className="mt-3 text-xs text-[#71717A]">
+            <div className="mt-3 text-xs text-[#8A8A8A]">
               {post.reading_time_minutes ||
                 Math.ceil((post.word_count || 0) / 200)}{" "}
               min read
@@ -127,83 +127,84 @@ export default async function Home() {
           className="object-cover"
         />
         {/* Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-t from-[#18181B] via-[#18181B]/50 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#111111] via-[#111111]/50 to-transparent" />
 
         {/* Content */}
         <div className="relative z-10 max-w-6xl">
-          <h1 className="text-6xl font-black uppercase leading-none tracking-tighter text-[#F3EDE4] md:text-8xl lg:text-[120px]">
-            YOUR GOLF TRIP,
+          <h1 className="font-headline text-6xl font-medium leading-none tracking-tighter text-[#F2F0EB] md:text-8xl lg:text-[120px]">
+            Your Golf Trip,
           </h1>
-          <h1 className="text-6xl font-black uppercase leading-none tracking-tighter text-[#D94F2B] md:text-8xl lg:text-[120px]">
-            HANDLED.
+          <h1 className="font-headline text-6xl font-medium leading-none tracking-tighter text-[#2D5A3D] md:text-8xl lg:text-[120px]">
+            Handled.
           </h1>
-          <p className="mt-4 max-w-lg text-lg text-[#F3EDE4]/70">
+          <p className="mt-4 max-w-lg text-lg text-[#F2F0EB]/70">
             The operating system for golf trips. From the first group text to the last settlement &mdash; one app.
           </p>
           <div className="mt-8 flex flex-col gap-4 sm:flex-row">
             <Link
               href="/login"
-              className="rounded-lg bg-[#D94F2B] px-8 py-4 text-center text-sm font-black uppercase tracking-widest text-white transition-colors hover:bg-[#c4442a]"
+              className="rounded-lg bg-[#2D5A3D] px-8 py-4 text-center text-sm font-semibold uppercase tracking-widest text-white transition-colors hover:bg-[#244B33]"
             >
               GET STARTED FREE
             </Link>
             <Link
               href="#features"
-              className="rounded-lg border border-[#F3EDE4] px-8 py-4 text-center text-sm font-black uppercase tracking-widest text-[#F3EDE4] transition-colors hover:bg-[#F3EDE4]/10"
+              className="rounded-lg border border-[#F2F0EB] px-8 py-4 text-center text-sm font-semibold uppercase tracking-widest text-[#F2F0EB] transition-colors hover:bg-[#F2F0EB]/10"
             >
               SEE HOW IT WORKS
             </Link>
           </div>
-          <p className="mt-4 text-xs uppercase tracking-widest text-[#F3EDE4]/30">
+          <p className="mt-4 text-xs uppercase tracking-widest text-[#F2F0EB]/30">
             88 founding member spots · $49.99/yr locked forever
           </p>
         </div>
       </section>
 
       {/* ═══ TRANSITION ═══ */}
-      <div className="h-32 bg-gradient-to-b from-[#18181B] to-[#F3EDE4]" />
+      <div className="h-32 bg-gradient-to-b from-[#111111] to-[#F2F0EB]" />
 
       {/* ═══ SECTION 2 — VALUE PROP 1: GOLF TRIPS, HANDLED ═══ */}
-      <section id="features" className="bg-[#F3EDE4] px-6 py-24 lg:px-16">
+      <section id="features" className="bg-[#F2F0EB] px-6 py-24 lg:px-16">
         <div className="mx-auto max-w-6xl">
-          <h2 className="text-[32px] font-black uppercase tracking-tight text-[#18181B] sm:text-[40px]">
-            GOLF TRIPS, HANDLED.
+          <p className="font-sans text-[11px] font-medium uppercase tracking-[0.08em] text-[#5C5C5C] mb-2">How It Works</p>
+          <h2 className="font-headline text-[28px] font-medium tracking-tight text-[#111111] sm:text-[40px]">
+            Golf Trips, Handled.
           </h2>
-          <p className="mt-3 text-[16px] text-[#18181B]/60">
+          <p className="mt-3 text-[16px] text-[#111111]/60">
             From &ldquo;we should do a trip&rdquo; to &ldquo;that was the best trip ever&rdquo; &mdash; one app.
           </p>
 
           {/* 4 Steps */}
           <div className="mt-12 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
             {/* Step 1 — Explore */}
-            <div className="rounded-[10px] border border-[#18181B]/10 bg-white p-6">
-              <Search className="mb-4 h-7 w-7 text-[#0D7377]" />
-              <h3 className="mb-2 text-lg font-black uppercase text-[#18181B]">Explore</h3>
-              <p className="text-sm leading-relaxed text-[#71717A]">
+            <div className="rounded-[10px] bg-white p-6 shadow-sm">
+              <Search className="mb-4 h-7 w-7 text-[#2D5A3D]" />
+              <h3 className="mb-2 text-lg font-semibold text-[#111111]">Explore</h3>
+              <p className="text-sm leading-relaxed text-[#8A8A8A]">
                 50+ curated destinations with real pricing and insider intel
               </p>
             </div>
             {/* Step 2 — Coordinate */}
-            <div className="rounded-[10px] border border-[#18181B]/10 bg-white p-6">
-              <Users className="mb-4 h-7 w-7 text-[#0D7377]" />
-              <h3 className="mb-2 text-lg font-black uppercase text-[#18181B]">Coordinate</h3>
-              <p className="text-sm leading-relaxed text-[#71717A]">
+            <div className="rounded-[10px] bg-white p-6 shadow-sm">
+              <Users className="mb-4 h-7 w-7 text-[#2D5A3D]" />
+              <h3 className="mb-2 text-lg font-semibold text-[#111111]">Coordinate</h3>
+              <p className="text-sm leading-relaxed text-[#8A8A8A]">
                 One link. Your crew commits, votes on dates, and locks in.
               </p>
             </div>
             {/* Step 3 — Play */}
-            <div className="rounded-[10px] border border-[#18181B]/10 bg-white p-6">
-              <Gamepad2 className="mb-4 h-7 w-7 text-[#0D7377]" />
-              <h3 className="mb-2 text-lg font-black uppercase text-[#18181B]">Play</h3>
-              <p className="text-sm leading-relaxed text-[#71717A]">
+            <div className="rounded-[10px] bg-white p-6 shadow-sm">
+              <Gamepad2 className="mb-4 h-7 w-7 text-[#2D5A3D]" />
+              <h3 className="mb-2 text-lg font-semibold text-[#111111]">Play</h3>
+              <p className="text-sm leading-relaxed text-[#8A8A8A]">
                 Live scorecards, skins, Nassau bets — calculated automatically
               </p>
             </div>
             {/* Step 4 — Settle */}
-            <div className="rounded-[10px] border border-[#18181B]/10 bg-white p-6">
-              <CreditCard className="mb-4 h-7 w-7 text-[#0D7377]" />
-              <h3 className="mb-2 text-lg font-black uppercase text-[#18181B]">Settle</h3>
-              <p className="text-sm leading-relaxed text-[#71717A]">
+            <div className="rounded-[10px] bg-white p-6 shadow-sm">
+              <CreditCard className="mb-4 h-7 w-7 text-[#2D5A3D]" />
+              <h3 className="mb-2 text-lg font-semibold text-[#111111]">Settle</h3>
+              <p className="text-sm leading-relaxed text-[#8A8A8A]">
                 Who owes who. One tap to Venmo. No spreadsheets.
               </p>
             </div>
@@ -213,7 +214,7 @@ export default async function Home() {
           <div className="mt-10">
             <Link
               href="/explore"
-              className="inline-block rounded-[10px] bg-[#0D7377] px-8 py-4 text-[16px] font-medium text-[#F3EDE4] transition-colors hover:bg-[#0b6264]"
+              className="inline-block rounded-[10px] bg-[#2D5A3D] px-8 py-4 text-[16px] font-medium text-[#F2F0EB] transition-colors hover:bg-[#244B33]"
             >
               Explore Destinations →
             </Link>
@@ -222,12 +223,13 @@ export default async function Home() {
       </section>
 
       {/* ═══ SECTION 3 — WHERE TO NEXT? ═══ */}
-      <section className="border-t border-[#18181B]/10 bg-[#F3EDE4] px-6 py-24 lg:px-16">
+      <section className="border-t border-[#111111]/10 bg-[#F2F0EB] px-6 py-24 lg:px-16">
         <div className="mx-auto max-w-6xl">
-          <h2 className="text-[32px] font-black uppercase tracking-tight text-[#18181B] sm:text-[40px]">
-            WHERE TO NEXT?
+          <p className="font-sans text-[11px] font-medium uppercase tracking-[0.08em] text-[#5C5C5C] mb-2">Destinations</p>
+          <h2 className="font-headline text-[28px] font-medium tracking-tight text-[#111111] sm:text-[40px]">
+            Where to Next?
           </h2>
-          <p className="mt-3 text-[16px] text-[#18181B]/60">
+          <p className="mt-3 text-[16px] text-[#111111]/60">
             50+ curated golf trips. Real courses. Real pricing.
           </p>
 
@@ -237,20 +239,20 @@ export default async function Home() {
               <Link
                 key={dest.id}
                 href={`/explore#${dest.id}`}
-                className="group rounded-[10px] border border-[#18181B]/10 bg-white p-6 transition-all hover:shadow-md"
+                className="group rounded-[10px] bg-white p-6 shadow-sm transition-all hover:shadow-md"
               >
                 <div className="flex items-start justify-between">
-                  <h3 className="text-lg font-black text-[#18181B] group-hover:text-[#D94F2B] transition-colors">
+                  <h3 className="text-lg font-semibold text-[#111111] group-hover:text-[#2D5A3D] transition-colors">
                     {dest.name}
                   </h3>
-                  <span className="text-sm font-bold text-[#0D7377]">{dest.price}</span>
+                  <span className="text-sm font-bold text-[#2D5A3D]">{dest.price}</span>
                 </div>
-                <p className="mt-1 text-xs text-[#71717A]">{dest.info}</p>
+                <p className="mt-1 text-xs text-[#8A8A8A]">{dest.info}</p>
                 <div className="mt-3 flex flex-wrap gap-1.5">
                   {dest.vibes.map((vibe) => (
                     <span
                       key={vibe}
-                      className="rounded-full bg-[#0D7377]/10 px-2.5 py-0.5 text-xs font-medium text-[#0D7377]"
+                      className="rounded-full bg-[#2D5A3D]/10 px-2.5 py-0.5 text-xs font-medium text-[#2D5A3D]"
                     >
                       {vibe}
                     </span>
@@ -264,7 +266,7 @@ export default async function Home() {
           <div className="mt-10">
             <Link
               href="/explore"
-              className="inline-block rounded-[10px] bg-[#0D7377] px-8 py-4 text-[16px] font-medium text-[#F3EDE4] transition-colors hover:bg-[#0b6264]"
+              className="inline-block rounded-[10px] bg-[#2D5A3D] px-8 py-4 text-[16px] font-medium text-[#F2F0EB] transition-colors hover:bg-[#244B33]"
             >
               See all 50+ destinations →
             </Link>
@@ -273,45 +275,46 @@ export default async function Home() {
       </section>
 
       {/* ═══ SECTION 4 — VALUE PROP 2: BETS MADE SIMPLE ═══ */}
-      <section className="border-t border-[#18181B]/10 bg-[#F3EDE4] px-6 pt-24 pb-24 lg:px-16">
+      <section className="border-t border-[#111111]/10 bg-[#F2F0EB] px-6 pt-24 pb-24 lg:px-16">
         <div className="mx-auto max-w-6xl">
-          <h2 className="text-[32px] font-black uppercase tracking-tight text-[#18181B] sm:text-[40px]">
-            BETS MADE SIMPLE.
+          <p className="font-sans text-[11px] font-medium uppercase tracking-[0.08em] text-[#5C5C5C] mb-2">Scoring & Bets</p>
+          <h2 className="font-headline text-[28px] font-medium tracking-tight text-[#111111] sm:text-[40px]">
+            Bets Made Simple.
           </h2>
-          <p className="mt-3 text-[16px] text-[#18181B]/60">
+          <p className="mt-3 text-[16px] text-[#111111]/60">
             Skins. Nassau. Match play. Best ball. Pick your game — we handle the math.
           </p>
 
           {/* Scorecard preview */}
           <div className="mx-auto mt-12 max-w-2xl">
             <div className="overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm">
-              <div className="flex items-center justify-between bg-[#18181B] px-6 py-4">
-                <span className="font-black uppercase text-[#F3EDE4]">
+              <div className="flex items-center justify-between bg-[#111111] px-6 py-4">
+                <span className="font-semibold uppercase text-[#F2F0EB]">
                   TPC SCOTTSDALE
                 </span>
-                <span className="font-black uppercase text-[#D94F2B]">
+                <span className="font-semibold uppercase text-[#2D5A3D]">
                   HOLE 16
                 </span>
               </div>
               <table className="w-full text-sm">
                 <thead>
                   <tr className="bg-gray-50">
-                    <th className="px-6 py-3 text-left text-xs font-medium uppercase text-[#71717A]">
+                    <th className="px-6 py-3 text-left text-xs font-medium uppercase text-[#8A8A8A]">
                       Player
                     </th>
-                    <th className="px-4 py-3 text-center text-xs font-medium uppercase text-[#71717A]">
+                    <th className="px-4 py-3 text-center text-xs font-medium uppercase text-[#8A8A8A]">
                       Front
                     </th>
-                    <th className="px-4 py-3 text-center text-xs font-medium uppercase text-[#71717A]">
+                    <th className="px-4 py-3 text-center text-xs font-medium uppercase text-[#8A8A8A]">
                       Back
                     </th>
-                    <th className="px-4 py-3 text-center text-xs font-medium uppercase text-[#71717A]">
+                    <th className="px-4 py-3 text-center text-xs font-medium uppercase text-[#8A8A8A]">
                       Total
                     </th>
-                    <th className="px-4 py-3 text-center text-xs font-medium uppercase text-[#71717A]">
+                    <th className="px-4 py-3 text-center text-xs font-medium uppercase text-[#8A8A8A]">
                       Skins
                     </th>
-                    <th className="px-4 py-3 text-right text-xs font-medium uppercase text-[#71717A]">
+                    <th className="px-4 py-3 text-right text-xs font-medium uppercase text-[#8A8A8A]">
                       Money
                     </th>
                   </tr>
@@ -319,30 +322,30 @@ export default async function Home() {
                 <tbody>
                   {sampleScorecard.map((player, i) => (
                     <tr key={player.name} className="border-b border-gray-100">
-                      <td className="px-6 py-3 font-black text-[#18181B]">
+                      <td className="px-6 py-3 font-semibold text-[#111111]">
                         {player.name}
                       </td>
-                      <td className="px-4 py-3 text-center text-[#71717A]">
+                      <td className="px-4 py-3 text-center text-[#8A8A8A]">
                         {player.front}
                       </td>
-                      <td className="px-4 py-3 text-center text-[#71717A]">
+                      <td className="px-4 py-3 text-center text-[#8A8A8A]">
                         {player.back}
                       </td>
                       <td
-                        className={`px-4 py-3 text-center font-black ${
-                          i === 0 ? "text-[#D94F2B]" : "text-[#18181B]"
+                        className={`px-4 py-3 text-center font-semibold ${
+                          i === 0 ? "text-[#2D5A3D]" : "text-[#111111]"
                         }`}
                       >
                         {player.total}
                       </td>
-                      <td className="px-4 py-3 text-center text-[#71717A]">
+                      <td className="px-4 py-3 text-center text-[#8A8A8A]">
                         {player.skins}
                       </td>
                       <td
-                        className={`px-4 py-3 text-right font-black ${
+                        className={`px-4 py-3 text-right font-semibold ${
                           player.money.startsWith("+")
                             ? "text-emerald-600"
-                            : "text-[#D94F2B]"
+                            : "text-[#C4423B]"
                         }`}
                       >
                         {player.money}
@@ -353,11 +356,11 @@ export default async function Home() {
               </table>
             </div>
 
-            <p className="mt-8 text-center text-[16px] text-[#18181B]/60">
+            <p className="mt-8 text-center text-[16px] text-[#111111]/60">
               Commissioner Mode is free. Forever.{" "}
               <Link
                 href="/login?redirect=/rounds/new"
-                className="font-medium text-[#D94F2B] underline underline-offset-2 hover:text-[#c4442a]"
+                className="font-medium text-[#2D5A3D] underline underline-offset-2 hover:text-[#244B33]"
               >
                 Start a round →
               </Link>
@@ -367,124 +370,125 @@ export default async function Home() {
       </section>
 
       {/* ═══ SECTION 5 — FOUNDING MEMBERS + PRICING ═══ */}
-      <section className="border-t border-[#18181B]/10 bg-[#F3EDE4] px-6 py-24 lg:px-16">
+      <section className="border-t border-[#111111]/10 bg-[#F2F0EB] px-6 py-24 lg:px-16">
         <div className="mx-auto max-w-6xl">
-          <h2 className="mb-16 text-4xl font-black uppercase tracking-tighter text-[#18181B] md:text-5xl">
-            PICK YOUR PLAY.
+          <p className="font-sans text-[11px] font-medium uppercase tracking-[0.08em] text-[#5C5C5C] mb-2">Pricing</p>
+          <h2 className="font-headline mb-16 text-4xl font-medium tracking-tighter text-[#111111] md:text-5xl">
+            Pick Your Play.
           </h2>
           <div className="mx-auto grid max-w-4xl gap-8 md:grid-cols-2">
             {/* Founding Members card */}
-            <div className="rounded-2xl border border-[#0D7377]/20 bg-white p-10 shadow-sm">
-              <h3 className="mb-4 text-2xl font-black uppercase text-[#18181B]">
-                FOUNDING MEMBERS
+            <div className="rounded-2xl bg-white p-10 shadow-sm">
+              <h3 className="font-headline mb-4 text-2xl font-medium text-[#111111]">
+                Founding Members
               </h3>
-              <p className="mb-4 text-[#71717A]">
+              <p className="mb-4 text-[#8A8A8A]">
                 88 founding member spots remaining. Lock in $49.99/yr — the price never goes up.
               </p>
               <div className="mb-6">
-                <span className="text-4xl font-black text-[#18181B]">$49.99</span>
-                <span className="text-sm text-[#71717A]">/year</span>
-                <span className="mt-1 block text-sm text-[#71717A]">Lock in this rate forever.</span>
+                <span className="text-4xl font-semibold text-[#111111]">$49.99</span>
+                <span className="text-sm text-[#8A8A8A]">/year</span>
+                <span className="mt-1 block text-sm text-[#8A8A8A]">Lock in this rate forever.</span>
               </div>
               <div className="mb-6 space-y-2">
                 <div className="flex items-center gap-2">
-                  <CheckCircle2 className="h-4 w-4 text-[#0D7377]" />
-                  <span className="text-sm text-[#71717A]">Founding Member badge</span>
+                  <CheckCircle2 className="h-4 w-4 text-[#2D5A3D]" />
+                  <span className="text-sm text-[#8A8A8A]">Founding Member badge</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <CheckCircle2 className="h-4 w-4 text-[#0D7377]" />
-                  <span className="text-sm text-[#71717A]">Priority access</span>
+                  <CheckCircle2 className="h-4 w-4 text-[#2D5A3D]" />
+                  <span className="text-sm text-[#8A8A8A]">Priority access</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <CheckCircle2 className="h-4 w-4 text-[#0D7377]" />
-                  <span className="text-sm text-[#71717A]">All Pro features</span>
+                  <CheckCircle2 className="h-4 w-4 text-[#2D5A3D]" />
+                  <span className="text-sm text-[#8A8A8A]">All Pro features</span>
                 </div>
               </div>
-              <p className="mb-2 text-sm text-[#71717A]">
+              <p className="mb-2 text-sm text-[#8A8A8A]">
                 88 of 100 spots remaining
               </p>
               <div className="h-1.5 rounded-full bg-gray-200">
                 <div
-                  className="h-1.5 rounded-full bg-[#0D7377]"
+                  className="h-1.5 rounded-full bg-[#2D5A3D]"
                   style={{ width: "12%" }}
                 />
               </div>
               <Link
                 href="/login"
-                className="mt-6 block w-full rounded-lg bg-[#D94F2B] py-3 text-center text-sm font-black uppercase text-white transition-colors hover:bg-[#c4442a]"
+                className="mt-6 block w-full rounded-lg bg-[#2D5A3D] py-3 text-center text-sm font-semibold uppercase text-white transition-colors hover:bg-[#244B33]"
               >
                 CLAIM YOUR SPOT
               </Link>
             </div>
 
             {/* Pricing card */}
-            <div className="rounded-2xl border border-gray-200 bg-white p-10 shadow-sm">
-              <h3 className="mb-1 text-xl font-black text-[#18181B]">
+            <div className="rounded-2xl bg-white p-10 shadow-sm">
+              <h3 className="mb-1 text-xl font-semibold text-[#111111]">
                 Free to keep score.
               </h3>
-              <p className="mb-8 text-sm text-[#71717A]">
+              <p className="mb-8 text-sm text-[#8A8A8A]">
                 Pay when money&apos;s on the line.
               </p>
 
               {/* Tier 1 — Commissioner */}
-              <div className="mb-3 rounded-xl bg-[#F3EDE4] p-4">
+              <div className="mb-3 rounded-xl bg-[#F2F0EB] p-4">
                 <div className="flex items-center justify-between">
-                  <span className="text-sm font-black uppercase text-[#18181B]">
+                  <span className="text-sm font-semibold uppercase text-[#111111]">
                     COMMISSIONER
                   </span>
-                  <span className="font-black text-[#18181B]">$0 forever</span>
+                  <span className="font-semibold text-[#111111]">$0 forever</span>
                 </div>
                 <div className="mt-2 space-y-1">
-                  <p className="text-xs text-[#71717A]">Score rounds, basic skins tracking</p>
-                  <p className="text-xs text-[#71717A]">Shareable recap link</p>
-                  <p className="text-xs text-[#71717A]">No bet tracking, no trips</p>
+                  <p className="text-xs text-[#8A8A8A]">Score rounds, basic skins tracking</p>
+                  <p className="text-xs text-[#8A8A8A]">Shareable recap link</p>
+                  <p className="text-xs text-[#8A8A8A]">No bet tracking, no trips</p>
                 </div>
               </div>
 
               {/* Tier 2 — Nassau Pro */}
-              <div className="mb-3 rounded-xl border border-[#D94F2B] bg-[#F3EDE4] p-4">
+              <div className="mb-3 rounded-xl border border-[#2D5A3D] bg-[#F2F0EB] p-4">
                 <div className="flex items-center justify-between">
-                  <span className="text-sm font-black uppercase text-[#D94F2B]">
+                  <span className="text-sm font-semibold uppercase text-[#2D5A3D]">
                     NASSAU PRO
                   </span>
-                  <span className="font-black text-[#18181B]">$6.99/mo</span>
+                  <span className="font-semibold text-[#111111]">$6.99/mo</span>
                 </div>
                 <div className="mt-2 space-y-1">
-                  <p className="text-xs text-[#71717A]">Bet tracking + settlements</p>
-                  <p className="text-xs text-[#71717A]">Trip planning + expenses</p>
-                  <p className="text-xs text-[#71717A]">Live scorecard</p>
+                  <p className="text-xs text-[#8A8A8A]">Bet tracking + settlements</p>
+                  <p className="text-xs text-[#8A8A8A]">Trip planning + expenses</p>
+                  <p className="text-xs text-[#8A8A8A]">Live scorecard</p>
                 </div>
               </div>
 
               {/* Tier 3 — Founding Member */}
-              <div className="mb-3 rounded-xl border-2 border-[#C9A54E] bg-[#18181B] p-4">
+              <div className="mb-3 rounded-xl border-2 border-[#B8976A] bg-[#111111] p-4">
                 <div className="flex items-center justify-between">
-                  <span className="text-sm font-black uppercase text-[#C9A54E]">
+                  <span className="text-sm font-semibold uppercase text-[#B8976A]">
                     FOUNDING MEMBER
                   </span>
                   <div className="flex items-center">
-                    <span className="font-black text-[#F3EDE4]">$49.99/yr</span>
-                    <span className="ml-2 rounded bg-[#C9A54E] px-2 py-0.5 text-xs font-black uppercase text-white">
+                    <span className="font-semibold text-[#F2F0EB]">$49.99/yr</span>
+                    <span className="ml-2 rounded bg-[#B8976A] px-2 py-0.5 text-xs font-semibold uppercase text-white">
                       LIMITED
                     </span>
                   </div>
                 </div>
                 <div className="mt-2 space-y-1">
-                  <p className="text-xs text-[#F3EDE4]/60">All Pro features included</p>
-                  <p className="text-xs text-[#F3EDE4]/60">Founding Member badge forever</p>
-                  <p className="text-xs text-[#F3EDE4]/60">Rate locked — never increases</p>
+                  <p className="text-xs text-[#F2F0EB]/60">All Pro features included</p>
+                  <p className="text-xs text-[#F2F0EB]/60">Founding Member badge forever</p>
+                  <p className="text-xs text-[#F2F0EB]/60">Rate locked — never increases</p>
                 </div>
               </div>
 
               <Link
                 href="/login"
-                className="mt-4 block w-full rounded-lg bg-[#D94F2B] py-3 text-center text-sm font-black uppercase text-white"
+                className="mt-4 block w-full rounded-lg bg-[#2D5A3D] py-3 text-center text-sm font-semibold uppercase text-white"
               >
                 START FREE TRIAL
               </Link>
               <Link
                 href="/login"
-                className="mt-2 block w-full rounded-lg bg-[#C9A54E] py-3 text-center text-sm font-black uppercase text-white"
+                className="mt-2 block w-full rounded-lg bg-[#B8976A] py-3 text-center text-sm font-semibold uppercase text-white"
               >
                 CLAIM FOUNDING SPOT — $49.99/YR
               </Link>
@@ -494,48 +498,48 @@ export default async function Home() {
       </section>
 
       {/* ═══ RECENT ARTICLES ═══ */}
-      <section className="bg-[#F3EDE4] px-6 py-16 lg:px-16">
+      <section className="bg-[#F2F0EB] px-6 py-16 lg:px-16">
         <div className="mx-auto max-w-6xl">
-          <h2 className="mb-8 text-2xl font-black uppercase tracking-tighter text-[#18181B]">
-            LATEST FROM THE BLOG
+          <h2 className="mb-8 font-headline text-[28px] font-medium tracking-tight text-[#111111]">
+            Latest From the Blog
           </h2>
           <RecentArticles />
         </div>
       </section>
 
       {/* ═══ FOOTER ═══ */}
-      <footer className="bg-[#18181B] px-6 py-16 text-center">
-        <p className="mb-2 text-2xl font-black text-[#F3EDE4]">NASSAU</p>
-        <p className="mb-8 text-sm text-[#F3EDE4]/60">
+      <footer className="bg-[#111111] px-6 py-16 text-center">
+        <p className="mb-2 font-headline text-[32px] font-medium text-[#F2F0EB]">Nassau</p>
+        <p className="mb-8 text-sm text-[#F2F0EB]/60">
           Built by a golfer, for golfers.
         </p>
         <div className="mb-6 flex justify-center gap-8">
           <a
             href="mailto:grayson@nassau.golf"
-            className="text-sm text-[#71717A] transition-colors hover:text-[#F3EDE4]"
+            className="text-sm text-[#8A8A8A] transition-colors hover:text-[#F2F0EB]"
           >
             Feedback
           </a>
           <Link
             href="/privacy"
-            className="text-sm text-[#71717A] transition-colors hover:text-[#F3EDE4]"
+            className="text-sm text-[#8A8A8A] transition-colors hover:text-[#F2F0EB]"
           >
             Privacy
           </Link>
           <Link
             href="/terms"
-            className="text-sm text-[#71717A] transition-colors hover:text-[#F3EDE4]"
+            className="text-sm text-[#8A8A8A] transition-colors hover:text-[#F2F0EB]"
           >
             Terms
           </Link>
           <a
             href="mailto:support@nassau.golf"
-            className="text-sm text-[#71717A] transition-colors hover:text-[#F3EDE4]"
+            className="text-sm text-[#8A8A8A] transition-colors hover:text-[#F2F0EB]"
           >
             Support
           </a>
         </div>
-        <p className="text-xs text-[#71717A]">
+        <p className="text-xs text-[#8A8A8A]">
           © 2026 Nassau Golf. All rights reserved.
         </p>
       </footer>
