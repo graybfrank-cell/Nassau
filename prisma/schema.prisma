@@ -224,6 +224,7 @@ model MarketingPartnerships {
 model Waitlists {
   id         String   @id @default(uuid()) @db.Uuid
   email      String   @unique
+  source     String   @default("landing")
   created_at DateTime @default(now()) @db.Timestamptz()
 
   @@map("waitlist")

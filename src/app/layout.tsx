@@ -27,24 +27,24 @@ const geistMono = localFont({
 
 export const metadata: Metadata = {
   title: {
-    default: "Nassau — The Golf Trip Companion",
+    default: "Nassau — All Golf Trips. One Link.",
     template: "%s | Nassau",
   },
   description:
-    "Nassau is the operating system for golf trips. Plan trips, coordinate your crew, track rounds, and settle bets — all in one app.",
+    "The operating system for golf trips. Plan it. Commit the crew. Play the rounds. Settle the bets. Launching April 2026.",
   metadataBase: new URL("https://nassau.golf"),
   openGraph: {
-    title: "Nassau — The Golf Trip Companion",
+    title: "Nassau — All Golf Trips. One Link.",
     description:
-      "Nassau is the operating system for golf trips. Plan trips, coordinate your crew, track rounds, and settle bets — all in one app.",
+      "The operating system for golf trips. Plan it. Commit the crew. Play the rounds. Settle the bets. Launching April 2026.",
     url: "https://nassau.golf",
     siteName: "Nassau",
     images: [
       {
-        url: "/api/og/default?title=Nassau&subtitle=The Golf Trip Companion",
+        url: "/api/og/default?title=Nassau&subtitle=All%20Golf%20Trips.%20One%20Link.",
         width: 1200,
         height: 630,
-        alt: "Nassau — The Golf Trip Companion",
+        alt: "Nassau — All Golf Trips. One Link.",
       },
     ],
     locale: "en_US",
@@ -52,10 +52,10 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Nassau — The Golf Trip Companion",
+    title: "Nassau — All Golf Trips. One Link.",
     description:
-      "Nassau is the operating system for golf trips. Plan trips, coordinate your crew, track rounds, and settle bets — all in one app.",
-    images: ["/api/og/default?title=Nassau&subtitle=The Golf Trip Companion"],
+      "The operating system for golf trips. Plan it. Commit the crew. Play the rounds. Settle the bets. Launching April 2026.",
+    images: ["/api/og/default?title=Nassau&subtitle=All%20Golf%20Trips.%20One%20Link."],
     creator: "@UseNassauGolf",
   },
 };

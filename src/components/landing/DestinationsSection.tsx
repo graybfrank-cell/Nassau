@@ -51,21 +51,18 @@ export default function DestinationsSection() {
     <section className="bg-[#F2F0EB] px-6 py-16 lg:px-16">
       <div className="mx-auto max-w-6xl">
         <p className="text-[11px] font-medium uppercase tracking-[0.08em] text-[#8A8A8A]">
-          Where to next
+          Where captains are planning
         </p>
         <h2 className="mt-3 font-headline text-[36px] font-medium leading-tight tracking-tight text-[#111111] sm:text-[40px]">
-          Explore 50+ golf destinations
+          Trips built on Nassau
         </h2>
-        <p className="mt-3 text-[16px] text-[#111111]/60">
-          50+ curated golf trips. Real courses. Real pricing.
-        </p>
 
         {/* Horizontal scroll */}
         <div className="mt-10 flex gap-5 overflow-x-auto pb-4" style={{ scrollbarWidth: "none" }}>
           {destinations.map((dest) => (
             <Link
               key={dest.id}
-              href={`/explore#${dest.id}`}
+              href={`/trip/preview/${dest.id}`}
               className="group relative h-[420px] w-[280px] flex-shrink-0 overflow-hidden rounded-2xl sm:w-[320px]"
             >
               <Image
@@ -79,7 +76,7 @@ export default function DestinationsSection() {
               {/* Hover button */}
               <div className="absolute inset-0 flex items-center justify-center opacity-0 transition-opacity group-hover:opacity-100">
                 <span className="rounded-full bg-white px-6 py-2.5 text-sm font-semibold text-[#111111]">
-                  Plan this trip
+                  Preview trip →
                 </span>
               </div>
 
@@ -95,14 +92,9 @@ export default function DestinationsSection() {
           ))}
         </div>
 
-        <div className="mt-8">
-          <Link
-            href="/explore"
-            className="text-sm font-medium text-[#2D5A3D] transition-colors hover:text-[#244B33]"
-          >
-            See all destinations &rarr;
-          </Link>
-        </div>
+        <p className="mt-8 text-center text-[#8A8A8A]">
+          50+ more destinations coming at launch
+        </p>
       </div>
     </section>
   );

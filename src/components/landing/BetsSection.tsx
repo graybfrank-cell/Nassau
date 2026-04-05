@@ -1,5 +1,3 @@
-import Link from "next/link";
-
 const sampleScorecard = [
   { name: "Grayson", front: 38, back: 41, total: 79, skins: 3, money: "+$45" },
   { name: "Tyler", front: 42, back: 39, total: 81, skins: 2, money: "+$15" },
@@ -15,16 +13,23 @@ export default function BetsSection() {
           Scoring &amp; Bets
         </p>
         <h2 className="mt-3 font-headline text-[36px] font-medium leading-tight tracking-tight text-[#F2F0EB] sm:text-[40px]">
-          Bets made simple
+          Bets that settle themselves
         </h2>
-        <p className="mt-3 text-[16px] text-white/40">
-          Skins. Nassau. Match play. Best ball. Pick your game — we handle the
-          math.
+        <p className="mt-3 max-w-lg text-[16px] text-white/40">
+          Skins, Nassau, Match Play &mdash; the math is automatic. Payouts are
+          pre-calculated. Settlements are one tap.
         </p>
 
         {/* Scorecard preview */}
         <div className="mx-auto mt-12 max-w-2xl">
-          <div className="overflow-hidden rounded-2xl border border-white/10 bg-white/5 backdrop-blur-sm">
+          <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-white/5 backdrop-blur-sm">
+            {/* Preview badge */}
+            <div className="absolute right-4 top-4 z-10 rounded-full border border-white/20 bg-white/10 px-3 py-1 backdrop-blur-sm">
+              <span className="text-xs font-medium text-white/70">
+                Preview — Live at launch
+              </span>
+            </div>
+
             <div className="flex items-center justify-between px-6 py-4">
               <span className="text-sm font-semibold uppercase tracking-wider text-[#F2F0EB]">
                 TPC Scottsdale
@@ -97,13 +102,7 @@ export default function BetsSection() {
           </div>
 
           <p className="mt-8 text-center text-[16px] text-white/40">
-            Commissioner Mode is free. Forever.{" "}
-            <Link
-              href="/login?redirect=/rounds/new"
-              className="font-medium text-[#2D5A3D] underline underline-offset-2 hover:text-[#3a7a52]"
-            >
-              Start a round &rarr;
-            </Link>
+            Commissioner Mode is free. Forever.
           </p>
         </div>
       </div>
