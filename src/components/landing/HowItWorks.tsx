@@ -1,25 +1,23 @@
-import Link from "next/link";
-
 const steps = [
   {
     num: "01",
-    title: "Explore",
-    desc: "50+ curated destinations with real pricing and insider intel.",
+    title: "Plan",
+    desc: "Pick a destination. Set the dates. Build the itinerary.",
   },
   {
     num: "02",
-    title: "Coordinate",
-    desc: "One link. Your crew commits, votes on dates, and locks in.",
+    title: "Commit",
+    desc: "Share one link. Your crew locks in. Dues tracked automatically.",
   },
   {
     num: "03",
     title: "Play",
-    desc: "Live scorecards, skins, Nassau bets — calculated automatically.",
+    desc: "Live scoring. Skins. Nassau bets. The math is automatic.",
   },
   {
     num: "04",
     title: "Settle",
-    desc: "Who owes who. One tap to Venmo. No spreadsheets.",
+    desc: "Who owes who. One tap to Venmo. Done.",
   },
 ];
 
@@ -31,13 +29,8 @@ export default function HowItWorks() {
           How it works
         </p>
         <h2 className="mt-3 font-headline text-[36px] font-medium leading-tight tracking-tight text-[#111111] sm:text-[40px]">
-          A new standard in golf
-          <br className="hidden sm:block" /> trip coordination
+          What &ldquo;one link&rdquo; actually means
         </h2>
-        <p className="mt-3 max-w-lg text-[16px] text-[#111111]/60">
-          From &ldquo;we should do a trip&rdquo; to &ldquo;that was the best
-          trip ever&rdquo; &mdash; one app.
-        </p>
 
         <div className="mt-14 grid grid-cols-1 gap-6 sm:grid-cols-2">
           {steps.map((step) => (
@@ -56,15 +49,6 @@ export default function HowItWorks() {
               </p>
             </div>
           ))}
-        </div>
-
-        <div className="mt-10">
-          <Link
-            href="/explore"
-            className="inline-block rounded-full bg-[#2D5A3D] px-8 py-3 text-sm font-semibold text-[#F2F0EB] transition-colors hover:bg-[#244B33]"
-          >
-            Explore Destinations &rarr;
-          </Link>
         </div>
       </div>
     </section>

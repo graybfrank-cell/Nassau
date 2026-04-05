@@ -85,22 +85,16 @@ export default function NavBar({ user }: { user: User }) {
             </form>
           </>
         ) : (
-          <>
-            <Link
-              href="/login"
-              className={`text-sm font-bold transition-colors ${
-                scrolled ? "text-[#2D5A3D]" : "text-[#2D5A3D]"
-              }`}
-            >
-              Login
-            </Link>
-            <Link
-              href="/login"
-              className="rounded-lg bg-[#2D5A3D] px-4 py-2 text-sm font-semibold uppercase text-white transition-colors hover:bg-[#244A32]"
-            >
-              Get Started Free
-            </Link>
-          </>
+          <a
+            href="mailto:hello@nassau.golf"
+            className={`text-sm font-medium transition-colors ${
+              scrolled
+                ? "text-[#111111] hover:text-[#2D5A3D]"
+                : "text-white/70 hover:text-white"
+            }`}
+          >
+            hello@nassau.golf
+          </a>
         )}
       </div>
     </nav>

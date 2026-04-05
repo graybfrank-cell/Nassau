@@ -1,51 +1,98 @@
+"use client";
+
+import { useState, FormEvent } from "react";
 import Link from "next/link";
 
 export default function CTASection() {
+  const [email, setEmail] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
+  const [error, setError] = useState("");
+  const [count, setCount] = useState<number | null>(null);
+
+  async function handleSubmit(e: FormEvent) {
+    e.preventDefault();
+    setError("");
+    setLoading(true);
+
+    try {
+      const res = await fetch("/api/waitlist", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+      const data = await res.json();
+
+      if (!res.ok) {
+        setError(data.error || "Something went wrong. Try again.");
+        return;
+      }
+
+      setSuccess(true);
+      if (data.count) setCount(data.count);
+    } catch {
+      setError("Something went wrong. Try again.");
+    } finally {
+      setLoading(false);
+    }
+  }
+
   return (
     <section className="bg-[#111111] px-6 py-24 text-center">
       <div className="mx-auto max-w-2xl">
-        <h2 className="font-headline text-[40px] font-medium leading-tight text-white sm:text-[52px]">
-          Your golf trip,
+        <h2 className="font-headline text-[56px] font-medium leading-[1.0] text-white">
+          All golf trips.
           <br />
-          handled.
+          One link.
         </h2>
         <p className="mt-4 text-[16px] text-[#8A8A8A]">
-          Plan trips. Track rounds. Settle bets.
+          Be first in line when Nassau opens to captains in April.
         </p>
 
-        {/* Email CTA */}
-        <div className="mx-auto mt-10 flex max-w-md items-center overflow-hidden rounded-full bg-white/10 backdrop-blur">
-          <input
-            type="email"
-            placeholder="Enter your email"
-            className="flex-1 bg-transparent px-6 py-3.5 text-sm text-white placeholder-white/40 outline-none"
-          />
-          <Link
-            href="/login"
-            className="mr-1.5 flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-[#2D5A3D] transition-colors hover:bg-[#244B33]"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-4 w-4 text-white"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              strokeWidth={2}
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M14 5l7 7m0 0l-7 7m7-7H3"
-              />
-            </svg>
-          </Link>
+        {/* Waitlist form */}
+        <div className="mx-auto mt-10 max-w-md">
+          {success ? (
+            <div>
+              <p className="text-[16px] font-medium text-white">
+                ✓ You&apos;re on the list. We&apos;ll be in touch.
+              </p>
+              {count && (
+                <p className="mt-2 text-[13px] text-white/50">
+                  You&apos;re captain #{count.toLocaleString()}
+                </p>
+              )}
+            </div>
+          ) : (
+            <form onSubmit={handleSubmit}>
+              <div className="flex items-center overflow-hidden rounded-full bg-white/10 backdrop-blur">
+                <input
+                  type="email"
+                  required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="your@email.com"
+                  className="flex-1 bg-transparent px-6 py-3.5 text-sm text-white placeholder-white/40 outline-none"
+                />
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="mr-1.5 whitespace-nowrap rounded-full bg-[#2D5A3D] px-6 py-3 text-sm text-white transition-colors hover:bg-[#244B33] disabled:opacity-50"
+                >
+                  {loading ? "Joining…" : "Join waitlist →"}
+                </button>
+              </div>
+              {error && (
+                <p className="mt-2 text-[13px] text-red-400">{error}</p>
+              )}
+            </form>
+          )}
         </div>
 
         {/* Social icons */}
         <div className="mt-8 flex items-center justify-center gap-6">
           {/* X / Twitter */}
           <a
-            href="https://x.com"
+            href="https://x.com/UseNassauGolf"
             target="_blank"
             rel="noopener noreferrer"
             className="text-[#8A8A8A] transition-colors hover:text-white"
@@ -56,7 +103,7 @@ export default function CTASection() {
           </a>
           {/* Instagram */}
           <a
-            href="https://instagram.com"
+            href="https://instagram.com/golfnassau"
             target="_blank"
             rel="noopener noreferrer"
             className="text-[#8A8A8A] transition-colors hover:text-white"
@@ -96,7 +143,7 @@ export default function CTASection() {
         </div>
 
         <p className="mt-6 text-xs text-[#8A8A8A]">
-          &copy; 2026 Nassau Golf. All rights reserved.
+          Nassau &mdash; Built in Austin, TX &middot; Launching April 2026
         </p>
       </div>
     </section>

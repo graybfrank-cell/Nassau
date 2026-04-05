@@ -11,14 +11,15 @@ import BetsSection from "@/components/landing/BetsSection";
 import CTASection from "@/components/landing/CTASection";
 
 export const metadata: Metadata = {
-  title: "Nassau — Your Golf Trip, Handled.",
+  title: "Nassau — All Golf Trips. One Link.",
   description:
-    "Nassau is the operating system for golf trips. Plan trips, coordinate your crew, track rounds, and settle bets — all in one app.",
+    "The operating system for golf trips. Plan it. Commit the crew. Play the rounds. Settle the bets. Launching April 2026.",
   openGraph: {
-    title: "Nassau — Your Golf Trip, Handled.",
-    description: "The operating system for golf trips.",
+    title: "Nassau — All Golf Trips. One Link.",
+    description:
+      "The operating system for golf trips. Plan it. Commit the crew. Play the rounds. Settle the bets. Launching April 2026.",
     images: [
-      "/api/og/default?title=Plan%20Trips.%0ATrack%20Rounds.%0ASettle%20Bets.&subtitle=The%20app%20for%20groups%20who%20actually%20play.",
+      "/api/og/default?title=All%20Golf%20Trips.%0AOne%20Link.&subtitle=Launching%20April%202026",
     ],
   },
 };
@@ -154,10 +155,10 @@ export default async function Home() {
                 />
               </div>
               <Link
-                href="/login"
+                href="/#waitlist"
                 className="mt-6 block w-full rounded-full bg-[#2D5A3D] py-3 text-center text-sm font-semibold text-white transition-colors hover:bg-[#244B33]"
               >
-                Claim your spot
+                Join waitlist
               </Link>
             </div>
 
@@ -221,16 +222,16 @@ export default async function Home() {
               </div>
 
               <Link
-                href="/login"
+                href="/#waitlist"
                 className="mt-4 block w-full rounded-full bg-[#2D5A3D] py-3 text-center text-sm font-semibold text-white"
               >
-                Start free trial
+                Join waitlist
               </Link>
               <Link
-                href="/login"
+                href="/#waitlist"
                 className="mt-2 block w-full rounded-full bg-[#B8976A] py-3 text-center text-sm font-semibold text-white"
               >
-                Claim founding spot — $49.99/yr
+                Join waitlist — Founding spots available
               </Link>
             </div>
           </div>
