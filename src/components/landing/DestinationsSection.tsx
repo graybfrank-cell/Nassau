@@ -34,7 +34,7 @@ const destinations = [
     name: "Pebble Beach, CA",
     price: "from $3,500",
     info: "3N · 3 rounds",
-    id: "pebble-beach-monterey-ca",
+    id: "pebble-beach-ca",
     img: "https://images.unsplash.com/photo-1596727362302-b8d891c42ab8?q=80&w=800&auto=format&fit=crop",
   },
   {
