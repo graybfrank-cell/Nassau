@@ -4,7 +4,7 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 
-const PUBLIC_ROUTES = ["/", "/explore", "/pricing", "/founding", "/blog"];
+const PUBLIC_ROUTES = ["/", "/explore", "/pricing", "/founding", "/blog", "/trip/preview"];
 const APP_ROUTES = ["/dashboard", "/rounds", "/trips", "/scorecard", "/settlements", "/profile"];
 
 type User = { email?: string } | null;
