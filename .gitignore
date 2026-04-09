@@ -47,3 +47,4 @@ next-env.d.ts
 marketing/carousels/nassau-carousels/node_modules/
 marketing/carousels/nassau-carousels/.remotion/
 marketing/carousels/nassau-carousels/out/
+.env*.local
