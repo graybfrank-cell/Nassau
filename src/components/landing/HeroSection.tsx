@@ -50,19 +50,6 @@ export default function HeroSection() {
       {/* Dark overlay */}
       <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/20 to-black/70" />
 
-      {/* Top bar */}
-      <nav className="relative z-20 flex items-center justify-between px-6 py-5 lg:px-12">
-        <span className="font-headline text-[20px] font-medium text-white">
-          Nassau
-        </span>
-        <a
-          href="mailto:hello@nassau.golf"
-          className="text-sm text-white/70 transition-colors hover:text-white"
-        >
-          hello@nassau.golf
-        </a>
-      </nav>
-
       {/* Frosted glass card — top right */}
       <div className="absolute right-6 top-20 z-20 hidden rounded-2xl border border-white/15 bg-white/10 p-5 backdrop-blur-md lg:right-12 lg:top-24 lg:block">
         <p className="text-sm font-semibold text-white">
