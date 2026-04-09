@@ -33,8 +33,8 @@ export default function PreviewItinerary({
           {itinerary.duration_nights} nights in {destinationName}
         </h2>
         <p className="mt-2 text-sm text-[#8A8A8A]">
-          {itinerary.ideal_group_size} players &middot; ~$
-          {itinerary.estimated_cost_pp.toLocaleString()} per person
+          {itinerary.ideal_group_size ?? "varies"} players &middot; ~$
+          {(itinerary.estimated_cost_pp ?? 0).toLocaleString()} per person
         </p>
 
         <div className="mt-10 space-y-8">
