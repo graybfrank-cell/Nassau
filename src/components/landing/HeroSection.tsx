@@ -41,7 +41,7 @@ export default function HeroSection() {
     <section className="relative flex min-h-screen flex-col overflow-hidden">
       {/* Background image */}
       <Image
-        src="https://images.unsplash.com/photo-1587174486073-ae5e5cff23aa?q=80&w=2070&auto=format&fit=crop"
+        src="/images/hero-backdrop.png"
         alt="Golf course at dawn"
         fill
         priority
