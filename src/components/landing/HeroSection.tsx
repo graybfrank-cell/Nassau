@@ -66,7 +66,7 @@ export default function HeroSection() {
       {/* Frosted glass card — top right */}
       <div className="absolute right-6 top-20 z-20 hidden rounded-2xl border border-white/15 bg-white/10 p-5 backdrop-blur-md lg:right-12 lg:top-24 lg:block">
         <p className="text-sm font-semibold text-white">
-          2,347 captains waiting &middot; April 2026
+          237 captains waiting &middot; May 2026
         </p>
       </div>
 
@@ -118,7 +118,7 @@ export default function HeroSection() {
                 <p className="mt-2 text-[13px] text-red-400">{error}</p>
               )}
               <p className="mt-3 text-[13px] text-white/50">
-                Launching April 2026 · Join 2,347 captains on the waitlist
+                Launching May 2026 · Join 237 captains on the waitlist
               </p>
             </form>
           )}
