@@ -19,7 +19,7 @@ export const metadata: Metadata = {
     description:
       "The operating system for golf trips. Plan it. Commit the crew. Play the rounds. Settle the bets. Launching April 2026.",
     images: [
-      "/api/og/default?title=All%20Golf%20Trips.%0AOne%20Link.&subtitle=Launching%20April%202026",
+      "/og-image.png",
     ],
   },
 };
