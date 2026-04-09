@@ -38,7 +38,7 @@ export default function PreviewItinerary({
         </p>
 
         <div className="mt-10 space-y-8">
-          {itinerary.days.map((day) => (
+          {(itinerary?.days ?? []).map((day) => (
             <div key={day.day} className="relative">
               {/* Day header */}
               <div className="flex items-center gap-3">
@@ -52,7 +52,7 @@ export default function PreviewItinerary({
 
               {/* Timeline items */}
               <div className="ml-4 mt-4 space-y-3 border-l border-[#2D5A3D]/20 pl-7">
-                {day.items.map((item, i) => (
+                {(day.items ?? []).map((item, i) => (
                   <div key={i} className="relative">
                     {/* Dot on the timeline */}
                     <div className="absolute -left-[33px] top-1 h-2 w-2 rounded-full bg-[#2D5A3D]/40" />

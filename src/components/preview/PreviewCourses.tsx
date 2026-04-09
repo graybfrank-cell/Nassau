@@ -16,7 +16,8 @@ function ratingDots(rating: number) {
 }
 
 export default function PreviewCourses({ courses }: { courses: Course[] }) {
-  const display = courses.slice(0, 5);
+  const display = (courses ?? []).slice(0, 5);
+  if (display.length === 0) return null;
 
   return (
     <section className="bg-[#F2F0EB] px-6 py-16 lg:px-16">

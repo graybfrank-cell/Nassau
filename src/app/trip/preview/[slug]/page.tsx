@@ -54,7 +54,7 @@ export default async function TripPreviewPage({ params }: Props) {
   }
 
   const d: Destination = dest;
-  const firstItinerary = Object.values(d.sample_itineraries)[0] ?? null;
+  const firstItinerary = Object.values(d.sample_itineraries ?? {}).find((it) => Array.isArray(it?.days) && it.days.length > 0) ?? null;
 
   return (
     <main>

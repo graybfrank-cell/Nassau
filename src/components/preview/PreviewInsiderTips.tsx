@@ -1,5 +1,5 @@
 export default function PreviewInsiderTips({ tips }: { tips: string[] }) {
-  const display = tips.slice(0, 5);
+  const display = (tips ?? []).slice(0, 5);
   if (display.length === 0) return null;
 
   return (
