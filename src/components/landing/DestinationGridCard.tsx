@@ -1,28 +1,44 @@
+"use client";
+
 import Link from "next/link";
+import Image from "next/image";
+import { useState } from "react";
 
 interface DestinationGridCardProps {
   name: string;
   slug: string;
+  imagePath: string;
 }
 
-export default function DestinationGridCard({ name, slug }: DestinationGridCardProps) {
+export default function DestinationGridCard({ name, slug, imagePath }: DestinationGridCardProps) {
+  const [imgError, setImgError] = useState(false);
+
   return (
     <Link
       href={`/trip/preview/${slug}`}
-      className="group relative aspect-[4/3] overflow-hidden rounded-2xl"
+      className="group relative aspect-square overflow-hidden rounded-2xl transition-all hover:scale-[1.02]"
     >
-      {/* Placeholder gradient — swap for real images later */}
-      <div className="absolute inset-0 bg-gradient-to-br from-[#2D5A3D] to-[#1a3625]" />
+      {imagePath && !imgError ? (
+        <Image
+          src={imagePath}
+          alt={name}
+          fill
+          className="object-cover"
+          onError={() => setImgError(true)}
+        />
+      ) : (
+        <div className="absolute inset-0 bg-gradient-to-br from-[#2D5A3D] to-[#1a3625]" />
+      )}
 
       {/* Bottom gradient overlay */}
-      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+      <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
 
-      {/* Destination name */}
+      {/* Content */}
       <div className="absolute bottom-0 left-0 right-0 p-5">
-        <h3 className="font-headline text-[20px] font-medium text-white">
+        <h3 className="font-headline text-xl font-medium text-white sm:text-2xl">
           {name}
         </h3>
-        <p className="mt-1 text-[11px] font-medium uppercase tracking-[0.08em] text-white/60 transition-colors group-hover:text-[#B8976A]">
+        <p className="mt-1 font-sans text-xs text-[#F2F0EB]/70">
           Preview trip →
         </p>
       </div>

@@ -11,6 +11,16 @@ const featuredDestinations = [
   { name: "St. Andrews, Scotland", price: "from $5,000", info: "4N · 3 rounds", id: "st-andrews-scotland", img: "https://images.unsplash.com/photo-1633078654544-61b3455b9161?q=80&w=800&auto=format&fit=crop" },
 ];
 
+const gridImageMap: Record<string, string> = {
+  "kiawah-island-sc": "/images/destinations/KiwahIslandSCtripcard.png",
+  "kohler-wi": "/images/destinations/Kohler%2C%20WI-tripcard.png",
+  "reynolds-lake-oconee-ga": "/images/destinations/Reynolds%20Lake%20Oconee%2C%20GATripCard.png",
+  "cabo-san-lucas-mx": "/images/destinations/CaboSanLucasTripCard.png",
+  "kapalua-maui-hi": "/images/destinations/Kapalua%2C%20HITrip%20Card.png",
+  "palm-springs-ca": "/images/destinations/PalmSpringsTripCard.png",
+  "hilton-head-sc": "/images/destinations/hilton-head-sc.png",
+};
+
 const exploreDestinations = [
   { name: "Kiawah Island, SC", slug: "kiawah-island-sc" },
   { name: "Kohler / Whistling Straits, WI", slug: "kohler-wi" },
@@ -55,7 +65,7 @@ export default function DestinationsSection() {
         </div>
 
         {/* More destinations grid */}
-        <div className="mt-16">
+        <div className="pt-20 lg:pt-24">
           <p className="text-[11px] font-medium uppercase tracking-[0.08em] text-[#8A8A8A]">
             More destinations
           </p>
@@ -63,14 +73,19 @@ export default function DestinationsSection() {
             Every trip deserves a better captain
           </h2>
 
-          <div className="mt-10 grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
+          <div className="mt-10 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 lg:gap-6">
             {exploreDestinations.map((dest) => (
-              <DestinationGridCard key={dest.slug} name={dest.name} slug={dest.slug} />
+              <DestinationGridCard
+                key={dest.slug}
+                name={dest.name}
+                slug={dest.slug}
+                imagePath={gridImageMap[dest.slug] ?? ""}
+              />
             ))}
           </div>
         </div>
 
-        <p className="mt-8 text-center text-[#8A8A8A]">
+        <p className="mt-12 text-center text-[#8A8A8A]">
           50+ more destinations coming at launch
         </p>
       </div>
