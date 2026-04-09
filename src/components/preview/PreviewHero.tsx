@@ -1,16 +1,18 @@
 import type { Destination } from "@/lib/destination-utils";
 
-function formatCostRange(costs: Destination["avg_cost_per_person_per_day"]) {
-  return `$${costs.budget}–$${costs.premium}`;
+function formatCostRange(costs: Destination["avg_cost_per_person_per_day"] | undefined) {
+  if (!costs) return "—";
+  return `$${costs.budget ?? 0}–$${costs.premium ?? 0}`;
 }
 
-function formatMonths(months: string[]) {
+function formatMonths(months: string[] | undefined) {
+  if (!months || months.length === 0) return "—";
   if (months.length <= 3) return months.join(", ");
   return `${months[0]}–${months[months.length - 1]}`;
 }
 
 export default function PreviewHero({ dest }: { dest: Destination }) {
-  const firstItinerary = Object.values(dest.sample_itineraries)[0];
+  const firstItinerary = Object.values(dest.sample_itineraries ?? {})[0];
 
   return (
     <section className="relative flex min-h-[70vh] flex-col items-center justify-center bg-[#111111] px-6 pt-24 pb-16 text-center">
@@ -23,11 +25,11 @@ export default function PreviewHero({ dest }: { dest: Destination }) {
         </p>
 
         <h1 className="mt-4 font-headline text-[48px] font-medium leading-[1.05] tracking-tight text-white sm:text-[64px]">
-          {dest.destination}
+          {dest.destination ?? "Destination"}
         </h1>
 
         <p className="mx-auto mt-6 max-w-xl text-[16px] leading-relaxed text-white/60">
-          {dest.why_go}
+          {dest.why_go ?? ""}
         </p>
 
         {/* Quick stats row */}
@@ -38,14 +40,14 @@ export default function PreviewHero({ dest }: { dest: Destination }) {
           {firstItinerary && (
             <Stat
               label="Sample trip"
-              value={`${firstItinerary.duration_nights}N · $${firstItinerary.estimated_cost_pp.toLocaleString()}/pp`}
+              value={`${firstItinerary.duration_nights ?? "?"}N · $${(firstItinerary.estimated_cost_pp ?? 0).toLocaleString()}/pp`}
             />
           )}
         </div>
 
         {/* Vibe tags */}
         <div className="mt-8 flex flex-wrap justify-center gap-2">
-          {dest.vibe.map((v) => (
+          {(dest.vibe ?? []).map((v) => (
             <span
               key={v}
               className="rounded-full bg-white/8 px-3 py-1 text-xs text-white/50"
