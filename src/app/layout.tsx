@@ -41,7 +41,7 @@ export const metadata: Metadata = {
     siteName: "Nassau",
     images: [
       {
-        url: "/api/og/default?title=Nassau&subtitle=All%20Golf%20Trips.%20One%20Link.",
+        url: "/og-image.png",
         width: 1200,
         height: 630,
         alt: "Nassau — All Golf Trips. One Link.",
@@ -55,7 +55,7 @@ export const metadata: Metadata = {
     title: "Nassau — All Golf Trips. One Link.",
     description:
       "The operating system for golf trips. Plan it. Commit the crew. Play the rounds. Settle the bets. Launching April 2026.",
-    images: ["/api/og/default?title=Nassau&subtitle=All%20Golf%20Trips.%20One%20Link."],
+    images: ["/og-image.png"],
     creator: "@UseNassauGolf",
   },
 };
