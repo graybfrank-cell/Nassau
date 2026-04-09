@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import {
   getDestinationBySlug,
   LAUNCH_DESTINATION_SLUGS,
+  EXPLORE_DESTINATION_SLUGS,
   type Destination,
 } from "@/lib/destination-utils";
 import PreviewHero from "@/components/preview/PreviewHero";
@@ -14,7 +15,7 @@ import PreviewCTA from "@/components/preview/PreviewCTA";
 type Props = { params: Promise<{ slug: string }> };
 
 export async function generateStaticParams() {
-  return LAUNCH_DESTINATION_SLUGS.map((slug) => ({ slug }));
+  return [...LAUNCH_DESTINATION_SLUGS, ...EXPLORE_DESTINATION_SLUGS].map((slug) => ({ slug }));
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {

@@ -5,7 +5,7 @@ const SLUG_ALIASES: Record<string, string> = {
   "pebble-beach-monterey-ca": "pebble-beach-ca",
 };
 
-/** The 8 launch destinations to statically generate */
+/** The 8 featured launch destinations to statically generate */
 export const LAUNCH_DESTINATION_SLUGS = [
   "bandon-dunes-or",
   "pinehurst-nc",
@@ -15,6 +15,17 @@ export const LAUNCH_DESTINATION_SLUGS = [
   "st-andrews-scotland",
   "streamsong-fl",
   "sand-valley-wi",
+];
+
+/** 7 additional destinations for the Explore grid */
+export const EXPLORE_DESTINATION_SLUGS = [
+  "kiawah-island-sc",
+  "kohler-wi",
+  "reynolds-lake-oconee-ga",
+  "cabo-san-lucas-mx",
+  "kapalua-maui-hi",
+  "palm-springs-ca",
+  "hilton-head-sc",
 ];
 
 export function resolveSlug(slug: string): string {
