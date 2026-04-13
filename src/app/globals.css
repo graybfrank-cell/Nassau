@@ -44,8 +44,8 @@
   --color-signal: #C4423B;
   --color-dark: #111111;
   --color-cream: #F2F0EB;
-  --color-coral: #2D5A3D;
-  --color-teal: #2D5A3D;
+  --color-coral: #D94F2B;
+  --color-teal: #2F4F4F;
   --color-gold: #B8976A;
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);

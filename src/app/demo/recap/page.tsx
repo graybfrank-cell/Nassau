@@ -31,7 +31,7 @@ export default function DemoRecapPage() {
         <span className="inline-block px-3 py-1 bg-black/50 backdrop-blur rounded-full text-xs uppercase tracking-wider mb-3">
           Final
         </span>
-        <h1 className="font-serif text-5xl md:text-6xl tracking-tight">
+        <h1 className="font-headline text-5xl md:text-6xl tracking-tight">
           Pacific Dunes
         </h1>
         <p className="mt-3 text-white/80 flex gap-4">
@@ -56,7 +56,7 @@ export default function DemoRecapPage() {
                   <div>
                     <span className="text-sm font-semibold text-[#1A1A1A]">{p.name}</span>
                     {p.moneyNet !== 0 && (
-                      <span className={`ml-2 text-xs font-medium ${p.moneyNet > 0 ? "text-emerald-600" : "text-red-500"}`}>
+                      <span className={`ml-2 text-xs font-medium ${p.moneyNet > 0 ? "text-nassau" : "text-red-500"}`}>
                         {p.moneyNet > 0 ? "+" : ""}${Math.abs(p.moneyNet)}
                       </span>
                     )}
@@ -78,7 +78,7 @@ export default function DemoRecapPage() {
             {Object.entries(DEMO_SKINS.payouts).filter(([, v]) => v !== 0).sort(([, a], [, b]) => b - a).map(([pid, amount]) => (
               <div key={pid} className="flex items-center justify-between">
                 <span className="text-sm text-[#1A1A1A]">{getCrewName(pid)}</span>
-                <span className={`text-sm font-bold ${amount > 0 ? "text-emerald-600" : "text-red-500"}`}>+${amount}</span>
+                <span className={`text-sm font-bold ${amount > 0 ? "text-nassau" : "text-red-500"}`}>+${amount}</span>
               </div>
             ))}
           </div>

@@ -21,7 +21,7 @@ export default function DemoTripDashboard() {
         height="lg"
         priority
       >
-        <h1 className="font-serif text-4xl md:text-5xl tracking-tight">
+        <h1 className="font-headline text-4xl md:text-5xl tracking-tight">
           {DEMO_TRIP.name}
         </h1>
         <p className="mt-2 text-white/80 text-sm md:text-base flex gap-4">

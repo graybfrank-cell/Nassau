@@ -23,7 +23,7 @@ export default function DemoSettlementsPage() {
         alt="Coastal golf at sunset"
         height="md"
       >
-        <h1 className="font-serif text-3xl md:text-4xl tracking-tight">
+        <h1 className="font-headline text-3xl md:text-4xl tracking-tight">
           Settlements
         </h1>
         <p className="mt-2 text-white/80">Who owes who. Settle up fast.</p>

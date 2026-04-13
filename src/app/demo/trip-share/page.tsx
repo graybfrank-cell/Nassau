@@ -36,7 +36,7 @@ export default function DemoTripSharePage() {
         <p className="text-xs uppercase tracking-widest text-white/70 mb-2">
           You&apos;re invited to
         </p>
-        <h1 className="font-serif text-5xl md:text-6xl tracking-tight">
+        <h1 className="font-headline text-5xl md:text-6xl tracking-tight">
           Bandon Dunes 2026 — The Annual
         </h1>
         <p className="mt-3 text-white/80 flex gap-4 flex-wrap">

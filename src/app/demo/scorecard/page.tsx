@@ -30,7 +30,7 @@ export default function DemoScorecardPage() {
         <span className="inline-block px-3 py-1 bg-black/50 backdrop-blur rounded-full text-xs uppercase tracking-wider mb-3">
           Final
         </span>
-        <h1 className="font-serif text-4xl md:text-5xl tracking-tight">
+        <h1 className="font-headline text-4xl md:text-5xl tracking-tight">
           Pacific Dunes
         </h1>
         <p className="mt-2 text-white/80">Sunday, May 10, 2026</p>
