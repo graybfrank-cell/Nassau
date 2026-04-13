@@ -1,19 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
 import {
-  Flag, Home, Trophy, Map, User, ChevronRight, DollarSign, Users, Calendar, MapPin, Crown,
+  Flag, Home, Trophy, Map, User, ChevronRight, DollarSign, Crown,
 } from "lucide-react";
+import { HeroBackdrop } from "@/components/HeroBackdrop";
 import {
-  DEMO_TRIP, DEMO_CREW, DEMO_ROUNDS, DEMO_STANDINGS, DEMO_SETTLEMENTS_TOTAL, DEMO_ITINERARY,
+  DEMO_TRIP, DEMO_CREW, DEMO_ROUNDS, DEMO_STANDINGS, DEMO_SETTLEMENTS_TOTAL,
 } from "@/lib/demo-data";
-
-function formatDateRange(start: string, end: string) {
-  const s = new Date(start + "T12:00:00");
-  const e = new Date(end + "T12:00:00");
-  return `${s.toLocaleDateString("en-US", { month: "short" })} ${s.getDate()}–${e.getDate()}, ${s.getFullYear()}`;
-}
 
 export default function DemoTripDashboard() {
   const completedRounds = DEMO_ROUNDS.filter((r) => r.status === "completed").length;
@@ -21,26 +15,20 @@ export default function DemoTripDashboard() {
   return (
     <div className="min-h-screen bg-[#111111] pb-32">
       {/* ── HERO BANNER ── */}
-      <div className="relative h-48 sm:h-56 overflow-hidden">
-        <Image
-          src="https://images.unsplash.com/photo-1587174486073-ae5e5cff23aa?q=80&w=2070&auto=format&fit=crop"
-          alt="Bandon Dunes coastline" fill className="object-cover" priority
-        />
-        <div className="absolute inset-0 bg-gradient-to-b from-[#111111]/80 via-[#111111]/60 to-[#111111]" />
-        <div className="relative z-10 flex flex-col h-full">
-          <div className="flex items-center justify-between px-5 py-3">
-            <span className="font-headline text-[20px] font-medium tracking-[0.02em] text-[#F2F0EB]">Nassau</span>
-            <div className="h-8 w-8 rounded-full bg-[#2F4F4F] flex items-center justify-center text-[11px] font-medium text-[#F2F0EB]">GF</div>
-          </div>
-          <div className="mt-auto px-6 pb-5">
-            <h1 className="font-headline text-[22px] font-medium text-[#F2F0EB] leading-tight">{DEMO_TRIP.name}</h1>
-            <div className="flex items-center gap-3 mt-1">
-              <span className="flex items-center gap-1 text-sm text-[#8A8A8A]"><MapPin className="h-3.5 w-3.5" />{DEMO_TRIP.destination}</span>
-              <span className="flex items-center gap-1 text-sm text-[#8A8A8A]"><Calendar className="h-3.5 w-3.5" />{formatDateRange(DEMO_TRIP.startDate, DEMO_TRIP.endDate)}</span>
-            </div>
-          </div>
-        </div>
-      </div>
+      <HeroBackdrop
+        src="/heroes/hero-backdrop.png"
+        alt="Coastal golf at sunset"
+        height="lg"
+        priority
+      >
+        <h1 className="font-serif text-4xl md:text-5xl tracking-tight">
+          {DEMO_TRIP.name}
+        </h1>
+        <p className="mt-2 text-white/80 text-sm md:text-base flex gap-4">
+          <span>📍 Bandon, Oregon</span>
+          <span>🗓 May 8–11, 2026</span>
+        </p>
+      </HeroBackdrop>
 
       {/* ── ROUND PROGRESS ── */}
       <div className="mx-6 mt-4 rounded-[10px] bg-[#1A1A1A] p-4 shadow-sm">

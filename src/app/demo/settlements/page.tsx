@@ -1,8 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
 import { DollarSign, Home, Trophy, Map, User, ExternalLink } from "lucide-react";
+import { HeroBackdrop } from "@/components/HeroBackdrop";
 import { DEMO_SETTLEMENTS, DEMO_SETTLEMENTS_TOTAL, getCrewName } from "@/lib/demo-data";
 
 const FILTERS = ["All", "Pending", "Paid"] as const;
@@ -18,23 +18,16 @@ export default function DemoSettlementsPage() {
   return (
     <div className="min-h-screen bg-[#111111] pb-32">
       {/* ── BANNER ── */}
-      <div className="relative h-40 sm:h-48 overflow-hidden">
-        <Image
-          src="https://images.unsplash.com/photo-1587174486073-ae5e5cff23aa?q=80&w=2070&auto=format&fit=crop"
-          alt="Golf course clubhouse" fill className="object-cover" priority
-        />
-        <div className="absolute inset-0 bg-gradient-to-b from-[#111111]/80 via-[#111111]/60 to-[#111111]" />
-        <div className="relative z-10 flex flex-col h-full">
-          <div className="flex items-center justify-between px-5 py-3">
-            <Link href="/demo"><span className="font-headline text-[20px] font-medium tracking-[0.02em] text-[#F2F0EB]">Nassau</span></Link>
-            <div className="h-8 w-8 rounded-full bg-[#2F4F4F] flex items-center justify-center text-[11px] font-medium text-[#F2F0EB]">GF</div>
-          </div>
-          <div className="mt-auto px-6 pb-5">
-            <h1 className="text-[22px] font-headline font-medium text-[#F2F0EB] tracking-tight">Settlements</h1>
-            <p className="text-[13px] text-[#F2F0EB]/50">Who owes who. Settle up fast.</p>
-          </div>
-        </div>
-      </div>
+      <HeroBackdrop
+        src="/heroes/hero-backdrop.png"
+        alt="Coastal golf at sunset"
+        height="md"
+      >
+        <h1 className="font-serif text-3xl md:text-4xl tracking-tight">
+          Settlements
+        </h1>
+        <p className="mt-2 text-white/80">Who owes who. Settle up fast.</p>
+      </HeroBackdrop>
 
       {/* ── SUMMARY CARD ── */}
       <div className="bg-[#1A1A1A] rounded-[10px] shadow-sm p-4 mx-6 mt-4">

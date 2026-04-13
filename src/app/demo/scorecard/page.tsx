@@ -1,8 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
 import ScorecardGrid from "@/components/shared/ScorecardGrid";
+import { HeroBackdrop } from "@/components/HeroBackdrop";
 import { PACIFIC_DUNES_PARS, DEMO_SCORECARD_PLAYERS, DEMO_ROUNDS } from "@/lib/demo-data";
 
 const round = DEMO_ROUNDS[1]; // Pacific Dunes
@@ -20,22 +20,23 @@ const totalPar = PACIFIC_DUNES_PARS.reduce((a, b) => a + b, 0);
 
 export default function DemoScorecardPage() {
   return (
-    <div className="min-h-screen bg-zinc-50 px-4 py-10">
-      <div className="mx-auto max-w-7xl">
-        <Link href="/demo" className="inline-flex items-center gap-1.5 text-sm text-zinc-500 hover:text-zinc-700">
-          <ArrowLeft className="h-4 w-4" />Back
-        </Link>
+    <div className="min-h-screen bg-zinc-50">
+      <HeroBackdrop
+        src="/heroes/bandon-dunes.png"
+        alt="Pacific Dunes coastal cliffs"
+        height="md"
+        priority
+      >
+        <span className="inline-block px-3 py-1 bg-black/50 backdrop-blur rounded-full text-xs uppercase tracking-wider mb-3">
+          Final
+        </span>
+        <h1 className="font-serif text-4xl md:text-5xl tracking-tight">
+          Pacific Dunes
+        </h1>
+        <p className="mt-2 text-white/80">Sunday, May 10, 2026</p>
+      </HeroBackdrop>
 
-        <div className="mt-6">
-          <h1 className="text-2xl font-bold tracking-tight text-zinc-900">{round.courseName}</h1>
-          <div className="mt-1 flex items-center gap-3">
-            <span className="text-sm text-zinc-400">
-              {new Date(round.date + "T12:00:00").toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric", year: "numeric" })}
-            </span>
-            <span className="inline-flex items-center rounded-full bg-[#1A1A1A] px-2.5 py-0.5 text-[10px] font-bold text-white">FINAL</span>
-          </div>
-        </div>
-
+      <div className="mx-auto max-w-7xl px-4 py-6">
         {/* Scorecard — reuses production ScorecardGrid */}
         <div className="mt-6 rounded-xl border border-zinc-200 bg-white p-4 shadow-sm">
           <ScorecardGrid

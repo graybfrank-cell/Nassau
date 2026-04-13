@@ -1,25 +1,19 @@
 "use client";
 
 import Link from "next/link";
-import { Trophy, MapPin, Calendar, Share2, DollarSign, Check } from "lucide-react";
+import { Trophy, Share2, DollarSign } from "lucide-react";
+import { HeroBackdrop } from "@/components/HeroBackdrop";
 import {
   DEMO_ROUNDS, DEMO_ROUND2_RESULTS, DEMO_SKINS, DEMO_NASSAU, DEMO_AWARDS, DEMO_SETTLEMENTS, getCrewName,
 } from "@/lib/demo-data";
 
-const round = DEMO_ROUNDS[1]; // Pacific Dunes
+const round = DEMO_ROUNDS[1];
 const coursePar = round.par;
-
-function formatRelativePar(total: number): string {
-  const diff = total - coursePar;
-  if (diff === 0) return "E";
-  return diff > 0 ? `+${diff}` : `${diff}`;
-}
-
+const fmtPar = (t: number): string => { const d = t - coursePar; return d === 0 ? "E" : d > 0 ? `+${d}` : `${d}`; };
 const leaderboard = DEMO_ROUND2_RESULTS.map((r) => ({
   ...r, name: getCrewName(r.playerId),
   moneyNet: (DEMO_SKINS.payouts[r.playerId] ?? 0) + (r.playerId === "p6" ? 40 : r.playerId === "p2" ? -10 : 0),
 }));
-
 const AWARD_EMOJIS: Record<string, string> = {
   "Low Round": "🏆", "Money Player": "💰", "Comeback Kid": "💪", "Steady Eddie": "⚖️",
 };
@@ -28,21 +22,23 @@ export default function DemoRecapPage() {
   return (
     <div className="min-h-screen bg-[#F2F0EB] pb-12">
       {/* ── Hero ── */}
-      <div className="relative overflow-hidden h-56 bg-gradient-to-r from-emerald-800 to-emerald-600">
-        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
-        <div className="absolute bottom-0 left-0 right-0 p-6">
-          <div className="mx-auto max-w-lg">
-            <span className="inline-flex items-center rounded-full bg-[#1A1A1A] px-3 py-1 text-xs font-bold text-white">FINAL</span>
-            <h1 className="mt-2 text-3xl font-bold text-white">{round.courseName}</h1>
-            <div className="mt-1 flex flex-wrap items-center gap-3 text-sm text-white/70">
-              <span className="flex items-center gap-1"><MapPin className="h-3.5 w-3.5" />Bandon, Oregon</span>
-              <span className="flex items-center gap-1"><Calendar className="h-3.5 w-3.5" />
-                {new Date(round.date + "T12:00:00").toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric", year: "numeric" })}
-              </span>
-            </div>
-          </div>
-        </div>
-      </div>
+      <HeroBackdrop
+        src="/heroes/bandon-dunes.png"
+        alt="Pacific Dunes coastal cliffs"
+        height="lg"
+        priority
+      >
+        <span className="inline-block px-3 py-1 bg-black/50 backdrop-blur rounded-full text-xs uppercase tracking-wider mb-3">
+          Final
+        </span>
+        <h1 className="font-serif text-5xl md:text-6xl tracking-tight">
+          Pacific Dunes
+        </h1>
+        <p className="mt-3 text-white/80 flex gap-4">
+          <span>📍 Bandon, Oregon</span>
+          <span>🗓 Sunday, May 10, 2026</span>
+        </p>
+      </HeroBackdrop>
 
       <div className="mx-auto max-w-lg px-4">
         {/* ── Final Leaderboard ── */}
@@ -68,7 +64,7 @@ export default function DemoRecapPage() {
                 </div>
                 <div className="text-right">
                   <span className="text-xl font-bold text-[#1A1A1A]">{p.total}</span>
-                  <p className="text-xs text-[#8A8078]">{formatRelativePar(p.total)}</p>
+                  <p className="text-xs text-[#8A8078]">{fmtPar(p.total)}</p>
                 </div>
               </div>
             ))}
@@ -139,19 +135,11 @@ export default function DemoRecapPage() {
           </div>
         </div>
 
-        {/* ── CTAs ── */}
         <div className="mt-6 flex gap-3">
-          <button className="flex-1 rounded-xl border border-[#E2D9CC] bg-white py-3.5 text-sm font-bold text-[#1A1A1A] inline-flex items-center justify-center gap-1">
-            <Share2 className="h-4 w-4" />Share This Recap
-          </button>
-          <Link href="/demo" className="flex-1 rounded-xl bg-[#2D5A3D] py-3.5 text-center text-sm font-bold text-white">
-            Back to Trip
-          </Link>
+          <button className="flex-1 rounded-xl border border-[#E2D9CC] bg-white py-3.5 text-sm font-bold text-[#1A1A1A] inline-flex items-center justify-center gap-1"><Share2 className="h-4 w-4" />Share This Recap</button>
+          <Link href="/demo" className="flex-1 rounded-xl bg-[#2D5A3D] py-3.5 text-center text-sm font-bold text-white">Back to Trip</Link>
         </div>
-
-        <p className="mt-8 text-center text-xs text-[#8A8078]">
-          Powered by <Link href="/" className="font-semibold text-[#1A1A1A]">Nassau</Link>
-        </p>
+        <p className="mt-8 text-center text-xs text-[#8A8078]">Powered by <Link href="/" className="font-semibold text-[#1A1A1A]">Nassau</Link></p>
       </div>
     </div>
   );

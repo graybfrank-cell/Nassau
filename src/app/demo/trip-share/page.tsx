@@ -1,23 +1,14 @@
 "use client";
 
 import Link from "next/link";
-import { MapPin, Calendar, Users, Crown, Clock, ChevronRight } from "lucide-react";
+import { Crown, ChevronRight } from "lucide-react";
+import { HeroBackdrop } from "@/components/HeroBackdrop";
 import { DEMO_TRIP, DEMO_CREW, DEMO_ROUNDS, DEMO_ITINERARY } from "@/lib/demo-data";
 
-function formatDateRange(start: string, end: string) {
-  const s = new Date(start + "T12:00:00");
-  const e = new Date(end + "T12:00:00");
-  return `${s.toLocaleDateString("en-US", { month: "short" })} ${s.getDate()}–${e.getDate()}, ${s.getFullYear()}`;
-}
-
-function getDaysUntil(startDate: string): number | null {
-  const s = new Date(startDate + "T12:00:00");
-  const now = new Date();
-  now.setHours(12, 0, 0, 0);
-  const diff = Math.ceil((s.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
-  return diff > 0 ? diff : null;
-}
-
+const fmtRange = (s: string, e: string): string => {
+  const a = new Date(s + "T12:00:00"), b = new Date(e + "T12:00:00");
+  return `${a.toLocaleDateString("en-US", { month: "short" })} ${a.getDate()}–${b.getDate()}, ${a.getFullYear()}`;
+};
 const SCHEDULE_EMOJIS: Record<string, string> = {
   tee_time: "⛳", dinner: "🍽️", travel: "✈️", activity: "🎯",
 };
@@ -29,7 +20,6 @@ const itineraryByDate = DEMO_ITINERARY.reduce<Record<string, typeof DEMO_ITINERA
 }, {});
 
 export default function DemoTripSharePage() {
-  const daysUntil = getDaysUntil(DEMO_TRIP.startDate);
   const nights = Math.round(
     (new Date(DEMO_TRIP.endDate + "T12:00:00").getTime() - new Date(DEMO_TRIP.startDate + "T12:00:00").getTime()) / (1000 * 60 * 60 * 24)
   );
@@ -37,20 +27,27 @@ export default function DemoTripSharePage() {
   return (
     <div className="min-h-screen bg-[#F2F0EB] pb-12">
       {/* ── Hero ── */}
-      <div className="bg-gradient-to-r from-emerald-800 to-emerald-600 px-6 py-10 pb-12">
-        <p className="text-xs font-bold uppercase tracking-wider text-white/50">You&apos;re invited to</p>
-        <h1 className="mt-2 text-3xl font-bold text-white">{DEMO_TRIP.name}</h1>
-        <div className="mt-3 flex flex-wrap items-center gap-3 text-sm text-white/70">
-          <span className="flex items-center gap-1"><MapPin className="h-3.5 w-3.5" />{DEMO_TRIP.destination}</span>
-          <span className="flex items-center gap-1"><Calendar className="h-3.5 w-3.5" />{formatDateRange(DEMO_TRIP.startDate, DEMO_TRIP.endDate)}</span>
-          <span className="flex items-center gap-1"><Users className="h-3.5 w-3.5" />{DEMO_CREW.length} players</span>
-        </div>
-        {daysUntil && (
-          <div className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1 text-xs font-semibold text-white backdrop-blur-sm">
-            <Clock className="h-3.5 w-3.5" />{daysUntil} days away
-          </div>
-        )}
-      </div>
+      <HeroBackdrop
+        src="/heroes/bandon-dunes.png"
+        alt="Bandon Dunes coastal links"
+        height="lg"
+        priority
+      >
+        <p className="text-xs uppercase tracking-widest text-white/70 mb-2">
+          You&apos;re invited to
+        </p>
+        <h1 className="font-serif text-5xl md:text-6xl tracking-tight">
+          Bandon Dunes 2026 — The Annual
+        </h1>
+        <p className="mt-3 text-white/80 flex gap-4 flex-wrap">
+          <span>📍 Bandon, Oregon</span>
+          <span>🗓 May 8–11, 2026</span>
+          <span>👥 6 players</span>
+        </p>
+        <span className="mt-4 inline-block px-3 py-1 bg-white/15 backdrop-blur rounded-full text-xs">
+          ⏱ 26 days away
+        </span>
+      </HeroBackdrop>
 
       <div className="mx-auto max-w-lg px-4 -mt-4">
         {/* ── Trip Info Card ── */}
@@ -138,21 +135,12 @@ export default function DemoTripSharePage() {
         <div className="mt-4 rounded-xl border border-[#E2D9CC] bg-white p-4">
           <p className="text-xs font-semibold uppercase tracking-wider text-[#8A8078]">Lodging</p>
           <p className="mt-2 text-sm font-semibold text-[#1A1A1A]">{DEMO_TRIP.lodging}</p>
-          <p className="text-xs text-[#8A8078]">{formatDateRange(DEMO_TRIP.startDate, DEMO_TRIP.endDate)} · {nights} nights</p>
+          <p className="text-xs text-[#8A8078]">{fmtRange(DEMO_TRIP.startDate, DEMO_TRIP.endDate)} · {nights} nights</p>
         </div>
 
-        {/* ── Commit CTA ── */}
-        <button className="mt-6 w-full rounded-xl bg-[#2D5A3D] py-3.5 text-sm font-bold text-white active:scale-[0.98]">
-          I&apos;m In — Commit to Trip
-        </button>
-
-        <p className="mt-4 text-center text-xs text-[#8A8078]">
-          Share code: <span className="font-bold text-[#1A1A1A]">{DEMO_TRIP.shareCode}</span>
-        </p>
-
-        <p className="mt-6 text-center text-xs text-[#8A8078]">
-          Powered by <Link href="/" className="font-semibold text-[#1A1A1A]">Nassau</Link>
-        </p>
+        <button className="mt-6 w-full rounded-xl bg-[#2D5A3D] py-3.5 text-sm font-bold text-white active:scale-[0.98]">I&apos;m In — Commit to Trip</button>
+        <p className="mt-4 text-center text-xs text-[#8A8078]">Share code: <span className="font-bold text-[#1A1A1A]">{DEMO_TRIP.shareCode}</span></p>
+        <p className="mt-6 text-center text-xs text-[#8A8078]">Powered by <Link href="/" className="font-semibold text-[#1A1A1A]">Nassau</Link></p>
       </div>
     </div>
   );
