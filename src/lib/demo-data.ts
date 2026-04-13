@@ -143,3 +143,74 @@ export const DEMO_STANDINGS = [
   { playerId: "p3", name: "Jake Morrison", totalStrokes: 174, totalPar: 143, skins: 1, moneyNet: -67 },
   { playerId: "p5", name: "Ben Rodriguez", totalStrokes: 183, totalPar: 143, skins: 0, moneyNet: -90 },
 ];
+
+// ── Planning / Pre-trip Data ─────────────────────────────────────────────────
+
+export const DEMO_LODGING = {
+  name: "Lily Pond Cottage at Bandon Dunes Resort",
+  perNight: 487,
+  nights: 3,
+  status: "Booked" as const,
+};
+
+export const DEMO_TEE_TIMES = [
+  { course: "Bandon Dunes", date: "2026-05-09", time: "8:30 AM", status: "Tee times confirmed" as const },
+  { course: "Pacific Dunes", date: "2026-05-10", time: "9:00 AM", status: "Tee times confirmed" as const },
+  { course: "Old Macdonald", date: "2026-05-11", time: "8:00 AM", status: "Tee times confirmed" as const },
+];
+
+export const DEMO_CREW_CONTRIBUTIONS = {
+  total: 14235,
+  perPerson: 2847,
+  status: "Fully funded" as const,
+};
+
+export const DEMO_INVITE_STATUS = [
+  { playerId: "p1", name: "Grayson Frank", status: "captain" as const },
+  { playerId: "p2", name: "Tyler Whitman", status: "committed" as const },
+  { playerId: "p6", name: "Cole Davis", status: "committed" as const },
+  { playerId: "p4", name: "Marcus Chen", status: "committed" as const },
+  { playerId: "p3", name: "Jake Morrison", status: "pending" as const },
+  { playerId: "p5", name: "Ben Rodriguez", status: "pending" as const },
+];
+
+export const DEMO_PLANNING_ITINERARY = [
+  { day: 1, label: "Day 1 — Thu, May 8", items: [
+    { time: "2:00 PM", title: "Arrive Bandon — Southwest Oregon Regional", type: "travel" as const },
+    { time: "4:00 PM", title: "Check in — Lily Pond Cottage", type: "activity" as const },
+    { time: "7:00 PM", title: "Group Dinner — Pacific Grill", type: "dinner" as const },
+  ]},
+  { day: 2, label: "Day 2 — Fri, May 9", items: [
+    { time: "8:30 AM", title: "Round 1 — Bandon Dunes (Par 72)", type: "tee_time" as const },
+    { time: "2:00 PM", title: "Free time — Punchbowl putting course", type: "activity" as const },
+    { time: "6:30 PM", title: "Dinner — McKenzie's Pub", type: "dinner" as const },
+  ]},
+  { day: 3, label: "Day 3 — Sat, May 10", items: [
+    { time: "9:00 AM", title: "Round 2 — Pacific Dunes (Par 71)", type: "tee_time" as const },
+    { time: "3:00 PM", title: "Drinks — The Bunker Bar", type: "activity" as const },
+    { time: "7:00 PM", title: "Captain's Dinner — The Gallery", type: "dinner" as const },
+  ]},
+  { day: 4, label: "Day 4 — Sun, May 11", items: [
+    { time: "8:00 AM", title: "Round 3 — Old Macdonald (Par 72)", type: "tee_time" as const },
+    { time: "1:00 PM", title: "Awards & Settlements", type: "activity" as const },
+    { time: "3:00 PM", title: "Depart Bandon", type: "travel" as const },
+  ]},
+];
+
+export const DEMO_DESTINATIONS = [
+  { name: "Bandon Dunes, OR", slug: "bandon-dunes-or", price: "from $3,200", info: "3N · 4 rounds" },
+  { name: "Pinehurst, NC", slug: "pinehurst-nc", price: "from $2,200", info: "3N · 3 rounds" },
+  { name: "Scottsdale, AZ", slug: "scottsdale-az", price: "from $1,650", info: "3N · 3 rounds" },
+  { name: "Myrtle Beach, SC", slug: "myrtle-beach-sc", price: "from $850", info: "3N · 4 rounds" },
+  { name: "Pebble Beach, CA", slug: "pebble-beach-ca", price: "from $3,500", info: "3N · 3 rounds" },
+  { name: "St. Andrews, Scotland", slug: "st-andrews-scotland", price: "from $5,000", info: "4N · 3 rounds" },
+  { name: "Streamsong, FL", slug: "streamsong-fl", price: "from $1,800", info: "3N · 3 rounds" },
+  { name: "Sand Valley, WI", slug: "sand-valley-wi", price: "from $1,400", info: "2N · 3 rounds" },
+  { name: "Kiawah Island, SC", slug: "kiawah-island-sc", price: "from $2,600", info: "3N · 3 rounds" },
+  { name: "Kohler, WI", slug: "kohler-wi", price: "from $2,100", info: "2N · 3 rounds" },
+  { name: "Reynolds Lake Oconee, GA", slug: "reynolds-lake-oconee-ga", price: "from $1,500", info: "3N · 4 rounds" },
+  { name: "Cabo San Lucas, MX", slug: "cabo-san-lucas-mx", price: "from $2,800", info: "3N · 3 rounds" },
+  { name: "Kapalua, Maui, HI", slug: "kapalua-maui-hi", price: "from $3,800", info: "4N · 3 rounds" },
+  { name: "Palm Springs, CA", slug: "palm-springs-ca", price: "from $1,200", info: "3N · 4 rounds" },
+  { name: "Hilton Head, SC", slug: "hilton-head-sc", price: "from $1,100", info: "3N · 3 rounds" },
+];

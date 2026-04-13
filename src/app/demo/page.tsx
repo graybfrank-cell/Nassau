@@ -14,6 +14,13 @@ export default function DemoTripDashboard() {
 
   return (
     <div className="min-h-screen bg-[#111111] pb-32">
+      {/* ── Planning Flow Links ── */}
+      <div className="fixed top-12 left-4 z-[998] flex flex-col gap-1">
+        <Link href="/demo/explore" className="text-[11px] font-medium text-[#8A8A8A] hover:text-[#F2F0EB] transition-colors">← Back to explore</Link>
+        <Link href="/demo/planning" className="text-[11px] font-medium text-[#8A8A8A] hover:text-[#F2F0EB] transition-colors">View planning</Link>
+        <Link href="/demo/invite" className="text-[11px] font-medium text-[#8A8A8A] hover:text-[#F2F0EB] transition-colors">View invite page</Link>
+      </div>
+
       {/* ── HERO BANNER ── */}
       <HeroBackdrop
         src="/heroes/hero-backdrop.png"
