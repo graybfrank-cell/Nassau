@@ -49,6 +49,11 @@ export async function proxy(request: NextRequest) {
       }
     }
 
+    // Demo routes bypass auth entirely
+    if (request.nextUrl.pathname.startsWith("/demo")) {
+      return supabaseResponse;
+    }
+
     // Protected routes — redirect to /login if not authenticated
     const isProtected =
       request.nextUrl.pathname.startsWith("/dashboard") ||
