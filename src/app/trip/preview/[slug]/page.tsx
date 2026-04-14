@@ -24,8 +24,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     return { title: "Destination Coming Soon" };
   }
 
-  const title = `${dest.destination} Golf Trip`;
-  const description = dest.why_go.slice(0, 155);
+  const title = `${dest.destination} Golf Trip — Planning Guide`;
+  const description = dest.why_go.length > 155
+    ? dest.why_go.slice(0, 152) + "..."
+    : dest.why_go;
+  const url = `https://nassau.golf/trip/preview/${slug}`;
 
   return {
     title,
@@ -33,7 +36,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     openGraph: {
       title: `${title} | Nassau`,
       description,
-      url: `https://nassau.golf/trip/preview/${slug}`,
+      url,
       siteName: "Nassau",
       type: "article",
     },
@@ -42,7 +45,37 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       title: `${title} | Nassau`,
       description,
     },
+    alternates: {
+      canonical: url,
+    },
   };
+}
+
+function DestinationJsonLd({ dest, slug }: { dest: Destination; slug: string }) {
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "TouristDestination",
+    name: `${dest.destination} Golf Trip`,
+    description: dest.why_go,
+    url: `https://nassau.golf/trip/preview/${slug}`,
+    touristType: "Golfers",
+    geo: {
+      "@type": "GeoCoordinates",
+      name: dest.destination,
+    },
+    includesAttraction: dest.top_courses.slice(0, 5).map((course) => ({
+      "@type": "TouristAttraction",
+      name: course.name,
+      description: course.must_know,
+    })),
+  };
+
+  return (
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+    />
+  );
 }
 
 export default async function TripPreviewPage({ params }: Props) {
@@ -58,6 +91,7 @@ export default async function TripPreviewPage({ params }: Props) {
 
   return (
     <main>
+      <DestinationJsonLd dest={d} slug={slug} />
       <PreviewHero dest={d} />
 
       <PreviewCourses courses={d.top_courses} />

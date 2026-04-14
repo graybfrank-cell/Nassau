@@ -13,14 +13,25 @@ import CTASection from "@/components/landing/CTASection";
 export const metadata: Metadata = {
   title: "Nassau — All Golf Trips. One Link.",
   description:
-    "The operating system for golf trips. Plan it. Commit the crew. Play the rounds. Settle the bets. Launching April 2026.",
+    "Plan golf trips, track bets, score rounds, and settle up — all in one app. Nassau is the operating system for golf trips. Join the waitlist.",
   openGraph: {
     title: "Nassau — All Golf Trips. One Link.",
     description:
-      "The operating system for golf trips. Plan it. Commit the crew. Play the rounds. Settle the bets. Launching April 2026.",
-    images: [
-      "/og-image.png",
-    ],
+      "Plan golf trips, track bets, score rounds, and settle up — all in one app. Nassau is the operating system for golf trips.",
+    url: "https://nassau.golf",
+    siteName: "Nassau",
+    type: "website",
+    images: ["/og-image.png"],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Nassau — All Golf Trips. One Link.",
+    description:
+      "Plan golf trips, track bets, score rounds, and settle up — all in one app. Join the waitlist.",
+    images: ["/og-image.png"],
+  },
+  alternates: {
+    canonical: "https://nassau.golf",
   },
 };
 
@@ -90,9 +101,35 @@ async function RecentArticles() {
 
 /* ─── Home Page ─── */
 
+function OrganizationJsonLd() {
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    name: "Nassau",
+    url: "https://nassau.golf",
+    logo: "https://nassau.golf/og-image.png",
+    description:
+      "The operating system for golf trips. Plan it. Commit the crew. Play the rounds. Settle the bets.",
+    sameAs: ["https://x.com/UseNassauGolf"],
+    contactPoint: {
+      "@type": "ContactPoint",
+      email: "hello@nassau.golf",
+      contactType: "customer support",
+    },
+  };
+
+  return (
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+    />
+  );
+}
+
 export default async function Home() {
   return (
     <div className="relative">
+      <OrganizationJsonLd />
       <AuthRedirect />
 
       <HeroSection />

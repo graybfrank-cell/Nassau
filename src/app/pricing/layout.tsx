@@ -1,14 +1,70 @@
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Pricing",
+  title: "Golf Trip Pricing — Free to Start",
   description:
-    "Free to keep score. Pay when money is on the line. Starting at $6.99/mo.",
+    "Score rounds free forever. Upgrade to Nassau Pro at $6.99/mo for bet tracking, trip planning, and settlements. Start your free trial today.",
   openGraph: {
-    title: "Nassau Pricing — Pick Your Play",
-    description: "Free to keep score. Pay when money is on the line.",
-    images: [
-      "/api/og/default?title=Pick%20Your%20Play&subtitle=Free%20to%20keep%20score.%20Pay%20when%20money%20is%20on%20the%20line.",
+    title: "Golf Trip Pricing — Free to Start | Nassau",
+    description:
+      "Score rounds free forever. Upgrade to Nassau Pro at $6.99/mo for bet tracking, trip planning, and settlements.",
+    url: "https://nassau.golf/pricing",
+    siteName: "Nassau",
+    type: "website",
+    images: ["/og-image.png"],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Golf Trip Pricing — Free to Start | Nassau",
+    description:
+      "Score rounds free forever. Upgrade to Nassau Pro at $6.99/mo for bet tracking, trip planning, and settlements.",
+    images: ["/og-image.png"],
+  },
+  alternates: {
+    canonical: "https://nassau.golf/pricing",
+  },
+};
+
+const pricingJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  name: "Nassau Pricing",
+  url: "https://nassau.golf/pricing",
+  description: "Pricing plans for Nassau golf trip management app.",
+  mainEntity: {
+    "@type": "SoftwareApplication",
+    name: "Nassau",
+    applicationCategory: "SportsApplication",
+    operatingSystem: "Web",
+    offers: [
+      {
+        "@type": "Offer",
+        name: "Commissioner",
+        price: "0",
+        priceCurrency: "USD",
+        description: "Free forever. Score rounds, basic skins tracking, shareable recap link.",
+      },
+      {
+        "@type": "Offer",
+        name: "Nassau Pro Monthly",
+        price: "6.99",
+        priceCurrency: "USD",
+        description: "Full trip planning, bet tracking, expense splits, and live scorecards.",
+      },
+      {
+        "@type": "Offer",
+        name: "Nassau Pro Annual",
+        price: "49.99",
+        priceCurrency: "USD",
+        description: "All Pro features billed annually. Save 40%.",
+      },
+      {
+        "@type": "Offer",
+        name: "Per-Trip Pass",
+        price: "9.99",
+        priceCurrency: "USD",
+        description: "One trip, full Pro features, no subscription required.",
+      },
     ],
   },
 };
@@ -18,5 +74,13 @@ export default function PricingLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return <>{children}</>;
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(pricingJsonLd) }}
+      />
+      {children}
+    </>
+  );
 }

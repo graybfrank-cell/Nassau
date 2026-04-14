@@ -49,6 +49,12 @@ export async function proxy(request: NextRequest) {
       }
     }
 
+    // Search engine crawlers bypass all gates so they see real content
+    const ua = request.headers.get("user-agent") || "";
+    if (/googlebot|bingbot|yandexbot|baiduspider|duckduckbot|slurp/i.test(ua)) {
+      return supabaseResponse;
+    }
+
     // Demo routes bypass auth entirely
     if (request.nextUrl.pathname.startsWith("/demo")) {
       return supabaseResponse;

@@ -1,15 +1,27 @@
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Founding Members",
+  title: "Founding Members — Lock In $49.99/yr",
   description:
-    "88 founding member spots remaining. Lock in $49.99/yr forever.",
+    "Only 88 founding member spots left. Lock in $49.99/yr forever with all Nassau Pro features, a founding badge, and priority support.",
   openGraph: {
-    title: "Nassau Founding Members — 88 Spots Left",
-    description: "Lock in $49.99/yr forever. 88 founding member spots remaining.",
-    images: [
-      "/api/og/default?title=Founding%20Members&subtitle=88%20spots%20remaining.%20%2449.99%2Fyr%20locked%20forever.",
-    ],
+    title: "Founding Members — Lock In $49.99/yr | Nassau",
+    description:
+      "Only 88 founding member spots left. Lock in $49.99/yr forever with all Nassau Pro features and a founding badge.",
+    url: "https://nassau.golf/founding",
+    siteName: "Nassau",
+    type: "website",
+    images: ["/og-image.png"],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Founding Members — Lock In $49.99/yr | Nassau",
+    description:
+      "Only 88 founding member spots left. Lock in $49.99/yr forever with all Nassau Pro features and a founding badge.",
+    images: ["/og-image.png"],
+  },
+  alternates: {
+    canonical: "https://nassau.golf/founding",
   },
 };
 
