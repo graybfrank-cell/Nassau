@@ -51,7 +51,7 @@ export default function DemoScorecardPage() {
 
         {/* Totals */}
         <div className="mt-6 rounded-xl border border-zinc-200 bg-white p-5 shadow-sm">
-          <h2 className="text-sm font-semibold text-zinc-600">Totals</h2>
+          <h2 className="font-serif text-sm font-semibold text-zinc-600">Totals</h2>
           <div className="mt-3 overflow-x-auto">
             <table className="w-full text-sm">
               <thead>

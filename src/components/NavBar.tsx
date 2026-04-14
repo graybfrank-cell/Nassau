@@ -41,7 +41,7 @@ export default function NavBar({ user }: { user: User }) {
     >
       <Link href="/" className="flex items-center gap-2">
         <span
-          className={`text-xl font-semibold uppercase tracking-tighter transition-colors ${
+          className={`font-serif text-xl font-semibold uppercase tracking-tighter transition-colors ${
             scrolled ? "text-[#111111]" : "text-white"
           }`}
         >
