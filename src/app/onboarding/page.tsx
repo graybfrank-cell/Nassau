@@ -1,14 +1,30 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { Suspense, useEffect, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { ChevronRight, ChevronLeft, User, DollarSign, Target } from "lucide-react";
 
 const TOTAL_STEPS = 3;
 
 export default function OnboardingPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="flex min-h-screen items-center justify-center bg-zinc-950">
+          <div className="h-8 w-8 animate-spin rounded-full border-2 border-zinc-700 border-t-[#2D5A3D]" />
+        </div>
+      }
+    >
+      <OnboardingPageInner />
+    </Suspense>
+  );
+}
+
+function OnboardingPageInner() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const destinationParam = searchParams.get("destination");
   const [step, setStep] = useState(1);
   const [fullName, setFullName] = useState("");
   const [venmoUsername, setVenmoUsername] = useState("");
@@ -75,7 +91,13 @@ export default function OnboardingPage() {
         return;
       }
 
-      router.push("/dashboard");
+      // Route into trip creation with destination pre-filled if user arrived
+      // here via a destination-aware explore link. Otherwise, go to dashboard.
+      if (destinationParam) {
+        router.push(`/trips/create?destination=${encodeURIComponent(destinationParam)}`);
+      } else {
+        router.push("/dashboard");
+      }
     } catch {
       setError("Something went wrong. Please try again.");
       setSubmitting(false);

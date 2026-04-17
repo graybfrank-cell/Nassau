@@ -47,7 +47,20 @@ async function creditReferralFromCookie(): Promise<void> {
   }
 }
 
-async function getPostLoginRedirect(baseUrl: string): Promise<string> {
+function extractDestinationFromNext(next: string | null): string | null {
+  if (!next) return null;
+  try {
+    const url = new URL(next, "https://nassau.golf");
+    return url.searchParams.get("destination");
+  } catch {
+    return null;
+  }
+}
+
+async function getPostLoginRedirect(
+  baseUrl: string,
+  next: string | null
+): Promise<string> {
   try {
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
@@ -65,8 +78,14 @@ async function getPostLoginRedirect(baseUrl: string): Promise<string> {
       .eq("id", user.id)
       .single();
 
-    // Check if onboarding is complete — gate all users behind this
+    // Check if onboarding is complete — gate all users behind this.
+    // Preserve destination context if the user came from an explore link so
+    // the onboarding can route them back into trip creation when complete.
     if (!profile?.onboarding_complete) {
+      const destination = extractDestinationFromNext(next);
+      if (destination) {
+        return `${baseUrl}/onboarding?destination=${encodeURIComponent(destination)}`;
+      }
       return `${baseUrl}/onboarding`;
     }
 
@@ -152,7 +171,7 @@ export async function GET(request: Request) {
       if (isValidNext) {
         return NextResponse.redirect(`${baseUrl}${next}`);
       }
-      return NextResponse.redirect(await getPostLoginRedirect(baseUrl));
+      return NextResponse.redirect(await getPostLoginRedirect(baseUrl, next));
     }
 
     if (token_hash && type) {
@@ -171,7 +190,7 @@ export async function GET(request: Request) {
       if (isValidNext) {
         return NextResponse.redirect(`${baseUrl}${next}`);
       }
-      return NextResponse.redirect(await getPostLoginRedirect(baseUrl));
+      return NextResponse.redirect(await getPostLoginRedirect(baseUrl, next));
     }
 
     console.error("Auth callback: no code or token_hash found");
