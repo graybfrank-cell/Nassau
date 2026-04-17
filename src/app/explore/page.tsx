@@ -3,8 +3,15 @@
 import { useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import { createClient } from "@/lib/supabase/client";
 import knowledgeBase from "@/data/nassau-knowledge-base.json";
+import {
+  resolveDestinationImage,
+  getRegionGradient,
+  type DestinationImageSource,
+} from "@/lib/destination-images";
+import { HeroBackdrop } from "@/components/HeroBackdrop";
 
 // ============================================
 // NASSAU EXPLORE PAGE v4 — Cream Theme + Auth Gate + Paywall
@@ -176,80 +183,55 @@ const TRIPS_DATA: TripData[] = destinations.map((d) => {
   };
 });
 
-// ─── Photo Map ────────────────────────────────────────────────
-
-interface PhotoEntry { photo: string; fallback: string; credit: string; }
-const PHOTO_MAP: Record<string, PhotoEntry> = {
-  "scottsdale-az": { photo: "photo-1682686581362-e05e14b37bcb", fallback: "from-amber-600 to-orange-800", credit: "Unsplash" },
-  "myrtle-beach-sc": { photo: "photo-1507525428034-b723cf961d3e", fallback: "from-sky-400 to-blue-600", credit: "Unsplash" },
-  "pinehurst-nc": { photo: "photo-1587174486073-ae5e5cff23aa", fallback: "from-green-700 to-emerald-900", credit: "Unsplash" },
-  "las-vegas-nv": { photo: "photo-1605833556294-ea5c7a74f57d", fallback: "from-purple-600 to-fuchsia-700", credit: "Unsplash" },
-  "austin-tx": { photo: "photo-1531218150217-54595bc2b934", fallback: "from-orange-500 to-red-600", credit: "Unsplash" },
-  "san-diego-ca": { photo: "photo-1538970272646-f61fabb3a8a2", fallback: "from-cyan-400 to-blue-500", credit: "Unsplash" },
-  "hilton-head-sc": { photo: "photo-1535131749006-b7f58c99034b", fallback: "from-teal-500 to-green-600", credit: "Unsplash" },
-  "pebble-beach-monterey-ca": { photo: "photo-1587174486073-ae5e5cff23aa", fallback: "from-slate-600 to-blue-900", credit: "Unsplash" },
-  "kiawah-island-sc": { photo: "photo-1600166898405-da9535204843", fallback: "from-emerald-600 to-teal-800", credit: "Unsplash" },
-  "bandon-dunes-or": { photo: "photo-1560088939-3dc36f0d00e8", fallback: "from-gray-500 to-slate-700", credit: "Unsplash" },
-  "streamsong-fl": { photo: "photo-1592919505780-303950717480", fallback: "from-lime-500 to-green-700", credit: "Unsplash" },
-  "palm-springs-ca": { photo: "photo-1509233725247-49e657c54213", fallback: "from-yellow-400 to-orange-500", credit: "Unsplash" },
-  "savannah-ga": { photo: "photo-1597424216809-3ba4c3dc3cf9", fallback: "from-green-600 to-emerald-800", credit: "Unsplash" },
-  "cabo-san-lucas-mx": { photo: "photo-1524260855046-f743b3cdad07", fallback: "from-blue-400 to-teal-600", credit: "Unsplash" },
-  "branson-mo": { photo: "photo-1505672678657-cc7037095e60", fallback: "from-green-500 to-lime-700", credit: "Unsplash" },
-  "gulf-shores-al": { photo: "photo-1510414842594-a61c69b5ae57", fallback: "from-sky-300 to-blue-500", credit: "Unsplash" },
-  "lake-tahoe-ca": { photo: "photo-1489659831163-682b5af42225", fallback: "from-blue-500 to-indigo-700", credit: "Unsplash" },
-  "mesquite-nv": { photo: "photo-1509316975850-ff9c5deb0cd9", fallback: "from-red-600 to-orange-700", credit: "Unsplash" },
-  "wisconsin-dells-sand-valley-wi": { photo: "photo-1535131749006-b7f58c99034b", fallback: "from-green-500 to-emerald-700", credit: "Unsplash" },
-  "st-andrews-scotland": { photo: "photo-1551882547-ff40c63fe5fa", fallback: "from-stone-500 to-slate-700", credit: "Unsplash" },
-  "charleston-sc": { photo: "photo-1569880153113-76e33fc52d5f", fallback: "from-rose-400 to-pink-600", credit: "Unsplash" },
-  "nashville-tn": { photo: "photo-1545419913-ef0cbcbbf7f4", fallback: "from-yellow-500 to-amber-600", credit: "Unsplash" },
-  "destin-fl": { photo: "photo-1519046904884-53103b34b206", fallback: "from-emerald-300 to-cyan-500", credit: "Unsplash" },
-  "orlando-fl": { photo: "photo-1575089976121-8ed7b2a54265", fallback: "from-orange-400 to-red-500", credit: "Unsplash" },
-  "williamsburg-va": { photo: "photo-1558618666-fcd25c85f82e", fallback: "from-amber-700 to-stone-800", credit: "Unsplash" },
-  "reynolds-lake-oconee-ga": { photo: "photo-1501785888041-af3ef285b470", fallback: "from-blue-400 to-green-600", credit: "Unsplash" },
-  "rtj-trail-al": { photo: "photo-1632932693498-7e44d6ab504c", fallback: "from-red-700 to-red-900", credit: "Unsplash" },
-  "cape-cod-ma": { photo: "photo-1499092346589-b9b6be3e94b2", fallback: "from-blue-300 to-sky-500", credit: "Unsplash" },
-  "kohler-wi": { photo: "photo-1600166898405-da9535204843", fallback: "from-green-800 to-slate-900", credit: "Unsplash" },
-  "tucson-az": { photo: "photo-1469854523086-cc02fe5d8800", fallback: "from-orange-600 to-red-800", credit: "Unsplash" },
-  "bend-or": { photo: "photo-1464278533981-50106e6176b1", fallback: "from-amber-500 to-green-600", credit: "Unsplash" },
-  "park-city-ut": { photo: "photo-1483728642387-6c3bdd6c93e5", fallback: "from-blue-400 to-purple-600", credit: "Unsplash" },
-  "coeur-dalene-id": { photo: "photo-1439066615861-d1af74d74000", fallback: "from-blue-500 to-cyan-600", credit: "Unsplash" },
-  "amelia-island-fl": { photo: "photo-1519046904884-53103b34b206", fallback: "from-teal-400 to-emerald-600", credit: "Unsplash" },
-  "pawleys-island-sc": { photo: "photo-1535131749006-b7f58c99034b", fallback: "from-green-500 to-teal-700", credit: "Unsplash" },
-  "sedona-az": { photo: "photo-1527549993586-dff825b37782", fallback: "from-red-500 to-orange-700", credit: "Unsplash" },
-  "french-lick-in": { photo: "photo-1587174486073-ae5e5cff23aa", fallback: "from-green-600 to-amber-700", credit: "Unsplash" },
-  "atlantic-city-nj": { photo: "photo-1596394516093-501ba68a0ba6", fallback: "from-purple-500 to-blue-600", credit: "Unsplash" },
-  "finger-lakes-ny": { photo: "photo-1506377247377-2a5b3b417ebb", fallback: "from-violet-400 to-purple-600", credit: "Unsplash" },
-  "kapalua-maui-hi": { photo: "photo-1542259009477-d625272157b7", fallback: "from-teal-400 to-blue-600", credit: "Unsplash" },
-  "riviera-maya-mx": { photo: "photo-1552733407-5d5c46c3bb3b", fallback: "from-emerald-400 to-teal-600", credit: "Unsplash" },
-  "punta-cana-dr": { photo: "photo-1505881502353-a1986add3762", fallback: "from-cyan-400 to-blue-500", credit: "Unsplash" },
-  "algarve-portugal": { photo: "photo-1555881400-74d7acaacd8b", fallback: "from-yellow-400 to-orange-500", credit: "Unsplash" },
-  "southwest-ireland": { photo: "photo-1564959130747-897a8e5b89c0", fallback: "from-green-500 to-emerald-700", credit: "Unsplash" },
-  "torrey-pines-la-jolla-ca": { photo: "photo-1538970272646-f61fabb3a8a2", fallback: "from-sky-400 to-blue-600", credit: "Unsplash" },
-  "hershey-pa": { photo: "photo-1587174486073-ae5e5cff23aa", fallback: "from-amber-600 to-stone-700", credit: "Unsplash" },
-  "grand-rapids-mi": { photo: "photo-1504280390367-361c6d9f38f4", fallback: "from-amber-400 to-green-600", credit: "Unsplash" },
-  "ozarks-ar": { photo: "photo-1505672678657-cc7037095e60", fallback: "from-green-600 to-teal-700", credit: "Unsplash" },
-  "pinehurst-extended-nc": { photo: "photo-1587174486073-ae5e5cff23aa", fallback: "from-green-800 to-emerald-950", credit: "Unsplash" },
-  "bethlehem-lehigh-valley-pa": { photo: "photo-1587174486073-ae5e5cff23aa", fallback: "from-gray-500 to-slate-700", credit: "Unsplash" },
-};
-
-function unsplashUrl(photoId: string, w = 600, h = 400): string {
-  return `https://images.unsplash.com/${photoId}?w=${w}&h=${h}&fit=crop&q=80&auto=format`;
-}
+// ─── Filter constants ─────────────────────────────────────────
+// Photo/Unsplash maps have moved to `src/lib/destination-images.ts` so the
+// Explore page, the trip preview page, and any marketing surface share a
+// single source of truth and a consistent local-first fallback chain.
 
 const VIBES = ["All", "Bucket List", "Party", "Relaxed", "Competitive", "Father-Son", "Budget", "Corporate", "Bachelor", "Resort", "Scenic"];
 const REGIONS = ["All", "Southeast", "Southwest", "West Coast", "Midwest", "Pacific NW", "Northeast", "Mid-Atlantic", "International", "Mountain West", "Gulf Coast", "Hawaii", "South Central"];
 const PRICES = ["All", "$", "$-$$", "$$", "$$-$$$", "$$$", "$$$$"];
 
-// ─── Image With Fallback ──────────────────────────────────────
+// ─── Destination Card Image ───────────────────────────────────
+// Renders the resolved DestinationImageSource with a runtime onError
+// escape hatch: if the image 404s (stale CDN, missing file), we swap in a
+// region-themed gradient so the card never renders as a blank block.
 
-function ImageWithFallback({ src, fallbackGradient, alt, className }: {
-  src: string; fallbackGradient: string; alt: string; className: string;
+function DestinationCardImage({
+  source,
+  region,
+  vibe,
+  alt,
+  priority = false,
+  sizes = "(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw",
+}: {
+  source: DestinationImageSource;
+  region?: string;
+  vibe?: string[];
+  alt: string;
+  priority?: boolean;
+  sizes?: string;
 }) {
   const [failed, setFailed] = useState(false);
-  if (failed) return <div className={`${className} bg-gradient-to-br ${fallbackGradient}`} />;
-  // eslint-disable-next-line @next/next/no-img-element
-  return <img src={src} alt={alt} className={`${className} object-cover pointer-events-none`}
-    onError={() => setFailed(true)} loading="lazy" draggable={false} />;
+  const fallbackGradient = getRegionGradient(region, vibe);
+
+  if (source.kind === "gradient" || failed) {
+    const gradient = source.kind === "gradient" ? source.gradient : fallbackGradient;
+    return <div className={`absolute inset-0 ${gradient}`} aria-hidden="true" />;
+  }
+
+  return (
+    <Image
+      src={source.src}
+      alt={alt}
+      fill
+      sizes={sizes}
+      priority={priority}
+      className="object-cover pointer-events-none group-hover:scale-105 transition-transform duration-700"
+      onError={() => setFailed(true)}
+      draggable={false}
+    />
+  );
 }
 
 // ─── Auth Gate ────────────────────────────────────────────────
@@ -339,59 +321,94 @@ function PaywallModal({ tripTitle, onClose, onPerTrip }: {
 // ─── Trip Card ────────────────────────────────────────────────
 
 function TripCard({ trip, onClick }: { trip: TripData; index: number; onClick: (t: TripData) => void }) {
-  const pm = PHOTO_MAP[trip.id];
-  const imgUrl = pm ? unsplashUrl(pm.photo, 600, trip.height === "tall" ? 500 : trip.height === "medium" ? 380 : 300) : null;
-  const heightClass = trip.height === "tall" ? "h-96" : trip.height === "medium" ? "h-72" : "h-56";
-  const accentColor = ACCENT_COLORS[trip.vibe?.[0]] || "#5A4F45";
+  const image = resolveDestinationImage(trip.id, {
+    region: trip.region,
+    vibe: trip.vibe,
+    width: 800,
+    height: 1067, // match aspect-[3/4]
+  });
+  const accentColor = ACCENT_COLORS[trip.vibe?.[0]] || "#2D5A3D";
 
   return (
-    <div className="group cursor-pointer break-inside-avoid mb-4" onClick={() => onClick(trip)}>
-      <div className="relative rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500 hover:-translate-y-1 bg-[#FDFAF5] border border-[#E2D9CC]">
-        <div className={`relative ${heightClass} overflow-hidden`}>
-          {imgUrl ? (
-            <ImageWithFallback src={imgUrl} fallbackGradient={pm?.fallback || "from-gray-500 to-gray-700"}
-              alt={trip.dest} className="absolute inset-0 w-full h-full group-hover:scale-105 transition-transform duration-700" />
-          ) : (
-            <div className={`absolute inset-0 bg-gradient-to-br ${pm?.fallback || "from-gray-500 to-gray-700"}`} />
-          )}
-          {trip.featured && (
-            <div className="absolute top-3 left-3 bg-amber-400 text-amber-900 text-xs font-bold px-2.5 py-1 rounded-full flex items-center gap-1 shadow-md z-10">
-              ⭐ EDITOR&apos;S PICK
-            </div>
-          )}
-          <div className="absolute top-3 right-3 bg-[#FDFAF5]/90 backdrop-blur-sm text-[#1A1A1A] text-xs font-semibold px-2.5 py-1 rounded-full z-10 border border-[#E2D9CC]/80">
-            {trip.tier}
-          </div>
-          <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-[#FDFAF5] via-[#FDFAF5]/60 to-transparent z-10" />
-          <div className="absolute bottom-3 left-3 right-3 z-10">
-            <h3 className="text-[#1A1A1A] text-lg font-bold leading-tight mb-0.5">{trip.title}</h3>
-            <p className="text-[#5A4F45] text-sm">{trip.dest}</p>
-          </div>
+    // min-h target for the whole card keeps the tap zone >= 44px tall
+    <button
+      type="button"
+      onClick={() => onClick(trip)}
+      aria-label={`Open ${trip.title} — ${trip.dest}`}
+      className="group relative block w-full text-left rounded-2xl overflow-hidden shadow-sm hover:shadow-xl focus-visible:shadow-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2D5A3D] transition-all duration-500 hover:-translate-y-1 aspect-[3/4] bg-[#1a1a1a]"
+    >
+      {/* Hero image / gradient fallback */}
+      <DestinationCardImage
+        source={image}
+        region={trip.region}
+        vibe={trip.vibe}
+        alt={`${trip.dest} — ${trip.title}`}
+      />
+
+      {/* Bottom-up scrim so text stays readable */}
+      <div
+        aria-hidden="true"
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          background:
+            "linear-gradient(to top, rgba(17,17,17,0.92) 0%, rgba(17,17,17,0.70) 28%, rgba(17,17,17,0.25) 58%, rgba(17,17,17,0.05) 80%, rgba(17,17,17,0) 100%)",
+        }}
+      />
+
+      {/* Featured ribbon */}
+      {trip.featured && (
+        <div className="absolute top-3 left-3 bg-[#C9A54E] text-[#2a1d00] text-[11px] font-bold px-2.5 py-1 rounded-full flex items-center gap-1 shadow-md z-10 tracking-wide uppercase">
+          ★ Editor&apos;s Pick
         </div>
-        <div className="p-3.5">
-          <p className="text-[#5A4F45] text-sm mb-2.5 leading-snug">{trip.tagline}</p>
-          <div className="flex items-center gap-3 text-xs text-[#8A8078] mb-2.5">
-            <span>🌙 {trip.nights}N</span>
-            <span>⛳ {trip.courses} rounds</span>
-            <span>📅 {trip.best}</span>
-          </div>
-          <div className="flex flex-wrap gap-1.5">
-            {(trip.vibe || []).map((v) => (
-              <span key={v} className="text-xs px-2 py-0.5 rounded-full font-medium"
-                style={{ backgroundColor: `${ACCENT_COLORS[v] || accentColor}12`, color: ACCENT_COLORS[v] || accentColor }}>
+      )}
+
+      {/* Price tier badge */}
+      <div className="absolute top-3 right-3 bg-white/90 backdrop-blur-sm text-[#1A1A1A] text-[11px] font-semibold px-2.5 py-1 rounded-full z-10 tracking-wide">
+        {trip.tier}
+      </div>
+
+      {/* Content — overlaid bottom of card */}
+      <div className="absolute inset-x-0 bottom-0 z-10 p-4 sm:p-5">
+        {/* Vibe pills */}
+        {(trip.vibe || []).length > 0 && (
+          <div className="flex flex-wrap gap-1.5 mb-2.5">
+            {(trip.vibe || []).slice(0, 2).map((v) => (
+              <span
+                key={v}
+                className="text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-full font-semibold backdrop-blur-sm"
+                style={{
+                  backgroundColor: `${ACCENT_COLORS[v] || accentColor}cc`,
+                  color: "white",
+                }}
+              >
                 {v}
               </span>
             ))}
           </div>
-          <div className="mt-2.5 pt-2.5 border-t border-[#E2D9CC] flex items-center justify-between">
-            <span className="text-xs text-[#8A8078]">from</span>
-            <span className="text-base font-bold text-[#1A1A1A]">
-              ${trip.cost.toLocaleString()}<span className="text-xs font-normal text-[#8A8078]">/person</span>
-            </span>
-          </div>
+        )}
+
+        {/* Title (Playfair) */}
+        <h3 className="font-serif text-white text-xl sm:text-[1.375rem] leading-tight font-medium mb-1 drop-shadow-md">
+          {trip.title}
+        </h3>
+
+        {/* Destination + region (Inter) */}
+        <p className="font-sans text-white/80 text-xs sm:text-sm mb-3">
+          {trip.dest}
+        </p>
+
+        {/* Meta row — trip length + cost */}
+        <div className="flex items-center justify-between gap-2 border-t border-white/15 pt-3">
+          <span className="font-sans text-white/80 text-[11px] sm:text-xs tracking-wide">
+            {trip.nights}N · {trip.courses} rounds
+          </span>
+          <span className="font-sans text-white text-sm sm:text-base font-semibold">
+            from ${trip.cost.toLocaleString()}
+            <span className="text-white/60 text-[11px] font-normal">/person</span>
+          </span>
         </div>
       </div>
-    </div>
+    </button>
   );
 }
 
@@ -404,8 +421,12 @@ function TripModal({ trip, onClose }: { trip: TripData; onClose: () => void }) {
   const [state, setState] = useState<ModalState>("modal");
   const [creating, setCreating] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const pm = PHOTO_MAP[trip.id];
-  const imgUrl = pm ? unsplashUrl(pm.photo, 800, 400) : null;
+  const modalImage = resolveDestinationImage(trip.id, {
+    region: trip.region,
+    vibe: trip.vibe,
+    width: 800,
+    height: 400,
+  });
 
   async function handlePlanTrip() {
     setError(null);
@@ -493,13 +514,15 @@ function TripModal({ trip, onClose }: { trip: TripData; onClose: () => void }) {
       <div className="relative bg-[#FDFAF5] rounded-t-3xl sm:rounded-2xl w-full max-w-lg max-h-[85vh] overflow-y-auto shadow-2xl border border-[#E2D9CC]"
         onClick={(e) => e.stopPropagation()} style={{ animation: "slideUp 0.3s ease-out" }}>
         {/* Header image */}
-        <div className="relative h-52 overflow-hidden rounded-t-3xl sm:rounded-t-2xl">
-          {imgUrl ? (
-            <ImageWithFallback src={imgUrl} fallbackGradient={pm?.fallback || "from-gray-500 to-gray-700"}
-              alt={trip.dest} className="absolute inset-0 w-full h-full" />
-          ) : (
-            <div className={`absolute inset-0 bg-gradient-to-br ${pm?.fallback || "from-gray-500 to-gray-700"}`} />
-          )}
+        <div className="relative h-52 overflow-hidden rounded-t-3xl sm:rounded-t-2xl group">
+          <DestinationCardImage
+            source={modalImage}
+            region={trip.region}
+            vibe={trip.vibe}
+            alt={trip.dest}
+            priority
+            sizes="(max-width: 640px) 100vw, 512px"
+          />
           <div className="absolute bottom-0 left-0 right-0 h-28 bg-gradient-to-t from-[#FDFAF5] to-transparent" />
           <div className="absolute bottom-4 left-5 right-5">
             <h2 className="text-[#1A1A1A] text-2xl font-bold">{trip.title}</h2>
@@ -621,6 +644,13 @@ function TripModal({ trip, onClose }: { trip: TripData; onClose: () => void }) {
 
 // ─── Main Page ────────────────────────────────────────────────
 
+type SortKey = "popular" | "price-asc" | "price-desc";
+const SORT_OPTIONS: { value: SortKey; label: string }[] = [
+  { value: "popular", label: "Popular" },
+  { value: "price-asc", label: "Price: Low to High" },
+  { value: "price-desc", label: "Price: High to Low" },
+];
+
 export default function NassauExplore() {
   const [selectedVibe, setSelectedVibe] = useState("All");
   const [selectedRegion, setSelectedRegion] = useState("All");
@@ -628,9 +658,10 @@ export default function NassauExplore() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedTrip, setSelectedTrip] = useState<TripData | null>(null);
   const [showFilters, setShowFilters] = useState(false);
+  const [sort, setSort] = useState<SortKey>("popular");
 
   const filteredTrips = useMemo(() => {
-    return TRIPS_DATA.filter((t) => {
+    const filtered = TRIPS_DATA.filter((t) => {
       if (selectedVibe !== "All" && !t.vibe.includes(selectedVibe)) return false;
       if (selectedRegion !== "All" && t.region !== selectedRegion) return false;
       if (selectedPrice !== "All" && t.tier !== selectedPrice) return false;
@@ -640,7 +671,19 @@ export default function NassauExplore() {
       }
       return true;
     });
-  }, [selectedVibe, selectedRegion, selectedPrice, searchQuery]);
+
+    // Apply sort. "Popular" = featured first, then by editorial rank preserved
+    // from the KB array order.
+    const sorted = [...filtered];
+    if (sort === "price-asc") {
+      sorted.sort((a, b) => a.cost - b.cost);
+    } else if (sort === "price-desc") {
+      sorted.sort((a, b) => b.cost - a.cost);
+    } else {
+      sorted.sort((a, b) => Number(b.featured) - Number(a.featured));
+    }
+    return sorted;
+  }, [selectedVibe, selectedRegion, selectedPrice, searchQuery, sort]);
 
   const activeFilterCount = [selectedVibe, selectedRegion, selectedPrice].filter(f => f !== "All").length;
 
@@ -651,53 +694,88 @@ export default function NassauExplore() {
         @keyframes fadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes fadeInScale { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
         .trip-card { animation: fadeIn 0.5s ease-out forwards; opacity: 0; }
-        .masonry { column-count: 2; column-gap: 16px; }
-        @media (min-width: 768px) { .masonry { column-count: 3; } }
-        @media (min-width: 1024px) { .masonry { column-count: 4; } }
-        @media (max-width: 640px) { .masonry { column-count: 1; } }
         .scrollbar-hide::-webkit-scrollbar { display: none; }
         .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
       `}</style>
 
-      {/* HERO */}
-      <div className="max-w-7xl mx-auto px-4 pt-8 pb-4">
-        <p className="font-sans text-[11px] font-medium uppercase tracking-[0.08em] text-[#5C5C5C] mb-1">Nassau</p>
-        <h1 className="font-headline text-3xl sm:text-4xl font-medium mb-2 text-[#1A1A1A]">Explore Golf Trips</h1>
-        <p className="text-[#5A4F45] text-base max-w-xl">
-          50 curated trips across 50 destinations. Find your next round, or let us plan one for you.
+      {/* HERO — full-bleed backdrop with Playfair headline */}
+      <HeroBackdrop
+        src="/images/hero-backdrop.png"
+        alt="Clifftop sunset green"
+        height="md"
+        priority
+      >
+        <p className="font-sans text-[11px] font-medium uppercase tracking-[0.08em] text-white/70 mb-2">
+          Explore Nassau
         </p>
-      </div>
+        <h1 className="font-serif text-4xl md:text-5xl font-medium tracking-tight">
+          Where to next?
+        </h1>
+        <p className="font-sans mt-2 text-white/75 text-sm md:text-base max-w-xl">
+          {TRIPS_DATA.length} curated trips across {TRIPS_DATA.length} destinations.
+          Find your next round, or let Nassau plan one for your crew.
+        </p>
+      </HeroBackdrop>
 
-      {/* FILTERS */}
-      <div className="max-w-7xl mx-auto px-4 pb-4">
-        <div className="mb-3">
-          <input type="text" placeholder="Search destinations..." value={searchQuery}
+      {/* FILTERS + SORT */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-6 pb-4">
+        <div className="mb-3 flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-between">
+          <input
+            type="text"
+            placeholder="Search destinations…"
+            value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full sm:w-72 px-4 py-2.5 rounded-xl border border-[#E2D9CC] bg-[#FDFAF5] text-sm text-[#1A1A1A] placeholder-[#8A8078] focus:outline-none focus:border-[#2D5A3D] transition-colors" />
+            className="font-sans w-full sm:w-72 min-h-[44px] px-4 py-2.5 rounded-xl border border-[#E2D9CC] bg-[#FDFAF5] text-sm text-[#1A1A1A] placeholder-[#8A8078] focus:outline-none focus:border-[#2D5A3D] transition-colors"
+          />
+          <div className="flex items-center gap-2">
+            <label htmlFor="explore-sort" className="font-sans text-xs text-[#8A8078] uppercase tracking-wide">
+              Sort
+            </label>
+            <select
+              id="explore-sort"
+              value={sort}
+              onChange={(e) => setSort(e.target.value as SortKey)}
+              className="font-sans min-h-[44px] px-3 py-2 rounded-xl border border-[#E2D9CC] bg-[#FDFAF5] text-sm text-[#1A1A1A] focus:outline-none focus:border-[#2D5A3D] transition-colors"
+            >
+              {SORT_OPTIONS.map((opt) => (
+                <option key={opt.value} value={opt.value}>
+                  {opt.label}
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
 
-        <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-hide">
-          <button onClick={() => setShowFilters(!showFilters)}
-            className="flex items-center gap-1.5 px-3.5 py-2 rounded-full text-sm font-semibold border-2 transition whitespace-nowrap"
+        <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-hide -mx-4 px-4 sm:-mx-6 sm:px-6">
+          <button
+            type="button"
+            onClick={() => setShowFilters(!showFilters)}
+            className="font-sans flex items-center gap-1.5 min-h-[44px] px-4 py-2 rounded-full text-sm font-semibold border-2 transition whitespace-nowrap"
             style={{
               borderColor: activeFilterCount > 0 ? "#2D5A3D" : "#E2D9CC",
               backgroundColor: activeFilterCount > 0 ? "#2D5A3D" : "#FDFAF5",
               color: activeFilterCount > 0 ? "white" : "#5A4F45",
-            }}>
-            ☰ Filters{activeFilterCount > 0 && (
+            }}
+          >
+            ☰ Filters
+            {activeFilterCount > 0 && (
               <span className="bg-white text-[#2D5A3D] w-5 h-5 rounded-full text-xs flex items-center justify-center font-bold ml-1">
                 {activeFilterCount}
               </span>
             )}
           </button>
           {VIBES.slice(1).map((v) => (
-            <button key={v} onClick={() => setSelectedVibe(selectedVibe === v ? "All" : v)}
-              className="px-3.5 py-2 rounded-full text-sm font-medium border transition whitespace-nowrap"
+            <button
+              key={v}
+              type="button"
+              onClick={() => setSelectedVibe(selectedVibe === v ? "All" : v)}
+              className="font-sans min-h-[44px] px-4 py-2 rounded-full text-sm font-medium border transition whitespace-nowrap"
               style={{
                 borderColor: selectedVibe === v ? "#2D5A3D" : "#E2D9CC",
                 backgroundColor: selectedVibe === v ? "#2D5A3D" : "#FDFAF5",
                 color: selectedVibe === v ? "white" : "#5A4F45",
-              }}>
+              }}
+            >
               {v}
             </button>
           ))}
@@ -743,11 +821,11 @@ export default function NassauExplore() {
         <div className="mt-3 text-sm text-[#8A8078]">{filteredTrips.length} trip{filteredTrips.length !== 1 ? "s" : ""}</div>
       </div>
 
-      {/* GRID */}
-      <div className="max-w-7xl mx-auto px-4 pb-16">
-        <div className="masonry">
+      {/* GRID — mobile: 1 col, tablet: 2 col, desktop: 3 col */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 pb-16">
+        <div className="grid grid-cols-1 gap-4 sm:gap-5 md:grid-cols-2 lg:grid-cols-3">
           {filteredTrips.map((trip, i) => (
-            <div key={trip.id} className="trip-card" style={{ animationDelay: `${i * 40}ms` }}>
+            <div key={trip.id} className="trip-card" style={{ animationDelay: `${Math.min(i, 12) * 40}ms` }}>
               <TripCard trip={trip} index={i} onClick={setSelectedTrip} />
             </div>
           ))}
@@ -755,11 +833,19 @@ export default function NassauExplore() {
         {filteredTrips.length === 0 && (
           <div className="text-center py-20">
             <div className="text-5xl mb-4">🏌️‍♂️</div>
-            <h3 className="text-xl font-bold mb-2 text-[#1A1A1A]">No trips match those filters</h3>
-            <p className="text-[#8A8078] text-sm">Try adjusting your filters or search query</p>
-            <button onClick={() => { setSelectedVibe("All"); setSelectedRegion("All"); setSelectedPrice("All"); setSearchQuery(""); }}
-              className="mt-4 px-5 py-2 rounded-full text-sm font-semibold text-white bg-[#2D5A3D] hover:bg-[#244B33] transition-colors">
-              Reset Filters
+            <h3 className="font-serif text-xl font-medium mb-2 text-[#1A1A1A]">No trips match those filters</h3>
+            <p className="font-sans text-[#8A8078] text-sm">Try adjusting your filters or search query</p>
+            <button
+              type="button"
+              onClick={() => {
+                setSelectedVibe("All");
+                setSelectedRegion("All");
+                setSelectedPrice("All");
+                setSearchQuery("");
+              }}
+              className="font-sans mt-4 min-h-[44px] px-5 py-2 rounded-full text-sm font-semibold text-white bg-[#2D5A3D] hover:bg-[#244B33] transition-colors"
+            >
+              Reset filters
             </button>
           </div>
         )}
