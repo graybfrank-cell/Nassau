@@ -11,6 +11,7 @@ import {
   getRegionGradient,
   type DestinationImageSource,
 } from "@/lib/destination-images";
+import { HeroBackdrop } from "@/components/HeroBackdrop";
 
 // ============================================
 // NASSAU EXPLORE PAGE v4 — Cream Theme + Auth Gate + Paywall
@@ -320,64 +321,94 @@ function PaywallModal({ tripTitle, onClose, onPerTrip }: {
 // ─── Trip Card ────────────────────────────────────────────────
 
 function TripCard({ trip, onClick }: { trip: TripData; index: number; onClick: (t: TripData) => void }) {
-  const imgH = trip.height === "tall" ? 500 : trip.height === "medium" ? 380 : 300;
   const image = resolveDestinationImage(trip.id, {
     region: trip.region,
     vibe: trip.vibe,
-    width: 600,
-    height: imgH,
+    width: 800,
+    height: 1067, // match aspect-[3/4]
   });
-  const heightClass = trip.height === "tall" ? "h-96" : trip.height === "medium" ? "h-72" : "h-56";
-  const accentColor = ACCENT_COLORS[trip.vibe?.[0]] || "#5A4F45";
+  const accentColor = ACCENT_COLORS[trip.vibe?.[0]] || "#2D5A3D";
 
   return (
-    <div className="group cursor-pointer break-inside-avoid mb-4" onClick={() => onClick(trip)}>
-      <div className="relative rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500 hover:-translate-y-1 bg-[#FDFAF5] border border-[#E2D9CC]">
-        <div className={`relative ${heightClass} overflow-hidden`}>
-          <DestinationCardImage
-            source={image}
-            region={trip.region}
-            vibe={trip.vibe}
-            alt={trip.dest}
-          />
-          {trip.featured && (
-            <div className="absolute top-3 left-3 bg-amber-400 text-amber-900 text-xs font-bold px-2.5 py-1 rounded-full flex items-center gap-1 shadow-md z-10">
-              ⭐ EDITOR&apos;S PICK
-            </div>
-          )}
-          <div className="absolute top-3 right-3 bg-[#FDFAF5]/90 backdrop-blur-sm text-[#1A1A1A] text-xs font-semibold px-2.5 py-1 rounded-full z-10 border border-[#E2D9CC]/80">
-            {trip.tier}
-          </div>
-          <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-[#FDFAF5] via-[#FDFAF5]/60 to-transparent z-10" />
-          <div className="absolute bottom-3 left-3 right-3 z-10">
-            <h3 className="text-[#1A1A1A] text-lg font-bold leading-tight mb-0.5">{trip.title}</h3>
-            <p className="text-[#5A4F45] text-sm">{trip.dest}</p>
-          </div>
+    // min-h target for the whole card keeps the tap zone >= 44px tall
+    <button
+      type="button"
+      onClick={() => onClick(trip)}
+      aria-label={`Open ${trip.title} — ${trip.dest}`}
+      className="group relative block w-full text-left rounded-2xl overflow-hidden shadow-sm hover:shadow-xl focus-visible:shadow-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2D5A3D] transition-all duration-500 hover:-translate-y-1 aspect-[3/4] bg-[#1a1a1a]"
+    >
+      {/* Hero image / gradient fallback */}
+      <DestinationCardImage
+        source={image}
+        region={trip.region}
+        vibe={trip.vibe}
+        alt={`${trip.dest} — ${trip.title}`}
+      />
+
+      {/* Bottom-up scrim so text stays readable */}
+      <div
+        aria-hidden="true"
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          background:
+            "linear-gradient(to top, rgba(17,17,17,0.92) 0%, rgba(17,17,17,0.70) 28%, rgba(17,17,17,0.25) 58%, rgba(17,17,17,0.05) 80%, rgba(17,17,17,0) 100%)",
+        }}
+      />
+
+      {/* Featured ribbon */}
+      {trip.featured && (
+        <div className="absolute top-3 left-3 bg-[#C9A54E] text-[#2a1d00] text-[11px] font-bold px-2.5 py-1 rounded-full flex items-center gap-1 shadow-md z-10 tracking-wide uppercase">
+          ★ Editor&apos;s Pick
         </div>
-        <div className="p-3.5">
-          <p className="text-[#5A4F45] text-sm mb-2.5 leading-snug">{trip.tagline}</p>
-          <div className="flex items-center gap-3 text-xs text-[#8A8078] mb-2.5">
-            <span>🌙 {trip.nights}N</span>
-            <span>⛳ {trip.courses} rounds</span>
-            <span>📅 {trip.best}</span>
-          </div>
-          <div className="flex flex-wrap gap-1.5">
-            {(trip.vibe || []).map((v) => (
-              <span key={v} className="text-xs px-2 py-0.5 rounded-full font-medium"
-                style={{ backgroundColor: `${ACCENT_COLORS[v] || accentColor}12`, color: ACCENT_COLORS[v] || accentColor }}>
+      )}
+
+      {/* Price tier badge */}
+      <div className="absolute top-3 right-3 bg-white/90 backdrop-blur-sm text-[#1A1A1A] text-[11px] font-semibold px-2.5 py-1 rounded-full z-10 tracking-wide">
+        {trip.tier}
+      </div>
+
+      {/* Content — overlaid bottom of card */}
+      <div className="absolute inset-x-0 bottom-0 z-10 p-4 sm:p-5">
+        {/* Vibe pills */}
+        {(trip.vibe || []).length > 0 && (
+          <div className="flex flex-wrap gap-1.5 mb-2.5">
+            {(trip.vibe || []).slice(0, 2).map((v) => (
+              <span
+                key={v}
+                className="text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-full font-semibold backdrop-blur-sm"
+                style={{
+                  backgroundColor: `${ACCENT_COLORS[v] || accentColor}cc`,
+                  color: "white",
+                }}
+              >
                 {v}
               </span>
             ))}
           </div>
-          <div className="mt-2.5 pt-2.5 border-t border-[#E2D9CC] flex items-center justify-between">
-            <span className="text-xs text-[#8A8078]">from</span>
-            <span className="text-base font-bold text-[#1A1A1A]">
-              ${trip.cost.toLocaleString()}<span className="text-xs font-normal text-[#8A8078]">/person</span>
-            </span>
-          </div>
+        )}
+
+        {/* Title (Playfair) */}
+        <h3 className="font-serif text-white text-xl sm:text-[1.375rem] leading-tight font-medium mb-1 drop-shadow-md">
+          {trip.title}
+        </h3>
+
+        {/* Destination + region (Inter) */}
+        <p className="font-sans text-white/80 text-xs sm:text-sm mb-3">
+          {trip.dest}
+        </p>
+
+        {/* Meta row — trip length + cost */}
+        <div className="flex items-center justify-between gap-2 border-t border-white/15 pt-3">
+          <span className="font-sans text-white/80 text-[11px] sm:text-xs tracking-wide">
+            {trip.nights}N · {trip.courses} rounds
+          </span>
+          <span className="font-sans text-white text-sm sm:text-base font-semibold">
+            from ${trip.cost.toLocaleString()}
+            <span className="text-white/60 text-[11px] font-normal">/person</span>
+          </span>
         </div>
       </div>
-    </div>
+    </button>
   );
 }
 
@@ -613,6 +644,13 @@ function TripModal({ trip, onClose }: { trip: TripData; onClose: () => void }) {
 
 // ─── Main Page ────────────────────────────────────────────────
 
+type SortKey = "popular" | "price-asc" | "price-desc";
+const SORT_OPTIONS: { value: SortKey; label: string }[] = [
+  { value: "popular", label: "Popular" },
+  { value: "price-asc", label: "Price: Low to High" },
+  { value: "price-desc", label: "Price: High to Low" },
+];
+
 export default function NassauExplore() {
   const [selectedVibe, setSelectedVibe] = useState("All");
   const [selectedRegion, setSelectedRegion] = useState("All");
@@ -620,9 +658,10 @@ export default function NassauExplore() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedTrip, setSelectedTrip] = useState<TripData | null>(null);
   const [showFilters, setShowFilters] = useState(false);
+  const [sort, setSort] = useState<SortKey>("popular");
 
   const filteredTrips = useMemo(() => {
-    return TRIPS_DATA.filter((t) => {
+    const filtered = TRIPS_DATA.filter((t) => {
       if (selectedVibe !== "All" && !t.vibe.includes(selectedVibe)) return false;
       if (selectedRegion !== "All" && t.region !== selectedRegion) return false;
       if (selectedPrice !== "All" && t.tier !== selectedPrice) return false;
@@ -632,7 +671,19 @@ export default function NassauExplore() {
       }
       return true;
     });
-  }, [selectedVibe, selectedRegion, selectedPrice, searchQuery]);
+
+    // Apply sort. "Popular" = featured first, then by editorial rank preserved
+    // from the KB array order.
+    const sorted = [...filtered];
+    if (sort === "price-asc") {
+      sorted.sort((a, b) => a.cost - b.cost);
+    } else if (sort === "price-desc") {
+      sorted.sort((a, b) => b.cost - a.cost);
+    } else {
+      sorted.sort((a, b) => Number(b.featured) - Number(a.featured));
+    }
+    return sorted;
+  }, [selectedVibe, selectedRegion, selectedPrice, searchQuery, sort]);
 
   const activeFilterCount = [selectedVibe, selectedRegion, selectedPrice].filter(f => f !== "All").length;
 
@@ -643,53 +694,88 @@ export default function NassauExplore() {
         @keyframes fadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes fadeInScale { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
         .trip-card { animation: fadeIn 0.5s ease-out forwards; opacity: 0; }
-        .masonry { column-count: 2; column-gap: 16px; }
-        @media (min-width: 768px) { .masonry { column-count: 3; } }
-        @media (min-width: 1024px) { .masonry { column-count: 4; } }
-        @media (max-width: 640px) { .masonry { column-count: 1; } }
         .scrollbar-hide::-webkit-scrollbar { display: none; }
         .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
       `}</style>
 
-      {/* HERO */}
-      <div className="max-w-7xl mx-auto px-4 pt-8 pb-4">
-        <p className="font-sans text-[11px] font-medium uppercase tracking-[0.08em] text-[#5C5C5C] mb-1">Nassau</p>
-        <h1 className="font-headline text-3xl sm:text-4xl font-medium mb-2 text-[#1A1A1A]">Explore Golf Trips</h1>
-        <p className="text-[#5A4F45] text-base max-w-xl">
-          50 curated trips across 50 destinations. Find your next round, or let us plan one for you.
+      {/* HERO — full-bleed backdrop with Playfair headline */}
+      <HeroBackdrop
+        src="/images/hero-backdrop.png"
+        alt="Clifftop sunset green"
+        height="md"
+        priority
+      >
+        <p className="font-sans text-[11px] font-medium uppercase tracking-[0.08em] text-white/70 mb-2">
+          Explore Nassau
         </p>
-      </div>
+        <h1 className="font-serif text-4xl md:text-5xl font-medium tracking-tight">
+          Where to next?
+        </h1>
+        <p className="font-sans mt-2 text-white/75 text-sm md:text-base max-w-xl">
+          {TRIPS_DATA.length} curated trips across {TRIPS_DATA.length} destinations.
+          Find your next round, or let Nassau plan one for your crew.
+        </p>
+      </HeroBackdrop>
 
-      {/* FILTERS */}
-      <div className="max-w-7xl mx-auto px-4 pb-4">
-        <div className="mb-3">
-          <input type="text" placeholder="Search destinations..." value={searchQuery}
+      {/* FILTERS + SORT */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-6 pb-4">
+        <div className="mb-3 flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-between">
+          <input
+            type="text"
+            placeholder="Search destinations…"
+            value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full sm:w-72 px-4 py-2.5 rounded-xl border border-[#E2D9CC] bg-[#FDFAF5] text-sm text-[#1A1A1A] placeholder-[#8A8078] focus:outline-none focus:border-[#2D5A3D] transition-colors" />
+            className="font-sans w-full sm:w-72 min-h-[44px] px-4 py-2.5 rounded-xl border border-[#E2D9CC] bg-[#FDFAF5] text-sm text-[#1A1A1A] placeholder-[#8A8078] focus:outline-none focus:border-[#2D5A3D] transition-colors"
+          />
+          <div className="flex items-center gap-2">
+            <label htmlFor="explore-sort" className="font-sans text-xs text-[#8A8078] uppercase tracking-wide">
+              Sort
+            </label>
+            <select
+              id="explore-sort"
+              value={sort}
+              onChange={(e) => setSort(e.target.value as SortKey)}
+              className="font-sans min-h-[44px] px-3 py-2 rounded-xl border border-[#E2D9CC] bg-[#FDFAF5] text-sm text-[#1A1A1A] focus:outline-none focus:border-[#2D5A3D] transition-colors"
+            >
+              {SORT_OPTIONS.map((opt) => (
+                <option key={opt.value} value={opt.value}>
+                  {opt.label}
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
 
-        <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-hide">
-          <button onClick={() => setShowFilters(!showFilters)}
-            className="flex items-center gap-1.5 px-3.5 py-2 rounded-full text-sm font-semibold border-2 transition whitespace-nowrap"
+        <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-hide -mx-4 px-4 sm:-mx-6 sm:px-6">
+          <button
+            type="button"
+            onClick={() => setShowFilters(!showFilters)}
+            className="font-sans flex items-center gap-1.5 min-h-[44px] px-4 py-2 rounded-full text-sm font-semibold border-2 transition whitespace-nowrap"
             style={{
               borderColor: activeFilterCount > 0 ? "#2D5A3D" : "#E2D9CC",
               backgroundColor: activeFilterCount > 0 ? "#2D5A3D" : "#FDFAF5",
               color: activeFilterCount > 0 ? "white" : "#5A4F45",
-            }}>
-            ☰ Filters{activeFilterCount > 0 && (
+            }}
+          >
+            ☰ Filters
+            {activeFilterCount > 0 && (
               <span className="bg-white text-[#2D5A3D] w-5 h-5 rounded-full text-xs flex items-center justify-center font-bold ml-1">
                 {activeFilterCount}
               </span>
             )}
           </button>
           {VIBES.slice(1).map((v) => (
-            <button key={v} onClick={() => setSelectedVibe(selectedVibe === v ? "All" : v)}
-              className="px-3.5 py-2 rounded-full text-sm font-medium border transition whitespace-nowrap"
+            <button
+              key={v}
+              type="button"
+              onClick={() => setSelectedVibe(selectedVibe === v ? "All" : v)}
+              className="font-sans min-h-[44px] px-4 py-2 rounded-full text-sm font-medium border transition whitespace-nowrap"
               style={{
                 borderColor: selectedVibe === v ? "#2D5A3D" : "#E2D9CC",
                 backgroundColor: selectedVibe === v ? "#2D5A3D" : "#FDFAF5",
                 color: selectedVibe === v ? "white" : "#5A4F45",
-              }}>
+              }}
+            >
               {v}
             </button>
           ))}
@@ -735,11 +821,11 @@ export default function NassauExplore() {
         <div className="mt-3 text-sm text-[#8A8078]">{filteredTrips.length} trip{filteredTrips.length !== 1 ? "s" : ""}</div>
       </div>
 
-      {/* GRID */}
-      <div className="max-w-7xl mx-auto px-4 pb-16">
-        <div className="masonry">
+      {/* GRID — mobile: 1 col, tablet: 2 col, desktop: 3 col */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 pb-16">
+        <div className="grid grid-cols-1 gap-4 sm:gap-5 md:grid-cols-2 lg:grid-cols-3">
           {filteredTrips.map((trip, i) => (
-            <div key={trip.id} className="trip-card" style={{ animationDelay: `${i * 40}ms` }}>
+            <div key={trip.id} className="trip-card" style={{ animationDelay: `${Math.min(i, 12) * 40}ms` }}>
               <TripCard trip={trip} index={i} onClick={setSelectedTrip} />
             </div>
           ))}
@@ -747,11 +833,19 @@ export default function NassauExplore() {
         {filteredTrips.length === 0 && (
           <div className="text-center py-20">
             <div className="text-5xl mb-4">🏌️‍♂️</div>
-            <h3 className="text-xl font-bold mb-2 text-[#1A1A1A]">No trips match those filters</h3>
-            <p className="text-[#8A8078] text-sm">Try adjusting your filters or search query</p>
-            <button onClick={() => { setSelectedVibe("All"); setSelectedRegion("All"); setSelectedPrice("All"); setSearchQuery(""); }}
-              className="mt-4 px-5 py-2 rounded-full text-sm font-semibold text-white bg-[#2D5A3D] hover:bg-[#244B33] transition-colors">
-              Reset Filters
+            <h3 className="font-serif text-xl font-medium mb-2 text-[#1A1A1A]">No trips match those filters</h3>
+            <p className="font-sans text-[#8A8078] text-sm">Try adjusting your filters or search query</p>
+            <button
+              type="button"
+              onClick={() => {
+                setSelectedVibe("All");
+                setSelectedRegion("All");
+                setSelectedPrice("All");
+                setSearchQuery("");
+              }}
+              className="font-sans mt-4 min-h-[44px] px-5 py-2 rounded-full text-sm font-semibold text-white bg-[#2D5A3D] hover:bg-[#244B33] transition-colors"
+            >
+              Reset filters
             </button>
           </div>
         )}
