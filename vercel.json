@@ -49,10 +49,6 @@
       "schedule": "0 11 * * *"
     },
     {
-      "path": "/api/cron/engagement",
-      "schedule": "0 14 * * *"
-    },
-    {
       "path": "/api/cron/integrity-check",
       "schedule": "0 */4 * * *"
     },
