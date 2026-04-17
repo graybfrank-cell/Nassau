@@ -1,8 +1,51 @@
 import { NextResponse } from "next/server";
+import { cookies } from "next/headers";
 import { createClient } from "@/lib/supabase/server";
 import { createServiceClient } from "@/lib/supabase/admin";
 
 const ADMIN_EMAIL = "graybfrank@gmail.com";
+
+// Credits a referral if the current user was referred by the code in the
+// cookie. Only credits if no existing referral record exists for this user.
+async function creditReferralFromCookie(): Promise<void> {
+  try {
+    const cookieStore = await cookies();
+    const ref = cookieStore.get("nassau_referral_code")?.value;
+    if (!ref) return;
+
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
+
+    const admin = createServiceClient();
+
+    // Skip if this user has already been credited
+    const { data: existing } = await admin
+      .from("referrals")
+      .select("id")
+      .eq("referred_id", user.id)
+      .maybeSingle();
+    if (existing) return;
+
+    const { data: referrer } = await admin
+      .from("referral_codes")
+      .select("user_id")
+      .eq("code", ref)
+      .single();
+    if (!referrer || referrer.user_id === user.id) return;
+
+    await admin.from("referrals").insert({
+      referrer_id: referrer.user_id,
+      referred_id: user.id,
+      referral_code: ref,
+    });
+
+    // Clear cookie after credit
+    cookieStore.delete("nassau_referral_code");
+  } catch (err) {
+    console.error("creditReferralFromCookie failed:", err);
+  }
+}
 
 async function getPostLoginRedirect(baseUrl: string): Promise<string> {
   try {
@@ -63,10 +106,21 @@ export async function GET(request: Request) {
   const type = searchParams.get("type");
   const baseUrl = getBaseUrl(request);
 
-  console.log(
-    "Auth callback hit:",
-    requestUrl.pathname + requestUrl.search
-  );
+  console.log("Auth callback hit:", requestUrl.pathname);
+
+  // Capture referral code from query param and persist it in a cookie so the
+  // signup webhook (or post-auth handler) can credit it after session exchange.
+  const ref = searchParams.get("ref");
+  if (ref) {
+    const cookieStore = await cookies();
+    cookieStore.set("nassau_referral_code", ref, {
+      maxAge: 30 * 24 * 60 * 60,
+      path: "/",
+      httpOnly: true,
+      secure: true,
+      sameSite: "lax",
+    });
+  }
 
   // Check for a `next` redirect param (e.g. /round/[shareCode], /admin/*)
   const next = searchParams.get("next");
@@ -94,6 +148,7 @@ export async function GET(request: Request) {
           `${baseUrl}/login?error=auth_failed&message=${encodeURIComponent(error.message)}`
         );
       }
+      await creditReferralFromCookie();
       if (isValidNext) {
         return NextResponse.redirect(`${baseUrl}${next}`);
       }
@@ -112,16 +167,14 @@ export async function GET(request: Request) {
           `${baseUrl}/login?error=auth_failed&message=${encodeURIComponent(error.message)}`
         );
       }
+      await creditReferralFromCookie();
       if (isValidNext) {
         return NextResponse.redirect(`${baseUrl}${next}`);
       }
       return NextResponse.redirect(await getPostLoginRedirect(baseUrl));
     }
 
-    console.error(
-      "Auth callback: no code or token_hash found. Search params:",
-      Object.fromEntries(searchParams)
-    );
+    console.error("Auth callback: no code or token_hash found");
   } catch (err) {
     console.error("Auth callback exception:", err);
   }

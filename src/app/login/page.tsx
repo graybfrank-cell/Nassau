@@ -28,18 +28,28 @@ function LoginContent() {
       const supabase = createClient();
       // Check for pending round invite to redirect back after auth
       let emailRedirectTo = "https://nassau.golf/auth/callback";
+      const ref = searchParams.get("ref");
       if (typeof window !== "undefined") {
         const pendingCode = sessionStorage.getItem("pendingRoundInvite");
         const redirectTo = searchParams.get("redirect");
+        const callbackParams = new URLSearchParams();
         if (pendingCode) {
-          emailRedirectTo = `${window.location.origin}/auth/callback?next=/round/${encodeURIComponent(pendingCode)}`;
+          callbackParams.set("next", `/round/${pendingCode}`);
         } else if (redirectTo) {
-          emailRedirectTo = `${window.location.origin}/auth/callback?next=${encodeURIComponent(redirectTo)}`;
+          callbackParams.set("next", redirectTo);
         }
+        if (ref) {
+          callbackParams.set("ref", ref);
+        }
+        const qs = callbackParams.toString();
+        emailRedirectTo = `${window.location.origin}/auth/callback${qs ? `?${qs}` : ""}`;
       }
       const { error } = await supabase.auth.signInWithOtp({
         email,
-        options: { emailRedirectTo },
+        options: {
+          emailRedirectTo,
+          data: ref ? { referral_code: ref } : undefined,
+        },
       });
       if (error) { setError(error.message); setLoading(false); return; }
       setSent(true);

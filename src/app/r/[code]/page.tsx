@@ -35,5 +35,5 @@ export default async function ReferralRedirect({ params }: Props) {
     });
   }
 
-  redirect("/auth/signup");
+  redirect(`/login?ref=${code}`);
 }
