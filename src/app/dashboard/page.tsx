@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import TopBar from "@/components/TopBar";
 import type { DashboardData } from "@/types/dashboard";
+import knowledgeBase from "@/data/nassau-knowledge-base.json";
 
 const EMPTY_DASHBOARD: DashboardData = {
   user: { fullName: "Golfer", firstName: "Golfer", venmoUsername: null },
@@ -150,6 +151,18 @@ export default function DashboardPage() {
 
   // Upcoming round data
   const upcomingRound = data.upcomingRound || data.upcomingRounds[0];
+
+  // First-time user empty state: no trips, no rounds, no scores
+  const isEmpty =
+    totalRounds === 0 &&
+    (data.upcomingRounds?.length ?? 0) === 0 &&
+    data.recentRounds.length === 0 &&
+    data.recentScores.length === 0 &&
+    !hasSettlements;
+
+  if (isEmpty) {
+    return <EmptyDashboard firstName={data.user.firstName} />;
+  }
 
   // Recent rounds: prefer recentRounds, fallback to recentScores
   const recentRoundsList: { id: string; courseName: string; date: string; score: number; moneyNet: number }[] =
@@ -401,6 +414,184 @@ export default function DashboardPage() {
       >
         <Flag className="h-6 w-6 text-white" />
       </Link>
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Empty Dashboard (first-time user)
+// ---------------------------------------------------------------------------
+const FEATURED_EMPTY_DESTINATIONS = [
+  "scottsdale-az",
+  "pinehurst-nc",
+  "pebble-beach-monterey-ca",
+  "bandon-dunes-or",
+];
+
+interface KBDestinationLite {
+  id: string;
+  destination: string;
+  region: string;
+  why_go?: string;
+}
+
+function EmptyDashboard({ firstName }: { firstName: string }) {
+  const kb = knowledgeBase as { destinations?: KBDestinationLite[] };
+  const featured = (kb.destinations ?? []).filter((d) =>
+    FEATURED_EMPTY_DESTINATIONS.includes(d.id)
+  );
+
+  return (
+    <div className="min-h-screen bg-[#111111] pb-32">
+      {/* Hero */}
+      <div className="relative h-44 sm:h-52 overflow-hidden">
+        <Image
+          src="https://images.unsplash.com/photo-1587174486073-ae5e5cff23aa?q=80&w=2070&auto=format&fit=crop"
+          alt="Sunrise over a golf course"
+          fill
+          className="object-cover"
+          priority
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-[#111111]/70 via-[#111111]/60 to-[#111111]" />
+        <div className="relative z-10 flex h-full flex-col">
+          <TopBar />
+          <div className="mt-auto px-6 pb-5">
+            <h1 className="font-headline text-[26px] font-medium text-[#F2F0EB]">
+              Welcome to Nassau, {firstName}
+            </h1>
+            <p className="mt-1 text-sm text-[#B5B5B5]">
+              Run the trip. Plan it. Play it. Settle it.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Two action cards */}
+      <div className="mx-6 mt-5 grid gap-3 sm:grid-cols-2">
+        <Link
+          href="/trips/create"
+          className="group flex min-h-[120px] flex-col justify-between rounded-2xl bg-[#2D5A3D] p-5 transition-opacity hover:opacity-90"
+        >
+          <Map className="h-6 w-6 text-white" />
+          <div>
+            <p className="font-headline text-[20px] font-medium leading-tight text-white">
+              Plan a golf trip
+            </p>
+            <p className="mt-1 text-xs text-white/80">
+              Destination, dates, crew — all in one link.
+            </p>
+          </div>
+        </Link>
+        <Link
+          href="/rounds/new"
+          className="group flex min-h-[120px] flex-col justify-between rounded-2xl border border-[#2D5A3D]/50 bg-[#1A1A1A] p-5 transition-colors hover:border-[#2D5A3D]"
+        >
+          <Flag className="h-6 w-6 text-[#2D5A3D]" />
+          <div>
+            <p className="font-headline text-[20px] font-medium leading-tight text-[#F2F0EB]">
+              Start a round
+            </p>
+            <p className="mt-1 text-xs text-[#8A8A8A]">
+              Score, bets, settlements — free forever.
+            </p>
+          </div>
+        </Link>
+      </div>
+
+      {/* Featured destinations */}
+      {featured.length > 0 && (
+        <div className="mt-8 px-6">
+          <div className="mb-3 flex items-end justify-between">
+            <p className="font-sans text-[11px] font-medium uppercase tracking-[0.08em] text-[#5C5C5C]">
+              Popular destinations
+            </p>
+            <Link
+              href="/explore"
+              className="text-xs font-semibold text-[#2D5A3D]"
+            >
+              See all →
+            </Link>
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            {featured.map((dest) => (
+              <Link
+                key={dest.id}
+                href={`/trips/create?destination=${dest.id}`}
+                className="rounded-2xl bg-[#1A1A1A] p-4 transition-colors hover:bg-[#202020]"
+              >
+                <p className="font-semibold text-[#F2F0EB] text-sm">
+                  {dest.destination}
+                </p>
+                <p className="mt-1 text-xs text-[#8A8A8A]">{dest.region}</p>
+                {dest.why_go && (
+                  <p className="mt-2 line-clamp-2 text-xs text-[#B5B5B5]">
+                    {dest.why_go}
+                  </p>
+                )}
+              </Link>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* How it works */}
+      <div className="mt-10 px-6">
+        <p className="mb-4 font-sans text-[11px] font-medium uppercase tracking-[0.08em] text-[#5C5C5C]">
+          How it works
+        </p>
+        <ol className="space-y-3">
+          {[
+            { n: 1, title: "Pick a destination", body: "Or invite the crew first — start the trip from anywhere." },
+            { n: 2, title: "Invite the crew", body: "Share one link. Everyone RSVPs, pays, and plays." },
+            { n: 3, title: "Play & settle", body: "Score in real time. Settle up over Venmo at the 19th." },
+          ].map((step) => (
+            <li
+              key={step.n}
+              className="flex items-start gap-3 rounded-2xl bg-[#1A1A1A] p-4"
+            >
+              <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#2D5A3D] text-xs font-bold text-white">
+                {step.n}
+              </span>
+              <div>
+                <p className="text-sm font-semibold text-[#F2F0EB]">
+                  {step.title}
+                </p>
+                <p className="mt-0.5 text-xs text-[#8A8A8A]">{step.body}</p>
+              </div>
+            </li>
+          ))}
+        </ol>
+      </div>
+
+      {/* Bottom nav */}
+      <nav className="fixed bottom-0 left-0 right-0 border-t border-[#1A1A1A] bg-[#111111] px-6 py-3">
+        <div className="grid grid-cols-4">
+          <Link href="/dashboard" className="flex flex-col items-center gap-1">
+            <Home className="h-5 w-5 text-[#2D5A3D]" />
+            <span className="text-xs font-medium uppercase text-[#2D5A3D]">
+              Home
+            </span>
+          </Link>
+          <Link href="/rounds" className="flex flex-col items-center gap-1">
+            <Trophy className="h-5 w-5 text-[#8A8A8A]" />
+            <span className="text-xs font-medium uppercase text-[#8A8A8A]">
+              Rounds
+            </span>
+          </Link>
+          <Link href="/trips" className="flex flex-col items-center gap-1">
+            <Map className="h-5 w-5 text-[#8A8A8A]" />
+            <span className="text-xs font-medium uppercase text-[#8A8A8A]">
+              Trips
+            </span>
+          </Link>
+          <Link href="/profile" className="flex flex-col items-center gap-1">
+            <User className="h-5 w-5 text-[#8A8A8A]" />
+            <span className="text-xs font-medium uppercase text-[#8A8A8A]">
+              Profile
+            </span>
+          </Link>
+        </div>
+      </nav>
     </div>
   );
 }
