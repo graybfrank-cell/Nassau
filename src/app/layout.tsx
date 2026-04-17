@@ -1,8 +1,9 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
 import { Playfair_Display, Inter } from "next/font/google";
 import { createClient } from "@/lib/supabase/server";
 import NavBar from "@/components/NavBar";
+import InstallBanner from "@/components/InstallBanner";
 import "./globals.css";
 
 const playfair = Playfair_Display({
@@ -58,6 +59,19 @@ export const metadata: Metadata = {
     images: ["/og-image.png"],
     creator: "@UseNassauGolf",
   },
+  manifest: "/manifest.json",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "black-translucent",
+    title: "Nassau",
+  },
+  icons: {
+    apple: "/icons/icon-192.png",
+  },
+};
+
+export const viewport: Viewport = {
+  themeColor: "#2D5A3D",
 };
 
 async function getUser() {
@@ -82,6 +96,7 @@ export default async function RootLayout({
       <body className={`${playfair.variable} ${inter.variable} ${geistMono.variable} font-sans antialiased`}>
         <NavBar user={user} />
         {children}
+        <InstallBanner />
       </body>
     </html>
   );
