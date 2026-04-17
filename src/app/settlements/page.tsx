@@ -194,7 +194,7 @@ export default function SettlementsPage() {
           <button
             key={filter}
             onClick={() => setActiveFilter(filter)}
-            className={`text-xs font-medium uppercase px-4 py-2 rounded-full whitespace-nowrap ${
+            className={`min-h-[44px] text-xs font-medium uppercase px-4 py-2 rounded-full whitespace-nowrap ${
               activeFilter === filter
                 ? "bg-[#2D5A3D] text-white"
                 : "border border-[#2A2A2A] text-[#8A8A8A]"

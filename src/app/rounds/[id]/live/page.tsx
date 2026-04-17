@@ -894,7 +894,7 @@ export default function LiveScorecardPage() {
           <Link
             key={label}
             href={href}
-            className="flex flex-col items-center gap-0.5 py-1"
+            className="flex min-h-[44px] flex-col items-center justify-center gap-0.5 py-2"
           >
             <Icon
               className="h-5 w-5"
