@@ -1,93 +1,106 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getUser, unauthorized, forbidden } from "@/lib/auth";
+import { apiError } from "@/lib/api-utils";
 
 export async function GET(
   _req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const user = await getUser();
-  if (!user) return unauthorized();
+  try {
+    const user = await getUser();
+    if (!user) return unauthorized();
 
-  const { id: roundId } = await params;
+    const { id: roundId } = await params;
 
-  const round = await prisma.gameRounds.findUnique({
-    where: { id: roundId },
-    include: { players: true, scorecards: true, skins_game: true },
-  });
-  if (!round) {
-    return NextResponse.json({ error: "Not found" }, { status: 404 });
+    const round = await prisma.gameRounds.findUnique({
+      where: { id: roundId },
+      include: { players: true, scorecards: true, skins_game: true },
+    });
+    if (!round) {
+      return NextResponse.json({ error: "Not found" }, { status: 404 });
+    }
+    if (!round.players.some((p: any) => p.user_id === user.id)) return forbidden();
+    if (!round.skins_game) {
+      return NextResponse.json({ error: "No skins game" }, { status: 404 });
+    }
+
+    // Auto-calculate results from scorecards
+    const confirmedPlayerIds = round.players
+      .filter((p: any) => p.status === "confirmed" || p.role === "COMMISSIONER")
+      .map((p: any) => p.id);
+    const results = calculateSkinsResults(
+      round.scorecards,
+      confirmedPlayerIds,
+      Number(round.skins_game.buy_in),
+      round.starting_hole
+    );
+
+    return NextResponse.json({
+      ...round.skins_game,
+      results,
+    });
+  } catch (err) {
+    return apiError(err, "GET /api/game-rounds/[id]/skins");
   }
-  if (!round.players.some((p: any) => p.user_id === user.id)) return forbidden();
-  if (!round.skins_game) {
-    return NextResponse.json({ error: "No skins game" }, { status: 404 });
-  }
-
-  // Auto-calculate results from scorecards
-  const confirmedPlayerIds = round.players
-    .filter((p: any) => p.status === "confirmed" || p.role === "COMMISSIONER")
-    .map((p: any) => p.id);
-  const results = calculateSkinsResults(
-    round.scorecards,
-    confirmedPlayerIds,
-    Number(round.skins_game.buy_in),
-    round.starting_hole
-  );
-
-  return NextResponse.json({
-    ...round.skins_game,
-    results,
-  });
 }
 
 export async function POST(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const user = await getUser();
-  if (!user) return unauthorized();
+  try {
+    const user = await getUser();
+    if (!user) return unauthorized();
 
-  const { id: roundId } = await params;
+    const { id: roundId } = await params;
 
-  const round = await prisma.gameRounds.findUnique({ where: { id: roundId } });
-  if (!round) {
-    return NextResponse.json({ error: "Not found" }, { status: 404 });
+    const round = await prisma.gameRounds.findUnique({ where: { id: roundId } });
+    if (!round) {
+      return NextResponse.json({ error: "Not found" }, { status: 404 });
+    }
+    if (round.commissioner_id !== user.id) return forbidden();
+
+    const body = await req.json();
+
+    const skinsGame = await prisma.gameSkinsGames.upsert({
+      where: { round_id: roundId },
+      create: {
+        round_id: roundId,
+        buy_in: body.buy_in || 20,
+      },
+      update: {
+        buy_in: body.buy_in || 20,
+      },
+    });
+
+    return NextResponse.json(skinsGame);
+  } catch (err) {
+    return apiError(err, "POST /api/game-rounds/[id]/skins");
   }
-  if (round.commissioner_id !== user.id) return forbidden();
-
-  const body = await req.json();
-
-  const skinsGame = await prisma.gameSkinsGames.upsert({
-    where: { round_id: roundId },
-    create: {
-      round_id: roundId,
-      buy_in: body.buy_in || 20,
-    },
-    update: {
-      buy_in: body.buy_in || 20,
-    },
-  });
-
-  return NextResponse.json(skinsGame);
 }
 
 export async function DELETE(
   _req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const user = await getUser();
-  if (!user) return unauthorized();
+  try {
+    const user = await getUser();
+    if (!user) return unauthorized();
 
-  const { id: roundId } = await params;
+    const { id: roundId } = await params;
 
-  const round = await prisma.gameRounds.findUnique({ where: { id: roundId } });
-  if (!round) {
-    return NextResponse.json({ error: "Not found" }, { status: 404 });
+    const round = await prisma.gameRounds.findUnique({ where: { id: roundId } });
+    if (!round) {
+      return NextResponse.json({ error: "Not found" }, { status: 404 });
+    }
+    if (round.commissioner_id !== user.id) return forbidden();
+
+    await prisma.gameSkinsGames.deleteMany({ where: { round_id: roundId } });
+    return NextResponse.json({ ok: true });
+  } catch (err) {
+    return apiError(err, "DELETE /api/game-rounds/[id]/skins");
   }
-  if (round.commissioner_id !== user.id) return forbidden();
-
-  await prisma.gameSkinsGames.deleteMany({ where: { round_id: roundId } });
-  return NextResponse.json({ ok: true });
 }
 
 interface ScorecardRow {

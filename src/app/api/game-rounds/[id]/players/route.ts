@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getUser, unauthorized, forbidden } from "@/lib/auth";
+import { apiError } from "@/lib/api-utils";
 import { Resend } from "resend";
 
 const resend = process.env.RESEND_API_KEY
@@ -11,8 +12,9 @@ export async function POST(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const user = await getUser();
-  if (!user) return unauthorized();
+  try {
+    const user = await getUser();
+    if (!user) return unauthorized();
 
   const { id: roundId } = await params;
 
@@ -113,5 +115,8 @@ export async function POST(
     }
   }
 
-  return NextResponse.json(player, { status: 201 });
+    return NextResponse.json(player, { status: 201 });
+  } catch (err) {
+    return apiError(err, "POST /api/game-rounds/[id]/players");
+  }
 }

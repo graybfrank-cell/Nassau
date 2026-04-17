@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import crypto from "crypto";
 import { prisma } from "@/lib/prisma";
 import { getUser, unauthorized } from "@/lib/auth";
+import { apiError } from "@/lib/api-utils";
 import { Resend } from "resend";
 
 const resend = process.env.RESEND_API_KEY
@@ -19,25 +20,29 @@ function generateShareCode(): string {
 }
 
 export async function GET() {
-  const user = await getUser();
-  if (!user) return unauthorized();
+  try {
+    const user = await getUser();
+    if (!user) return unauthorized();
 
-  const rounds = await prisma.gameRounds.findMany({
-    where: {
-      players: { some: { user_id: user.id } },
-    },
-    include: {
-      players: true,
-      scorecards: true,
-      skins_game: true,
-      nassau_bet: true,
-      expenses: true,
-      settlements: true,
-    },
-    orderBy: { tee_time: "desc" },
-  });
+    const rounds = await prisma.gameRounds.findMany({
+      where: {
+        players: { some: { user_id: user.id } },
+      },
+      include: {
+        players: true,
+        scorecards: true,
+        skins_game: true,
+        nassau_bet: true,
+        expenses: true,
+        settlements: true,
+      },
+      orderBy: { tee_time: "desc" },
+    });
 
-  return NextResponse.json(rounds);
+    return NextResponse.json(rounds);
+  } catch (err) {
+    return apiError(err, "GET /api/game-rounds");
+  }
 }
 
 export async function POST(req: NextRequest) {

@@ -1,14 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getUser, unauthorized, forbidden } from "@/lib/auth";
+import { apiError } from "@/lib/api-utils";
 import { calculateNassauBet } from "@/components/shared/NassauBetCalculator";
 
 export async function POST(
   _req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const user = await getUser();
-  if (!user) return unauthorized();
+  try {
+    const user = await getUser();
+    if (!user) return unauthorized();
 
   const { id: roundId } = await params;
 
@@ -184,5 +186,8 @@ export async function POST(
     orderBy: { created_at: "asc" },
   });
 
-  return NextResponse.json(allSettlements);
+    return NextResponse.json(allSettlements);
+  } catch (err) {
+    return apiError(err, "POST /api/game-rounds/[id]/settlements/recalculate");
+  }
 }

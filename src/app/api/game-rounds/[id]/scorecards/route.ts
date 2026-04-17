@@ -1,41 +1,47 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getUser, unauthorized, forbidden } from "@/lib/auth";
+import { apiError } from "@/lib/api-utils";
 import { calculateNassauBet } from "@/components/shared/NassauBetCalculator";
 
 export async function GET(
   _req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const user = await getUser();
-  if (!user) return unauthorized();
+  try {
+    const user = await getUser();
+    if (!user) return unauthorized();
 
-  const { id: roundId } = await params;
+    const { id: roundId } = await params;
 
-  const round = await prisma.gameRounds.findUnique({
-    where: { id: roundId },
-    include: { players: true },
-  });
-  if (!round) {
-    return NextResponse.json({ error: "Not found" }, { status: 404 });
+    const round = await prisma.gameRounds.findUnique({
+      where: { id: roundId },
+      include: { players: true },
+    });
+    if (!round) {
+      return NextResponse.json({ error: "Not found" }, { status: 404 });
+    }
+    if (!round.players.some((p: any) => p.user_id === user.id)) return forbidden();
+
+    const scorecards = await prisma.gameScorecards.findMany({
+      where: { round_id: roundId },
+    });
+
+    return NextResponse.json(scorecards);
+  } catch (err) {
+    return apiError(err, "GET /api/game-rounds/[id]/scorecards");
   }
-  if (!round.players.some((p: any) => p.user_id === user.id)) return forbidden();
-
-  const scorecards = await prisma.gameScorecards.findMany({
-    where: { round_id: roundId },
-  });
-
-  return NextResponse.json(scorecards);
 }
 
 export async function POST(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const user = await getUser();
-  if (!user) return unauthorized();
+  try {
+    const user = await getUser();
+    if (!user) return unauthorized();
 
-  const { id: roundId } = await params;
+    const { id: roundId } = await params;
 
   const round = await prisma.gameRounds.findUnique({
     where: { id: roundId },
@@ -120,5 +126,8 @@ export async function POST(
     // Table may not exist yet or recalculation failed — don't block scorecard save
   }
 
-  return NextResponse.json(scorecard);
+    return NextResponse.json(scorecard);
+  } catch (err) {
+    return apiError(err, "POST /api/game-rounds/[id]/scorecards");
+  }
 }
