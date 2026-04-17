@@ -60,13 +60,13 @@ export default function HeroSection() {
       {/* Hero content — bottom left */}
       <div className="relative z-10 mt-auto px-6 pb-24 lg:px-12">
         <h1 className="font-headline text-[56px] font-medium leading-[1.0] text-white sm:text-[72px]">
-          All golf trips.
-          <br />
-          One link.
+          Run the trip.
         </h1>
-        <p className="mt-4 max-w-md text-[16px] leading-relaxed text-white/60">
-          Plan the trip. Commit the crew. Play the rounds. Settle the bets. One
-          link does it all.
+        <p className="mt-4 max-w-md text-[18px] leading-relaxed text-white/80">
+          Plan it. Play it. Settle it.
+        </p>
+        <p className="mt-3 max-w-md text-[14px] leading-relaxed text-white/50">
+          The operating system for golf trips.
         </p>
 
         {/* Waitlist form */}

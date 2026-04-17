@@ -27,16 +27,16 @@ const geistMono = localFont({
 
 export const metadata: Metadata = {
   title: {
-    default: "Nassau — All Golf Trips. One Link.",
+    default: "Nassau",
     template: "%s | Nassau",
   },
   description:
-    "The operating system for golf trips. Plan it. Commit the crew. Play the rounds. Settle the bets. Launching April 2026.",
+    "Run the trip. The operating system for golf trips — plan it, play it, settle it. All golf trips. One link.",
   metadataBase: new URL("https://nassau.golf"),
   openGraph: {
-    title: "Nassau — All Golf Trips. One Link.",
+    title: "Nassau — Run the trip.",
     description:
-      "The operating system for golf trips. Plan it. Commit the crew. Play the rounds. Settle the bets. Launching April 2026.",
+      "Run the trip. The operating system for golf trips — plan it, play it, settle it. All golf trips. One link.",
     url: "https://nassau.golf",
     siteName: "Nassau",
     images: [
@@ -44,7 +44,7 @@ export const metadata: Metadata = {
         url: "/og-image.png",
         width: 1200,
         height: 630,
-        alt: "Nassau — All Golf Trips. One Link.",
+        alt: "Nassau — All golf trips. One link.",
       },
     ],
     locale: "en_US",
@@ -52,9 +52,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Nassau — All Golf Trips. One Link.",
+    title: "Nassau — Run the trip.",
     description:
-      "The operating system for golf trips. Plan it. Commit the crew. Play the rounds. Settle the bets. Launching April 2026.",
+      "Run the trip. The operating system for golf trips — plan it, play it, settle it. All golf trips. One link.",
     images: ["/og-image.png"],
     creator: "@UseNassauGolf",
   },

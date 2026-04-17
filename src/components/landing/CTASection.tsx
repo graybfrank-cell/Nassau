@@ -41,11 +41,12 @@ export default function CTASection() {
     <section className="bg-[#111111] px-6 py-24 text-center">
       <div className="mx-auto max-w-2xl">
         <h2 className="font-headline text-[56px] font-medium leading-[1.0] text-white">
-          All golf trips.
-          <br />
-          One link.
+          Run the trip.
         </h2>
-        <p className="mt-4 text-[16px] text-[#8A8A8A]">
+        <p className="mt-4 text-[18px] text-white/80">
+          Plan it. Play it. Settle it.
+        </p>
+        <p className="mt-4 text-[14px] text-[#8A8A8A]">
           Be first in line when Nassau opens to captains in April.
         </p>
 

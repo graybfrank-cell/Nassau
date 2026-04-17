@@ -11,13 +11,13 @@ import BetsSection from "@/components/landing/BetsSection";
 import CTASection from "@/components/landing/CTASection";
 
 export const metadata: Metadata = {
-  title: "Nassau — All Golf Trips. One Link.",
+  title: "Nassau",
   description:
-    "Plan golf trips, track bets, score rounds, and settle up — all in one app. Nassau is the operating system for golf trips. Join the waitlist.",
+    "Run the trip. Plan it. Play it. Settle it. Nassau is the operating system for golf trips. Join the waitlist.",
   openGraph: {
-    title: "Nassau — All Golf Trips. One Link.",
+    title: "Nassau — Run the trip.",
     description:
-      "Plan golf trips, track bets, score rounds, and settle up — all in one app. Nassau is the operating system for golf trips.",
+      "Run the trip. Plan it. Play it. Settle it. Nassau is the operating system for golf trips.",
     url: "https://nassau.golf",
     siteName: "Nassau",
     type: "website",
@@ -25,9 +25,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Nassau — All Golf Trips. One Link.",
+    title: "Nassau — Run the trip.",
     description:
-      "Plan golf trips, track bets, score rounds, and settle up — all in one app. Join the waitlist.",
+      "Run the trip. Plan it. Play it. Settle it. Join the waitlist.",
     images: ["/og-image.png"],
   },
   alternates: {
@@ -109,7 +109,7 @@ function OrganizationJsonLd() {
     url: "https://nassau.golf",
     logo: "https://nassau.golf/og-image.png",
     description:
-      "The operating system for golf trips. Plan it. Commit the crew. Play the rounds. Settle the bets.",
+      "Run the trip. The operating system for golf trips. Plan it. Play it. Settle it.",
     sameAs: ["https://x.com/UseNassauGolf"],
     contactPoint: {
       "@type": "ContactPoint",

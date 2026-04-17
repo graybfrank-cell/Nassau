@@ -69,7 +69,7 @@ function LoginContent() {
               <span className="text-2xl font-extrabold text-[#2D5A3D]">N</span>
             </div>
             <h1 className="text-3xl font-bold tracking-tight text-[#1A1A1A]">Nassau</h1>
-            <p className="mt-2 text-sm text-[#5A4F45]">The Golf Trip Companion</p>
+            <p className="mt-2 text-sm text-[#5A4F45]">Run the trip.</p>
           </div>
           {sent ? (
             <div className="text-center">
