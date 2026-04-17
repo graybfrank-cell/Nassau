@@ -236,7 +236,9 @@ function DestinationCardImage({
 
 // ─── Auth Gate ────────────────────────────────────────────────
 
-function AuthGate({ tripTitle, onClose }: { tripTitle: string; onClose: () => void }) {
+function AuthGate({ tripTitle, destSlug, onClose }: { tripTitle: string; destSlug: string; onClose: () => void }) {
+  const nextParam = encodeURIComponent(`/trips/create?destination=${destSlug}`);
+  const signInHref = `/login?next=${nextParam}`;
   return (
     <div className="fixed inset-0 z-[60] flex items-center justify-center px-4" onClick={onClose}>
       <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" />
@@ -256,11 +258,11 @@ function AuthGate({ tripTitle, onClose }: { tripTitle: string; onClose: () => vo
           <p className="text-xs font-semibold text-[#2D5A3D] uppercase tracking-wide mb-1">Your first trip is free</p>
           <p className="text-xs text-[#5A4F45]">No credit card required to get started</p>
         </div>
-        <Link href="/login?redirect=/explore"
+        <Link href={signInHref}
           className="block w-full py-3.5 rounded-xl bg-[#2D5A3D] text-white text-center font-bold text-sm hover:bg-[#244B33] transition-colors shadow-lg shadow-[#2D5A3D]/20 mb-2">
           Create Free Account →
         </Link>
-        <Link href="/login?redirect=/explore"
+        <Link href={signInHref}
           className="block w-full py-3 rounded-xl border border-[#E2D9CC] text-[#1A1A1A] text-center font-medium text-sm hover:bg-[#F2F0EB] transition-colors mb-3">
           Sign In
         </Link>
@@ -505,7 +507,7 @@ function TripModal({ trip, onClose }: { trip: TripData; onClose: () => void }) {
     router.push(`/login?plan=per-trip&dest=${encodeURIComponent(trip.id)}`);
   }
 
-  if (state === "auth-gate") return <AuthGate tripTitle={trip.title} onClose={onClose} />;
+  if (state === "auth-gate") return <AuthGate tripTitle={trip.title} destSlug={trip.id} onClose={onClose} />;
   if (state === "paywall") return <PaywallModal tripTitle={trip.title} onClose={onClose} onPerTrip={handlePerTrip} />;
 
   return (

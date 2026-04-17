@@ -1,7 +1,7 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
-import { useRouter } from 'next/navigation';
+import { Suspense, useState, useEffect, useRef } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Image from 'next/image';
 import {
   ArrowLeft,
@@ -15,6 +15,13 @@ import {
   Minus,
 } from 'lucide-react';
 import TopBar from '@/components/TopBar';
+import knowledgeBase from '@/data/nassau-knowledge-base.json';
+
+function lookupDestinationName(slug: string): string {
+  const kb = knowledgeBase as { destinations?: Array<{ id: string; destination: string }> };
+  const match = kb.destinations?.find((d) => d.id === slug);
+  return match?.destination || slug;
+}
 
 // ============================================================
 // TYPES
@@ -574,12 +581,25 @@ function AddPlayerModal({
 // ============================================================
 
 export default function CreateTripPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-dark" />}>
+      <CreateTripPageInner />
+    </Suspense>
+  );
+}
+
+function CreateTripPageInner() {
   const router = useRouter();
-  const [step, setStep] = useState(1);
+  const searchParams = useSearchParams();
+  const destinationParam = searchParams.get('destination') || '';
+  const hasDestinationParam = destinationParam.trim().length > 0;
+  const [step, setStep] = useState(hasDestinationParam ? 2 : 1);
   const TOTAL_STEPS = 3;
 
-  // Step 1 state
-  const [destination, setDestination] = useState('');
+  // Step 1 state — pre-fill from query param if present (looks up KB slug → display name)
+  const [destination, setDestination] = useState(
+    hasDestinationParam ? lookupDestinationName(destinationParam) : ''
+  );
   const [timeFrame, setTimeFrame] = useState<TimeFrame | null>(null);
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
