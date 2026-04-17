@@ -3,8 +3,14 @@
 import { useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import { createClient } from "@/lib/supabase/client";
 import knowledgeBase from "@/data/nassau-knowledge-base.json";
+import {
+  resolveDestinationImage,
+  getRegionGradient,
+  type DestinationImageSource,
+} from "@/lib/destination-images";
 
 // ============================================
 // NASSAU EXPLORE PAGE v4 — Cream Theme + Auth Gate + Paywall
@@ -176,80 +182,55 @@ const TRIPS_DATA: TripData[] = destinations.map((d) => {
   };
 });
 
-// ─── Photo Map ────────────────────────────────────────────────
-
-interface PhotoEntry { photo: string; fallback: string; credit: string; }
-const PHOTO_MAP: Record<string, PhotoEntry> = {
-  "scottsdale-az": { photo: "photo-1682686581362-e05e14b37bcb", fallback: "from-amber-600 to-orange-800", credit: "Unsplash" },
-  "myrtle-beach-sc": { photo: "photo-1507525428034-b723cf961d3e", fallback: "from-sky-400 to-blue-600", credit: "Unsplash" },
-  "pinehurst-nc": { photo: "photo-1587174486073-ae5e5cff23aa", fallback: "from-green-700 to-emerald-900", credit: "Unsplash" },
-  "las-vegas-nv": { photo: "photo-1605833556294-ea5c7a74f57d", fallback: "from-purple-600 to-fuchsia-700", credit: "Unsplash" },
-  "austin-tx": { photo: "photo-1531218150217-54595bc2b934", fallback: "from-orange-500 to-red-600", credit: "Unsplash" },
-  "san-diego-ca": { photo: "photo-1538970272646-f61fabb3a8a2", fallback: "from-cyan-400 to-blue-500", credit: "Unsplash" },
-  "hilton-head-sc": { photo: "photo-1535131749006-b7f58c99034b", fallback: "from-teal-500 to-green-600", credit: "Unsplash" },
-  "pebble-beach-monterey-ca": { photo: "photo-1587174486073-ae5e5cff23aa", fallback: "from-slate-600 to-blue-900", credit: "Unsplash" },
-  "kiawah-island-sc": { photo: "photo-1600166898405-da9535204843", fallback: "from-emerald-600 to-teal-800", credit: "Unsplash" },
-  "bandon-dunes-or": { photo: "photo-1560088939-3dc36f0d00e8", fallback: "from-gray-500 to-slate-700", credit: "Unsplash" },
-  "streamsong-fl": { photo: "photo-1592919505780-303950717480", fallback: "from-lime-500 to-green-700", credit: "Unsplash" },
-  "palm-springs-ca": { photo: "photo-1509233725247-49e657c54213", fallback: "from-yellow-400 to-orange-500", credit: "Unsplash" },
-  "savannah-ga": { photo: "photo-1597424216809-3ba4c3dc3cf9", fallback: "from-green-600 to-emerald-800", credit: "Unsplash" },
-  "cabo-san-lucas-mx": { photo: "photo-1524260855046-f743b3cdad07", fallback: "from-blue-400 to-teal-600", credit: "Unsplash" },
-  "branson-mo": { photo: "photo-1505672678657-cc7037095e60", fallback: "from-green-500 to-lime-700", credit: "Unsplash" },
-  "gulf-shores-al": { photo: "photo-1510414842594-a61c69b5ae57", fallback: "from-sky-300 to-blue-500", credit: "Unsplash" },
-  "lake-tahoe-ca": { photo: "photo-1489659831163-682b5af42225", fallback: "from-blue-500 to-indigo-700", credit: "Unsplash" },
-  "mesquite-nv": { photo: "photo-1509316975850-ff9c5deb0cd9", fallback: "from-red-600 to-orange-700", credit: "Unsplash" },
-  "wisconsin-dells-sand-valley-wi": { photo: "photo-1535131749006-b7f58c99034b", fallback: "from-green-500 to-emerald-700", credit: "Unsplash" },
-  "st-andrews-scotland": { photo: "photo-1551882547-ff40c63fe5fa", fallback: "from-stone-500 to-slate-700", credit: "Unsplash" },
-  "charleston-sc": { photo: "photo-1569880153113-76e33fc52d5f", fallback: "from-rose-400 to-pink-600", credit: "Unsplash" },
-  "nashville-tn": { photo: "photo-1545419913-ef0cbcbbf7f4", fallback: "from-yellow-500 to-amber-600", credit: "Unsplash" },
-  "destin-fl": { photo: "photo-1519046904884-53103b34b206", fallback: "from-emerald-300 to-cyan-500", credit: "Unsplash" },
-  "orlando-fl": { photo: "photo-1575089976121-8ed7b2a54265", fallback: "from-orange-400 to-red-500", credit: "Unsplash" },
-  "williamsburg-va": { photo: "photo-1558618666-fcd25c85f82e", fallback: "from-amber-700 to-stone-800", credit: "Unsplash" },
-  "reynolds-lake-oconee-ga": { photo: "photo-1501785888041-af3ef285b470", fallback: "from-blue-400 to-green-600", credit: "Unsplash" },
-  "rtj-trail-al": { photo: "photo-1632932693498-7e44d6ab504c", fallback: "from-red-700 to-red-900", credit: "Unsplash" },
-  "cape-cod-ma": { photo: "photo-1499092346589-b9b6be3e94b2", fallback: "from-blue-300 to-sky-500", credit: "Unsplash" },
-  "kohler-wi": { photo: "photo-1600166898405-da9535204843", fallback: "from-green-800 to-slate-900", credit: "Unsplash" },
-  "tucson-az": { photo: "photo-1469854523086-cc02fe5d8800", fallback: "from-orange-600 to-red-800", credit: "Unsplash" },
-  "bend-or": { photo: "photo-1464278533981-50106e6176b1", fallback: "from-amber-500 to-green-600", credit: "Unsplash" },
-  "park-city-ut": { photo: "photo-1483728642387-6c3bdd6c93e5", fallback: "from-blue-400 to-purple-600", credit: "Unsplash" },
-  "coeur-dalene-id": { photo: "photo-1439066615861-d1af74d74000", fallback: "from-blue-500 to-cyan-600", credit: "Unsplash" },
-  "amelia-island-fl": { photo: "photo-1519046904884-53103b34b206", fallback: "from-teal-400 to-emerald-600", credit: "Unsplash" },
-  "pawleys-island-sc": { photo: "photo-1535131749006-b7f58c99034b", fallback: "from-green-500 to-teal-700", credit: "Unsplash" },
-  "sedona-az": { photo: "photo-1527549993586-dff825b37782", fallback: "from-red-500 to-orange-700", credit: "Unsplash" },
-  "french-lick-in": { photo: "photo-1587174486073-ae5e5cff23aa", fallback: "from-green-600 to-amber-700", credit: "Unsplash" },
-  "atlantic-city-nj": { photo: "photo-1596394516093-501ba68a0ba6", fallback: "from-purple-500 to-blue-600", credit: "Unsplash" },
-  "finger-lakes-ny": { photo: "photo-1506377247377-2a5b3b417ebb", fallback: "from-violet-400 to-purple-600", credit: "Unsplash" },
-  "kapalua-maui-hi": { photo: "photo-1542259009477-d625272157b7", fallback: "from-teal-400 to-blue-600", credit: "Unsplash" },
-  "riviera-maya-mx": { photo: "photo-1552733407-5d5c46c3bb3b", fallback: "from-emerald-400 to-teal-600", credit: "Unsplash" },
-  "punta-cana-dr": { photo: "photo-1505881502353-a1986add3762", fallback: "from-cyan-400 to-blue-500", credit: "Unsplash" },
-  "algarve-portugal": { photo: "photo-1555881400-74d7acaacd8b", fallback: "from-yellow-400 to-orange-500", credit: "Unsplash" },
-  "southwest-ireland": { photo: "photo-1564959130747-897a8e5b89c0", fallback: "from-green-500 to-emerald-700", credit: "Unsplash" },
-  "torrey-pines-la-jolla-ca": { photo: "photo-1538970272646-f61fabb3a8a2", fallback: "from-sky-400 to-blue-600", credit: "Unsplash" },
-  "hershey-pa": { photo: "photo-1587174486073-ae5e5cff23aa", fallback: "from-amber-600 to-stone-700", credit: "Unsplash" },
-  "grand-rapids-mi": { photo: "photo-1504280390367-361c6d9f38f4", fallback: "from-amber-400 to-green-600", credit: "Unsplash" },
-  "ozarks-ar": { photo: "photo-1505672678657-cc7037095e60", fallback: "from-green-600 to-teal-700", credit: "Unsplash" },
-  "pinehurst-extended-nc": { photo: "photo-1587174486073-ae5e5cff23aa", fallback: "from-green-800 to-emerald-950", credit: "Unsplash" },
-  "bethlehem-lehigh-valley-pa": { photo: "photo-1587174486073-ae5e5cff23aa", fallback: "from-gray-500 to-slate-700", credit: "Unsplash" },
-};
-
-function unsplashUrl(photoId: string, w = 600, h = 400): string {
-  return `https://images.unsplash.com/${photoId}?w=${w}&h=${h}&fit=crop&q=80&auto=format`;
-}
+// ─── Filter constants ─────────────────────────────────────────
+// Photo/Unsplash maps have moved to `src/lib/destination-images.ts` so the
+// Explore page, the trip preview page, and any marketing surface share a
+// single source of truth and a consistent local-first fallback chain.
 
 const VIBES = ["All", "Bucket List", "Party", "Relaxed", "Competitive", "Father-Son", "Budget", "Corporate", "Bachelor", "Resort", "Scenic"];
 const REGIONS = ["All", "Southeast", "Southwest", "West Coast", "Midwest", "Pacific NW", "Northeast", "Mid-Atlantic", "International", "Mountain West", "Gulf Coast", "Hawaii", "South Central"];
 const PRICES = ["All", "$", "$-$$", "$$", "$$-$$$", "$$$", "$$$$"];
 
-// ─── Image With Fallback ──────────────────────────────────────
+// ─── Destination Card Image ───────────────────────────────────
+// Renders the resolved DestinationImageSource with a runtime onError
+// escape hatch: if the image 404s (stale CDN, missing file), we swap in a
+// region-themed gradient so the card never renders as a blank block.
 
-function ImageWithFallback({ src, fallbackGradient, alt, className }: {
-  src: string; fallbackGradient: string; alt: string; className: string;
+function DestinationCardImage({
+  source,
+  region,
+  vibe,
+  alt,
+  priority = false,
+  sizes = "(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw",
+}: {
+  source: DestinationImageSource;
+  region?: string;
+  vibe?: string[];
+  alt: string;
+  priority?: boolean;
+  sizes?: string;
 }) {
   const [failed, setFailed] = useState(false);
-  if (failed) return <div className={`${className} bg-gradient-to-br ${fallbackGradient}`} />;
-  // eslint-disable-next-line @next/next/no-img-element
-  return <img src={src} alt={alt} className={`${className} object-cover pointer-events-none`}
-    onError={() => setFailed(true)} loading="lazy" draggable={false} />;
+  const fallbackGradient = getRegionGradient(region, vibe);
+
+  if (source.kind === "gradient" || failed) {
+    const gradient = source.kind === "gradient" ? source.gradient : fallbackGradient;
+    return <div className={`absolute inset-0 ${gradient}`} aria-hidden="true" />;
+  }
+
+  return (
+    <Image
+      src={source.src}
+      alt={alt}
+      fill
+      sizes={sizes}
+      priority={priority}
+      className="object-cover pointer-events-none group-hover:scale-105 transition-transform duration-700"
+      onError={() => setFailed(true)}
+      draggable={false}
+    />
+  );
 }
 
 // ─── Auth Gate ────────────────────────────────────────────────
@@ -339,8 +320,13 @@ function PaywallModal({ tripTitle, onClose, onPerTrip }: {
 // ─── Trip Card ────────────────────────────────────────────────
 
 function TripCard({ trip, onClick }: { trip: TripData; index: number; onClick: (t: TripData) => void }) {
-  const pm = PHOTO_MAP[trip.id];
-  const imgUrl = pm ? unsplashUrl(pm.photo, 600, trip.height === "tall" ? 500 : trip.height === "medium" ? 380 : 300) : null;
+  const imgH = trip.height === "tall" ? 500 : trip.height === "medium" ? 380 : 300;
+  const image = resolveDestinationImage(trip.id, {
+    region: trip.region,
+    vibe: trip.vibe,
+    width: 600,
+    height: imgH,
+  });
   const heightClass = trip.height === "tall" ? "h-96" : trip.height === "medium" ? "h-72" : "h-56";
   const accentColor = ACCENT_COLORS[trip.vibe?.[0]] || "#5A4F45";
 
@@ -348,12 +334,12 @@ function TripCard({ trip, onClick }: { trip: TripData; index: number; onClick: (
     <div className="group cursor-pointer break-inside-avoid mb-4" onClick={() => onClick(trip)}>
       <div className="relative rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500 hover:-translate-y-1 bg-[#FDFAF5] border border-[#E2D9CC]">
         <div className={`relative ${heightClass} overflow-hidden`}>
-          {imgUrl ? (
-            <ImageWithFallback src={imgUrl} fallbackGradient={pm?.fallback || "from-gray-500 to-gray-700"}
-              alt={trip.dest} className="absolute inset-0 w-full h-full group-hover:scale-105 transition-transform duration-700" />
-          ) : (
-            <div className={`absolute inset-0 bg-gradient-to-br ${pm?.fallback || "from-gray-500 to-gray-700"}`} />
-          )}
+          <DestinationCardImage
+            source={image}
+            region={trip.region}
+            vibe={trip.vibe}
+            alt={trip.dest}
+          />
           {trip.featured && (
             <div className="absolute top-3 left-3 bg-amber-400 text-amber-900 text-xs font-bold px-2.5 py-1 rounded-full flex items-center gap-1 shadow-md z-10">
               ⭐ EDITOR&apos;S PICK
@@ -404,8 +390,12 @@ function TripModal({ trip, onClose }: { trip: TripData; onClose: () => void }) {
   const [state, setState] = useState<ModalState>("modal");
   const [creating, setCreating] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const pm = PHOTO_MAP[trip.id];
-  const imgUrl = pm ? unsplashUrl(pm.photo, 800, 400) : null;
+  const modalImage = resolveDestinationImage(trip.id, {
+    region: trip.region,
+    vibe: trip.vibe,
+    width: 800,
+    height: 400,
+  });
 
   async function handlePlanTrip() {
     setError(null);
@@ -493,13 +483,15 @@ function TripModal({ trip, onClose }: { trip: TripData; onClose: () => void }) {
       <div className="relative bg-[#FDFAF5] rounded-t-3xl sm:rounded-2xl w-full max-w-lg max-h-[85vh] overflow-y-auto shadow-2xl border border-[#E2D9CC]"
         onClick={(e) => e.stopPropagation()} style={{ animation: "slideUp 0.3s ease-out" }}>
         {/* Header image */}
-        <div className="relative h-52 overflow-hidden rounded-t-3xl sm:rounded-t-2xl">
-          {imgUrl ? (
-            <ImageWithFallback src={imgUrl} fallbackGradient={pm?.fallback || "from-gray-500 to-gray-700"}
-              alt={trip.dest} className="absolute inset-0 w-full h-full" />
-          ) : (
-            <div className={`absolute inset-0 bg-gradient-to-br ${pm?.fallback || "from-gray-500 to-gray-700"}`} />
-          )}
+        <div className="relative h-52 overflow-hidden rounded-t-3xl sm:rounded-t-2xl group">
+          <DestinationCardImage
+            source={modalImage}
+            region={trip.region}
+            vibe={trip.vibe}
+            alt={trip.dest}
+            priority
+            sizes="(max-width: 640px) 100vw, 512px"
+          />
           <div className="absolute bottom-0 left-0 right-0 h-28 bg-gradient-to-t from-[#FDFAF5] to-transparent" />
           <div className="absolute bottom-4 left-5 right-5">
             <h2 className="text-[#1A1A1A] text-2xl font-bold">{trip.title}</h2>
