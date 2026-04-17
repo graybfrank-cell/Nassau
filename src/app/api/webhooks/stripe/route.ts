@@ -160,7 +160,16 @@ async function handleSubscriptionDeleted(subscription: Stripe.Subscription) {
 }
 
 function getTierFromPriceId(priceId: string | undefined): string {
-  // TODO: Update with actual Stripe price IDs from your dashboard
+  if (!process.env.STRIPE_PRO_PRICE_ID) {
+    console.warn(
+      "[stripe-webhook] STRIPE_PRO_PRICE_ID not set — subscription tier assignment will not work"
+    );
+  }
+  if (!process.env.STRIPE_PREMIUM_PRICE_ID) {
+    console.warn(
+      "[stripe-webhook] STRIPE_PREMIUM_PRICE_ID not set — subscription tier assignment will not work"
+    );
+  }
   const tierMap: Record<string, string> = {
     [process.env.STRIPE_PRO_PRICE_ID || ""]: "pro",
     [process.env.STRIPE_PREMIUM_PRICE_ID || ""]: "premium",
