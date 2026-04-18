@@ -10,6 +10,13 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  // Only export static when building for native app (Capacitor iOS)
+  ...(process.env.IS_NATIVE === "1" && {
+    output: "export",
+    images: {
+      unoptimized: true,
+    },
+  }),
 };
 
 export default nextConfig;
