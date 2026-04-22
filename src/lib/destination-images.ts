@@ -26,6 +26,8 @@ export const DESTINATION_IMAGE_MANIFEST: Record<string, string> = {
   "hilton-head-sc": "/images/destinations/hilton-head-sc.png",
   "pebble-beach-monterey-ca": "/images/destinations/pebble-beach-monterey-ca.jpg",
   "st-andrews-scotland": "/images/destinations/st-andrews-scotland.jpg",
+  "scottsdale-az": "/images/destinations/scottsdale-az.png",
+  "bandon-dunes-or": "/images/destinations/bandon-dunes-or.png",
   // Legacy filenames preserved via URL-encoded paths so existing art keeps
   // rendering without requiring large binary rewrites.
   "cabo-san-lucas-mx": "/images/destinations/CaboSanLucasTripCard.png",
