@@ -1,14 +1,16 @@
 import Link from "next/link";
 import Image from "next/image";
 import DestinationGridCard from "./DestinationGridCard";
+import { getDestinationImageUrl } from "@/lib/destination-images";
 
+// Last-resort Unsplash URLs, used only when the resolver has nothing for a slug.
 const featuredDestinations = [
-  { name: "Scottsdale, AZ", price: "from $1,650", info: "3N · 3 rounds", id: "scottsdale-az", img: "https://images.unsplash.com/photo-1535131749006-b7f58c99034b?q=80&w=800&auto=format&fit=crop" },
-  { name: "Bandon Dunes, OR", price: "from $3,200", info: "3N · 4 rounds", id: "bandon-dunes-or", img: "https://images.unsplash.com/photo-1587174486073-ae5e5cff23aa?q=80&w=800&auto=format&fit=crop" },
-  { name: "Pinehurst, NC", price: "from $2,200", info: "3N · 3 rounds", id: "pinehurst-nc", img: "https://images.unsplash.com/photo-1592919355415-9db1cd94b2ba?q=80&w=800&auto=format&fit=crop" },
-  { name: "Myrtle Beach, SC", price: "from $850", info: "3N · 4 rounds", id: "myrtle-beach-sc", img: "https://images.unsplash.com/photo-1600011689032-8b628b8a8747?q=80&w=800&auto=format&fit=crop" },
-  { name: "Pebble Beach, CA", price: "from $3,500", info: "3N · 3 rounds", id: "pebble-beach-ca", img: "https://images.unsplash.com/photo-1596727362302-b8d891c42ab8?q=80&w=800&auto=format&fit=crop" },
-  { name: "St. Andrews, Scotland", price: "from $5,000", info: "4N · 3 rounds", id: "st-andrews-scotland", img: "https://images.unsplash.com/photo-1633078654544-61b3455b9161?q=80&w=800&auto=format&fit=crop" },
+  { name: "Scottsdale, AZ", price: "from $1,650", info: "3N · 3 rounds", id: "scottsdale-az", fallbackImg: "https://images.unsplash.com/photo-1535131749006-b7f58c99034b?q=80&w=800&auto=format&fit=crop" },
+  { name: "Bandon Dunes, OR", price: "from $3,200", info: "3N · 4 rounds", id: "bandon-dunes-or", fallbackImg: "https://images.unsplash.com/photo-1587174486073-ae5e5cff23aa?q=80&w=800&auto=format&fit=crop" },
+  { name: "Pinehurst, NC", price: "from $2,200", info: "3N · 3 rounds", id: "pinehurst-nc", fallbackImg: "https://images.unsplash.com/photo-1592919355415-9db1cd94b2ba?q=80&w=800&auto=format&fit=crop" },
+  { name: "Myrtle Beach, SC", price: "from $850", info: "3N · 4 rounds", id: "myrtle-beach-sc", fallbackImg: "https://images.unsplash.com/photo-1600011689032-8b628b8a8747?q=80&w=800&auto=format&fit=crop" },
+  { name: "Pebble Beach, CA", price: "from $3,500", info: "3N · 3 rounds", id: "pebble-beach-monterey-ca", fallbackImg: "https://images.unsplash.com/photo-1596727362302-b8d891c42ab8?q=80&w=800&auto=format&fit=crop" },
+  { name: "St. Andrews, Scotland", price: "from $5,000", info: "4N · 3 rounds", id: "st-andrews-scotland", fallbackImg: "https://images.unsplash.com/photo-1633078654544-61b3455b9161?q=80&w=800&auto=format&fit=crop" },
 ];
 
 const gridImageMap: Record<string, string> = {
@@ -44,13 +46,15 @@ export default function DestinationsSection() {
         </h2>
 
         <div className="mt-10 flex gap-5 overflow-x-auto pb-4" style={{ scrollbarWidth: "none" }}>
-          {featuredDestinations.map((dest) => (
+          {featuredDestinations.map((dest) => {
+            const resolvedImg = getDestinationImageUrl(dest.id) ?? dest.fallbackImg;
+            return (
             <Link
               key={dest.id}
               href={`/trip/preview/${dest.id}`}
               className="group relative h-[420px] w-[280px] flex-shrink-0 overflow-hidden rounded-2xl sm:w-[320px]"
             >
-              <Image src={dest.img} alt={dest.name} fill className="object-cover transition-transform duration-500 group-hover:scale-105" />
+              <Image src={resolvedImg} alt={dest.name} fill className="object-cover transition-transform duration-500 group-hover:scale-105" />
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
               <div className="absolute inset-0 flex items-center justify-center opacity-0 transition-opacity group-hover:opacity-100">
                 <span className="rounded-full bg-white px-6 py-2.5 text-sm font-semibold text-[#111111]">Preview trip →</span>
@@ -61,7 +65,8 @@ export default function DestinationsSection() {
                 <p className="text-xs text-white/40">{dest.info}</p>
               </div>
             </Link>
-          ))}
+            );
+          })}
         </div>
 
         {/* More destinations grid */}
