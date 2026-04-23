@@ -14,7 +14,7 @@ export default function robots(): MetadataRoute.Robots {
           "/rounds/",
           "/settlements",
           "/admin",
-          "/demo/",
+          "/demo",
         ],
       },
     ],

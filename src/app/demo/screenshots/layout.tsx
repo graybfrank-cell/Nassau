@@ -14,7 +14,7 @@ import type { Metadata, Viewport } from "next";
  */
 export const metadata: Metadata = {
   title: "Nassau — Screenshot Capture",
-  robots: "noindex, nofollow",
+  robots: { index: false, follow: false },
 };
 
 export const viewport: Viewport = {

@@ -3,7 +3,7 @@ import DemoBadge from "@/components/DemoBadge";
 
 export const metadata: Metadata = {
   title: "Demo — Nassau",
-  robots: "noindex, nofollow",
+  robots: { index: false, follow: false },
 };
 
 export default function DemoLayout({ children }: { children: React.ReactNode }) {
