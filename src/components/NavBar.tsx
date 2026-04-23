@@ -5,7 +5,21 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 
 const PUBLIC_ROUTES = ["/", "/explore", "/pricing", "/founding", "/blog", "/trip/preview", "/demo"];
-const APP_ROUTES = ["/dashboard", "/rounds", "/trips", "/scorecard", "/settlements", "/profile", "/demo"];
+const APP_ROUTES = [
+  "/dashboard",
+  "/rounds",
+  "/trips",
+  "/trip",
+  "/invite",
+  "/round",
+  "/r/",
+  "/scorecard",
+  "/scorecards",
+  "/settlements",
+  "/profile",
+  "/onboarding",
+  "/demo",
+];
 
 type User = { email?: string } | null;
 
@@ -13,9 +27,7 @@ export default function NavBar({ user }: { user: User }) {
   const pathname = usePathname();
 
   // Hide NavBar entirely on app routes — they have their own internal nav
-  const isAppRoute = APP_ROUTES.some(
-    (r) => pathname === r || pathname.startsWith(r + "/")
-  );
+  const isAppRoute = APP_ROUTES.some((r) => pathname.startsWith(r));
   if (isAppRoute) return null;
 
   const isPublic = PUBLIC_ROUTES.some(
