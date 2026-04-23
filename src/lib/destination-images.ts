@@ -243,3 +243,61 @@ export function getDestinationImageUrl(
   if (unsplashId) return buildUnsplashUrl(unsplashId, width, height);
   return null;
 }
+
+const HERO_BACKDROP_FALLBACK = "/images/hero-backdrop.png";
+
+function slugifyDestinationInput(input: string): string {
+  return input
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[̀-ͯ]/g, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
+/**
+ * Resolve an image URL from a raw destination string that may be either a
+ * known slug (e.g. "scottsdale-az") or a human-readable name from a trip
+ * record (e.g. "Scottsdale, AZ" or "Hilton Head Island, SC"). Tries, in
+ * order: exact slug match, slugified match, fuzzy token-overlap match
+ * against the registered slugs. Falls back to the generic hero backdrop
+ * so callers can always render a valid <Image> src.
+ */
+export function getDestinationImageBySlugOrName(input: string): string {
+  if (!input) return HERO_BACKDROP_FALLBACK;
+
+  const exact = getDestinationImageUrl(input);
+  if (exact) return exact;
+
+  const slug = slugifyDestinationInput(input);
+  if (slug && slug !== input) {
+    const slugged = getDestinationImageUrl(slug);
+    if (slugged) return slugged;
+  }
+
+  const inputTokens = new Set(slug.split("-").filter(Boolean));
+  if (inputTokens.size > 0) {
+    const registered = new Set<string>([
+      ...Object.keys(DESTINATION_IMAGE_MANIFEST),
+      ...Object.keys(UNSPLASH_PHOTO_MAP),
+    ]);
+    let bestSlug: string | null = null;
+    let bestScore = 0;
+    for (const candidate of registered) {
+      const tokens = candidate.split("-");
+      let score = 0;
+      for (const t of tokens) if (inputTokens.has(t)) score++;
+      if (score > bestScore) {
+        bestScore = score;
+        bestSlug = candidate;
+      }
+    }
+    const requiredScore = Math.min(2, inputTokens.size);
+    if (bestSlug && bestScore >= requiredScore) {
+      const url = getDestinationImageUrl(bestSlug);
+      if (url) return url;
+    }
+  }
+
+  return HERO_BACKDROP_FALLBACK;
+}

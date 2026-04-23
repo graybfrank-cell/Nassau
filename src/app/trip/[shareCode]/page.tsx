@@ -3,7 +3,9 @@
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import { createClient } from "@/lib/supabase/client";
+import { getDestinationImageBySlugOrName } from "@/lib/destination-images";
 import {
   MapPin,
   Calendar,
@@ -111,13 +113,6 @@ function formatCountdown(deadline: string | Date): string {
   if (hours > 0) return `${hours}h left`;
   const mins = Math.floor(diff / (1000 * 60));
   return `${mins}m left`;
-}
-
-// Unsplash photo search for destination hero images
-function getDestinationImageUrl(destination: string): string {
-  if (!destination) return "";
-  const query = encodeURIComponent(`${destination} golf course landscape`);
-  return `https://source.unsplash.com/800x400/?${query}`;
 }
 
 export default function TripSharePage() {
@@ -320,15 +315,15 @@ export default function TripSharePage() {
       {/* A. Hero Banner */}
       <div className="relative h-48 sm:h-56 overflow-hidden bg-[#1A1A1A]">
         {trip.destination && (
-          <>
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={getDestinationImageUrl(trip.destination)}
-              alt={trip.destination}
-              className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-700 ${imageLoaded ? "opacity-100" : "opacity-0"}`}
-              onLoad={() => setImageLoaded(true)}
-            />
-          </>
+          <Image
+            src={getDestinationImageBySlugOrName(trip.destination)}
+            alt={trip.destination}
+            fill
+            priority
+            sizes="100vw"
+            className={`object-cover transition-opacity duration-700 ${imageLoaded ? "opacity-100" : "opacity-0"}`}
+            onLoad={() => setImageLoaded(true)}
+          />
         )}
         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
         <div className="absolute inset-0 flex flex-col justify-end p-5 pb-8">
