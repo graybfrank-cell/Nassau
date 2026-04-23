@@ -72,7 +72,7 @@ things that need attention before the May 4 launch fall into three buckets:
 
 **Public / marketing:**
 `/` (landing), `/pricing`, `/founding`, `/explore`, `/blog`, `/blog/[slug]`,
-`/login`, `/login-test`, `/r/[code]` (referral redirect), `/trip/preview/[slug]`.
+`/login`, `/r/[code]` (referral redirect), `/trip/preview/[slug]`.
 
 **Onboarded user app:**
 `/dashboard`, `/onboarding`, `/profile`, `/trips`, `/trips/new`, `/trips/create`,
