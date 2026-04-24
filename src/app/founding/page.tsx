@@ -82,6 +82,12 @@ export default function FoundingMemberPage() {
               >
                 {loading ? 'SENDING...' : 'CLAIM MY SPOT'}
               </button>
+              <p className="text-[#8A8A8A] text-xs italic leading-relaxed">
+                Founding Member status is for personal use — captains organizing golf trips with their own friends and group. If you run trips commercially, Nassau has a separate{' '}
+                <Link href="/partnerships" className="underline hover:text-[#F2F0EB] transition-colors">
+                  Partnerships program. Learn more →
+                </Link>
+              </p>
             </div>
           )}
         </div>
