@@ -79,10 +79,7 @@ export default function HeroSection() {
           Run the trip.
         </h1>
         <p className="mt-4 max-w-md text-[18px] leading-relaxed text-white/80">
-          Plan it. Play it. Settle it.
-        </p>
-        <p className="mt-3 max-w-md text-[14px] leading-relaxed text-white/50">
-          The operating system for golf trips.
+          Build your golf trip, invite your group, run the weekend — all from one link.
         </p>
 
         {/* CTAs */}
