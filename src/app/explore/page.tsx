@@ -1,10 +1,8 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
-import { createClient } from "@/lib/supabase/client";
 import knowledgeBase from "@/data/nassau-knowledge-base.json";
 import {
   resolveDestinationImage,
@@ -14,10 +12,10 @@ import {
 import { HeroBackdrop } from "@/components/HeroBackdrop";
 
 // ============================================
-// NASSAU EXPLORE PAGE v4 — Cream Theme + Auth Gate + Paywall
-// All destination data from nassau-knowledge-base.json (zero API calls)
-// Auth: Supabase client session check before any trip creation
-// Paywall: 1 free trip → $9.99/trip or $6.99/mo
+// NASSAU EXPLORE PAGE
+// Inspirational content that feeds the trip builder — not a marketplace.
+// Every destination CTA routes into /trips/create?destination=[slug] so the
+// auth + paywall gates apply downstream in the trip builder.
 // ============================================
 
 // ─── KB Types ────────────────────────────────────────────────
@@ -234,92 +232,6 @@ function DestinationCardImage({
   );
 }
 
-// ─── Auth Gate ────────────────────────────────────────────────
-
-function AuthGate({ tripTitle, destSlug, onClose }: { tripTitle: string; destSlug: string; onClose: () => void }) {
-  const nextParam = encodeURIComponent(`/trips/create?destination=${destSlug}`);
-  const signInHref = `/login?next=${nextParam}`;
-  return (
-    <div className="fixed inset-0 z-[60] flex items-center justify-center px-4" onClick={onClose}>
-      <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" />
-      <div className="relative bg-[#FDFAF5] rounded-2xl w-full max-w-sm p-8 shadow-2xl border border-[#E2D9CC]"
-        onClick={(e) => e.stopPropagation()} style={{ animation: "fadeInScale 0.25s ease-out" }}>
-        <div className="text-center mb-6">
-          <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-[#2D5A3D]/10 mb-4">
-            <span className="text-2xl font-semibold text-[#2D5A3D]">N</span>
-          </div>
-          <h2 className="text-xl font-bold text-[#1A1A1A]">Sign in to plan this trip</h2>
-          <p className="text-sm text-[#5A4F45] mt-2 leading-relaxed">
-            <span className="font-semibold text-[#1A1A1A]">{tripTitle}</span> is ready to go.<br />
-            Create your free account to save it.
-          </p>
-        </div>
-        <div className="bg-[#2D5A3D]/8 border border-[#2D5A3D]/20 rounded-xl p-3 mb-5 text-center">
-          <p className="text-xs font-semibold text-[#2D5A3D] uppercase tracking-wide mb-1">Your first trip is free</p>
-          <p className="text-xs text-[#5A4F45]">No credit card required to get started</p>
-        </div>
-        <Link href={signInHref}
-          className="block w-full py-3.5 rounded-xl bg-[#2D5A3D] text-white text-center font-bold text-sm hover:bg-[#244B33] transition-colors shadow-lg shadow-[#2D5A3D]/20 mb-2">
-          Create Free Account →
-        </Link>
-        <Link href={signInHref}
-          className="block w-full py-3 rounded-xl border border-[#E2D9CC] text-[#1A1A1A] text-center font-medium text-sm hover:bg-[#F2F0EB] transition-colors mb-3">
-          Sign In
-        </Link>
-        <button onClick={onClose} className="block w-full text-xs text-[#8A8078] hover:text-[#1A1A1A] transition-colors text-center">
-          Keep browsing
-        </button>
-      </div>
-    </div>
-  );
-}
-
-// ─── Paywall Modal ────────────────────────────────────────────
-
-function PaywallModal({ tripTitle, onClose, onPerTrip }: {
-  tripTitle: string; onClose: () => void; onPerTrip: () => void;
-}) {
-  return (
-    <div className="fixed inset-0 z-[60] flex items-center justify-center px-4" onClick={onClose}>
-      <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" />
-      <div className="relative bg-[#FDFAF5] rounded-2xl w-full max-w-sm p-8 shadow-2xl border border-[#E2D9CC]"
-        onClick={(e) => e.stopPropagation()} style={{ animation: "fadeInScale 0.25s ease-out" }}>
-        <div className="text-center mb-6">
-          <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-[#2D5A3D]/10 mb-4">
-            <span className="text-2xl">⛳</span>
-          </div>
-          <h2 className="text-xl font-bold text-[#1A1A1A]">Ready for another trip?</h2>
-          <p className="text-sm text-[#5A4F45] mt-2 leading-relaxed">
-            You&apos;ve used your free trip. Unlock{" "}
-            <span className="font-semibold text-[#1A1A1A]">{tripTitle}</span> with a pass or go Pro.
-          </p>
-        </div>
-        {/* Per-trip */}
-        <button onClick={onPerTrip}
-          className="w-full rounded-xl border-2 border-[#E2D9CC] hover:border-[#2D5A3D]/50 bg-white p-4 text-left mb-3 transition-all">
-          <div className="flex items-center justify-between mb-0.5">
-            <span className="font-bold text-[#1A1A1A] text-sm">Per-Trip Pass</span>
-            <span className="text-lg font-semibold text-[#1A1A1A]">$9.99</span>
-          </div>
-          <p className="text-xs text-[#5A4F45]">One trip, full access. No subscription needed.</p>
-        </button>
-        {/* Pro */}
-        <Link href="/login?plan=pro"
-          className="block w-full rounded-xl bg-[#2D5A3D] p-4 text-left mb-4 shadow-lg shadow-[#2D5A3D]/20 hover:bg-[#244B33] transition-colors">
-          <div className="flex items-center justify-between mb-0.5">
-            <span className="font-bold text-white text-sm">Nassau Pro</span>
-            <div><span className="text-lg font-semibold text-white">$6.99</span><span className="text-white/70 text-xs">/mo</span></div>
-          </div>
-          <p className="text-xs text-white/80">Unlimited trips · $49.99/yr · 30-day free trial</p>
-        </Link>
-        <button onClick={onClose} className="block w-full text-xs text-[#8A8078] hover:text-[#1A1A1A] transition-colors text-center">
-          Maybe later
-        </button>
-      </div>
-    </div>
-  );
-}
-
 // ─── Trip Card ────────────────────────────────────────────────
 
 function TripCard({ trip, onClick }: { trip: TripData; index: number; onClick: (t: TripData) => void }) {
@@ -416,99 +328,14 @@ function TripCard({ trip, onClick }: { trip: TripData; index: number; onClick: (
 
 // ─── Trip Modal ───────────────────────────────────────────────
 
-type ModalState = "modal" | "auth-gate" | "paywall";
-
 function TripModal({ trip, onClose }: { trip: TripData; onClose: () => void }) {
-  const router = useRouter();
-  const [state, setState] = useState<ModalState>("modal");
-  const [creating, setCreating] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const modalImage = resolveDestinationImage(trip.id, {
     region: trip.region,
     vibe: trip.vibe,
     width: 800,
     height: 400,
   });
-
-  async function handlePlanTrip() {
-    setError(null);
-    setCreating(true);
-    try {
-      // 1. Check if user is logged in
-      const supabase = createClient();
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) {
-        setCreating(false);
-        setState("auth-gate");
-        return;
-      }
-      // 2. Check how many trips they've already created
-      const countRes = await fetch("/api/trips/count");
-      if (!countRes.ok) throw new Error("Could not verify account status");
-      const { count } = await countRes.json();
-      // 3. Gate after first free trip
-      if (count >= 1) {
-        setCreating(false);
-        setState("paywall");
-        return;
-      }
-      // 4. Free — create and redirect
-      await createTrip();
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Something went wrong. Please try again.");
-      setCreating(false);
-    }
-  }
-
-  async function createTrip() {
-    setCreating(true);
-    setError(null);
-    try {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const itineraryItems: any[] = [];
-      if (trip.itinerary) {
-        let sortOrder = 0;
-        for (const day of trip.itinerary.days || []) {
-          for (const item of day.items || []) {
-            itineraryItems.push({
-              day_number: day.day, date: "", time: item.time, title: item.title,
-              type: ["tee_time","dinner","travel","activity"].includes(item.type) ? item.type : "other",
-              description: `Day ${day.day}: ${day.title}`,
-              cost: item.cost_pp ?? 0, booking_status: "", sort_order: sortOrder++,
-            });
-          }
-        }
-      }
-      const res = await fetch("/api/trips", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          name: trip.title, destination: trip.dest,
-          startDate: "", endDate: "",
-          vibe: (trip.vibe || []).join(", "), budgetTier: trip.tier,
-          groupSizeTarget: trip.groupSize,
-          notes: `Created from Nassau Explore — ${trip.dest}. ${(trip.whyGo || "").slice(0, 200)}`,
-          itineraryItems,
-        }),
-      });
-      if (!res.ok) {
-        const data = await res.json().catch(() => ({}));
-        throw new Error(data.error || `Server error ${res.status}`);
-      }
-      const data = await res.json();
-      router.push(`/trips/${data.id}`);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to create trip");
-      setCreating(false);
-    }
-  }
-
-  function handlePerTrip() {
-    router.push(`/login?plan=per-trip&dest=${encodeURIComponent(trip.id)}`);
-  }
-
-  if (state === "auth-gate") return <AuthGate tripTitle={trip.title} destSlug={trip.id} onClose={onClose} />;
-  if (state === "paywall") return <PaywallModal tripTitle={trip.title} onClose={onClose} onPerTrip={handlePerTrip} />;
+  const planTripHref = `/trips/create?destination=${trip.id}`;
 
   return (
     <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center" onClick={onClose}>
@@ -626,17 +453,12 @@ function TripModal({ trip, onClose }: { trip: TripData; onClose: () => void }) {
             )}
           </div>
 
-          {/* Error */}
-          {error && (
-            <div className="mb-4 rounded-xl bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700">{error}</div>
-          )}
-
           {/* CTA */}
-          <button onClick={handlePlanTrip} disabled={creating}
-            className="w-full py-3.5 rounded-xl text-white font-bold text-base transition-all duration-200 hover:opacity-90 active:scale-[0.98] disabled:opacity-60"
+          <Link href={planTripHref}
+            className="block w-full py-3.5 rounded-xl text-white font-bold text-base text-center transition-all duration-200 hover:opacity-90 active:scale-[0.98]"
             style={{ backgroundColor: "#2D5A3D" }}>
-            {creating ? "Checking your account..." : "Plan This Trip →"}
-          </button>
+            Plan a trip here →
+          </Link>
           <p className="text-center text-xs text-[#8A8078] mt-2">First trip free · No card required to start</p>
         </div>
       </div>
