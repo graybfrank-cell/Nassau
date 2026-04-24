@@ -5,18 +5,16 @@ import Link from "next/link";
 import Image from "next/image";
 import { CheckCircle2, ChevronDown } from "lucide-react";
 
-type PlanType = "monthly" | "annual" | "trip" | "founding";
-
 const FAQ_ITEMS = [
   {
-    question: "Is there really no credit card required?",
+    question: "Is there a subscription?",
     answer:
-      "No credit card required to start. Just your email. We only ask for payment when you upgrade to Pro.",
+      "Only if you want one. Per-Trip Pass is $9.99 one-time for a single trip. Founding Member is $49.99/year for the first 100 captains who want unlimited trips and a lifetime price lock. That's it — no middle tiers, no hidden plans.",
   },
   {
     question: "Can I use Nassau for just one trip?",
     answer:
-      "Yes — grab a Per-Trip Pass for $9.99. One trip, full Pro features, no subscription needed.",
+      "Yes. Per-Trip Pass gets you full coordination features for one trip — one invite link, live dashboard, scorecards, settlements, recap. $9.99. No subscription, no expiration on that trip.",
   },
   {
     question: "What happens after my trial ends?",
@@ -26,7 +24,6 @@ const FAQ_ITEMS = [
 ];
 
 export default function PricingPage() {
-  const [plan, setPlan] = useState<PlanType>("monthly");
   const [openFaq, setOpenFaq] = useState<number | null>(null);
 
   return (
@@ -37,251 +34,132 @@ export default function PricingPage() {
       }}
     >
       {/* HERO */}
-      <section className="pt-32 pb-8 px-6 text-center max-w-xl mx-auto">
-        <h1 className="font-headline text-6xl md:text-7xl font-medium tracking-tighter text-[#111111] leading-none mb-4">
+      <section className="pt-32 pb-16 px-6 text-center max-w-3xl mx-auto">
+        <h1 className="font-headline text-6xl md:text-7xl font-medium tracking-tighter text-[#111111] leading-none">
           Pick Your Play.
         </h1>
-        <p className="text-lg text-[#8A8A8A] mb-8">
-          Start free. Upgrade when you&apos;re ready.
-        </p>
-
-        {/* Pricing Toggle */}
-        <div className="inline-flex bg-white p-1 rounded-lg shadow-sm border border-gray-200">
-          <button
-            onClick={() => setPlan("monthly")}
-            className={`px-6 py-2 rounded-md font-semibold text-xs uppercase ${
-              plan === "monthly"
-                ? "bg-[#111111] text-white"
-                : "text-[#8A8A8A] hover:text-[#111111]"
-            }`}
-          >
-            Monthly
-          </button>
-          <button
-            onClick={() => setPlan("annual")}
-            className={`px-6 py-2 rounded-md font-semibold text-xs uppercase flex items-center ${
-              plan === "annual"
-                ? "bg-[#111111] text-white"
-                : "text-[#8A8A8A] hover:text-[#111111]"
-            }`}
-          >
-            Annual
-            {plan !== "annual" && (
-              <span className="bg-[#2D5A3D]/10 text-[#2D5A3D] px-2 py-0.5 rounded text-[9px] font-semibold tracking-tight ml-1">
-                SAVE 40%
-              </span>
-            )}
-          </button>
-          <button
-            onClick={() => setPlan("trip")}
-            className={`px-6 py-2 rounded-md font-semibold text-xs uppercase ${
-              plan === "trip"
-                ? "bg-[#111111] text-white"
-                : "text-[#8A8A8A] hover:text-[#111111]"
-            }`}
-          >
-            Trip
-          </button>
-          <button
-            onClick={() => setPlan("founding")}
-            className={`px-6 py-2 rounded-md font-semibold text-xs uppercase flex items-center ${
-              plan === "founding"
-                ? "bg-[#111111] text-white"
-                : "text-[#8A8A8A] hover:text-[#111111]"
-            }`}
-          >
-            Founding
-            {plan !== "founding" && (
-              <span className="bg-[#B8976A]/10 text-[#B8976A] px-2 py-0.5 rounded text-[9px] font-semibold tracking-tight ml-1">
-                LIMITED
-              </span>
-            )}
-          </button>
-        </div>
       </section>
 
       {/* PRICING CARDS */}
-      <section className="max-w-xl mx-auto px-6 space-y-6">
-        {plan === "trip" ? (
-          /* PER-TRIP PASS */
-          <div className="bg-white rounded-2xl p-8 shadow-sm relative overflow-hidden">
-            <div className="absolute top-0 right-0 bg-[#2D5A3D] px-4 py-1.5 rounded-bl-xl">
-              <span className="text-[10px] font-semibold tracking-widest text-white uppercase">
-                ONE-TIME
+      <section className="px-6 lg:px-16">
+        <div className="mx-auto max-w-4xl grid gap-8 md:grid-cols-2">
+          {/* CARD 1 — PER-TRIP PASS */}
+          <div className="flex flex-col rounded-2xl border border-[#111111]/10 bg-[#F2F0EB] p-10 shadow-sm">
+            <div className="flex items-baseline gap-2">
+              <span className="font-headline text-5xl font-medium text-[#111111]">
+                $9.99
               </span>
+              <span className="text-sm text-[#8A8A8A]">one trip</span>
             </div>
-            <p className="text-xs font-semibold uppercase tracking-widest text-[#2D5A3D] mb-4">
-              PER-TRIP PASS
+            <p className="mt-4 text-sm font-medium text-[#111111]">
+              Full Nassau features. One trip. No subscription.
             </p>
-            <div className="flex items-baseline gap-1">
-              <span className="text-5xl font-semibold text-[#111111]">$9.99</span>
-              <span className="text-[#8A8A8A] text-sm">/ trip</span>
-            </div>
-            <p className="text-[#8A8A8A] text-sm mt-2 mb-6">
-              One trip. Full Pro features. No subscription.
+            <p className="mt-2 text-sm text-[#8A8A8A]">
+              Build your trip free. Pay when you&apos;re ready to send it to
+              the group.
             </p>
-            <ul className="space-y-4">
-              {[
-                "Full trip planning + itinerary",
-                "Nassau bet + skins settlements",
-                "Expense tracking + splits",
-                "Shareable trip invite page",
-                "Round scoring for all players",
-              ].map((feat) => (
-                <li key={feat} className="flex items-center gap-3 text-[#111111]">
-                  <CheckCircle2 className="w-5 h-5 text-[#2D5A3D] fill-[#2D5A3D] shrink-0" />
-                  {feat}
-                </li>
-              ))}
+            <ul className="mt-6 space-y-3">
+              <li className="flex items-start gap-3 text-sm text-[#111111]">
+                <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-[#2D5A3D]" />
+                One link to invite your whole group
+              </li>
+              <li className="flex items-start gap-3 text-sm text-[#111111]">
+                <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-[#2D5A3D]" />
+                Live coordination: date poll, itinerary, deposits
+              </li>
+              <li className="flex items-start gap-3 text-sm text-[#111111]">
+                <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-[#2D5A3D]" />
+                Scores, settlements, and recap
+              </li>
             </ul>
             <Link
-              href="/login?redirect=/dashboard"
-              className="block w-full py-4 rounded-lg bg-[#2D5A3D] text-white font-semibold uppercase text-sm text-center hover:opacity-90 transition-opacity mt-8"
+              href="/login?next=/trips/new"
+              className="mt-auto block w-full rounded-full bg-[#2D5A3D] py-3 text-center text-sm font-semibold text-white transition-colors hover:bg-[#244B33]"
+              style={{ marginTop: "2.5rem" }}
             >
-              BUY A TRIP PASS
+              Plan a trip →
             </Link>
-            <p className="text-center text-xs text-[#8A8A8A] mt-3">
-              Perfect for one-time groups. No commitment required.
-            </p>
           </div>
-        ) : plan !== "founding" ? (
-          <>
-            {/* COMMISSIONER */}
-            <div className="bg-white rounded-2xl p-8 shadow-sm">
-              <p className="text-xs font-semibold uppercase tracking-widest text-[#8A8A8A] mb-4">
-                COMMISSIONER
-              </p>
-              <div className="flex items-baseline gap-1">
-                <span className="text-5xl font-semibold text-[#111111]">$0</span>
-                <span className="text-[#8A8A8A] text-sm">/ forever</span>
-              </div>
-              <ul className="space-y-4 mt-6">
-                {[
-                  "Score any round solo or with friends",
-                  "Basic skins tracking",
-                  "Shareable round recap link",
-                  "Unlimited rounds",
-                ].map((feat) => (
-                  <li key={feat} className="flex items-center gap-3 text-[#111111]">
-                    <CheckCircle2 className="w-5 h-5 text-[#8A8A8A] shrink-0" />
-                    {feat}
-                  </li>
-                ))}
-              </ul>
-              <Link
-                href="/login?redirect=/dashboard"
-                className="block w-full py-4 rounded-lg border-2 border-[#111111] text-[#111111] font-semibold uppercase text-sm text-center hover:bg-[#111111] hover:text-white transition-colors mt-8"
-              >
-                GET STARTED FREE
-              </Link>
-            </div>
 
-            {/* NASSAU PRO */}
-            <div className="bg-white rounded-2xl p-8 shadow-sm relative overflow-hidden">
-              <div className="absolute top-0 right-0 bg-[#2D5A3D] px-4 py-1.5 rounded-bl-xl">
-                <span className="text-[10px] font-semibold tracking-widest text-white uppercase">
-                  MOST POPULAR
-                </span>
-              </div>
-              <p className="text-xs font-semibold uppercase tracking-widest text-[#2D5A3D] mb-4">
-                NASSAU PRO
-              </p>
-              <div className="flex items-baseline gap-1">
-                <span className="text-5xl font-semibold text-[#111111]">
-                  {plan === "monthly" ? "$6.99" : "$49.99"}
-                </span>
-                <span className="text-[#8A8A8A] text-sm">
-                  {plan === "monthly" ? "/ mo" : "/ yr"}
-                </span>
-                {plan === "annual" && (
-                  <span className="text-[#8A8A8A] text-sm line-through ml-2">
-                    $69.99
-                  </span>
-                )}
-              </div>
-              <ul className="space-y-4 mt-6">
-                {[
-                  "Everything in Commissioner",
-                  "Full trip planning + itinerary",
-                  "Nassau bet + skins settlements",
-                  "Expense tracking + splits",
-                ].map((feat) => (
-                  <li key={feat} className="flex items-center gap-3 text-[#111111]">
-                    <CheckCircle2 className="w-5 h-5 text-[#2D5A3D] fill-[#2D5A3D] shrink-0" />
-                    {feat}
-                  </li>
-                ))}
-              </ul>
-              <Link
-                href="/login?redirect=/dashboard"
-                className="block w-full py-4 rounded-lg bg-[#2D5A3D] text-white font-semibold uppercase text-sm text-center hover:opacity-90 transition-opacity mt-8"
-              >
-                START FREE TRIAL
-              </Link>
-              <p className="text-center text-xs text-[#8A8A8A] mt-3">
-                30-day free trial · No card required
-              </p>
-            </div>
-          </>
-        ) : (
-          /* FOUNDING MEMBER */
-          <div className="bg-[#111111] rounded-2xl border-2 border-[#B8976A] p-8 shadow-xl relative overflow-hidden max-w-xl mx-auto">
-            <div className="absolute top-0 right-0 bg-[#B8976A] px-4 py-1.5 rounded-bl-xl">
-              <span className="text-[10px] font-semibold text-white uppercase">
-                LIMITED · 88 SPOTS
+          {/* CARD 2 — FOUNDING MEMBER */}
+          <div className="flex flex-col rounded-2xl bg-[#111111] p-10 shadow-sm">
+            <div className="flex items-baseline gap-2">
+              <span className="font-headline text-5xl font-medium text-[#F2F0EB]">
+                $49.99
               </span>
+              <span className="text-sm text-[#F2F0EB]/70">/ year, forever</span>
             </div>
-            <p className="text-xs font-semibold uppercase tracking-widest text-[#B8976A] mb-2">
-              FOUNDING MEMBER
+            <p className="mt-4 text-sm font-medium text-[#C9A54E]">
+              First 100 captains only.
             </p>
-            <div className="flex items-baseline gap-1">
-              <span className="text-5xl font-semibold text-[#F2F0EB]">$49.99</span>
-              <span className="text-[#F2F0EB]/60 text-sm">/ yr</span>
-              <span className="text-[#F2F0EB]/40 text-sm line-through ml-2">
-                $69.99
-              </span>
-            </div>
-            <p className="text-[#F2F0EB]/60 text-sm mt-2 mb-6">
-              Lock in this rate forever. Never increases.
+            <p className="mt-2 text-xs italic text-[#F2F0EB]/70">
+              For personal use organizing trips with your own friends and
+              group.
             </p>
 
-            {/* Progress bar */}
-            <p className="text-[#F2F0EB]/40 text-xs mb-1">
-              88 of 100 spots remaining
-            </p>
-            <div className="h-1.5 bg-white/10 rounded-full overflow-hidden">
-              <div
-                className="h-full bg-[#B8976A] rounded-full"
-                style={{ width: "12%" }}
-              />
+            <div className="mt-6">
+              <p className="mb-2 text-xs text-[#F2F0EB]/70">
+                12 of 100 claimed
+              </p>
+              <div className="h-1.5 overflow-hidden rounded-full bg-[#F2F0EB]/10">
+                <div
+                  className="h-full rounded-full bg-[#C9A54E]"
+                  style={{ width: "12%" }}
+                />
+              </div>
             </div>
 
-            <ul className="space-y-4 mt-6">
-              {[
-                "Everything in Nassau Pro",
-                "Founding Member badge on your profile",
-                "Rate locked in forever — never increases",
-                "Priority support + early feature access",
-                "30-day free trial included",
-              ].map((feat) => (
-                <li key={feat} className="flex items-center gap-3 text-[#F2F0EB]">
-                  <CheckCircle2 className="w-5 h-5 text-[#B8976A] shrink-0" />
-                  {feat}
-                </li>
-              ))}
+            <ul className="mt-6 space-y-3">
+              <li className="flex items-start gap-3 text-sm text-[#F2F0EB]">
+                <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-[#C9A54E]" />
+                Unlimited trips, forever
+              </li>
+              <li className="flex items-start gap-3 text-sm text-[#F2F0EB]">
+                <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-[#C9A54E]" />
+                Lifetime price lock at $49.99/year
+              </li>
+              <li className="flex items-start gap-3 text-sm text-[#F2F0EB]">
+                <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-[#C9A54E]" />
+                Founding Member badge on your profile
+              </li>
+              <li className="flex items-start gap-3 text-sm text-[#F2F0EB]">
+                <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-[#C9A54E]" />
+                First access to the Nassau marketplace when it launches
+              </li>
+              <li className="flex items-start gap-3 text-sm text-[#F2F0EB]">
+                <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-[#C9A54E]" />
+                Direct founder access
+              </li>
             </ul>
             <Link
-              href="/login?redirect=/dashboard"
-              className="block w-full py-4 rounded-lg bg-[#B8976A] text-white font-semibold uppercase text-sm text-center hover:opacity-90 transition-opacity mt-8"
+              href="/founding"
+              className="mt-auto block w-full rounded-full bg-[#C9A54E] py-3 text-center text-sm font-semibold text-[#111111] transition-opacity hover:opacity-90"
+              style={{ marginTop: "2.5rem" }}
             >
-              CLAIM FOUNDING SPOT — $49.99/YR
+              Join the 100 →
             </Link>
-            <p className="text-center text-xs text-[#F2F0EB]/40 mt-3">
-              Only 88 founding spots remaining. After April 1, this rate goes
-              away forever.
-            </p>
           </div>
-        )}
+        </div>
+
+        {/* PARTNERSHIPS ROW */}
+        <div className="mx-auto mt-20 max-w-4xl">
+          <p className="text-[11px] font-medium uppercase tracking-[0.08em] text-[#8A8A8A]">
+            Partnerships
+          </p>
+          <h3 className="mt-3 font-headline text-[28px] font-medium leading-tight tracking-tight text-[#111111] sm:text-[32px]">
+            Running trips commercially?
+          </h3>
+          <p className="mt-3 max-w-2xl text-base text-[#111111]/70">
+            Agencies, creators, concierges, and resort teams use Nassau as
+            their operating layer.
+          </p>
+          <Link
+            href="/partnerships"
+            className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-[#2D5A3D] hover:text-[#244B33]"
+          >
+            Talk to us →
+          </Link>
+        </div>
       </section>
 
       {/* FAQ */}

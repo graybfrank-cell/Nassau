@@ -142,7 +142,7 @@ export default async function Home() {
 
       <BetsSection />
 
-      {/* ═══ PRICING & FOUNDING MEMBERS ═══ */}
+      {/* ═══ PRICING ═══ */}
       <section className="bg-[#F2F0EB] px-6 py-24 lg:px-16">
         <div className="mx-auto max-w-6xl">
           <p className="text-[11px] font-medium uppercase tracking-[0.08em] text-[#8A8A8A]">
@@ -151,126 +151,124 @@ export default async function Home() {
           <h2 className="mt-3 font-headline text-[36px] font-medium leading-tight tracking-tight text-[#111111] sm:text-[40px]">
             Pick your play
           </h2>
+
           <div className="mx-auto mt-14 grid max-w-4xl gap-8 md:grid-cols-2">
-            {/* Founding Members card */}
-            <div className="rounded-2xl bg-white p-10 shadow-sm">
-              <h3 className="font-headline text-2xl font-medium text-[#111111]">
-                Founding Members
-              </h3>
-              <p className="mt-4 text-sm text-[#8A8A8A]">
-                88 founding member spots remaining. Lock in $49.99/yr — the
-                price never goes up.
-              </p>
-              <div className="mt-6 mb-6">
-                <span className="text-4xl font-semibold text-[#111111]">$49.99</span>
-                <span className="text-sm text-[#8A8A8A]">/year</span>
-                <span className="mt-1 block text-sm text-[#8A8A8A]">
-                  Lock in this rate forever.
+            {/* CARD 1 — PER-TRIP PASS (primary) */}
+            <div className="flex flex-col rounded-2xl border border-[#111111]/10 bg-[#F2F0EB] p-10 shadow-sm">
+              <div className="flex items-baseline gap-2">
+                <span className="font-headline text-5xl font-medium text-[#111111]">
+                  $9.99
                 </span>
+                <span className="text-sm text-[#8A8A8A]">one trip</span>
               </div>
-              <div className="mb-6 space-y-2">
-                <div className="flex items-center gap-2">
-                  <CheckCircle2 className="h-4 w-4 text-[#2D5A3D]" />
-                  <span className="text-sm text-[#8A8A8A]">Founding Member badge</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <CheckCircle2 className="h-4 w-4 text-[#2D5A3D]" />
-                  <span className="text-sm text-[#8A8A8A]">Priority access</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <CheckCircle2 className="h-4 w-4 text-[#2D5A3D]" />
-                  <span className="text-sm text-[#8A8A8A]">All Pro features</span>
-                </div>
-              </div>
-              <p className="mb-2 text-sm text-[#8A8A8A]">
-                88 of 100 spots remaining
+              <p className="mt-4 text-sm font-medium text-[#111111]">
+                Full Nassau features. One trip. No subscription.
               </p>
-              <div className="h-1.5 rounded-full bg-gray-200">
-                <div
-                  className="h-1.5 rounded-full bg-[#2D5A3D]"
-                  style={{ width: "12%" }}
-                />
-              </div>
+              <p className="mt-2 text-sm text-[#8A8A8A]">
+                Build your trip free. Pay when you&apos;re ready to send it to
+                the group.
+              </p>
+              <ul className="mt-6 space-y-3">
+                <li className="flex items-start gap-3 text-sm text-[#111111]">
+                  <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-[#2D5A3D]" />
+                  One link to invite your whole group
+                </li>
+                <li className="flex items-start gap-3 text-sm text-[#111111]">
+                  <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-[#2D5A3D]" />
+                  Live coordination: date poll, itinerary, deposits
+                </li>
+                <li className="flex items-start gap-3 text-sm text-[#111111]">
+                  <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-[#2D5A3D]" />
+                  Scores, settlements, and recap
+                </li>
+              </ul>
               <Link
                 href="/login?next=/trips/new"
-                className="mt-6 block w-full rounded-full bg-[#2D5A3D] py-3 text-center text-sm font-semibold text-white transition-colors hover:bg-[#244B33]"
+                className="mt-auto block w-full rounded-full bg-[#2D5A3D] py-3 text-center text-sm font-semibold text-white transition-colors hover:bg-[#244B33]"
+                style={{ marginTop: "2.5rem" }}
               >
-                Join waitlist
+                Plan a trip →
               </Link>
             </div>
 
-            {/* Pricing tiers card */}
-            <div className="rounded-2xl bg-white p-10 shadow-sm">
-              <h3 className="text-xl font-semibold text-[#111111]">
-                Free to keep score.
-              </h3>
-              <p className="mt-1 mb-8 text-sm text-[#8A8A8A]">
-                Pay when money&apos;s on the line.
+            {/* CARD 2 — FOUNDING MEMBER (distinct) */}
+            <div className="flex flex-col rounded-2xl bg-[#111111] p-10 shadow-sm">
+              <div className="flex items-baseline gap-2">
+                <span className="font-headline text-5xl font-medium text-[#F2F0EB]">
+                  $49.99
+                </span>
+                <span className="text-sm text-[#F2F0EB]/70">/ year, forever</span>
+              </div>
+              <p className="mt-4 text-sm font-medium text-[#C9A54E]">
+                First 100 captains only.
+              </p>
+              <p className="mt-2 text-xs italic text-[#F2F0EB]/70">
+                For personal use organizing trips with your own friends and
+                group.
               </p>
 
-              {/* Commissioner */}
-              <div className="mb-3 rounded-xl bg-[#F2F0EB] p-4">
-                <div className="flex items-center justify-between">
-                  <span className="text-sm font-semibold uppercase text-[#111111]">
-                    Commissioner
-                  </span>
-                  <span className="font-semibold text-[#111111]">$0 forever</span>
-                </div>
-                <div className="mt-2 space-y-1">
-                  <p className="text-xs text-[#8A8A8A]">Score rounds, basic skins tracking</p>
-                  <p className="text-xs text-[#8A8A8A]">Shareable recap link</p>
-                  <p className="text-xs text-[#8A8A8A]">No bet tracking, no trips</p>
+              <div className="mt-6">
+                <p className="mb-2 text-xs text-[#F2F0EB]/70">
+                  12 of 100 claimed
+                </p>
+                <div className="h-1.5 overflow-hidden rounded-full bg-[#F2F0EB]/10">
+                  <div
+                    className="h-full rounded-full bg-[#C9A54E]"
+                    style={{ width: "12%" }}
+                  />
                 </div>
               </div>
 
-              {/* Nassau Pro */}
-              <div className="mb-3 rounded-xl border border-[#2D5A3D] bg-[#F2F0EB] p-4">
-                <div className="flex items-center justify-between">
-                  <span className="text-sm font-semibold uppercase text-[#2D5A3D]">
-                    Nassau Pro
-                  </span>
-                  <span className="font-semibold text-[#111111]">$6.99/mo</span>
-                </div>
-                <div className="mt-2 space-y-1">
-                  <p className="text-xs text-[#8A8A8A]">Bet tracking + settlements</p>
-                  <p className="text-xs text-[#8A8A8A]">Trip planning + expenses</p>
-                  <p className="text-xs text-[#8A8A8A]">Live scorecard</p>
-                </div>
-              </div>
-
-              {/* Founding Member */}
-              <div className="mb-3 rounded-xl border-2 border-[#B8976A] bg-[#111111] p-4">
-                <div className="flex items-center justify-between">
-                  <span className="text-sm font-semibold uppercase text-[#B8976A]">
-                    Founding Member
-                  </span>
-                  <div className="flex items-center">
-                    <span className="font-semibold text-[#F2F0EB]">$49.99/yr</span>
-                    <span className="ml-2 rounded bg-[#B8976A] px-2 py-0.5 text-xs font-semibold uppercase text-white">
-                      Limited
-                    </span>
-                  </div>
-                </div>
-                <div className="mt-2 space-y-1">
-                  <p className="text-xs text-[#F2F0EB]/60">All Pro features included</p>
-                  <p className="text-xs text-[#F2F0EB]/60">Founding Member badge forever</p>
-                  <p className="text-xs text-[#F2F0EB]/60">Rate locked — never increases</p>
-                </div>
-              </div>
-
+              <ul className="mt-6 space-y-3">
+                <li className="flex items-start gap-3 text-sm text-[#F2F0EB]">
+                  <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-[#C9A54E]" />
+                  Unlimited trips, forever
+                </li>
+                <li className="flex items-start gap-3 text-sm text-[#F2F0EB]">
+                  <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-[#C9A54E]" />
+                  Lifetime price lock at $49.99/year
+                </li>
+                <li className="flex items-start gap-3 text-sm text-[#F2F0EB]">
+                  <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-[#C9A54E]" />
+                  Founding Member badge on your profile
+                </li>
+                <li className="flex items-start gap-3 text-sm text-[#F2F0EB]">
+                  <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-[#C9A54E]" />
+                  First access to the Nassau marketplace when it launches
+                </li>
+                <li className="flex items-start gap-3 text-sm text-[#F2F0EB]">
+                  <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-[#C9A54E]" />
+                  Direct founder access
+                </li>
+              </ul>
               <Link
-                href="/login?next=/trips/new"
-                className="mt-4 block w-full rounded-full bg-[#2D5A3D] py-3 text-center text-sm font-semibold text-white"
+                href="/founding"
+                className="mt-auto block w-full rounded-full bg-[#C9A54E] py-3 text-center text-sm font-semibold text-[#111111] transition-opacity hover:opacity-90"
+                style={{ marginTop: "2.5rem" }}
               >
-                Join waitlist
-              </Link>
-              <Link
-                href="/login?next=/trips/new"
-                className="mt-2 block w-full rounded-full bg-[#B8976A] py-3 text-center text-sm font-semibold text-white"
-              >
-                Join waitlist — Founding spots available
+                Join the 100 →
               </Link>
             </div>
+          </div>
+
+          {/* PARTNERSHIPS ROW */}
+          <div className="mx-auto mt-20 max-w-4xl">
+            <p className="text-[11px] font-medium uppercase tracking-[0.08em] text-[#8A8A8A]">
+              Partnerships
+            </p>
+            <h3 className="mt-3 font-headline text-[28px] font-medium leading-tight tracking-tight text-[#111111] sm:text-[32px]">
+              Running trips commercially?
+            </h3>
+            <p className="mt-3 max-w-2xl text-base text-[#111111]/70">
+              Agencies, creators, concierges, and resort teams use Nassau as
+              their operating layer.
+            </p>
+            <Link
+              href="/partnerships"
+              className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-[#2D5A3D] hover:text-[#244B33]"
+            >
+              Talk to us →
+            </Link>
           </div>
         </div>
       </section>
