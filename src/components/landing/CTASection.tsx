@@ -1,96 +1,37 @@
-"use client";
-
-import { useState, FormEvent } from "react";
 import Link from "next/link";
 
 export default function CTASection() {
-  const [email, setEmail] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [success, setSuccess] = useState(false);
-  const [error, setError] = useState("");
-  const [count, setCount] = useState<number | null>(null);
-
-  async function handleSubmit(e: FormEvent) {
-    e.preventDefault();
-    setError("");
-    setLoading(true);
-
-    try {
-      const res = await fetch("/api/waitlist", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email }),
-      });
-      const data = await res.json();
-
-      if (!res.ok) {
-        setError(data.error || "Something went wrong. Try again.");
-        return;
-      }
-
-      setSuccess(true);
-      if (data.count) setCount(data.count);
-    } catch {
-      setError("Something went wrong. Try again.");
-    } finally {
-      setLoading(false);
-    }
-  }
-
   return (
     <section className="bg-[#111111] px-6 py-24 text-center">
       <div className="mx-auto max-w-2xl">
-        <h2 className="font-headline text-[56px] font-medium leading-[1.0] text-white">
-          Run the trip.
+        <p className="text-[11px] font-medium uppercase tracking-[0.15em] text-[#C9A54E]">
+          Ready?
+        </p>
+        <h2 className="mt-4 font-headline text-[56px] font-medium leading-[1.0] text-white">
+          Run your next trip on Nassau.
         </h2>
         <p className="mt-4 text-[18px] text-white/80">
-          Plan it. Play it. Settle it.
-        </p>
-        <p className="mt-4 text-[14px] text-[#8A8A8A]">
-          Be first in line when Nassau opens to captains in April.
+          Build your trip free. Pay when you&apos;re ready to send it to the
+          group.
         </p>
 
-        {/* Waitlist form */}
-        <div className="mx-auto mt-10 max-w-md">
-          {success ? (
-            <div>
-              <p className="text-[16px] font-medium text-white">
-                ✓ You&apos;re on the list. We&apos;ll be in touch.
-              </p>
-              {count && (
-                <p className="mt-2 text-[13px] text-white/50">
-                  You&apos;re captain #{count.toLocaleString()}
-                </p>
-              )}
-            </div>
-          ) : (
-            <form onSubmit={handleSubmit}>
-              <div className="flex items-center overflow-hidden rounded-full bg-white/10 backdrop-blur">
-                <input
-                  type="email"
-                  required
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="your@email.com"
-                  className="flex-1 bg-transparent px-6 py-3.5 text-sm text-white placeholder-white/40 outline-none"
-                />
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className="mr-1.5 whitespace-nowrap rounded-full bg-[#2D5A3D] px-6 py-3 text-sm text-white transition-colors hover:bg-[#244B33] disabled:opacity-50"
-                >
-                  {loading ? "Joining…" : "Join waitlist →"}
-                </button>
-              </div>
-              {error && (
-                <p className="mt-2 text-[13px] text-red-400">{error}</p>
-              )}
-            </form>
-          )}
+        <div className="mt-10 flex flex-wrap items-center justify-center gap-6">
+          <Link
+            href="/login?next=/trips/new"
+            className="inline-block rounded-full bg-[#2D5A3D] px-10 py-4 text-base font-semibold text-white transition-colors hover:bg-[#244B33]"
+          >
+            Plan a trip →
+          </Link>
+          <Link
+            href="/pricing"
+            className="text-sm font-medium text-white/80 transition-colors hover:text-white"
+          >
+            See pricing
+          </Link>
         </div>
 
         {/* Social icons */}
-        <div className="mt-8 flex items-center justify-center gap-6">
+        <div className="mt-12 flex items-center justify-center gap-6">
           {/* X / Twitter */}
           <a
             href="https://x.com/UseNassauGolf"
@@ -144,7 +85,7 @@ export default function CTASection() {
         </div>
 
         <p className="mt-6 text-xs text-[#8A8A8A]">
-          Nassau &mdash; Built in Austin, TX &middot; Launching April 2026
+          Nassau &mdash; Built in Austin, TX
         </p>
       </div>
     </section>

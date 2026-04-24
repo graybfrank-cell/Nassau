@@ -13,11 +13,11 @@ import CTASection from "@/components/landing/CTASection";
 export const metadata: Metadata = {
   title: "Nassau",
   description:
-    "Run the trip. Plan it. Play it. Settle it. Nassau is the operating system for golf trips. Join the waitlist.",
+    "Build your golf trip, invite your group, run the weekend — all from one link. Nassau is the operating system for golf trips.",
   openGraph: {
     title: "Nassau — Run the trip.",
     description:
-      "Run the trip. Plan it. Play it. Settle it. Nassau is the operating system for golf trips.",
+      "Build your golf trip, invite your group, run the weekend — all from one link. Nassau is the operating system for golf trips.",
     url: "https://nassau.golf",
     siteName: "Nassau",
     type: "website",
@@ -27,7 +27,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Nassau — Run the trip.",
     description:
-      "Run the trip. Plan it. Play it. Settle it. Join the waitlist.",
+      "Build your golf trip, invite your group, run the weekend — all from one link. Nassau is the operating system for golf trips.",
     images: ["/og-image.png"],
   },
   alternates: {

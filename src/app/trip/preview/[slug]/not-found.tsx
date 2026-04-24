@@ -21,10 +21,10 @@ export default function PreviewNotFound() {
           Back to Nassau
         </Link>
         <Link
-          href="/#waitlist"
+          href="/login?next=/trips/new"
           className="rounded-full border border-[#111111]/20 px-8 py-3.5 text-sm font-medium text-[#111111] transition-colors hover:border-[#2D5A3D] hover:text-[#2D5A3D]"
         >
-          Join the waitlist
+          Plan a trip →
         </Link>
       </div>
     </main>

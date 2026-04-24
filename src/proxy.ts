@@ -72,18 +72,6 @@ export async function proxy(request: NextRequest) {
       return NextResponse.redirect(url);
     }
 
-    // Waitlist gate: redirect unauthenticated users from /login and /signup to waitlist
-    if (
-      (request.nextUrl.pathname === "/login" ||
-        request.nextUrl.pathname === "/signup") &&
-      !user
-    ) {
-      const url = request.nextUrl.clone();
-      url.pathname = "/";
-      url.hash = "waitlist";
-      return NextResponse.redirect(url);
-    }
-
     // If authenticated user visits / or /login, redirect to /dashboard
     if (
       (request.nextUrl.pathname === "/login" ||

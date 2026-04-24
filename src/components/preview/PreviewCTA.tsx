@@ -20,10 +20,10 @@ export default function PreviewCTA({
 
         <div className="mt-10">
           <Link
-            href="/#waitlist"
+            href="/login?next=/trips/new"
             className="inline-block rounded-full bg-[#2D5A3D] px-8 py-3.5 text-sm font-medium text-white transition-colors hover:bg-[#244B33]"
           >
-            Join the waitlist &rarr;
+            Plan a trip &rarr;
           </Link>
         </div>
 
