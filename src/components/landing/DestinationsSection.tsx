@@ -3,7 +3,7 @@ import Image from "next/image";
 import DestinationGridCard from "./DestinationGridCard";
 import { getDestinationImageUrl } from "@/lib/destination-images";
 
-// Last-resort Unsplash URLs, used only when the resolver has nothing for a slug.
+// Last-resort fallback URLs, used only when the resolver has nothing for a slug.
 const featuredDestinations = [
   { name: "Scottsdale, AZ", price: "from $1,650", info: "3N · 3 rounds", id: "scottsdale-az", fallbackImg: "https://images.unsplash.com/photo-1535131749006-b7f58c99034b?q=80&w=800&auto=format&fit=crop" },
   { name: "Bandon Dunes, OR", price: "from $3,200", info: "3N · 4 rounds", id: "bandon-dunes-or", fallbackImg: "https://images.unsplash.com/photo-1587174486073-ae5e5cff23aa?q=80&w=800&auto=format&fit=crop" },

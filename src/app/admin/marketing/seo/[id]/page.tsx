@@ -89,7 +89,7 @@ export default function PostEditor() {
     const ta = textareaRef.current;
     if (!ta) return;
 
-    const photoMarkdown = `\n![${alt}](${url})\n*Photo: [${photographer}](${photographerUrl}) / [Unsplash](https://unsplash.com)*\n`;
+    const photoMarkdown = `\n![${alt}](${url})\n*Photo: [${photographer}](${photographerUrl})*\n`;
     const start = ta.selectionStart;
     const end = ta.selectionEnd;
     const text = post.content_markdown || "";

@@ -182,7 +182,7 @@ const TRIPS_DATA: TripData[] = destinations.map((d) => {
 });
 
 // ─── Filter constants ─────────────────────────────────────────
-// Photo/Unsplash maps have moved to `src/lib/destination-images.ts` so the
+// Destination image resolution lives in `src/lib/destination-images.ts` so the
 // Explore page, the trip preview page, and any marketing surface share a
 // single source of truth and a consistent local-first fallback chain.
 

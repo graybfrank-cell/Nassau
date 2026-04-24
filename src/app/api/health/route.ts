@@ -16,7 +16,6 @@ export async function GET() {
     "STRIPE_PRO_PRICE_ID",
     "STRIPE_PREMIUM_PRICE_ID",
     "GOOGLE_PLACES_API_KEY",
-    "UNSPLASH_ACCESS_KEY",
   ];
 
   const missing = required.filter((k) => !process.env[k]);

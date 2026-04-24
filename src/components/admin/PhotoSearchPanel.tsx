@@ -10,7 +10,6 @@ interface Photo {
   alt?: string;
   photographer: string;
   photographerUrl: string;
-  unsplashUrl: string;
 }
 
 interface PhotoSearchPanelProps {
@@ -141,12 +140,12 @@ export default function PhotoSearchPanel({ onInsert, onSetFeatured }: PhotoSearc
                   Set Featured
                 </button>
                 <a
-                  href={photo.unsplashUrl}
+                  href={photo.photographerUrl}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-[10px] text-white/70 hover:text-white"
                 >
-                  {photo.photographer} / Unsplash
+                  {photo.photographer}
                 </a>
               </div>
             </div>
