@@ -192,7 +192,7 @@ export default async function Home() {
                 />
               </div>
               <Link
-                href="/#waitlist"
+                href="/login?next=/trips/new"
                 className="mt-6 block w-full rounded-full bg-[#2D5A3D] py-3 text-center text-sm font-semibold text-white transition-colors hover:bg-[#244B33]"
               >
                 Join waitlist
@@ -259,13 +259,13 @@ export default async function Home() {
               </div>
 
               <Link
-                href="/#waitlist"
+                href="/login?next=/trips/new"
                 className="mt-4 block w-full rounded-full bg-[#2D5A3D] py-3 text-center text-sm font-semibold text-white"
               >
                 Join waitlist
               </Link>
               <Link
-                href="/#waitlist"
+                href="/login?next=/trips/new"
                 className="mt-2 block w-full rounded-full bg-[#B8976A] py-3 text-center text-sm font-semibold text-white"
               >
                 Join waitlist — Founding spots available

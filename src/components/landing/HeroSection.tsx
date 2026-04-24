@@ -2,13 +2,14 @@
 
 import { useState, FormEvent } from "react";
 import Image from "next/image";
+import Link from "next/link";
 
-export default function HeroSection() {
+// Waitlist form retained for relocation in Prompt 09's landing work.
+// Intentionally defined but not mounted in the hero for launch.
+export function WaitlistForm() {
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
-  const [success, setSuccess] = useState(false);
   const [error, setError] = useState("");
-  const [count, setCount] = useState<number | null>(null);
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
@@ -27,9 +28,6 @@ export default function HeroSection() {
         setError(data.error || "Something went wrong. Try again.");
         return;
       }
-
-      setSuccess(true);
-      if (data.count) setCount(data.count);
     } catch {
       setError("Something went wrong. Try again.");
     } finally {
@@ -37,6 +35,31 @@ export default function HeroSection() {
     }
   }
 
+  return (
+    <form onSubmit={handleSubmit}>
+      <div className="flex items-center">
+        <input
+          type="email"
+          required
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          placeholder="your@email.com"
+          className="w-full max-w-md rounded-full border border-white/20 bg-white/10 px-6 py-4 text-white placeholder:text-white/40 backdrop-blur-md outline-none"
+        />
+        <button
+          type="submit"
+          disabled={loading}
+          className="ml-2 whitespace-nowrap rounded-full bg-[#2D5A3D] px-6 py-3 text-white transition-colors hover:bg-[#244B33] disabled:opacity-50"
+        >
+          {loading ? "Joining…" : "Join waitlist →"}
+        </button>
+      </div>
+      {error && <p className="mt-2 text-[13px] text-red-400">{error}</p>}
+    </form>
+  );
+}
+
+export default function HeroSection() {
   return (
     <section className="relative flex min-h-screen flex-col overflow-hidden">
       {/* Background image */}
@@ -50,13 +73,6 @@ export default function HeroSection() {
       {/* Dark overlay */}
       <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/20 to-black/70" />
 
-      {/* Frosted glass card — top right */}
-      <div className="absolute right-6 top-20 z-20 hidden rounded-2xl border border-white/15 bg-white/10 p-5 backdrop-blur-md lg:right-12 lg:top-24 lg:block">
-        <p className="text-sm font-semibold text-white">
-          237 captains waiting &middot; May 2026
-        </p>
-      </div>
-
       {/* Hero content — bottom left */}
       <div className="relative z-10 mt-auto px-6 pb-24 lg:px-12">
         <h1 className="font-headline text-[56px] font-medium leading-[1.0] text-white sm:text-[72px]">
@@ -69,47 +85,31 @@ export default function HeroSection() {
           The operating system for golf trips.
         </p>
 
-        {/* Waitlist form */}
-        <div id="waitlist" className="mt-8 max-w-md">
-          {success ? (
-            <div>
-              <p className="text-[16px] font-medium text-white">
-                ✓ You&apos;re on the list. We&apos;ll be in touch.
-              </p>
-              {count && (
-                <p className="mt-2 text-[13px] text-white/50">
-                  You&apos;re captain #{count.toLocaleString()}
-                </p>
-              )}
-            </div>
-          ) : (
-            <form onSubmit={handleSubmit}>
-              <div className="flex items-center">
-                <input
-                  type="email"
-                  required
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="your@email.com"
-                  className="w-full max-w-md rounded-full border border-white/20 bg-white/10 px-6 py-4 text-white placeholder:text-white/40 backdrop-blur-md outline-none"
-                />
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className="ml-2 whitespace-nowrap rounded-full bg-[#2D5A3D] px-6 py-3 text-white transition-colors hover:bg-[#244B33] disabled:opacity-50"
-                >
-                  {loading ? "Joining…" : "Join waitlist →"}
-                </button>
-              </div>
-              {error && (
-                <p className="mt-2 text-[13px] text-red-400">{error}</p>
-              )}
-              <p className="mt-3 text-[13px] text-white/50">
-                Launching May 2026 · Join 237 captains on the waitlist
-              </p>
-            </form>
-          )}
+        {/* CTAs */}
+        <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
+          <Link
+            href="/login?next=/trips/new"
+            className="inline-flex items-center justify-center whitespace-nowrap rounded-full bg-[#2D5A3D] px-6 py-3 text-white transition-colors hover:bg-[#244B33]"
+          >
+            Plan a trip →
+          </Link>
+          <a
+            href="#how-it-works"
+            onClick={(e) => {
+              e.preventDefault();
+              document
+                .getElementById("how-it-works")
+                ?.scrollIntoView({ behavior: "smooth" });
+            }}
+            className="inline-flex items-center justify-center whitespace-nowrap rounded-full border border-white/30 bg-transparent px-6 py-3 text-white transition-colors hover:bg-white/10"
+          >
+            See how it works
+          </a>
         </div>
+
+        <p className="mt-6 text-[13px] text-white/50">
+          Built for the captain. Used by your group.
+        </p>
       </div>
     </section>
   );
