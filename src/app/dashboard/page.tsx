@@ -457,7 +457,7 @@ function EmptyDashboard({ firstName }: { firstName: string }) {
           <TopBar />
           <div className="mt-auto px-6 pb-5">
             <h1 className="font-headline text-[26px] font-medium text-[#F2F0EB]">
-              Welcome to Nassau, {firstName}
+              Ready for your next trip, {firstName}?
             </h1>
             <p className="mt-1 text-sm text-[#B5B5B5]">
               Run the trip. Plan it. Play it. Settle it.
@@ -466,33 +466,33 @@ function EmptyDashboard({ firstName }: { firstName: string }) {
         </div>
       </div>
 
-      {/* Two action cards */}
-      <div className="mx-6 mt-5 grid gap-3 sm:grid-cols-2">
+      {/* Action cards — "Plan a trip" is the dominant primary action */}
+      <div className="mx-6 mt-5 grid gap-3 sm:grid-cols-5">
         <Link
-          href="/trips/create"
-          className="group flex min-h-[120px] flex-col justify-between rounded-2xl bg-[#2D5A3D] p-5 transition-opacity hover:opacity-90"
+          href="/trips/new"
+          className="group flex min-h-[180px] flex-col justify-between rounded-2xl bg-[#2D5A3D] p-6 transition-opacity hover:opacity-90 sm:col-span-3"
         >
-          <Map className="h-6 w-6 text-white" />
+          <Map className="h-8 w-8 text-white" />
           <div>
-            <p className="font-headline text-[20px] font-medium leading-tight text-white">
+            <p className="font-headline text-[26px] font-medium leading-tight text-white">
               Plan a golf trip
             </p>
-            <p className="mt-1 text-xs text-white/80">
+            <p className="mt-2 text-sm text-white/80">
               Destination, dates, crew — all in one link.
             </p>
           </div>
         </Link>
         <Link
           href="/rounds/new"
-          className="group flex min-h-[120px] flex-col justify-between rounded-2xl border border-[#2D5A3D]/50 bg-[#1A1A1A] p-5 transition-colors hover:border-[#2D5A3D]"
+          className="group flex min-h-[100px] flex-row items-center justify-between rounded-2xl border border-[#2D5A3D]/50 bg-[#1A1A1A] p-4 transition-colors hover:border-[#2D5A3D] sm:col-span-2 sm:min-h-[180px] sm:flex-col sm:items-start sm:justify-between sm:p-5"
         >
-          <Flag className="h-6 w-6 text-[#2D5A3D]" />
+          <Flag className="h-6 w-6 shrink-0 text-[#2D5A3D]" />
           <div>
-            <p className="font-headline text-[20px] font-medium leading-tight text-[#F2F0EB]">
+            <p className="font-headline text-[16px] font-medium leading-tight text-[#F2F0EB] sm:text-[18px]">
               Start a round
             </p>
             <p className="mt-1 text-xs text-[#8A8A8A]">
-              Score, bets, settlements — free forever.
+              Score, bets, settlements.
             </p>
           </div>
         </Link>

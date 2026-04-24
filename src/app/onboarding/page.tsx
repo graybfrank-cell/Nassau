@@ -92,11 +92,12 @@ function OnboardingPageInner() {
       }
 
       // Route into trip creation with destination pre-filled if user arrived
-      // here via a destination-aware explore link. Otherwise, go to dashboard.
+      // here via a destination-aware explore link. Otherwise, send new captains
+      // to the three-path chooser — the dashboard is for returning users.
       if (destinationParam) {
         router.push(`/trips/create?destination=${encodeURIComponent(destinationParam)}`);
       } else {
-        router.push("/dashboard");
+        router.push("/trips/new");
       }
     } catch {
       setError("Something went wrong. Please try again.");
