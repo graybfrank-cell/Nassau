@@ -238,8 +238,6 @@ function TripCard({ trip, onClick }: { trip: TripData; index: number; onClick: (
   const image = resolveDestinationImage(trip.id, {
     region: trip.region,
     vibe: trip.vibe,
-    width: 800,
-    height: 1067, // match aspect-[3/4]
   });
   const accentColor = ACCENT_COLORS[trip.vibe?.[0]] || "#2D5A3D";
 
@@ -332,8 +330,6 @@ function TripModal({ trip, onClose }: { trip: TripData; onClose: () => void }) {
   const modalImage = resolveDestinationImage(trip.id, {
     region: trip.region,
     vibe: trip.vibe,
-    width: 800,
-    height: 400,
   });
   const planTripHref = `/trips/create?destination=${trip.id}`;
 
