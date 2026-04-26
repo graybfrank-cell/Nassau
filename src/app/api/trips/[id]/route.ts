@@ -17,6 +17,13 @@ export async function GET(
       const trip = await prisma.trips.findUnique({
         where: { id },
         include: {
+          creator: {
+            select: {
+              id: true,
+              subscription_tier: true,
+              subscription_status: true,
+            },
+          },
           members: { include: { user: true } },
           itineraryItems: { orderBy: { sort_order: "asc" } },
           expenses: {

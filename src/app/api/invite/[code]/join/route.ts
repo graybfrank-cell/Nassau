@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getUser, unauthorized } from "@/lib/auth";
 import { apiError } from "@/lib/api-utils";
+import { isTripUnlocked } from "@/lib/trip-payment";
 
 export async function POST(
   _req: NextRequest,
@@ -15,10 +16,34 @@ export async function POST(
 
     const trip = await prisma.trips.findUnique({
       where: { invite_code: code },
+      include: {
+        creator: {
+          select: {
+            subscription_tier: true,
+            subscription_status: true,
+          },
+        },
+      },
     });
 
     if (!trip) {
       return NextResponse.json({ error: "Invalid invite link" }, { status: 404 });
+    }
+
+    const captain = (trip as any).creator || {
+      subscription_tier: null,
+      subscription_status: null,
+    };
+    if (
+      !isTripUnlocked(
+        { payment_status: (trip as any).payment_status ?? null },
+        captain
+      )
+    ) {
+      return NextResponse.json(
+        { error: "Trip is not yet open for joining" },
+        { status: 403 }
+      );
     }
 
     // Check if user is already a member via trip_members table

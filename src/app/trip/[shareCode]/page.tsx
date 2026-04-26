@@ -57,6 +57,7 @@ interface TripData {
   endDate: string;
   vibe: string | null;
   shareCode: string;
+  unlocked: boolean;
   groupSizeTarget: number | null;
   members: TripMember[];
   schedule: ScheduleItem[];
@@ -258,6 +259,30 @@ export default function TripSharePage() {
   }
 
   if (!trip) return null;
+
+  if (!trip.unlocked) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-[#F2F0EB] px-6">
+        <div className="max-w-sm text-center">
+          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-white shadow-sm">
+            <Clock className="h-8 w-8 text-[#1A1A1A]/40" />
+          </div>
+          <h1 className="mt-5 text-xl font-bold text-[#1A1A1A]">
+            This trip is still being planned
+          </h1>
+          <p className="mt-2 text-sm text-[#1A1A1A]/50">
+            The captain hasn&apos;t shared this trip yet. Check back soon.
+          </p>
+          <Link
+            href="/"
+            className="mt-6 inline-block rounded-[10px] bg-[#2D5A3D] px-6 py-3 text-sm font-semibold text-[#F2F0EB] hover:bg-[#244A32] transition-colors"
+          >
+            Go to Nassau
+          </Link>
+        </div>
+      </div>
+    );
+  }
 
   const goingCount = trip.members.filter((m) => m.rsvpStatus === "GOING").length;
   const totalMembers = trip.members.length;

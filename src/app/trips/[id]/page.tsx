@@ -5,6 +5,8 @@ import { useParams } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { createClient } from "@/lib/supabase/client";
+import { isTripUnlocked } from "@/lib/trip-payment";
+import PaywallModal from "@/components/paywall/PaywallModal";
 import {
   getTrip,
   updateTrip,
@@ -160,6 +162,11 @@ export default function TripDetailPage() {
   const [inviteSending, setInviteSending] = useState(false);
   const [inviteSuccess, setInviteSuccess] = useState<string | null>(null);
 
+  // Paywall / unlock state
+  const [unlocked, setUnlocked] = useState<boolean | null>(null);
+  const [showPaywall, setShowPaywall] = useState(false);
+  const [paidToast, setPaidToast] = useState(false);
+
   // Date Poll
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [datePoll, setDatePoll] = useState<any>(null);
@@ -189,6 +196,19 @@ export default function TripDetailPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tripId]);
 
+  // Detect successful checkout return: ?paid=1 → show toast, then clear param
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const url = new URL(window.location.href);
+    if (url.searchParams.get("paid") === "1") {
+      setPaidToast(true);
+      url.searchParams.delete("paid");
+      window.history.replaceState({}, "", url.toString());
+      const timer = setTimeout(() => setPaidToast(false), 3000);
+      return () => clearTimeout(timer);
+    }
+  }, []);
+
   async function refresh() {
     const t = await getTrip(tripId);
     if (t) {
@@ -196,6 +216,25 @@ export default function TripDetailPage() {
       setLodgingForm(t.lodging);
       setArrivalTime(t.arrivalTime);
       setDepartureTime(t.departureTime);
+      // Fetch raw trip row for unlock state (payment_status + captain subscription)
+      try {
+        const rawRes = await fetch(`/api/trips/${tripId}`);
+        if (rawRes.ok) {
+          const raw = await rawRes.json();
+          const captain = raw.creator || {
+            subscription_tier: null,
+            subscription_status: null,
+          };
+          setUnlocked(
+            isTripUnlocked(
+              { payment_status: raw.payment_status ?? null },
+              captain
+            )
+          );
+        }
+      } catch {
+        // Unlock fetch failure — leave unlocked as null (treated as locked for captain UI)
+      }
       const [expenses, rds, skins, sc] = await Promise.all([
         getExpenses(tripId),
         getRounds(tripId),
@@ -254,6 +293,10 @@ export default function TripDetailPage() {
   }
 
   async function handleShareInvite() {
+    if (unlocked === false) {
+      setShowPaywall(true);
+      return;
+    }
     setInviteLoading(true);
     // Prefer share_code for the cinematic share page
     let sc = (trip as any)?.share_code;
@@ -984,32 +1027,65 @@ export default function TripDetailPage() {
                   ].filter(Boolean).join(" · ")}
                 </p>
               </div>
-              <button
-                onClick={handleShareInvite}
-                disabled={inviteLoading}
-                className={`flex items-center gap-1.5 rounded-[10px] border px-4 py-2 text-[13px] font-medium transition-all ${
-                  copied
-                    ? "border-[#2D5A3D]/50 text-[#2D5A3D]"
-                    : "border-[#2D5A3D]/30 bg-[#2D5A3D]/10 text-[#2D5A3D] hover:bg-[#2D5A3D]/15"
-                }`}
-              >
-                {copied ? (
-                  <>
-                    <Check className="h-3.5 w-3.5" strokeWidth={2.5} />
-                    Copied!
-                  </>
-                ) : inviteLoading ? (
-                  <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                ) : (
-                  <>
-                    <Link2 className="h-3.5 w-3.5" strokeWidth={2} />
-                    Invite
-                  </>
-                )}
-              </button>
+              {unlocked === false && isCaptain ? (
+                <button
+                  onClick={() => setShowPaywall(true)}
+                  className="flex items-center gap-1.5 rounded-[10px] bg-[#2D5A3D] px-4 py-2 text-[13px] font-medium text-cream transition-colors hover:bg-[#2D5A3D]/90"
+                >
+                  Send to crew
+                  <span className="text-[14px]">→</span>
+                </button>
+              ) : (
+                <button
+                  onClick={handleShareInvite}
+                  disabled={inviteLoading}
+                  className={`flex items-center gap-1.5 rounded-[10px] border px-4 py-2 text-[13px] font-medium transition-all ${
+                    copied
+                      ? "border-[#2D5A3D]/50 text-[#2D5A3D]"
+                      : "border-[#2D5A3D]/30 bg-[#2D5A3D]/10 text-[#2D5A3D] hover:bg-[#2D5A3D]/15"
+                  }`}
+                >
+                  {copied ? (
+                    <>
+                      <Check className="h-3.5 w-3.5" strokeWidth={2.5} />
+                      Copied!
+                    </>
+                  ) : inviteLoading ? (
+                    <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                  ) : (
+                    <>
+                      <Link2 className="h-3.5 w-3.5" strokeWidth={2} />
+                      Invite
+                    </>
+                  )}
+                </button>
+              )}
             </div>
           </div>
         </div>
+
+        {/* Paid success toast */}
+        {paidToast && (
+          <div className="mx-5 mt-3 rounded-[10px] border border-[#2D5A3D]/30 bg-[#2D5A3D]/10 px-4 py-2.5 text-center text-[13px] font-medium text-[#2D5A3D]">
+            ✓ Trip unlocked. Send it to your crew.
+          </div>
+        )}
+
+        {/* Draft-mode banner (captain, unpaid) */}
+        {unlocked === false && isCaptain && !paidToast && (
+          <div className="mx-5 mt-3 flex items-center justify-between gap-3 rounded-[10px] border border-cream/[0.08] bg-cream/[0.04] px-4 py-2.5">
+            <p className="text-[13px] text-cream/70">
+              <span className="font-medium text-cream">Draft mode.</span> Send to your crew when you&apos;re ready.{" "}
+              <span className="text-[#8A8A8A]">($9.99 one-time)</span>
+            </p>
+            <button
+              onClick={() => setShowPaywall(true)}
+              className="shrink-0 rounded-[10px] bg-[#2D5A3D] px-3 py-1.5 text-[12px] font-medium text-cream hover:bg-[#2D5A3D]/90"
+            >
+              Send it
+            </button>
+          </div>
+        )}
 
         {/* Travel info (below banner) */}
         <div className="px-5 pb-4">
@@ -1278,6 +1354,10 @@ export default function TripDetailPage() {
                         {status === "PENDING" && isCaptain && (
                           <button
                             onClick={() => {
+                              if (unlocked === false) {
+                                setShowPaywall(true);
+                                return;
+                              }
                               const goingCount = trip.members.filter((mm) => mm.rsvpStatus === "GOING").length;
                               const shareUrl = (trip as any).share_code ? `${window.location.origin}/trip/${(trip as any).share_code}` : `${window.location.origin}/invite/${trip.inviteCode || ""}`;
                               const msg = `Hey — we're planning ${trip.name}${trip.destination ? ` in ${trip.destination}` : ""}. ${goingCount} guy${goingCount !== 1 ? "s are" : " is"} already in. Commit here: ${shareUrl}`;
@@ -2527,13 +2607,23 @@ export default function TripDetailPage() {
               })()}
             </div>
             <div className="flex items-center gap-2">
-              <button
-                onClick={() => setShowInvite(!showInvite)}
-                className="inline-flex items-center gap-1.5 rounded-[10px] border border-[#2D5A3D]/30 bg-[#2D5A3D]/10 px-3 py-2 text-[12px] font-medium text-[#2D5A3D] transition-colors hover:bg-[#2D5A3D]/15"
-              >
-                <Mail className="h-3.5 w-3.5" />
-                Invite
-              </button>
+              {unlocked === false && isCaptain ? (
+                <button
+                  onClick={() => setShowPaywall(true)}
+                  className="inline-flex items-center gap-1.5 rounded-[10px] bg-[#2D5A3D] px-3 py-2 text-[12px] font-medium text-cream transition-colors hover:bg-[#2D5A3D]/90"
+                >
+                  Send to crew
+                  <span>→</span>
+                </button>
+              ) : (
+                <button
+                  onClick={() => setShowInvite(!showInvite)}
+                  className="inline-flex items-center gap-1.5 rounded-[10px] border border-[#2D5A3D]/30 bg-[#2D5A3D]/10 px-3 py-2 text-[12px] font-medium text-[#2D5A3D] transition-colors hover:bg-[#2D5A3D]/15"
+                >
+                  <Mail className="h-3.5 w-3.5" />
+                  Invite
+                </button>
+              )}
               <button
                 onClick={() => setShowAddMember(!showAddMember)}
                 className="inline-flex items-center gap-1.5 rounded-[10px] bg-[#2D5A3D] px-3 py-2 text-[12px] font-medium text-cream transition-colors hover:bg-[#2D5A3D]/90"
@@ -2831,6 +2921,14 @@ export default function TripDetailPage() {
 
       </div>{/* end space-y-6 */}
       </div>{/* end max-w-5xl */}
+
+      <PaywallModal
+        isOpen={showPaywall}
+        onClose={() => setShowPaywall(false)}
+        tripId={tripId}
+        tripName={trip.name}
+        destination={trip.destination}
+      />
 
       {/* Keyframes */}
       <style jsx global>{`

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { ensureDbColumns } from "@/lib/auto-migrate";
+import { isTripUnlocked } from "@/lib/trip-payment";
 
 // GET /api/trip/[shareCode] - Public trip lookup by share code
 export async function GET(
@@ -9,48 +10,64 @@ export async function GET(
 ) {
   const { shareCode } = await params;
 
+  const tripInclude = {
+    creator: {
+      select: {
+        subscription_tier: true,
+        subscription_status: true,
+      },
+    },
+    members: {
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        user_id: true,
+        role: true,
+        rsvp_status: true,
+        handicap: true,
+      },
+    },
+  } as const;
+
   try {
     let trip;
     try {
       trip = await prisma.trips.findUnique({
         where: { share_code: shareCode },
-        include: {
-          members: {
-            select: {
-              id: true,
-              name: true,
-              email: true,
-              user_id: true,
-              role: true,
-              rsvp_status: true,
-              handicap: true,
-            },
-          },
-        },
+        include: tripInclude,
       });
     } catch {
       // Likely missing columns — auto-migrate and retry
       await ensureDbColumns();
       trip = await prisma.trips.findUnique({
         where: { share_code: shareCode },
-        include: {
-          members: {
-            select: {
-              id: true,
-              name: true,
-              email: true,
-              user_id: true,
-              role: true,
-              rsvp_status: true,
-              handicap: true,
-            },
-          },
-        },
+        include: tripInclude,
       });
     }
 
     if (!trip) {
       return NextResponse.json({ error: "Trip not found" }, { status: 404 });
+    }
+
+    const captain = (trip as any).creator || {
+      subscription_tier: null,
+      subscription_status: null,
+    };
+    const unlocked = isTripUnlocked(
+      { payment_status: (trip as any).payment_status ?? null },
+      captain
+    );
+
+    if (!unlocked) {
+      // Hide trip details until the captain has paid. Return a minimal
+      // "draft" payload so the share page can show a placeholder.
+      return NextResponse.json({
+        id: trip.id,
+        name: trip.name,
+        shareCode: trip.share_code,
+        unlocked: false,
+      });
     }
 
     // Fetch active or recent poll for this trip
@@ -111,6 +128,7 @@ export async function GET(
       endDate: trip.end_date,
       vibe: trip.vibe,
       shareCode: trip.share_code,
+      unlocked: true,
       groupSizeTarget: trip.group_size_target,
       members: trip.members.map((m: any) => ({
         id: m.id,
