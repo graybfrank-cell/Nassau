@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getUser, getTripMembership, unauthorized, forbidden } from "@/lib/auth";
 import { ensureDbColumns } from "@/lib/auto-migrate";
+import { getTripState } from "@/lib/trip-state";
 
 export async function GET(
   _req: NextRequest,
@@ -42,6 +43,20 @@ export async function GET(
         trip.created_by === user.id ||
         trip.members.some((m: any) => m.user_id === user.id);
       if (!isMember) return forbidden();
+
+      if (
+        getTripState(trip) === "active" &&
+        !trip.first_active_at
+      ) {
+        prisma.trips
+          .update({
+            where: { id: trip.id },
+            data: { first_active_at: new Date() },
+          })
+          .catch(() => {
+            /* best effort — ignore */
+          });
+      }
 
       return NextResponse.json(trip);
     } catch (err) {

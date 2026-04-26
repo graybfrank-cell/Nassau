@@ -56,6 +56,7 @@ model Trips {
 
   payment_status String    @default("unpaid")
   paid_at        DateTime? @db.Timestamptz()
+  first_active_at DateTime? @db.Timestamptz()
 
   creator        Profiles         @relation(fields: [created_by], references: [id], onDelete: Cascade)
   members        TripMembers[]
