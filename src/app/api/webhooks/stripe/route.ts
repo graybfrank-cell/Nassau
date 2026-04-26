@@ -32,24 +32,40 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    switch (event.type) {
-      case "checkout.session.completed": {
-        const session = event.data.object as Stripe.Checkout.Session;
-        await handleCheckoutCompleted(session);
-        break;
+    if (event.type === "checkout.session.completed") {
+      const session = event.data.object as Stripe.Checkout.Session;
+
+      // Per-Trip Pass purchase
+      if (session.metadata?.mode === "trip_pass" && session.metadata.tripId) {
+        await prisma.trips.update({
+          where: { id: session.metadata.tripId },
+          data: {
+            payment_status: "paid",
+            paid_at: new Date(),
+          },
+        });
       }
-      case "customer.subscription.updated": {
-        const subscription = event.data.object as Stripe.Subscription;
-        await handleSubscriptionUpdated(subscription);
-        break;
+
+      // Founding Member subscription
+      if (session.metadata?.mode === "founding" && session.metadata.userId) {
+        await prisma.profiles.update({
+          where: { id: session.metadata.userId },
+          data: {
+            subscription_tier: "founding",
+            subscription_status: "active",
+            stripe_customer_id: session.customer as string,
+            stripe_subscription_id: session.subscription as string,
+          },
+        });
       }
-      case "customer.subscription.deleted": {
-        const subscription = event.data.object as Stripe.Subscription;
-        await handleSubscriptionDeleted(subscription);
-        break;
-      }
-      default:
-        console.log(`[stripe-webhook] Unhandled event type: ${event.type}`);
+    } else if (event.type === "customer.subscription.updated") {
+      const subscription = event.data.object as Stripe.Subscription;
+      await handleSubscriptionUpdated(subscription);
+    } else if (event.type === "customer.subscription.deleted") {
+      const subscription = event.data.object as Stripe.Subscription;
+      await handleSubscriptionDeleted(subscription);
+    } else {
+      console.log(`[stripe-webhook] Unhandled event type: ${event.type}`);
     }
 
     return NextResponse.json({ received: true });
@@ -71,46 +87,6 @@ function getPeriodEnd(subscription: Stripe.Subscription): Date | null {
   return null;
 }
 
-async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
-  const customerId = session.customer as string;
-  if (!customerId) return;
-
-  const profile = await prisma.profiles.findFirst({
-    where: { stripe_customer_id: customerId },
-  });
-
-  if (!profile) {
-    console.warn(
-      `[stripe-webhook] No profile found for customer: ${customerId}`
-    );
-    return;
-  }
-
-  const subscriptionId = session.subscription as string;
-  if (!subscriptionId) return;
-
-  const subscription = (await stripe.subscriptions.retrieve(
-    subscriptionId
-  )) as unknown as Stripe.Subscription;
-  const priceId = subscription.items.data[0]?.price.id;
-  const tier = getTierFromPriceId(priceId);
-
-  await prisma.profiles.update({
-    where: { id: profile.id },
-    data: {
-      stripe_customer_id: customerId,
-      stripe_subscription_id: subscriptionId,
-      subscription_status: "active",
-      subscription_tier: tier,
-      subscription_expires_at: getPeriodEnd(subscription),
-    },
-  });
-
-  console.log(
-    `[stripe-webhook] Activated ${tier} subscription for ${profile.email}`
-  );
-}
-
 async function handleSubscriptionUpdated(subscription: Stripe.Subscription) {
   const customerId = subscription.customer as string;
   const profile = await prisma.profiles.findFirst({
@@ -120,7 +96,10 @@ async function handleSubscriptionUpdated(subscription: Stripe.Subscription) {
 
   const status = mapStripeStatus(subscription.status);
   const priceId = subscription.items.data[0]?.price.id;
-  const tier = getTierFromPriceId(priceId);
+  const tier =
+    priceId && priceId === process.env.STRIPE_FOUNDING_PRICE_ID
+      ? "founding"
+      : profile.subscription_tier;
 
   await prisma.profiles.update({
     where: { id: profile.id },
@@ -154,27 +133,7 @@ async function handleSubscriptionDeleted(subscription: Stripe.Subscription) {
     },
   });
 
-  console.log(
-    `[stripe-webhook] Subscription canceled for ${profile.email}`
-  );
-}
-
-function getTierFromPriceId(priceId: string | undefined): string {
-  if (!process.env.STRIPE_PRO_PRICE_ID) {
-    console.warn(
-      "[stripe-webhook] STRIPE_PRO_PRICE_ID not set — subscription tier assignment will not work"
-    );
-  }
-  if (!process.env.STRIPE_PREMIUM_PRICE_ID) {
-    console.warn(
-      "[stripe-webhook] STRIPE_PREMIUM_PRICE_ID not set — subscription tier assignment will not work"
-    );
-  }
-  const tierMap: Record<string, string> = {
-    [process.env.STRIPE_PRO_PRICE_ID || ""]: "pro",
-    [process.env.STRIPE_PREMIUM_PRICE_ID || ""]: "premium",
-  };
-  return tierMap[priceId || ""] || "pro";
+  console.log(`[stripe-webhook] Subscription canceled for ${profile.email}`);
 }
 
 function mapStripeStatus(status: Stripe.Subscription.Status): string {

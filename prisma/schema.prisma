@@ -54,6 +54,9 @@ model Trips {
   created_at     DateTime @default(now()) @db.Timestamptz()
   updated_at     DateTime @default(now()) @db.Timestamptz()
 
+  payment_status String    @default("unpaid")
+  paid_at        DateTime? @db.Timestamptz()
+
   creator        Profiles         @relation(fields: [created_by], references: [id], onDelete: Cascade)
   members        TripMembers[]
   itineraryItems ItineraryItems[]
