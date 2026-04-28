@@ -72,6 +72,54 @@ export async function proxy(request: NextRequest) {
       return NextResponse.redirect(url);
     }
 
+    // Private beta gate: only allowlisted emails can access authenticated app
+    const allowedEmailsEnv = process.env.PRIVATE_BETA_ALLOWED_EMAILS;
+
+    if (allowedEmailsEnv && allowedEmailsEnv.trim().length > 0) {
+      const allowedEmails = allowedEmailsEnv
+        .split(",")
+        .map((e) => e.trim().toLowerCase())
+        .filter((e) => e.length > 0);
+
+      // Public paths that bypass the gate entirely
+      const publicPaths = [
+        "/",                   // landing page
+        "/pricing",
+        "/explore",
+        "/founding",
+        "/partnerships",
+        "/private-beta",       // the gated message page itself
+      ];
+      const publicPathPrefixes = [
+        "/blog",               // /blog and /blog/[slug]
+        "/trip/",              // /trip/[shareCode] previews (read-only)
+        "/api/partnerships/",  // partnerships contact form
+        "/api/waitlist",       // legacy waitlist endpoint, harmless
+        "/api/auth/",          // Supabase auth callbacks
+        "/_next/",             // Next.js internals
+        "/auth/",              // Supabase auth pages
+      ];
+
+      const path = request.nextUrl.pathname;
+
+      const isPublic =
+        publicPaths.includes(path) ||
+        publicPathPrefixes.some((p) => path.startsWith(p)) ||
+        path.match(/\.(png|jpg|jpeg|gif|svg|webp|ico|woff|woff2|ttf|css|js|map)$/);
+
+      if (!isPublic) {
+        if (user) {
+          const userEmail = (user.email || "").toLowerCase();
+          if (!allowedEmails.includes(userEmail)) {
+            const url = request.nextUrl.clone();
+            url.pathname = "/private-beta";
+            url.search = "";
+            return NextResponse.redirect(url);
+          }
+        }
+      }
+    }
+
     // If authenticated user visits / or /login, redirect to /dashboard
     if (
       (request.nextUrl.pathname === "/login" ||
