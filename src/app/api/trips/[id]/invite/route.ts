@@ -2,11 +2,12 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getUser, getTripMembership, unauthorized, forbidden } from "@/lib/auth";
 import crypto from "crypto";
-import { Resend } from "resend";
-
-const resend = process.env.RESEND_API_KEY
-  ? new Resend(process.env.RESEND_API_KEY)
-  : null;
+import {
+  sendEmail,
+  FROM_PERSONAL,
+  REPLY_TO_PERSONAL,
+} from "@/lib/email";
+import { renderInviteEmail } from "@/emails/InviteEmail";
 
 function generateInviteCode(): string {
   return crypto.randomBytes(6).toString("base64url");
@@ -111,30 +112,27 @@ export async function POST(
         },
       });
 
-      // Send invite email
-      if (resend) {
-        try {
-          const tripUrl = `https://nassau.golf/trip/${shareCode}`;
-          const captainName = membership.name || "Your friend";
+      // Fire-and-forget invite email — never block member creation on email failure
+      try {
+        const tripUrl = `https://nassau.golf/trip/${shareCode}`;
+        const captainName = membership.name || "Your friend";
 
-          await resend.emails.send({
-            from: "Grayson at Nassau <grayson@nassau.golf>",
-            replyTo: "grayson@nassau.golf",
-            to: trimmed,
-            subject: `You're invited to ${trip.name}! \uD83C\uDFCC\uFE0F`,
-            html: buildInviteEmail({
-              captainName,
-              tripName: trip.name,
-              destination: trip.destination,
-              startDate: trip.start_date,
-              endDate: trip.end_date,
-              groupSize: trip.group_size_target,
-              tripUrl,
-            }),
-          });
-        } catch {
-          // Email send failure shouldn't block member creation
-        }
+        await sendEmail({
+          from: FROM_PERSONAL,
+          replyTo: REPLY_TO_PERSONAL,
+          to: trimmed,
+          subject: `${captainName} invited you to ${trip.name}`,
+          html: renderInviteEmail({
+            captainName,
+            tripName: trip.name,
+            destination: trip.destination,
+            startDate: trip.start_date,
+            endDate: trip.end_date,
+            tripUrl,
+          }),
+        });
+      } catch {
+        // Email send failure shouldn't block member creation
       }
 
       results.push({ email: trimmed, status: "invited" });
@@ -164,64 +162,4 @@ export async function POST(
     inviteCode: updated.invite_code,
     shareCode: updated.share_code,
   });
-}
-
-function buildInviteEmail(data: {
-  captainName: string;
-  tripName: string;
-  destination: string;
-  startDate: string;
-  endDate: string;
-  groupSize: number | null;
-  tripUrl: string;
-}): string {
-  const dates =
-    data.startDate && data.endDate
-      ? `${data.startDate} \u2014 ${data.endDate}`
-      : data.startDate || data.endDate || "";
-
-  return `<!DOCTYPE html>
-<html>
-<head><meta charset="utf-8"></head>
-<body style="margin:0;padding:0;background:#f4f4f5;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
-  <table width="100%" cellpadding="0" cellspacing="0" style="background:#f4f4f5;padding:40px 20px;">
-    <tr><td align="center">
-      <table width="100%" cellpadding="0" cellspacing="0" style="max-width:480px;background:#ffffff;border-radius:12px;overflow:hidden;">
-        <tr>
-          <td style="background:#059669;padding:24px 32px;text-align:center;">
-            <span style="color:#ffffff;font-size:24px;font-weight:700;letter-spacing:1px;">NASSAU</span>
-          </td>
-        </tr>
-        <tr>
-          <td style="padding:32px;">
-            <p style="margin:0 0 16px;font-size:16px;color:#18181b;">
-              <strong>${data.captainName}</strong> invited you to
-            </p>
-            <h1 style="margin:0 0 24px;font-size:24px;color:#18181b;">${data.tripName}</h1>
-            <table width="100%" cellpadding="0" cellspacing="0" style="background:#f4f4f5;border-radius:8px;padding:16px;margin-bottom:24px;">
-              <tr><td>
-                ${data.destination ? `<p style="margin:0 0 8px;font-size:14px;color:#52525b;"><strong>Destination:</strong> ${data.destination}</p>` : ""}
-                ${dates ? `<p style="margin:0 0 8px;font-size:14px;color:#52525b;"><strong>Dates:</strong> ${dates}</p>` : ""}
-                ${data.groupSize ? `<p style="margin:0;font-size:14px;color:#52525b;"><strong>Group Size:</strong> ${data.groupSize} golfers</p>` : ""}
-              </td></tr>
-            </table>
-            <table width="100%" cellpadding="0" cellspacing="0">
-              <tr><td align="center">
-                <a href="${data.tripUrl}" style="display:inline-block;background:#059669;color:#ffffff;padding:12px 32px;border-radius:8px;text-decoration:none;font-size:16px;font-weight:600;">
-                  View Trip &amp; RSVP
-                </a>
-              </td></tr>
-            </table>
-          </td>
-        </tr>
-        <tr>
-          <td style="padding:16px 32px;border-top:1px solid #e4e4e7;text-align:center;">
-            <p style="margin:0;font-size:12px;color:#a1a1aa;">Nassau &mdash; The Golf Trip Companion</p>
-          </td>
-        </tr>
-      </table>
-    </td></tr>
-  </table>
-</body>
-</html>`;
 }

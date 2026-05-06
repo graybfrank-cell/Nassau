@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
 import { prisma } from "@/lib/prisma";
+import { sendEmail, FROM_PERSONAL, REPLY_TO_PERSONAL } from "@/lib/email";
+import { renderPaymentConfirmation } from "@/emails/PaymentConfirmation";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: "2026-02-25.clover",
@@ -37,12 +39,21 @@ export async function POST(req: NextRequest) {
 
       // Per-Trip Pass purchase
       if (session.metadata?.mode === "trip_pass" && session.metadata.tripId) {
+        const tripId = session.metadata.tripId;
         await prisma.trips.update({
-          where: { id: session.metadata.tripId },
+          where: { id: tripId },
           data: {
             payment_status: "paid",
             paid_at: new Date(),
           },
+        });
+
+        // Fire-and-forget payment confirmation email to captain
+        sendTripPassConfirmationEmail(tripId, session).catch((err) => {
+          console.error(
+            "[stripe-webhook] Trip pass confirmation email failed:",
+            err
+          );
         });
       }
 
@@ -134,6 +145,55 @@ async function handleSubscriptionDeleted(subscription: Stripe.Subscription) {
   });
 
   console.log(`[stripe-webhook] Subscription canceled for ${profile.email}`);
+}
+
+/**
+ * Send the captain a payment confirmation after a successful trip-pass
+ * purchase. Resolves the receipt URL via the Stripe-hosted invoice when
+ * available; falls back to a generic "charge will appear" line.
+ */
+async function sendTripPassConfirmationEmail(
+  tripId: string,
+  session: Stripe.Checkout.Session
+) {
+  const trip = await prisma.trips.findUnique({
+    where: { id: tripId },
+    include: { creator: { select: { email: true, full_name: true } } },
+  });
+  if (!trip || !trip.creator?.email) return;
+
+  let stripeReceiptUrl: string | undefined;
+  try {
+    const invoiceId =
+      typeof session.invoice === "string" ? session.invoice : session.invoice?.id;
+    if (invoiceId) {
+      const invoice = await stripe.invoices.retrieve(invoiceId);
+      stripeReceiptUrl = invoice.hosted_invoice_url || undefined;
+    }
+  } catch (err) {
+    console.warn("[stripe-webhook] Could not retrieve invoice for receipt:", err);
+  }
+
+  const amountTotal = session.amount_total ?? 999;
+  const currency = (session.currency || "usd").toLowerCase();
+  const amount =
+    currency === "usd"
+      ? `$${(amountTotal / 100).toFixed(2)}`
+      : `${(amountTotal / 100).toFixed(2)} ${currency.toUpperCase()}`;
+
+  await sendEmail({
+    from: FROM_PERSONAL,
+    replyTo: REPLY_TO_PERSONAL,
+    to: trip.creator.email,
+    subject: `Trip unlocked: ${trip.name}`,
+    html: renderPaymentConfirmation({
+      captainName: trip.creator.full_name || "Captain",
+      tripName: trip.name,
+      amount,
+      tripUrl: `https://nassau.golf/trips/${trip.id}`,
+      stripeReceiptUrl,
+    }),
+  });
 }
 
 function mapStripeStatus(status: Stripe.Subscription.Status): string {
