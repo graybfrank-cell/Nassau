@@ -65,6 +65,8 @@ import {
 import RoundHub from "@/components/RoundHub";
 import TripPhotos from "@/components/trips/TripPhotos";
 import TopBar from "@/components/TopBar";
+import TodayView from "@/components/today/TodayView";
+import { getTripState } from "@/lib/trip-state";
 
 const SCHEDULE_TYPES = [
   { value: "tee_time", label: "Tee Time", emoji: "\u26F3", color: "bg-[#2D5A3D]/15 text-[#2D5A3D]", border: "border-l-[#2D5A3D]" },
@@ -834,6 +836,15 @@ export default function TripDetailPage() {
         </div>
       </div>
     );
+  }
+
+  const tripState = getTripState({
+    start_date: trip.startDate,
+    end_date: trip.endDate,
+  });
+
+  if (tripState === "active") {
+    return <TodayView tripId={trip.id} />;
   }
 
   // Determine if the current user is the trip captain or co-captain (can edit)
