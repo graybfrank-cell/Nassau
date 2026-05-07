@@ -108,6 +108,7 @@ export async function POST(
           data: {
             trip_id: id,
             user_id: profile?.id || null,
+            email: trimmed,
             name: profile?.full_name || trimmed.split("@")[0],
             role: "MEMBER",
             rsvp_status: "PENDING",

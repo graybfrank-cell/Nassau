@@ -82,6 +82,7 @@ model TripMembers {
   id             String   @id @default(uuid()) @db.Uuid
   trip_id        String   @db.Uuid
   user_id        String?  @db.Uuid
+  email          String?
   name           String   @default("")
   handicap       Decimal  @default(0)
   role           String   @default("MEMBER")
