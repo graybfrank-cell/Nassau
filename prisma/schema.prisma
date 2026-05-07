@@ -54,6 +54,13 @@ model Trips {
   created_at     DateTime @default(now()) @db.Timestamptz()
   updated_at     DateTime @default(now()) @db.Timestamptz()
 
+  share_code        String?  @unique
+  vibe              String?
+  budget_tier       String?
+  group_size_target Int?
+  notes             String?
+  is_test           Boolean? @default(false)
+
   payment_status String    @default("unpaid")
   paid_at        DateTime? @db.Timestamptz()
   first_active_at DateTime? @db.Timestamptz()
