@@ -74,14 +74,10 @@ export async function POST(
         continue;
       }
 
-      // Check if already a member (by email field or linked user email)
-      const alreadyInvited = trip.members.some(
-        (m: any) => m.email === trimmed
-      );
-      if (alreadyInvited) {
-        results.push({ email: trimmed, status: "already_invited" });
-        continue;
-      }
+      // Note: we can't dedupe by email at this layer because trip_members has no
+      // email column. Dedupe happens via the profile-based check below for known
+      // users, and via the @@unique([trip_id, user_id]) constraint for any
+      // accidental duplicate inserts.
 
       // Check if a user exists with this email
       const profile = await prisma.profiles.findFirst({
@@ -99,18 +95,33 @@ export async function POST(
         }
       }
 
-      // Create member record
-      await prisma.tripMembers.create({
-        data: {
-          trip_id: id,
-          user_id: profile?.id || null,
-          email: trimmed,
-          name: profile?.full_name || trimmed.split("@")[0],
-          role: "MEMBER",
-          rsvp_status: "PENDING",
-          invited_at: new Date(),
-        },
-      });
+      // Create member record. Schema doesn't store email or invited_at on
+      // trip_members — those are stored implicitly via user_id linkage when the
+      // invitee signs up, or as a known limitation for non-existing-user invitees.
+      // KNOWN LIMITATION: If two non-existing-user emails are invited to the same
+      // trip, the second create will fail with a unique constraint violation on
+      // (trip_id, user_id) since both have user_id = null. Tracked separately —
+      // proper fix requires either an `email` column on trip_members or a separate
+      // pending_invites table.
+      try {
+        await prisma.tripMembers.create({
+          data: {
+            trip_id: id,
+            user_id: profile?.id || null,
+            name: profile?.full_name || trimmed.split("@")[0],
+            role: "MEMBER",
+            rsvp_status: "PENDING",
+          },
+        });
+      } catch (err: any) {
+        // Unique constraint violation — likely two non-existing-user invitees on same trip
+        // Prisma error code P2002 = unique constraint failed
+        if (err?.code === "P2002") {
+          results.push({ email: trimmed, status: "duplicate_pending" });
+          continue;
+        }
+        throw err; // unknown error, let it propagate
+      }
 
       // Fire-and-forget invite email — never block member creation on email failure
       try {
