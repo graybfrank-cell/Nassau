@@ -673,7 +673,7 @@
         }
       },
       "kit_title": "The Scottsdale Standard",
-      "kit_subtitle": "4 days · 5 rounds · all-in ~$1,700/pp",
+      "kit_subtitle": "4 days · 4 rounds · all-in ~$1,700/pp",
       "kit_tagline": "TPC Stadium, We-Ko-Pa desert golf, and Old Town nightlife — the best 72 hours in American golf trips.",
       "region_visual_category": "Southwest",
       "default_recommended_dates": {
@@ -691,45 +691,24 @@
         },
         {
           "day": 2,
-          "day_label": "Day 2 (AM)",
+          "day_label": "Day 2",
           "course_id": "TPC Scottsdale (Stadium Course)",
-          "tee_time": "7:30 AM",
-          "tee_time_logic": "Early start on the marquee course before temps climb — the 16th Stadium Hole plays best with morning energy."
-        },
-        {
-          "day": 2,
-          "day_label": "Day 2 (PM)",
-          "course_id": "TPC Scottsdale (Champions Course)",
-          "tee_time": "1:30 PM",
-          "tee_time_logic": "Twilight rate kicks in after 1pm for 40-50% savings — quieter sibling with better desert scenery while legs are still fresh."
+          "tee_time": "8:00 AM",
+          "tee_time_logic": "Early start on the marquee course before temps climb and before you're sore — the 16th Stadium Hole plays best with morning energy."
         },
         {
           "day": 3,
-          "day_label": "Day 3 (AM)",
+          "day_label": "Day 3",
           "course_id": "We-Ko-Pa (Saguaro Course)",
           "tee_time": "7:30 AM",
           "tee_time_logic": "Best public course in Arizona gets first light — pure Sonoran desert with no road noise, and you want photos in morning sun."
         },
         {
-          "day": 3,
-          "day_label": "Day 3 (PM)",
-          "course_id": "We-Ko-Pa (Cholla Course)",
-          "tee_time": "1:00 PM",
-          "tee_time_logic": "Stay on-property for back-to-back rounds — tighter target golf after Saguaro's wide-open layout makes for good contrast."
-        },
-        {
           "day": 4,
           "day_label": "Day 4",
-          "course_id": "Troon North (Monument Course)",
+          "course_id": "TPC Scottsdale (Champions Course)",
           "tee_time": "7:00 AM",
-          "tee_time_logic": "Early round at Pinnacle Desert boulder gives you checkout flexibility and airport buffer for afternoon flights home."
-        },
-        {
-          "day": 5,
-          "day_label": "Day 5",
-          "course_id": "Travel",
-          "tee_time": null,
-          "tee_time_logic": "Checkout and head to PHX — 20 min Uber from North Scottsdale for midday flights."
+          "tee_time_logic": "Early twilight-rate round on the quieter TPC course gives you checkout flexibility and airport buffer for afternoon flights."
         }
       ],
       "recommended_lodging": {
@@ -741,24 +720,24 @@
       },
       "cost_breakdown_4day": [
         {
-          "item": "Green fees (5 rounds)",
-          "amount": 745
+          "item": "Green fees (4 rounds)",
+          "amount": 670
         },
         {
           "item": "Lodging (3 nights)",
           "amount": 500
         },
         {
-          "item": "Cart fees + range",
-          "amount": 75
+          "item": "Caddies + tips",
+          "amount": 0
         },
         {
           "item": "Food + drink",
-          "amount": 300
+          "amount": 350
         },
         {
           "item": "Travel + transfer",
-          "amount": 80
+          "amount": 180
         }
       ],
       "bonus_plays": [
@@ -771,13 +750,13 @@
         {
           "type": "bar",
           "name": "Old Town bar crawl",
-          "why": "Walk out your front door after 36 at TPC and you're in the best post-round nightlife scene in golf — no Uber math, no driving.",
+          "why": "Walk out your front door after TPC Stadium and you're in the best post-round nightlife scene in golf — no Uber math, no driving.",
           "when": "Day 2 evening"
         },
         {
           "type": "9-hole",
           "name": "Papago Golf Course twilight 9",
-          "why": "If you land early Day 1 or want a sixth round, Papago is $40-60 and the Buttes views are legitimately stunning for a muni.",
+          "why": "If you land early Day 1 or want a fifth round, Papago is $40-60 and the Buttes views are legitimately stunning for a muni.",
           "when": "Anytime"
         },
         {
@@ -1145,19 +1124,19 @@
       "cost_breakdown_4day": [
         {
           "item": "Green fees (5 rounds)",
-          "amount": 490
+          "amount": 390
         },
         {
           "item": "Lodging (4 nights)",
           "amount": 92
         },
         {
-          "item": "Cart fees + range",
+          "item": "Caddies + tips",
           "amount": 0
         },
         {
           "item": "Food + drink",
-          "amount": 180
+          "amount": 285
         },
         {
           "item": "Travel + transfer",
@@ -1505,7 +1484,7 @@
         }
       },
       "kit_title": "The Strip & Swing",
-      "kit_subtitle": "4 days · 5 rounds · all-in ~$2100/pp",
+      "kit_subtitle": "4 days · 3 rounds · all-in ~$1700/pp",
       "kit_tagline": "Desert golf mornings, Vegas nights — the only trip where your non-golf buddies beg to come along.",
       "region_visual_category": "Southwest",
       "default_recommended_dates": {
@@ -1517,93 +1496,79 @@
         {
           "day": 1,
           "day_label": "Day 1",
-          "course_id": "Paiute Golf Resort (Wolf Course)",
-          "tee_time": "1:00 PM",
-          "tee_time_logic": "Monday arrival lets you catch cheap flights and still get 18 in — afternoon start after checkout means fresh legs on Pete Dye's best value."
+          "course_id": "Travel + Range",
+          "tee_time": null,
+          "tee_time_logic": "Monday arrival lets you catch flights under $200 and check in without weekend rates — save the golf for fresh legs."
         },
         {
           "day": 2,
-          "day_label": "Day 2 (AM)",
+          "day_label": "Day 2",
+          "course_id": "Paiute Golf Resort (Wolf Course)",
+          "tee_time": "7:30 AM",
+          "tee_time_logic": "First full day on Pete Dye's best Vegas value — get out early before desert wind picks up and everyone's fresh."
+        },
+        {
+          "day": 3,
+          "day_label": "Day 3",
           "course_id": "Wolf Creek Golf Club",
           "tee_time": "8:00 AM",
-          "tee_time_logic": "90-minute drive to Mesquite means 6:30am departure, but the canyon holes are worth the early alarm when everyone's still sharp."
-        },
-        {
-          "day": 2,
-          "day_label": "Day 2 (PM)",
-          "course_id": "Cascata",
-          "tee_time": "3:00 PM",
-          "tee_time_logic": "On the way back from Wolf Creek — Boulder City location makes this a natural second round, waterfall backdrop for the group photo."
-        },
-        {
-          "day": 3,
-          "day_label": "Day 3 (AM)",
-          "course_id": "Shadow Creek",
-          "tee_time": "8:30 AM",
-          "tee_time_logic": "Limo picks you up from MGM property — best conditions in America warrant the early start before desert heat builds."
-        },
-        {
-          "day": 3,
-          "day_label": "Day 3 (PM)",
-          "course_id": "TPC Las Vegas",
-          "tee_time": "2:00 PM",
-          "tee_time_logic": "PGA Tour track for your second 36-hole day — afternoon round still gets you done by 6pm for Thursday dinner before weekend prices hit."
+          "tee_time_logic": "90-minute drive to Mesquite means 6:30am departure, but the elevation drops and canyon holes are worth the early alarm."
         },
         {
           "day": 4,
           "day_label": "Day 4",
-          "course_id": "Travel",
-          "tee_time": null,
-          "tee_time_logic": "Late checkout and 3pm flights — sleep in after two days of 36 holes, do awards at breakfast."
+          "course_id": "TPC Las Vegas",
+          "tee_time": "7:00 AM",
+          "tee_time_logic": "Final round at the PGA Tour track — early tee gets you done by noon for 3pm flights, still time for Beef Wellington awards."
         }
       ],
       "recommended_lodging": {
         "name": "MGM Grand / Bellagio / Aria",
         "room_type": "2 Queen Standard",
         "nightly_rate": 200,
-        "why_this_one": "MGM property unlocks Shadow Creek access — mandatory for this itinerary. Central Strip location puts you 5 minutes from STK and walking distance to everything at night.",
+        "why_this_one": "MGM property unlocks Shadow Creek access if someone wants to upgrade a round. Central Strip location puts you 5 minutes from STK and walking distance to everything at night.",
         "booking_priority": "Critical · 3 months out — Strip rates jump 40% inside 6 weeks, and March is peak convention season."
       },
       "cost_breakdown_4day": [
         {
-          "item": "Green fees (5 rounds)",
-          "amount": 1020
+          "item": "Green fees (3 rounds)",
+          "amount": 670
         },
         {
           "item": "Lodging (3 nights)",
           "amount": 600
         },
         {
-          "item": "Cart fees + range",
-          "amount": 80
+          "item": "Caddies + tips",
+          "amount": 0
         },
         {
           "item": "Food + drink",
-          "amount": 285
+          "amount": 320
         },
         {
           "item": "Travel + transfer",
-          "amount": 115
+          "amount": 110
         }
       ],
       "bonus_plays": [
         {
           "type": "dinner",
           "name": "STK Steakhouse",
-          "why": "At the Cosmopolitan — DJ, scene, and proper steaks. This is your Thursday night move after TPC before Friday rates spike.",
-          "when": "Day 3 evening"
+          "why": "At the Cosmopolitan — DJ, scene, and proper steaks. This is your Thursday night move before Friday rates spike.",
+          "when": "Day 2 evening"
         },
         {
           "type": "bar",
           "name": "Herbs & Rye",
-          "why": "Off-Strip speakeasy with half-price cocktails 5-8pm. Best drinks in Vegas without the tourist tax — hit it after Wolf Creek on your way back.",
-          "when": "Day 2 evening"
+          "why": "Off-Strip speakeasy with half-price cocktails 5-8pm. Best drinks in Vegas without the tourist tax.",
+          "when": "Day 3 evening after Wolf Creek"
         },
         {
           "type": "other",
-          "name": "Pool day between rounds",
-          "why": "Day 3 between Shadow Creek morning and TPC afternoon — 3 hours at the MGM pool keeps energy up for 36 holes.",
-          "when": "Day 3 midday"
+          "name": "In-N-Out run",
+          "why": "Late night tradition after a big night out. Off-Strip location, open late, and everyone needs it.",
+          "when": "Anytime after 10pm"
         }
       ]
     },
@@ -1939,7 +1904,7 @@
           "day_label": "Day 1 - Arrival",
           "course_id": "Falconhead Golf Club",
           "tee_time": "2:30 PM",
-          "tee_time_logic": "Afternoon round after noon arrivals catches twilight pricing at $65 and saves energy for Rainey Street."
+          "tee_time_logic": "Afternoon round after noon arrivals, catches twilight pricing, and saves energy for Rainey Street."
         },
         {
           "day": 2,
@@ -1980,7 +1945,7 @@
           "amount": 380
         },
         {
-          "item": "Cart fees + range",
+          "item": "Caddies + tips",
           "amount": 0
         },
         {
@@ -2379,19 +2344,19 @@
         },
         {
           "item": "Lodging (3 nights)",
-          "amount": 188
+          "amount": 375
         },
         {
-          "item": "Cart fees + range",
-          "amount": 120
+          "item": "Caddies + tips",
+          "amount": 0
         },
         {
           "item": "Food + drink",
-          "amount": 360
+          "amount": 350
         },
         {
           "item": "Travel + transfer",
-          "amount": 192
+          "amount": 135
         }
       ],
       "bonus_plays": [
@@ -2801,12 +2766,12 @@
           "amount": 600
         },
         {
-          "item": "Cart fees + range",
-          "amount": 80
+          "item": "Caddies + tips",
+          "amount": 0
         },
         {
           "item": "Food + drink",
-          "amount": 255
+          "amount": 335
         },
         {
           "item": "Travel + transfer",
@@ -3165,7 +3130,7 @@
       },
       "kit_title": "The Pebble Beach Pilgrimage",
       "kit_subtitle": "4 days · 3 rounds · all-in ~$3,600/pp",
-      "kit_tagline": "Walk holes 6-10 along the cliffs, play the #1 public course in America, and check the box you've been thinking about for years.",
+      "kit_tagline": "Play the #1 public course in America, walk holes 6-10 along the cliffs, and check the box you've been thinking about for years.",
       "region_visual_category": "West",
       "default_recommended_dates": {
         "start": "2026-09-14",
@@ -3189,24 +3154,17 @@
         },
         {
           "day": 3,
-          "day_label": "Day 3 (AM)",
+          "day_label": "Day 3",
           "course_id": "Spyglass Hill",
-          "tee_time": "8:00 AM",
+          "tee_time": "8:30 AM",
           "tee_time_logic": "Harder than Pebble — play it when you're still sharp. Front 9 ocean views, back 9 forest elevation changes."
-        },
-        {
-          "day": 3,
-          "day_label": "Day 3 (PM)",
-          "course_id": "Pacific Grove Golf Links",
-          "tee_time": "3:00 PM",
-          "tee_time_logic": "Back 9 along the coast for $55 after your morning grind at Spyglass. Deer on the fairways, ocean views, no stress."
         },
         {
           "day": 4,
           "day_label": "Day 4",
           "course_id": "Travel",
           "tee_time": null,
-          "tee_time_logic": "Checkout and travel home. Late flight means you could sneak in Pacific Grove again for one last ocean loop."
+          "tee_time_logic": "Checkout and travel home. If you have a late flight, play Pacific Grove muni for $55 and ocean views."
         }
       ],
       "recommended_lodging": {
@@ -3218,8 +3176,8 @@
       },
       "cost_breakdown_4day": [
         {
-          "item": "Green fees (4 rounds)",
-          "amount": 1530
+          "item": "Green fees (3 rounds)",
+          "amount": 1480
         },
         {
           "item": "Lodging (3 nights)",
@@ -3231,7 +3189,7 @@
         },
         {
           "item": "Food + drink",
-          "amount": 550
+          "amount": 600
         },
         {
           "item": "Travel + transfer",
@@ -3240,10 +3198,10 @@
       ],
       "bonus_plays": [
         {
-          "type": "other",
-          "name": "Sunset bagpiper at Spanish Bay",
-          "why": "Happens every evening at sunset. Stand on the patio with a drink and watch the piper walk the dunes. It's free and unforgettable.",
-          "when": "Day 1 evening"
+          "type": "9-hole",
+          "name": "Pacific Grove Golf Links",
+          "why": "Play it the evening before Pebble — it's $55, has ocean views on the back 9, and gets you calibrated without pressure.",
+          "when": "Day 1 evening or Day 4 morning if late flight"
         },
         {
           "type": "dinner",
@@ -3252,16 +3210,16 @@
           "when": "Day 2 evening"
         },
         {
+          "type": "other",
+          "name": "Sunset bagpiper at Spanish Bay",
+          "why": "Happens every evening at sunset. Stand on the patio with a drink and watch the piper walk the dunes. It's free and unforgettable.",
+          "when": "Day 1 evening"
+        },
+        {
           "type": "dinner",
           "name": "Montrio Bistro",
           "why": "Downtown Monterey with creative menu and strong cocktails. More relaxed than resort dining and easier to get a table for four.",
           "when": "Day 3 evening"
-        },
-        {
-          "type": "other",
-          "name": "17-Mile Drive",
-          "why": "Free if you're staying at a Pebble Beach resort — save the $11.25 entrance fee. Do it between rounds on Day 2 or 3.",
-          "when": "Day 2 afternoon"
         }
       ]
     },
@@ -3568,7 +3526,7 @@
         }
       },
       "kit_title": "The Lowcountry Ocean Test",
-      "kit_subtitle": "4 days · 4 rounds · all-in ~$2400/pp",
+      "kit_subtitle": "4 days · 3 rounds · all-in ~$2400/pp",
       "kit_tagline": "Play the Ocean Course, survive the wind, eat your way through Charleston's James Beard scene.",
       "region_visual_category": "Southeast",
       "default_recommended_dates": {
@@ -3586,31 +3544,24 @@
         },
         {
           "day": 2,
-          "day_label": "Day 2 (AM)",
+          "day_label": "Day 2",
           "course_id": "The Ocean Course",
           "tee_time": "8:00 AM",
           "tee_time_logic": "Early tee when you're rested and wind is calmest — Ocean Course demands your best energy and focus."
-        },
-        {
-          "day": 2,
-          "day_label": "Day 2 (PM)",
-          "course_id": "Cougar Point",
-          "tee_time": "2:30 PM",
-          "tee_time_logic": "Shortest course on the island for a casual afternoon 18 after the Ocean Course grind — Player design along the river is easy enough when you're spent."
         },
         {
           "day": 3,
           "day_label": "Day 3",
           "course_id": "Turtle Point",
           "tee_time": "8:30 AM",
-          "tee_time_logic": "Morning round before Charleston drive — Nicklaus layout with 3 ocean holes is a solid closer without the Ocean Course intensity."
+          "tee_time_logic": "Morning round before Charleston drive — Nicklaus layout with 3 ocean holes is a solid closer without the Ocean Course grind."
         },
         {
           "day": 4,
           "day_label": "Day 4",
           "course_id": "Travel",
           "tee_time": null,
-          "tee_time_logic": "Checkout and drive to CHS — no golf scheduled unless you have a late flight and want to squeeze in a muni round."
+          "tee_time_logic": "Checkout and drive to CHS — no golf scheduled unless you have a late flight and want to add Cougar Point."
         }
       ],
       "recommended_lodging": {
@@ -3622,8 +3573,8 @@
       },
       "cost_breakdown_4day": [
         {
-          "item": "Green fees (4 rounds)",
-          "amount": 925
+          "item": "Green fees (3 rounds)",
+          "amount": 900
         },
         {
           "item": "Lodging (3 nights)",
@@ -3635,7 +3586,7 @@
         },
         {
           "item": "Food + drink",
-          "amount": 525
+          "amount": 550
         },
         {
           "item": "Travel + transfer",
@@ -3658,7 +3609,7 @@
         {
           "type": "other",
           "name": "Beach cart / bike rental",
-          "why": "30+ miles of paved trails across the island. Rent bikes or a beach cart on Day 2 afternoon between rounds to decompress before dinner.",
+          "why": "30+ miles of paved trails across the island. Rent bikes or a beach cart on Day 2 afternoon post-Ocean Course to decompress before dinner.",
           "when": "Day 2 afternoon"
         },
         {
@@ -3859,7 +3810,7 @@
         }
       },
       "kit_title": "The Oregon Coast Pilgrimage",
-      "kit_subtitle": "5 days · 5 rounds · all-in ~$2,800/pp",
+      "kit_subtitle": "5 days · 5 rounds · all-in ~$3,100/pp",
       "kit_tagline": "Five Tom Doak and Coore/Crenshaw courses on cliff edges where links golf was meant to be played.",
       "region_visual_category": "PNW",
       "default_recommended_dates": {
@@ -3897,13 +3848,6 @@
           "tee_time_logic": "Back nine cliff holes deserve good legs and clear heads — morning start before fatigue sets in."
         },
         {
-          "day": 4,
-          "day_label": "Day 4 (PM)",
-          "course_id": "Bandon Trails",
-          "tee_time": "1:30 PM",
-          "tee_time_logic": "Inland routing through forest is easier on the body for second round — no wind exposure, gentler terrain."
-        },
-        {
           "day": 5,
           "day_label": "Day 5",
           "course_id": "Sheep Ranch",
@@ -3920,20 +3864,20 @@
       },
       "cost_breakdown_4day": [
         {
-          "item": "Green fees (6 rounds)",
-          "amount": 1220
+          "item": "Green fees (5 rounds)",
+          "amount": 1350
         },
         {
           "item": "Lodging (4 nights)",
-          "amount": 700
+          "amount": 1400
         },
         {
           "item": "Caddies + tips",
-          "amount": 288
+          "amount": 0
         },
         {
           "item": "Food + drink",
-          "amount": 450
+          "amount": 500
         },
         {
           "item": "Travel + transfer",
@@ -4162,12 +4106,16 @@
           "amount": 350
         },
         {
-          "item": "Cart fees + range",
-          "amount": 90
+          "item": "Caddies + tips",
+          "amount": 0
         },
         {
           "item": "Food + drink",
           "amount": 220
+        },
+        {
+          "item": "Travel + transfer",
+          "amount": 90
         }
       ],
       "bonus_plays": [
@@ -4430,15 +4378,15 @@
       "cost_breakdown_4day": [
         {
           "item": "Green fees (4 rounds)",
-          "amount": 1200
+          "amount": 1150
         },
         {
           "item": "Lodging (4 nights)",
           "amount": 750
         },
         {
-          "item": "Cart fees + range",
-          "amount": 150
+          "item": "Caddies + tips",
+          "amount": 200
         },
         {
           "item": "Food + drink",
@@ -4457,16 +4405,16 @@
           "when": "Day 2 evening after Quivira"
         },
         {
-          "type": "other",
-          "name": "Half-day fishing charter",
-          "why": "Marlin capital of the world. Incredible fishing and non-golf activity that matters. Book afternoon Day 3 after morning round.",
-          "when": "Day 3 afternoon"
-        },
-        {
           "type": "bar",
           "name": "El Squid Roe",
           "why": "Legendary Cabo party bar. One night mandatory. Go Day 3 after the fishing charter.",
           "when": "Day 3 late evening"
+        },
+        {
+          "type": "other",
+          "name": "Half-day fishing charter",
+          "why": "Marlin capital of the world. Incredible fishing and non-golf activity that matters. Book afternoon Day 3 after morning round.",
+          "when": "Day 3 afternoon"
         },
         {
           "type": "dinner",
@@ -4807,15 +4755,15 @@
         },
         {
           "item": "Lodging (3 nights)",
-          "amount": 300
+          "amount": 350
         },
         {
-          "item": "Cart fees + range",
-          "amount": 60
+          "item": "Caddies + tips",
+          "amount": 0
         },
         {
           "item": "Food + drink",
-          "amount": 160
+          "amount": 170
         },
         {
           "item": "Travel + transfer",
@@ -5172,24 +5120,17 @@
         },
         {
           "day": 3,
-          "day_label": "Day 3 (AM)",
-          "course_id": "RTJ Trail — Magnolia Grove (Crossings)",
-          "tee_time": "7:30 AM",
-          "tee_time_logic": "Drive 45 minutes north to Mobile for insane RTJ value — tee early to finish by noon and drive back for twilight."
-        },
-        {
-          "day": 3,
-          "day_label": "Day 3 (PM)",
+          "day_label": "Day 3",
           "course_id": "Craft Farms (Cotton Creek)",
-          "tee_time": "2:30 PM",
-          "tee_time_logic": "Palmer design is more forgiving than Kiva or RTJ — twilight rate makes the 36-hole day easy on the wallet."
+          "tee_time": "8:00 AM",
+          "tee_time_logic": "Palmer design is more forgiving than Kiva — good recovery round after yesterday's wind test."
         },
         {
           "day": 4,
           "day_label": "Day 4",
           "course_id": "Peninsula Golf & Racquet Club",
           "tee_time": "7:30 AM",
-          "tee_time_logic": "Early round on the bay with marsh views, done by noon — leaves time for checkout and the drive to PNS for afternoon flights."
+          "tee_time_logic": "Early round on the bay, done by noon — leaves time for checkout and the drive to PNS for afternoon flights."
         }
       ],
       "recommended_lodging": {
@@ -5202,23 +5143,23 @@
       "cost_breakdown_4day": [
         {
           "item": "Green fees (4 rounds)",
-          "amount": 280
+          "amount": 270
         },
         {
           "item": "Lodging (3 nights)",
           "amount": 200
         },
         {
-          "item": "Cart fees + range",
-          "amount": 25
+          "item": "Caddies + tips",
+          "amount": 0
         },
         {
           "item": "Food + drink",
-          "amount": 120
+          "amount": 135
         },
         {
           "item": "Travel + transfer",
-          "amount": 25
+          "amount": 45
         }
       ],
       "bonus_plays": [
@@ -5231,20 +5172,20 @@
         {
           "type": "dinner",
           "name": "Fisher's at Orange Beach Marina",
-          "why": "Fresh off the boat at the docks. Best seafood in the area and the right spot for the big group dinner night after the Kiva round.",
-          "when": "Day 2 evening"
+          "why": "Fresh off the boat at the docks. Best seafood in the area and the right spot for the big group dinner night.",
+          "when": "Day 2 evening after Kiva"
+        },
+        {
+          "type": "9-hole",
+          "name": "RTJ Trail — Magnolia Grove",
+          "why": "If the group wants one more round, the 45-minute drive north to Mobile gets you 36 holes of RTJ Trail for under $100. Insane value.",
+          "when": "Day 3 afternoon option"
         },
         {
           "type": "other",
-          "name": "Beach afternoon + jet skis",
-          "why": "Gulf waters are warm in fall. Two-hour jet ski rental splits across the group and fills the afternoon before twilight golf on Day 3.",
-          "when": "Day 3 between rounds"
-        },
-        {
-          "type": "dinner",
-          "name": "GT's on the Bay",
-          "why": "Upscale spot on Wolf Bay for the farewell dinner after Peninsula. End the trip right with steaks and bay views.",
-          "when": "Day 4 evening if late flights"
+          "name": "Jet ski rentals",
+          "why": "Gulf waters are warm in fall. Two-hour rental splits across the group and fills the afternoon gap between rounds.",
+          "when": "Day 3 afternoon"
         }
       ]
     },
@@ -5535,7 +5476,7 @@
         }
       },
       "kit_title": "The High Sierra Loop",
-      "kit_subtitle": "4 days · 4 rounds · all-in ~$1700/pp",
+      "kit_subtitle": "4 days · 3 rounds · all-in ~$1600/pp",
       "kit_tagline": "Mountain golf at 6,200 feet where your drives bomb 10-15% farther and the lake makes every round a postcard.",
       "region_visual_category": "Mountain",
       "default_recommended_dates": {
@@ -5560,17 +5501,10 @@
         },
         {
           "day": 3,
-          "day_label": "Day 3 (AM)",
+          "day_label": "Day 3",
           "course_id": "Old Greenwood",
-          "tee_time": "8:00 AM",
-          "tee_time_logic": "Morning round on the Nicklaus track — wider fairways and forgiving layout make it perfect for a 36-hole day without beating up your group."
-        },
-        {
-          "day": 3,
-          "day_label": "Day 3 (PM)",
-          "course_id": "Incline Village Championship Course",
-          "tee_time": "2:00 PM",
-          "tee_time_logic": "Afternoon 18 at the RTJ Sr. track after lunch — tight mountain layout and lake views close out your full golf day before casino night."
+          "tee_time": "8:30 AM",
+          "tee_time_logic": "Morning round on the Nicklaus track after Edgewood — wider fairways and forgiving layout give your group a breather before departure day."
         },
         {
           "day": 4,
@@ -5589,20 +5523,20 @@
       },
       "cost_breakdown_4day": [
         {
-          "item": "Green fees (4 rounds)",
-          "amount": 725
+          "item": "Green fees (3 rounds)",
+          "amount": 600
         },
         {
           "item": "Lodging (3 nights)",
           "amount": 360
         },
         {
-          "item": "Cart fees + range",
-          "amount": 80
+          "item": "Caddies + tips",
+          "amount": 0
         },
         {
           "item": "Food + drink",
-          "amount": 400
+          "amount": 505
         },
         {
           "item": "Travel + transfer",
@@ -5619,20 +5553,20 @@
         {
           "type": "bar",
           "name": "Gar Woods Grill deck",
-          "why": "North Shore lakefront deck with the famous Wet Woody cocktail — post-Edgewood celebration spot before heading back to the cabin.",
+          "why": "North Shore lakefront deck with the famous Wet Woody cocktail — post-Edgewood celebration spot before you head to the cabin or South Shore casinos.",
           "when": "Day 2 afternoon"
         },
         {
           "type": "other",
           "name": "Casino night at Harrah's",
-          "why": "South Shore is 30 minutes from North Shore but worth the drive for one night after your 36-hole day — blackjack, craps, and the full Nevada experience. Set a loss limit.",
-          "when": "Day 3 evening"
+          "why": "South Shore is 30 minutes from North Shore but worth the drive for one night — blackjack, craps, and the full Nevada experience. Set a loss limit.",
+          "when": "Day 2 or 3 evening"
         },
         {
           "type": "9-hole",
           "name": "Incline Village Mountain Course",
-          "why": "Par-58 executive track for $50 if you want to squeeze in 9 on arrival day before Coyote Moon. Fast and fun, gets you acclimated to altitude.",
-          "when": "Day 1 morning"
+          "why": "Par-58 executive track for $50 if you want to squeeze in 9 on arrival day before Coyote Moon or as a Day 3 afternoon add-on. Fast and fun.",
+          "when": "Day 1 morning or Day 3 afternoon"
         }
       ]
     },
@@ -5974,12 +5908,12 @@
           "amount": 135
         },
         {
-          "item": "Cart fees + range",
-          "amount": 50
+          "item": "Caddies + tips",
+          "amount": 0
         },
         {
           "item": "Food + drink",
-          "amount": 170
+          "amount": 220
         },
         {
           "item": "Travel + transfer",
@@ -6307,28 +6241,28 @@
         },
         {
           "day": 2,
-          "day_label": "Day 2 (AM)",
+          "day_label": "Day 2",
           "course_id": "Sand Valley",
           "tee_time": "8:00 AM",
-          "tee_time_logic": "The original. Morning tee before wind picks up and to leave afternoon open for a second round."
+          "tee_time_logic": "The original. Morning tee before wind picks up and to leave afternoon open for a second round if the group is feeling strong."
         },
         {
           "day": 2,
-          "day_label": "Day 2 (PM)",
+          "day_label": "Day 2",
           "course_id": "The Lido",
           "tee_time": "2:30 PM",
           "tee_time_logic": "The hardest of the three. Play it when you're warmed up but not exhausted. 36-hole day for the full monastery experience."
         },
         {
           "day": 3,
-          "day_label": "Day 3 (AM)",
+          "day_label": "Day 3",
           "course_id": "Lawsonia Links",
           "tee_time": "9:00 AM",
           "tee_time_logic": "30-minute drive south to Green Lake. Top-100 value course at a third of the price. Early tee leaves afternoon for Sedge Valley."
         },
         {
           "day": 3,
-          "day_label": "Day 3 (PM)",
+          "day_label": "Day 3",
           "course_id": "Sedge Valley (par-3)",
           "tee_time": "4:00 PM",
           "tee_time_logic": "Par-3 track on-site. Fast, fun, and the perfect way to settle last-day bets without a full 18."
@@ -6359,7 +6293,7 @@
         },
         {
           "item": "Caddies + tips",
-          "amount": 192
+          "amount": 150
         },
         {
           "item": "Food + drink",
@@ -6367,7 +6301,7 @@
         },
         {
           "item": "Travel + transfer",
-          "amount": 78
+          "amount": 120
         }
       ],
       "bonus_plays": [
@@ -6767,7 +6701,7 @@
         }
       },
       "kit_title": "The Home of Golf Pilgrimage",
-      "kit_subtitle": "6 days · 7 rounds · all-in ~$5300/pp",
+      "kit_subtitle": "6 days · 7 rounds · all-in ~$5000/pp",
       "kit_tagline": "Walk the Old Course fairways, earn your Swilcan Bridge photo, and understand why this town owns golf history.",
       "region_visual_category": "International",
       "default_recommended_dates": {
@@ -6781,7 +6715,7 @@
           "day_label": "Day 1",
           "course_id": "Crail Golfing Society (Balcomie Links)",
           "tee_time": "3:00 PM",
-          "tee_time_logic": "Arrival round after 90-minute drive from Edinburgh. Crail is low-pressure clifftop links to shake off travel and dial in the ground game."
+          "tee_time_logic": "Arrival round after 90-minute drive from Edinburgh. Crail is low-pressure links golf to shake off travel and dial in the ground game."
         },
         {
           "day": 2,
@@ -6792,14 +6726,14 @@
         },
         {
           "day": 3,
-          "day_label": "Day 3 (AM)",
+          "day_label": "Day 3",
           "course_id": "The Old Course at St Andrews",
           "tee_time": "8:00 AM",
           "tee_time_logic": "Prime morning slot if ballot hits. Caddies are sharp early, and you'll finish in time for the Jigger Inn ritual."
         },
         {
           "day": 3,
-          "day_label": "Day 3 (PM)",
+          "day_label": "Day 3 (afternoon)",
           "course_id": "The New Course (St Andrews Links)",
           "tee_time": "2:00 PM",
           "tee_time_logic": "36-hole day works here. New Course is walkable Old Tom Morris links without the Old Course pressure. Usually available same-day."
@@ -6813,17 +6747,10 @@
         },
         {
           "day": 5,
-          "day_label": "Day 5 (AM)",
+          "day_label": "Day 5",
           "course_id": "Elie Golf House Club",
           "tee_time": "9:00 AM",
           "tee_time_logic": "Recovery round. Elie is charming, authentic, and forgiving after Carnoustie beat you up."
-        },
-        {
-          "day": 5,
-          "day_label": "Day 5 (PM)",
-          "course_id": "The New Course (St Andrews Links)",
-          "tee_time": "2:30 PM",
-          "tee_time_logic": "Final round back where it started. New Course gives you one more Old Tom Morris layout before heading home."
         },
         {
           "day": 6,
@@ -6843,7 +6770,7 @@
       "cost_breakdown_4day": [
         {
           "item": "Green fees (7 rounds)",
-          "amount": 1950
+          "amount": 1980
         },
         {
           "item": "Lodging (5 nights)",
@@ -6851,7 +6778,7 @@
         },
         {
           "item": "Caddies + tips",
-          "amount": 500
+          "amount": 600
         },
         {
           "item": "Food + drink",
@@ -6859,7 +6786,7 @@
         },
         {
           "item": "Travel + transfer",
-          "amount": 300
+          "amount": 370
         }
       ],
       "bonus_plays": [
@@ -7153,7 +7080,7 @@
         }
       },
       "kit_title": "The Lowcountry Championship",
-      "kit_subtitle": "4 days · 5 rounds · all-in ~$1300/pp",
+      "kit_subtitle": "4 days · 4 rounds · all-in ~$1400/pp",
       "kit_tagline": "Ocean Course drama, cobblestone dinners, and marsh golf that costs half what you'd pay at Pebble.",
       "region_visual_category": "Southeast",
       "default_recommended_dates": {
@@ -7171,17 +7098,10 @@
         },
         {
           "day": 2,
-          "day_label": "Day 2 (AM)",
+          "day_label": "Day 2",
           "course_id": "Kiawah Island Osprey Point",
           "tee_time": "8:00 AM",
           "tee_time_logic": "Tom Fazio warmup round to adjust to Lowcountry golf and humidity before you tackle the Ocean Course."
-        },
-        {
-          "day": 2,
-          "day_label": "Day 2 (PM)",
-          "course_id": "The Links at Stono Ferry",
-          "tee_time": "2:30 PM",
-          "tee_time_logic": "Best value play near Charleston fits as an afternoon round while you're still fresh on day 2."
         },
         {
           "day": 3,
@@ -7193,9 +7113,9 @@
         {
           "day": 4,
           "day_label": "Day 4",
-          "course_id": "RiverTowne Country Club",
+          "course_id": "The Links at Stono Ferry",
           "tee_time": "7:30 AM",
-          "tee_time_logic": "Early Palmer design gets you to CHS airport by noon for afternoon flights without the stress."
+          "tee_time_logic": "Early start on the best value track near Charleston gets you to CHS airport by 1pm for afternoon flights."
         }
       ],
       "recommended_lodging": {
@@ -7207,24 +7127,24 @@
       },
       "cost_breakdown_4day": [
         {
-          "item": "Green fees (5 rounds)",
-          "amount": 598
+          "item": "Green fees (4 rounds)",
+          "amount": 585
         },
         {
           "item": "Lodging (3 nights)",
-          "amount": 315
+          "amount": 350
         },
         {
-          "item": "Cart fees + range",
-          "amount": 90
+          "item": "Caddies + tips",
+          "amount": 120
         },
         {
           "item": "Food + drink",
-          "amount": 220
+          "amount": 250
         },
         {
           "item": "Travel + transfer",
-          "amount": 85
+          "amount": 95
         }
       ],
       "bonus_plays": [
@@ -7480,7 +7400,7 @@
         }
       },
       "kit_title": "The Music City Birdie Crawl",
-      "kit_subtitle": "4 days · 4 rounds · all-in ~$1100/pp",
+      "kit_subtitle": "4 days · 3 rounds · all-in ~$1100/pp",
       "kit_tagline": "Morning golf, nighttime honky-tonks, and hot chicken that'll make you forget you shot 92.",
       "region_visual_category": "Southeast",
       "default_recommended_dates": {
@@ -7505,23 +7425,16 @@
         },
         {
           "day": 3,
-          "day_label": "Day 3 (AM)",
+          "day_label": "Day 3",
           "course_id": "Hermitage Golf Course (Presidents Reserve)",
-          "tee_time": "7:30 AM",
-          "tee_time_logic": "Championship track first when legs still work. Early start leaves afternoon open for Sewanee drive or Topgolf."
-        },
-        {
-          "day": 3,
-          "day_label": "Day 3 (PM)",
-          "course_id": "The Course at Sewanee",
-          "tee_time": "2:30 PM",
-          "tee_time_logic": "90-minute drive from Hermitage but absurd value with mountain views. Twilight rate kicks in, back to Nashville by 8pm for dinner."
+          "tee_time": "8:30 AM",
+          "tee_time_logic": "Championship track while legs still work. Afternoon open for Topgolf or pool time before farewell dinner."
         },
         {
           "day": 4,
           "day_label": "Day 4",
           "course_id": "Nashville Golf & Athletic Club",
-          "tee_time": "7:00 AM",
+          "tee_time": "7:30 AM",
           "tee_time_logic": "Early sunrise round at the value track. Off by noon with time for Biscuit Love brunch and afternoon flights."
         }
       ],
@@ -7534,20 +7447,20 @@
       },
       "cost_breakdown_4day": [
         {
-          "item": "Green fees (4 rounds)",
-          "amount": 470
+          "item": "Green fees (3 rounds)",
+          "amount": 450
         },
         {
           "item": "Lodging (3 nights)",
           "amount": 360
         },
         {
-          "item": "Cart fees + range",
-          "amount": 60
+          "item": "Caddies + tips",
+          "amount": 0
         },
         {
           "item": "Food + drink",
-          "amount": 180
+          "amount": 210
         },
         {
           "item": "Travel + transfer",
@@ -7570,8 +7483,8 @@
         {
           "type": "other",
           "name": "Party bus day rental",
-          "why": "If you're 12+ guys, book this for day 3. Hermitage to Sewanee to Broadway. Splits to $40/head and nobody's the designated driver for the mountain drive.",
-          "when": "Day 3 all day"
+          "why": "If you're 12+ guys, book this for day 2. Course to hot chicken to Topgolf to Broadway. Splits to $40/head and nobody's the designated driver.",
+          "when": "Day 2 all day"
         }
       ]
     },
@@ -7803,7 +7716,7 @@
         }
       },
       "kit_title": "The Emerald Coast Run",
-      "kit_subtitle": "4 days · 4 rounds · all-in ~$900/pp",
+      "kit_subtitle": "4 days · 3 rounds · all-in ~$900/pp",
       "kit_tagline": "White sand mornings, championship golf before lunch, and a pontoon full of guys anchored at Crab Island by 3pm.",
       "region_visual_category": "Southeast",
       "default_recommended_dates": {
@@ -7815,9 +7728,9 @@
         {
           "day": 1,
           "day_label": "Day 1",
-          "course_id": "Regatta Bay Golf & Yacht Club",
-          "tee_time": "2:00 PM",
-          "tee_time_logic": "Most flights land VPS by early afternoon — Regatta Bay is the most forgiving in the rotation, so save Raven and Camp Creek for when everyone's sharp."
+          "course_id": "Travel + Range",
+          "tee_time": null,
+          "tee_time_logic": "Most flights land VPS by early afternoon — use the time to settle into Sandestin, hit the range, and save energy for the next three mornings."
         },
         {
           "day": 2,
@@ -7836,38 +7749,38 @@
         {
           "day": 4,
           "day_label": "Day 4",
-          "course_id": "The Courses at Burnt Pine",
+          "course_id": "Regatta Bay Golf & Yacht Club",
           "tee_time": "7:45 AM",
-          "tee_time_logic": "Final round at Burnt Pine — best greens on the Emerald Coast and the most exclusive feel, so close the trip on a high note before checkout."
+          "tee_time_logic": "Final round at Regatta Bay — easier than Raven or Camp Creek, so it plays well when guys are tired, and the bay views make a solid send-off."
         }
       ],
       "recommended_lodging": {
         "name": "Sandestin Golf and Beach Resort",
         "room_type": "2-bedroom condo",
         "nightly_rate": 325,
-        "why_this_one": "You're playing Raven and Burnt Pine on-site, the golf-lodging package saves 20-30%, and having pools, beach, and bars within walking distance means nobody needs to drive after dinner. Split a condo 4 ways and it's cheaper than separate hotel rooms.",
+        "why_this_one": "You're playing Raven on-site, the golf-lodging package saves 20-30%, and having pools, beach, and bars within walking distance means nobody needs to drive after dinner. Split a condo 4 ways and it's cheaper than separate hotel rooms.",
         "booking_priority": "Critical · 8-10 weeks out for spring dates, condos fill fast in April."
       },
       "cost_breakdown_4day": [
         {
-          "item": "Green fees (4 rounds)",
-          "amount": 385
+          "item": "Green fees (3 rounds)",
+          "amount": 400
         },
         {
           "item": "Lodging (3 nights)",
           "amount": 245
         },
         {
-          "item": "Cart fees + range",
-          "amount": 60
+          "item": "Caddies + tips",
+          "amount": 0
         },
         {
           "item": "Food + drink",
-          "amount": 160
+          "amount": 180
         },
         {
           "item": "Travel + transfer",
-          "amount": 50
+          "amount": 75
         }
       ],
       "bonus_plays": [
@@ -7892,8 +7805,8 @@
         {
           "type": "9-hole",
           "name": "Santa Rosa Golf & Beach Club twilight 9",
-          "why": "If flights land early enough on Day 1, Santa Rosa is right on 30A and you can hit the beach immediately after — perfect combo before the Regatta Bay afternoon round.",
-          "when": "Day 1 late morning (optional)"
+          "why": "If the group wants more golf on arrival day, Santa Rosa is right on 30A and you can hit the beach immediately after — perfect combo if flights land early.",
+          "when": "Day 1 late afternoon (optional)"
         }
       ]
     },
@@ -8131,7 +8044,7 @@
         }
       },
       "kit_title": "The Orlando Value Blitz",
-      "kit_subtitle": "4 days · 4 rounds · all-in ~$1100/pp",
+      "kit_subtitle": "4 days · 3 rounds · all-in ~$1100/pp",
       "kit_tagline": "More championship golf per dollar than anywhere in Florida, 30 minutes from your hotel room.",
       "region_visual_category": "Southeast",
       "default_recommended_dates": {
@@ -8156,17 +8069,10 @@
         },
         {
           "day": 3,
-          "day_label": "Day 3 (AM)",
+          "day_label": "Day 3",
           "course_id": "ChampionsGate (International)",
           "tee_time": "7:30 AM",
           "tee_time_logic": "Hardest course of the trip. Early start means you're done by noon and have the afternoon for Topgolf or CityWalk."
-        },
-        {
-          "day": 3,
-          "day_label": "Day 3 (PM)",
-          "course_id": "Streamsong Red",
-          "tee_time": "2:00 PM",
-          "tee_time_logic": "Worth the 90-minute drive south. Afternoon round lets you play into sunset on one of America's best public tracks."
         },
         {
           "day": 4,
@@ -8185,20 +8091,20 @@
       },
       "cost_breakdown_4day": [
         {
-          "item": "Green fees (4 rounds)",
-          "amount": 470
+          "item": "Green fees (3 rounds)",
+          "amount": 420
         },
         {
           "item": "Lodging (3 nights)",
           "amount": 330
         },
         {
-          "item": "Cart fees + range",
-          "amount": 50
+          "item": "Caddies + tips",
+          "amount": 0
         },
         {
           "item": "Food + drink",
-          "amount": 200
+          "amount": 250
         },
         {
           "item": "Travel + transfer",
@@ -8216,13 +8122,13 @@
           "type": "bar",
           "name": "Universal CityWalk",
           "why": "Free entry, 10 bars in walking distance, late-night food. Better scene than Disney Springs and no parking fees.",
-          "when": "Day 3 evening after Streamsong"
+          "when": "Day 3 evening"
         },
         {
           "type": "other",
           "name": "Andretti Indoor Karting",
           "why": "15 minutes from Champions Gate. Full arcade, go-karts, and ropes course. Perfect afternoon activity if someone tweaks their back.",
-          "when": "Day 2 afternoon instead of pool time"
+          "when": "Day 3 afternoon if skipping Topgolf"
         }
       ]
     },
@@ -8487,7 +8393,7 @@
           "amount": 225
         },
         {
-          "item": "Cart fees + range",
+          "item": "Caddies + tips",
           "amount": 0
         },
         {
@@ -8747,8 +8653,8 @@
         }
       },
       "kit_title": "The Lake Oconee Corporate Classic",
-      "kit_subtitle": "4 days · 4 rounds · all-in ~$1700/pp",
-      "kit_tagline": "Six championship courses on one private Georgia lake, 90 minutes from Atlanta but zero distractions.",
+      "kit_subtitle": "4 days · 3 rounds · all-in ~$1600/pp",
+      "kit_tagline": "Six Nicklaus-Fazio-Jones courses on one private Georgia lake, 90 minutes from Atlanta but zero distractions.",
       "region_visual_category": "Southeast",
       "default_recommended_dates": {
         "start": "2026-10-12",
@@ -8766,17 +8672,10 @@
         },
         {
           "day": 2,
-          "day_label": "Day 2 (AM)",
+          "day_label": "Day 2",
           "course_id": "Reynolds Great Waters",
           "tee_time": "8:00 AM",
           "tee_time_logic": "Morning tee for the flagship Nicklaus course. The 9 lakeside holes play best before wind picks up midday."
-        },
-        {
-          "day": 2,
-          "day_label": "Day 2 (PM)",
-          "course_id": "Reynolds National",
-          "tee_time": "1:30 PM",
-          "tee_time_logic": "Tom Fazio design accessible through resort stays. Afternoon 36-hole stretch while legs are fresh."
         },
         {
           "day": 3,
@@ -8802,20 +8701,20 @@
       },
       "cost_breakdown_4day": [
         {
-          "item": "Green fees (4 rounds)",
-          "amount": 725
+          "item": "Green fees (3 rounds)",
+          "amount": 700
         },
         {
           "item": "Lodging (3 nights)",
           "amount": 470
         },
         {
-          "item": "Cart fees + range",
-          "amount": 80
+          "item": "Caddies + tips",
+          "amount": 0
         },
         {
           "item": "Food + drink",
-          "amount": 325
+          "amount": 330
         },
         {
           "item": "Travel + transfer",
@@ -8824,22 +8723,16 @@
       ],
       "bonus_plays": [
         {
-          "type": "other",
-          "name": "3-course resort package",
-          "why": "Book through Reynolds directly — saves 15-20% vs individual tee times. Worth the phone call.",
-          "when": "Book at reservation"
+          "type": "dinner",
+          "name": "Linger Longer Steakhouse",
+          "why": "Thick-cut steaks and bourbon selection. This is the group dinner on Day 2 after Great Waters.",
+          "when": "Day 2 evening"
         },
         {
           "type": "other",
           "name": "Lake Oconee pontoon rental",
-          "why": "Spend Day 2 evening on the water after 36 holes. Bass fishing or just floating with coolers — the lake is why this place exists.",
-          "when": "Day 2 evening"
-        },
-        {
-          "type": "dinner",
-          "name": "Linger Longer Steakhouse",
-          "why": "Thick-cut steaks and bourbon selection. This is the group dinner on Day 2 after the double.",
-          "when": "Day 2 evening"
+          "why": "Spend Day 2 afternoon on the water between rounds. Bass fishing or just floating with coolers — the lake is why this place exists.",
+          "when": "Day 2 afternoon"
         },
         {
           "type": "bar",
@@ -8849,9 +8742,9 @@
         },
         {
           "type": "other",
-          "name": "Bring a fishing rod",
-          "why": "The lake has incredible largemouth bass and you can fish between rounds. Guides available for $250-400 if you want structure.",
-          "when": "Anytime"
+          "name": "3-course resort package",
+          "why": "Book through Reynolds directly — saves 15-20% vs individual tee times. Worth the phone call.",
+          "when": "Book at reservation"
         }
       ]
     },
@@ -9122,18 +9015,18 @@
           "tee_time_logic": "20 minutes from Ross Bridge. Dramatic elevation changes through valley. Second morning tee captures conditions before wind."
         },
         {
-          "day": 3,
-          "day_label": "Day 3 (PM)",
-          "course_id": "Capitol Hill (Judge Course)",
-          "tee_time": "2:00 PM",
-          "tee_time_logic": "90-minute drive to Prattville after morning round. Afternoon 18 at the LPGA venue, stay on-site at Marriott."
-        },
-        {
           "day": 4,
           "day_label": "Day 4",
           "course_id": "Grand National (Links Course)",
           "tee_time": "7:30 AM",
-          "tee_time_logic": "75-minute drive from Prattville to Opelika. Early tee on the crown jewel before checkout, 2-hour buffer to BHM."
+          "tee_time_logic": "90-minute drive to Opelika. Early tee gives time for 36 if crew wants Lake Course after. Crown jewel round."
+        },
+        {
+          "day": 5,
+          "day_label": "Day 5",
+          "course_id": "Grand National (Lake Course)",
+          "tee_time": "8:00 AM",
+          "tee_time_logic": "On-site second round before checkout. Easier than Links, good final-day energy. Finish by noon, 2-hour buffer to BHM."
         }
       ],
       "recommended_lodging": {
@@ -9153,7 +9046,7 @@
           "amount": 195
         },
         {
-          "item": "Cart fees + range",
+          "item": "Caddies + tips",
           "amount": 0
         },
         {
@@ -9175,8 +9068,8 @@
         {
           "type": "9-hole",
           "name": "Grand National Short Course",
-          "why": "Par-3 course on-site at Grand National. $25 per player. Good warm-up before Links Course or add-on after if crew has gas.",
-          "when": "Day 4 pre-round"
+          "why": "Par-3 course on-site at Grand National. $25 per player. Good warm-up before Links Course or add-on after Lake round if crew has gas.",
+          "when": "Day 4 afternoon or Day 5 pre-round"
         },
         {
           "type": "other",
@@ -9451,16 +9344,16 @@
           "amount": 320
         },
         {
-          "item": "Cart fees + range",
-          "amount": 90
+          "item": "Caddies + tips",
+          "amount": 0
         },
         {
           "item": "Food + drink",
-          "amount": 180
+          "amount": 220
         },
         {
           "item": "Travel + transfer",
-          "amount": 50
+          "amount": 100
         }
       ],
       "bonus_plays": [
@@ -9720,7 +9613,7 @@
         }
       },
       "kit_title": "The Tucson Value Play",
-      "kit_subtitle": "4 days · 4 rounds · all-in ~$1100/pp",
+      "kit_subtitle": "4 days · 3 rounds · all-in ~$1100/pp",
       "kit_tagline": "Scottsdale golf at 70% of the price, better Mexican food, and no scene to navigate.",
       "region_visual_category": "Southwest",
       "default_recommended_dates": {
@@ -9732,9 +9625,9 @@
         {
           "day": 1,
           "day_label": "Day 1",
-          "course_id": "Sewailo Golf Club",
-          "tee_time": "2:00 PM",
-          "tee_time_logic": "Most flights land by noon. Afternoon tee at the walking-friendly budget option lets you ease into the trip without burning premium courses on arrival energy."
+          "course_id": "Travel + Range",
+          "tee_time": null,
+          "tee_time_logic": "Most direct flights land midday. Use afternoon for range session at JW Marriott, settle in, early dinner."
         },
         {
           "day": 2,
@@ -9745,24 +9638,17 @@
         },
         {
           "day": 3,
-          "day_label": "Day 3 (AM)",
+          "day_label": "Day 3",
           "course_id": "Arizona National Golf Club",
           "tee_time": "7:30 AM",
           "tee_time_logic": "Earlier tee captures cooler temps and faster pace. RTJ Jr. design plays harder than rating suggests, better fresh than hungover."
         },
         {
-          "day": 3,
-          "day_label": "Day 3 (PM)",
-          "course_id": "Omni Tucson National (Catalina Course)",
-          "tee_time": "1:30 PM",
-          "tee_time_logic": "Former PGA Tour layout pairs well with Arizona National for a 36-hole stretch. Catalina plays shorter than the morning round, manageable on tired legs."
-        },
-        {
           "day": 4,
           "day_label": "Day 4",
-          "course_id": "Travel",
-          "tee_time": null,
-          "tee_time_logic": "Checkout and depart. Airport is 20 minutes from JW Marriott, flights after 11am work fine."
+          "course_id": "Sewailo Golf Club",
+          "tee_time": "7:00 AM",
+          "tee_time_logic": "Walking-friendly layout works well for final round. Early start gives you checkout buffer and airport cushion by 1pm."
         }
       ],
       "recommended_lodging": {
@@ -9774,20 +9660,20 @@
       },
       "cost_breakdown_4day": [
         {
-          "item": "Green fees (4 rounds)",
-          "amount": 430
+          "item": "Green fees (3 rounds)",
+          "amount": 420
         },
         {
           "item": "Lodging (3 nights)",
           "amount": 300
         },
         {
-          "item": "Cart fees + range",
-          "amount": 60
+          "item": "Caddies + tips",
+          "amount": 0
         },
         {
           "item": "Food + drink",
-          "amount": 220
+          "amount": 240
         },
         {
           "item": "Travel + transfer",
@@ -9810,13 +9696,13 @@
         {
           "type": "dinner",
           "name": "Hacienda del Sol Guest Ranch",
-          "why": "Upscale Southwest cuisine in a 1929 hacienda. The patio at sunset is legitimately special. Book this for the main group dinner after your 36-hole day.",
+          "why": "Upscale Southwest cuisine in a 1929 hacienda. The patio at sunset is legitimately special. Book this for the main group dinner on Day 3.",
           "when": "Day 3 evening"
         },
         {
           "type": "bar",
           "name": "Dragoon Brewing",
-          "why": "Best local brewery. The taproom is low-key, pours are strong, and it's 10 minutes from the resort. Post-round stop works any day.",
+          "why": "Best local brewery. The taproom is low-key, pours are strong, and it's 10 minutes from the resort. Post-round stop on Day 2 or 3.",
           "when": "Anytime"
         }
       ]
@@ -10105,16 +9991,16 @@
           "amount": 265
         },
         {
-          "item": "Cart fees + range",
-          "amount": 85
+          "item": "Caddies + tips",
+          "amount": 0
         },
         {
           "item": "Food + drink",
-          "amount": 210
+          "amount": 260
         },
         {
           "item": "Travel + transfer",
-          "amount": 75
+          "amount": 90
         }
       ],
       "bonus_plays": [
@@ -10135,12 +10021,6 @@
           "name": "Deschutes River float",
           "why": "Put in at Riverbend Park, float 2 hours through town, walk to a brewery. Rental is $40. Do it Day 3 afternoon after Pronghorn.",
           "when": "Day 3 afternoon"
-        },
-        {
-          "type": "9-hole",
-          "name": "Crosswater at Sunriver Resort",
-          "why": "Bob Cupp design through the Deschutes River. Play 9 holes twilight rate on Day 2 afternoon if the group wants a second loop. Otherwise skip for the float.",
-          "when": "Day 2 afternoon (optional)"
         }
       ]
     },
@@ -10369,7 +10249,7 @@
         }
       },
       "kit_title": "The Wasatch Summer Session",
-      "kit_subtitle": "4 days · 3 rounds · all-in ~$1,300/pp",
+      "kit_subtitle": "4 days · 3 rounds · all-in ~$1300/pp",
       "kit_tagline": "Mountain golf at 6,500 feet when the rest of the country melts. 75F and no crowds.",
       "region_visual_category": "Mountain",
       "default_recommended_dates": {
@@ -10424,16 +10304,16 @@
           "amount": 350
         },
         {
-          "item": "Cart fees + range",
-          "amount": 120
+          "item": "Caddies + tips",
+          "amount": 0
         },
         {
           "item": "Food + drink",
-          "amount": 220
+          "amount": 320
         },
         {
           "item": "Travel + transfer",
-          "amount": 130
+          "amount": 150
         }
       ],
       "bonus_plays": [
@@ -10699,22 +10579,15 @@
           "day": 3,
           "day_label": "Day 3",
           "course_id": "Circling Raven Golf Club",
-          "tee_time": "8:30 AM",
+          "tee_time": "9:00 AM",
           "tee_time_logic": "Better pure golf than the resort. Gene Bates design, 620 acres, no houses. Top-100 public caliber."
-        },
-        {
-          "day": 3,
-          "day_label": "Day 3 (PM)",
-          "course_id": "The Idaho Club",
-          "tee_time": "2:00 PM",
-          "tee_time_logic": "45-minute drive to Sandpoint after lunch. Jack Nicklaus design on Lake Pend Oreille. Worth the drive and 36-hole day."
         },
         {
           "day": 4,
           "day_label": "Day 4",
-          "course_id": "Travel",
-          "tee_time": null,
-          "tee_time_logic": "Tubbs Hill hike if time before GEG departure. No morning round after 36 yesterday."
+          "course_id": "Avondale Golf Club",
+          "tee_time": "7:00 AM",
+          "tee_time_logic": "Early value round in Hayden before checkout. Solid warm-down, $40 greens fee, depart GEG by 2pm."
         }
       ],
       "recommended_lodging": {
@@ -10727,14 +10600,14 @@
       "cost_breakdown_4day": [
         {
           "item": "Green fees (3 rounds)",
-          "amount": 545
+          "amount": 540
         },
         {
           "item": "Lodging (3 nights)",
           "amount": 375
         },
         {
-          "item": "Cart fees + range",
+          "item": "Caddies + tips",
           "amount": 60
         },
         {
@@ -10743,7 +10616,7 @@
         },
         {
           "item": "Travel + transfer",
-          "amount": 70
+          "amount": 75
         }
       ],
       "bonus_plays": [
@@ -10760,16 +10633,16 @@
           "when": "Day 1 evening"
         },
         {
-          "type": "other",
-          "name": "Lake CdA boat cruise",
-          "why": "40-minute scenic cruise. Best arrival activity before dinner. Puts everyone on vacation mode immediately.",
-          "when": "Day 1 afternoon"
+          "type": "9-hole",
+          "name": "StoneRidge Golf Course",
+          "why": "Hidden gem in Blanchard, Selkirk Mountain setting. Swap this in if Avondale doesn't fit Day 4 timing.",
+          "when": "Day 4 morning alternate"
         },
         {
           "type": "other",
           "name": "Tubbs Hill hiking",
-          "why": "Free lakeside hike with views. Perfect Day 4 morning if no golf before GEG departure.",
-          "when": "Day 4 morning"
+          "why": "Free lakeside hike with views. Perfect post-Circling Raven afternoon or Day 4 pre-flight if no morning round.",
+          "when": "Anytime"
         }
       ]
     },
@@ -10983,7 +10856,7 @@
         }
       },
       "kit_title": "The Island Dye Trip",
-      "kit_subtitle": "4 days · 4 rounds · all-in ~$1,100/pp",
+      "kit_subtitle": "4 days · 3 rounds · all-in ~$1,100/pp",
       "kit_tagline": "Barrier island golf without the Florida crowds. Pete Dye's marshland masterpiece and two resort courses 20 minutes apart.",
       "region_visual_category": "Southeast",
       "default_recommended_dates": {
@@ -11001,17 +10874,10 @@
         },
         {
           "day": 2,
-          "day_label": "Day 2 (AM)",
+          "day_label": "Day 2",
           "course_id": "Amelia Island Oak Marsh",
           "tee_time": "8:00 AM",
           "tee_time_logic": "Early morning on Pete Dye before ocean breeze picks up. Former PGA Tour venue requires focus."
-        },
-        {
-          "day": 2,
-          "day_label": "Day 2 (PM)",
-          "course_id": "Omni Ocean Links",
-          "tee_time": "1:30 PM",
-          "tee_time_logic": "Second round at Omni after lunch. More playable than Oak Marsh and on-site at lodging."
         },
         {
           "day": 3,
@@ -11032,12 +10898,12 @@
         "name": "Omni Amelia Island Resort",
         "room_type": "2-bedroom villa",
         "nightly_rate": 375,
-        "why_this_one": "Oak Marsh and Ocean Links both on-site. Resort packages bundle lodging and golf at real savings compared to paying separately.",
+        "why_this_one": "Oak Marsh is on-site and Ocean Links is the backup if weather shifts. Resort packages bundle lodging and golf at real savings compared to paying separately.",
         "booking_priority": "Critical · 6-8 weeks out for spring dates"
       },
       "cost_breakdown_4day": [
         {
-          "item": "Green fees (4 rounds)",
+          "item": "Green fees (3 rounds)",
           "amount": 425
         },
         {
@@ -11045,16 +10911,16 @@
           "amount": 340
         },
         {
-          "item": "Cart fees + range",
-          "amount": 60
+          "item": "Caddies + tips",
+          "amount": 0
         },
         {
           "item": "Food + drink",
-          "amount": 190
+          "amount": 240
         },
         {
           "item": "Travel + transfer",
-          "amount": 85
+          "amount": 95
         }
       ],
       "bonus_plays": [
@@ -11062,7 +10928,7 @@
           "type": "dinner",
           "name": "Joe's 2nd Street Bistro",
           "why": "Downtown Fernandina has better restaurants than resort dining. Best local spot on the island.",
-          "when": "Day 2 evening after 36 holes"
+          "when": "Day 2 evening after Oak Marsh"
         },
         {
           "type": "9-hole",
@@ -11344,8 +11210,8 @@
           "amount": 395
         },
         {
-          "item": "Cart fees + range",
-          "amount": 50
+          "item": "Caddies + tips",
+          "amount": 0
         },
         {
           "item": "Food + drink",
@@ -11353,16 +11219,10 @@
         },
         {
           "item": "Travel + transfer",
-          "amount": 70
+          "amount": 120
         }
       ],
       "bonus_plays": [
-        {
-          "type": "other",
-          "name": "Cathedral Rock hike",
-          "why": "Free sunrise hike on Day 2 before your 7:30 AM tee time. Trailhead is 10 minutes from VOC rentals. Gets your legs warm for the round.",
-          "when": "Day 2 early morning"
-        },
         {
           "type": "dinner",
           "name": "Elote Cafe",
@@ -11380,6 +11240,12 @@
           "name": "Mariposa Latin Inspired Grill",
           "why": "Panoramic red rock views at Lisa Dahl's flagship. Book the patio for Day 3 farewell dinner when you reserve lodging.",
           "when": "Day 3 evening"
+        },
+        {
+          "type": "other",
+          "name": "Cathedral Rock hike",
+          "why": "Free sunrise hike on Day 2 before your 7:30 AM tee time. Trailhead is 10 minutes from VOC rentals. Gets your legs warm for the round.",
+          "when": "Day 2 early morning"
         }
       ]
     },
@@ -11586,7 +11452,7 @@
       },
       "kit_title": "The Hoosier Hills Championship",
       "kit_subtitle": "4 days · 3 rounds · all-in ~$1100/pp",
-      "kit_tagline": "Two Pete Dye courses in the rolling hills of southern Indiana, with a grand hotel casino and nothing to do but golf.",
+      "kit_tagline": "Two Pete Dye masterpieces in the rolling hills of southern Indiana, with a grand hotel casino and nothing to do but golf.",
       "region_visual_category": "Midwest",
       "default_recommended_dates": {
         "start": "2026-10-12",
@@ -11640,16 +11506,16 @@
           "amount": 360
         },
         {
-          "item": "Cart fees + range",
-          "amount": 60
+          "item": "Caddies + tips",
+          "amount": 0
         },
         {
           "item": "Food + drink",
-          "amount": 180
+          "amount": 220
         },
         {
           "item": "Travel + transfer",
-          "amount": 80
+          "amount": 100
         }
       ],
       "bonus_plays": [
@@ -11904,7 +11770,7 @@
         }
       },
       "kit_title": "The Jersey Shore Grind",
-      "kit_subtitle": "4 days · 4 rounds · all-in ~$1,300/pp",
+      "kit_subtitle": "4 days · 3 rounds · all-in ~$1200/pp",
       "kit_tagline": "Links golf on Jersey dunes, then casino floors until 4am. Northeast golf trip that actually parties.",
       "region_visual_category": "Northeast",
       "default_recommended_dates": {
@@ -11929,17 +11795,10 @@
         },
         {
           "day": 3,
-          "day_label": "Day 3 (AM)",
+          "day_label": "Day 3",
           "course_id": "Ballamor Golf Club",
-          "tee_time": "7:30 AM",
-          "tee_time_logic": "Ballamor after a casino night. Fazio design is fair and forgiving — perfect for guys nursing hangovers."
-        },
-        {
-          "day": 3,
-          "day_label": "Day 3 (PM)",
-          "course_id": "Sand Barrens Golf Club",
-          "tee_time": "2:00 PM",
-          "tee_time_logic": "27 holes means you can pick the best nine combo. Afternoon round keeps the group together instead of splitting to casino early."
+          "tee_time": "9:00 AM",
+          "tee_time_logic": "Ballamor after a casino night. Fazio design is fair and forgiving — perfect for guys nursing hangovers. Best conditions in the AC area."
         },
         {
           "day": 4,
@@ -11953,29 +11812,29 @@
         "name": "Borgata Hotel Casino & Spa",
         "room_type": "Standard Double Queen",
         "nightly_rate": 225,
-        "why_this_one": "Borgata is the best casino in AC by a wide margin. Pool scene, Old Homestead steakhouse, actual nightlife that doesn't feel depressing. Worth the extra $50/night over Tropicana.",
+        "why_this_one": "Borgata is the best casino in AC by a wide margin. Pool scene, Old Homestead steakhouse, actual nightlife that doesn't feel depressing. Walking distance to boardwalk but you're not staying in a dated 1980s tower. Worth the extra $50/night over Tropicana.",
         "booking_priority": "Critical · Book 8-10 weeks out. Midweek rates drop hard but rooms still sell out for group blocks in May and September."
       },
       "cost_breakdown_4day": [
         {
-          "item": "Green fees (4 rounds)",
-          "amount": 505
+          "item": "Green fees (3 rounds)",
+          "amount": 495
         },
         {
           "item": "Lodging (3 nights)",
           "amount": 340
         },
         {
-          "item": "Cart fees + range",
-          "amount": 80
+          "item": "Caddies + tips",
+          "amount": 0
         },
         {
           "item": "Food + drink",
-          "amount": 280
+          "amount": 240
         },
         {
           "item": "Travel + transfer",
-          "amount": 95
+          "amount": 85
         }
       ],
       "bonus_plays": [
@@ -12279,7 +12138,7 @@
           "amount": 260
         },
         {
-          "item": "Cart fees + range",
+          "item": "Caddies + tips",
           "amount": 0
         },
         {
@@ -12308,13 +12167,7 @@
           "type": "bar",
           "name": "Finger Lakes Brewing Company",
           "why": "Hammondsport location. Good beer, lake views, casual vibe for the last night before departure.",
-          "when": "Day 3 evening"
-        },
-        {
-          "type": "9-hole",
-          "name": "Centennial Golf Club twilight 9",
-          "why": "If the group wants bonus holes on Day 2 or 3 afternoon. Denis Griffiths design, excellent conditioning, twilight rate at $40 makes it easy to justify.",
-          "when": "Day 2 or 3 late afternoon"
+          "when": "Day 4 evening or Day 3 if you skip the castle"
         }
       ]
     },
@@ -12556,9 +12409,9 @@
           ]
         }
       },
-      "kit_title": "The Sentry Venue + Island Sweep",
-      "kit_subtitle": "4 days · 4 rounds · all-in ~$2100/pp",
-      "kit_tagline": "Play where the Tour plays in January, trust the elevation, and split a Montage residence with full kitchen.",
+      "kit_title": "The Maui Plantation Run",
+      "kit_subtitle": "4 days · 3 rounds · all-in ~$2100/pp",
+      "kit_tagline": "Play the Sentry venue, trust the downhill clubs, and book Mama's three months out or don't complain.",
       "region_visual_category": "Tropical",
       "default_recommended_dates": {
         "start": "2026-05-18",
@@ -12575,24 +12428,17 @@
         },
         {
           "day": 2,
-          "day_label": "Day 2 (AM)",
+          "day_label": "Day 2",
           "course_id": "Kapalua Plantation Course",
-          "tee_time": "7:30 AM",
+          "tee_time": "8:00 AM",
           "tee_time_logic": "First full day on the bucket list course. Morning tee before wind picks up and while legs are fresh for elevation changes."
-        },
-        {
-          "day": 2,
-          "day_label": "Day 2 (PM)",
-          "course_id": "Kapalua Bay Course",
-          "tee_time": "1:00 PM",
-          "tee_time_logic": "Bay Course twilight rate at $139 makes sense for 36-hole day. Same resort, no travel, more playable than Plantation for round two."
         },
         {
           "day": 3,
           "day_label": "Day 3",
           "course_id": "Wailea Gold Course",
-          "tee_time": "9:00 AM",
-          "tee_time_logic": "South side drive from Kapalua is 90 minutes. Mid-morning start handles travel buffer and leaves afternoon for pool or Honolua Bay snorkeling."
+          "tee_time": "7:30 AM",
+          "tee_time_logic": "South side drive from Kapalua is 90 minutes. Early start gets you there by 9am for warm-up, handles travel, and leaves afternoon for pool."
         },
         {
           "day": 4,
@@ -12611,15 +12457,15 @@
       },
       "cost_breakdown_4day": [
         {
-          "item": "Green fees (4 rounds)",
-          "amount": 814
+          "item": "Green fees (3 rounds)",
+          "amount": 825
         },
         {
           "item": "Lodging (3 nights)",
           "amount": 525
         },
         {
-          "item": "Cart fees + range",
+          "item": "Caddies + tips",
           "amount": 0
         },
         {
@@ -12634,27 +12480,27 @@
       "bonus_plays": [
         {
           "type": "dinner",
-          "name": "Merriman's Kapalua",
-          "why": "Farm-to-table with ocean views. Perfect post-Plantation celebration dinner at sunset. Walking distance from Montage.",
-          "when": "Day 2 evening after 36 holes"
-        },
-        {
-          "type": "dinner",
           "name": "Mama's Fish House",
           "why": "Most famous restaurant on Maui. Oceanfront, fish caught that day. Book 2-3 months ahead or try walk-in lunch. Not kidding about the lead time.",
           "when": "Day 3 evening after Wailea round"
         },
         {
-          "type": "other",
-          "name": "Honolua Bay snorkeling",
-          "why": "Free. Ten minutes from Kapalua. Best snorkeling on the island. Go morning of Day 3 before driving to Wailea if you skip the 36-hole grind.",
-          "when": "Day 3 morning before Wailea tee time"
+          "type": "dinner",
+          "name": "Merriman's Kapalua",
+          "why": "Farm-to-table with ocean views. Perfect post-Plantation celebration dinner at sunset. Walking distance from Montage.",
+          "when": "Day 2 evening"
         },
         {
-          "type": "dinner",
-          "name": "Monkeypod Kitchen",
-          "why": "Peter Merriman's casual spot. Craft cocktails, pizza, good vibes. Easy first-night landing after travel.",
-          "when": "Day 1 evening arrival"
+          "type": "9-hole",
+          "name": "Kapalua Bay Course twilight",
+          "why": "If group wants more golf, Bay Course twilight at $139 is the move. More playable than Plantation, same ocean views, Molokai backdrop.",
+          "when": "Day 2 afternoon if energy allows"
+        },
+        {
+          "type": "other",
+          "name": "Honolua Bay snorkeling",
+          "why": "Free. Ten minutes from Kapalua. Best snorkeling on the island. Go morning of Day 3 before driving to Wailea.",
+          "when": "Day 3 morning before Wailea tee time"
         }
       ]
     },
@@ -12951,7 +12797,7 @@
           "amount": 300
         },
         {
-          "item": "Cart fees + range",
+          "item": "Caddies + tips",
           "amount": 75
         },
         {
@@ -13210,8 +13056,8 @@
         }
       },
       "kit_title": "The Caribbean All-Inclusive",
-      "kit_subtitle": "4 days · 4 rounds · all-in ~$1100/pp",
-      "kit_tagline": "Four courses, unlimited rum, and oceanside golf for less than a Pinehurst weekend.",
+      "kit_subtitle": "4 days · 3 rounds · all-in ~$1100/pp",
+      "kit_tagline": "Three Jack Nicklaus-class courses, unlimited rum, and oceanside golf for less than a Pinehurst weekend.",
       "region_visual_category": "International",
       "default_recommended_dates": {
         "start": "2026-02-16",
@@ -13228,31 +13074,24 @@
         },
         {
           "day": 2,
-          "day_label": "Day 2 (AM)",
+          "day_label": "Day 2",
           "course_id": "Punta Espada Golf Club",
-          "tee_time": "7:30 AM",
+          "tee_time": "8:00 AM",
           "tee_time_logic": "Play the Caribbean's #1 course when you're fresh. Morning gets you off before wind picks up on ocean holes."
-        },
-        {
-          "day": 2,
-          "day_label": "Day 2 (PM)",
-          "course_id": "Iberostar Bavaro Golf Club",
-          "tee_time": "1:00 PM",
-          "tee_time_logic": "On-site at your resort. Easier Dye design after the championship test. Built-in discount for guests."
         },
         {
           "day": 3,
           "day_label": "Day 3",
           "course_id": "Corales Golf Course",
-          "tee_time": "8:00 AM",
-          "tee_time_logic": "PGA Tour venue second morning. Devil's Elbow finish is iconic. Afternoon open for catamaran or beach recovery."
+          "tee_time": "8:30 AM",
+          "tee_time_logic": "PGA Tour venue second. Devil's Elbow finish is iconic. Afternoon open for catamaran or beach recovery."
         },
         {
           "day": 4,
           "day_label": "Day 4",
           "course_id": "La Cana Golf Course",
           "tee_time": "7:30 AM",
-          "tee_time_logic": "Most forgiving of the four. Early start gets you to airport by 1pm for afternoon flights."
+          "tee_time_logic": "Most forgiving of the three. Early start gets you to airport by 1pm for afternoon flights."
         }
       ],
       "recommended_lodging": {
@@ -13264,32 +13103,32 @@
       },
       "cost_breakdown_4day": [
         {
-          "item": "Green fees (4 rounds)",
-          "amount": 475
+          "item": "Green fees (3 rounds)",
+          "amount": 450
         },
         {
           "item": "Lodging (3 nights)",
           "amount": 300
         },
         {
-          "item": "Cart fees + range",
-          "amount": 50
+          "item": "Caddies + tips",
+          "amount": 100
         },
         {
           "item": "Food + drink",
-          "amount": 175
+          "amount": 200
         },
         {
           "item": "Travel + transfer",
-          "amount": 100
+          "amount": 50
         }
       ],
       "bonus_plays": [
         {
           "type": "dinner",
           "name": "La Yola",
-          "why": "Only off-resort meal worth it. Fresh catch at Puntacana Marina. Get a table at sunset day 3.",
-          "when": "Day 3 evening"
+          "why": "Only off-resort meal worth it. Fresh catch at Puntacana Marina. Get a table at sunset day 2 or 3.",
+          "when": "Day 2 or 3 evening"
         },
         {
           "type": "other",
@@ -13585,15 +13424,15 @@
           "day": 4,
           "day_label": "Day 4",
           "course_id": "Quinta do Lago South",
-          "tee_time": "8:00 AM",
-          "tee_time_logic": "Championship test mid-trip. Early start allows for beach afternoon or Lagos exploration after the round."
+          "tee_time": "9:00 AM",
+          "tee_time_logic": "Championship test on the final day. Slightly later start allows for recovery from previous two days."
         },
         {
           "day": 5,
           "day_label": "Day 5",
           "course_id": "Monte Rei North Course",
           "tee_time": "7:30 AM",
-          "tee_time_logic": "The Nicklaus masterpiece deserves fresh legs and empty fairways. Early departure round for late afternoon flights."
+          "tee_time_logic": "Early departure round for late afternoon flights. The Nicklaus masterpiece deserves fresh legs and empty fairways."
         }
       ],
       "recommended_lodging": {
@@ -13613,7 +13452,7 @@
           "amount": 345
         },
         {
-          "item": "Cart fees + range",
+          "item": "Caddies + tips",
           "amount": 0
         },
         {
@@ -13960,7 +13799,7 @@
           "amount": 345
         },
         {
-          "item": "Pull trolleys + range",
+          "item": "Caddies + tips",
           "amount": 80
         },
         {
@@ -13974,12 +13813,6 @@
       ],
       "bonus_plays": [
         {
-          "type": "other",
-          "name": "Cliffs of Moher",
-          "why": "20-minute detour from Lahinch. Eight-dollar entry. Do it on Day 1 before or after your round while you're right there.",
-          "when": "Day 1 morning or late afternoon"
-        },
-        {
           "type": "dinner",
           "name": "Local pubs (every town)",
           "why": "Irish pubs are the dining experience. Fresh seafood, lamb stew, Guinness, and live trad music most nights. Skip fancy restaurants.",
@@ -13990,6 +13823,12 @@
           "name": "Dooks Golf Club",
           "why": "Old links course overlooking Dingle Bay. Charming, authentic, affordable at €60-100. Perfect for a Day 3 afternoon if the group has gas left.",
           "when": "Day 3 afternoon (optional)"
+        },
+        {
+          "type": "other",
+          "name": "Cliffs of Moher",
+          "why": "20-minute detour from Lahinch. Eight-dollar entry. Do it on Day 1 before or after your round while you're right there.",
+          "when": "Day 1 morning or late afternoon"
         },
         {
           "type": "bar",
@@ -14262,12 +14101,12 @@
           "amount": 400
         },
         {
-          "item": "Cart fees + range",
-          "amount": 80
+          "item": "Caddies + tips",
+          "amount": 0
         },
         {
           "item": "Food + drink",
-          "amount": 200
+          "amount": 280
         },
         {
           "item": "Travel + transfer",
@@ -14518,8 +14357,8 @@
         }
       },
       "kit_title": "The Chocolate Country Club Trip",
-      "kit_subtitle": "4 days · 4 rounds · all-in ~$950/pp",
-      "kit_tagline": "Former LPGA venue, chocolate spa treatments, and zero lodging friction at Milton Hershey's grand resort.",
+      "kit_subtitle": "4 days · 3 rounds · all-in ~$950/pp",
+      "kit_tagline": "Championship golf where Milton Hershey built his empire. Former LPGA venue, chocolate spa, and zero logistical friction.",
       "region_visual_category": "Northeast",
       "default_recommended_dates": {
         "start": "2026-09-14",
@@ -14530,9 +14369,9 @@
         {
           "day": 1,
           "day_label": "Day 1",
-          "course_id": "Hershey Links",
-          "tee_time": "3:00 PM",
-          "tee_time_logic": "Most MDT flights land by 2pm. 18-hole warm-up at the easier Links course lets everyone settle in without pressure."
+          "course_id": "Travel + Range",
+          "tee_time": null,
+          "tee_time_logic": "Most flights into MDT land by 2pm. Use afternoon for check-in and range time at Hotel Hershey facilities."
         },
         {
           "day": 2,
@@ -14565,24 +14404,24 @@
       },
       "cost_breakdown_4day": [
         {
-          "item": "Green fees (4 rounds)",
-          "amount": 420
+          "item": "Green fees (3 rounds)",
+          "amount": 365
         },
         {
           "item": "Lodging (3 nights)",
           "amount": 325
         },
         {
-          "item": "Cart fees + range",
+          "item": "Caddies + tips",
           "amount": 0
         },
         {
           "item": "Food + drink",
-          "amount": 150
+          "amount": 180
         },
         {
           "item": "Travel + transfer",
-          "amount": 55
+          "amount": 80
         }
       ],
       "bonus_plays": [
@@ -14593,16 +14432,16 @@
           "when": "Day 2 evening after East Course"
         },
         {
-          "type": "other",
-          "name": "Chocolate Spa",
-          "why": "Sounds gimmicky but it's actually excellent. Chocolate body wrap is serious relaxation. Wives will ask why you went without them.",
-          "when": "Day 2 afternoon post-round"
-        },
-        {
           "type": "dinner",
           "name": "The Circular Sunday Brunch",
           "why": "If your trip lands on a Sunday, the brunch at The Circular is legendary. Worth adjusting dates for. Fine dining in the grand hotel without the dinner formality.",
           "when": "Day 3 if Sunday"
+        },
+        {
+          "type": "other",
+          "name": "Chocolate Spa",
+          "why": "Sounds gimmicky but it's actually excellent. Chocolate body wrap is serious relaxation. Wives will ask why you went without them.",
+          "when": "Day 2 afternoon post-round"
         },
         {
           "type": "dinner",
@@ -14860,7 +14699,7 @@
           "day_label": "Day 1",
           "course_id": "Thousand Oaks Golf Club",
           "tee_time": "2:00 PM",
-          "tee_time_logic": "Afternoon tee after morning flights land. Moderate difficulty shakes out travel rust without punishing the group."
+          "tee_time_logic": "Arrival round after morning flights. Moderate difficulty shakes out travel rust without punishing the group."
         },
         {
           "day": 2,
@@ -14894,23 +14733,23 @@
       "cost_breakdown_4day": [
         {
           "item": "Green fees (4 rounds)",
-          "amount": 395
+          "amount": 380
         },
         {
           "item": "Lodging (3 nights)",
           "amount": 240
         },
         {
-          "item": "Cart fees + range",
+          "item": "Caddies + tips",
           "amount": 60
         },
         {
           "item": "Food + drink",
-          "amount": 155
+          "amount": 160
         },
         {
           "item": "Travel + transfer",
-          "amount": 50
+          "amount": 60
         }
       ],
       "bonus_plays": [
@@ -15168,7 +15007,7 @@
         }
       },
       "kit_title": "The Ozark Value Play",
-      "kit_subtitle": "4 days · 3 rounds · all-in ~$500/pp",
+      "kit_subtitle": "4 days · 4 rounds · all-in ~$700/pp",
       "kit_tagline": "Nine mountain courses under $60, thermal baths between rounds, and nobody else knows about it yet.",
       "region_visual_category": "South Central",
       "default_recommended_dates": {
@@ -15201,9 +15040,16 @@
         {
           "day": 4,
           "day_label": "Day 4",
-          "course_id": "Stonebridge Meadows (Fayetteville)",
+          "course_id": "Hot Springs Village (DeSoto)",
           "tee_time": "7:30 AM",
-          "tee_time_logic": "Early departure round in NW Arkansas corridor. Finishes by 11:30am for 90-minute drive to XNA airport."
+          "tee_time_logic": "Early departure round. DeSoto is closest to village lodging and finishes by 11:30am for checkout."
+        },
+        {
+          "day": 5,
+          "day_label": "Day 5",
+          "course_id": "Travel",
+          "tee_time": null,
+          "tee_time_logic": "Checkout and 60-minute drive to LIT. No golf scheduled."
         }
       ],
       "recommended_lodging": {
@@ -15215,15 +15061,15 @@
       },
       "cost_breakdown_4day": [
         {
-          "item": "Green fees (3 rounds)",
-          "amount": 155
+          "item": "Green fees (4 rounds)",
+          "amount": 280
         },
         {
           "item": "Lodging (3 nights)",
-          "amount": 66
+          "amount": 175
         },
         {
-          "item": "Cart fees + range",
+          "item": "Caddies + tips",
           "amount": 0
         },
         {
@@ -15232,7 +15078,7 @@
         },
         {
           "item": "Travel + transfer",
-          "amount": 100
+          "amount": 65
         }
       ],
       "bonus_plays": [
@@ -15250,15 +15096,15 @@
         },
         {
           "type": "other",
-          "name": "Bathhouse Row thermal baths",
-          "why": "Legit therapeutic recovery between rounds. $40-75 gets you the full soak and steam treatment.",
-          "when": "Day 3 afternoon"
+          "name": "Oaklawn Racing & Casino",
+          "why": "Thoroughbred racing runs through April. Free entry, cheap drinks, $2 exactas. Perfect post-round activity.",
+          "when": "Day 4 afternoon if time allows"
         },
         {
           "type": "other",
-          "name": "Oaklawn Racing & Casino",
-          "why": "Thoroughbred racing runs through April. Free entry, cheap drinks, $2 exactas. Perfect post-round activity if timing allows.",
-          "when": "Day 2 or 3 evening"
+          "name": "Bathhouse Row thermal baths",
+          "why": "Legit therapeutic recovery between rounds. $40-75 gets you the full soak and steam treatment.",
+          "when": "Day 3 afternoon"
         }
       ]
     },
@@ -15543,45 +15389,38 @@
       "recommended_itinerary": [
         {
           "day": 1,
-          "day_label": "Day 1",
+          "day_label": "Day 1 · Arrival",
           "course_id": "Travel + Range",
           "tee_time": null,
           "tee_time_logic": "RDU to Pinehurst is 90 minutes. Use arrival day for settling in and range work before No. 2 tomorrow."
         },
         {
           "day": 2,
-          "day_label": "Day 2",
+          "day_label": "Day 2 · Morning",
           "course_id": "Pinehurst No. 2",
           "tee_time": "8:00 AM",
           "tee_time_logic": "Book first available morning slot. You want fresh legs for No. 2 and a caddie who isn't burned out from earlier loops."
         },
         {
           "day": 3,
-          "day_label": "Day 3 (AM)",
+          "day_label": "Day 3 · Morning",
           "course_id": "Pinehurst No. 4",
-          "tee_time": "7:30 AM",
-          "tee_time_logic": "The Hanse design plays better in morning light when you can read the bunkering. Early start gives you time for Tobacco Road afterward."
+          "tee_time": "8:30 AM",
+          "tee_time_logic": "The Hanse design plays better in morning light when you can read the bunkering. Save afternoon for recovery or Tobacco Road if the group votes yes."
         },
         {
           "day": 3,
-          "day_label": "Day 3 (PM)",
+          "day_label": "Day 3 · Afternoon",
           "course_id": "Tobacco Road",
           "tee_time": "2:00 PM",
           "tee_time_logic": "Play this polarizing Strantz design when energy is loose and the group can handle the chaos. Cart-only anyway, so afternoon heat matters less."
         },
         {
           "day": 4,
-          "day_label": "Day 4 (AM)",
+          "day_label": "Day 4 · Morning",
           "course_id": "Mid Pines Inn & Golf Club",
-          "tee_time": "7:00 AM",
-          "tee_time_logic": "Early morning walk on a Ross restoration is the perfect Ross double with Pine Needles to follow. Both courses are 10 minutes apart."
-        },
-        {
-          "day": 4,
-          "day_label": "Day 4 (PM)",
-          "course_id": "Pine Needles Lodge & Golf Club",
-          "tee_time": "12:30 PM",
-          "tee_time_logic": "Second Ross course of the day caps the trip at half the cost of No. 2. Still leaves time for departure by evening if needed."
+          "tee_time": "7:30 AM",
+          "tee_time_logic": "Early morning walk on a Ross restoration is the perfect sendoff. Still leaves time for lunch and RDU departure by 2pm."
         }
       ],
       "recommended_lodging": {
@@ -15602,11 +15441,11 @@
         },
         {
           "item": "Caddies + tips",
-          "amount": 80
+          "amount": 140
         },
         {
           "item": "Food + drink",
-          "amount": 320
+          "amount": 260
         },
         {
           "item": "Travel + transfer",
@@ -15863,9 +15702,9 @@
         {
           "day": 1,
           "day_label": "Day 1",
-          "course_id": "Bethlehem Golf Club",
-          "tee_time": "2:00 PM",
-          "tee_time_logic": "ABE is 15 min from courses. Afternoon tee at the muni lets you fly in morning, grab lunch, and still get 18 in."
+          "course_id": "Travel + Range",
+          "tee_time": null,
+          "tee_time_logic": "ABE is 15 min from courses. Get in, settle at Wind Creek, hit balls if time allows."
         },
         {
           "day": 2,
@@ -15899,15 +15738,15 @@
       "cost_breakdown_4day": [
         {
           "item": "Green fees (4 rounds)",
-          "amount": 405
+          "amount": 410
         },
         {
           "item": "Lodging (3 nights)",
           "amount": 200
         },
         {
-          "item": "Cart fees + range",
-          "amount": 45
+          "item": "Caddies + tips",
+          "amount": 0
         },
         {
           "item": "Food + drink",
@@ -15915,7 +15754,7 @@
         },
         {
           "item": "Travel + transfer",
-          "amount": 60
+          "amount": 50
         }
       ],
       "bonus_plays": [
@@ -15938,10 +15777,10 @@
           "when": "Day 3 evening"
         },
         {
-          "type": "bar",
-          "name": "Wind Creek Casino",
-          "why": "Mini-Atlantic City without the seedy boardwalk. On property at your hotel. Low-stakes tables, late-night option.",
-          "when": "Day 1 or Day 3 evening"
+          "type": "9-hole",
+          "name": "Bethlehem Golf Club",
+          "why": "Muni course 10 min from Wind Creek. If someone wants extra holes on day 1 or 3, $35 gets you walking-friendly terrain.",
+          "when": "Anytime"
         }
       ]
     },
@@ -16262,7 +16101,7 @@
         }
       },
       "kit_title": "The Northern Michigan Links Run",
-      "kit_subtitle": "4 days · 5 rounds · all-in ~$1500/pp",
+      "kit_subtitle": "4 days · 4 rounds · all-in ~$1400/pp",
       "kit_tagline": "Links golf above Lake Michigan, cherry orchards between holes, and a wine scene that actually delivers.",
       "region_visual_category": "Midwest",
       "default_recommended_dates": {
@@ -16280,38 +16119,24 @@
         },
         {
           "day": 2,
-          "day_label": "Day 2 (AM)",
+          "day_label": "Day 2",
           "course_id": "Arcadia Bluffs (Bluffs Course)",
-          "tee_time": "7:30 AM",
+          "tee_time": "8:00 AM",
           "tee_time_logic": "Early start puts you on the bluffs before afternoon wind picks up off Lake Michigan."
-        },
-        {
-          "day": 2,
-          "day_label": "Day 2 (PM)",
-          "course_id": "Arcadia Bluffs (South Course)",
-          "tee_time": "2:00 PM",
-          "tee_time_logic": "Reversible course pairs perfectly with Bluffs Course for a full Arcadia day. Walking-only keeps the pace relaxed."
         },
         {
           "day": 3,
           "day_label": "Day 3",
           "course_id": "The Bear at Grand Traverse Resort",
-          "tee_time": "8:00 AM",
+          "tee_time": "8:30 AM",
           "tee_time_logic": "Play The Bear when you're fresh and the group's still sharp. This course doesn't forgive tired swings."
         },
         {
           "day": 4,
-          "day_label": "Day 4 (AM)",
+          "day_label": "Day 4",
           "course_id": "LochenHeath Golf Club",
-          "tee_time": "7:00 AM",
-          "tee_time_logic": "Early round with bay views leaves time for Manitou Passage and still makes afternoon flights."
-        },
-        {
-          "day": 4,
-          "day_label": "Day 4 (PM)",
-          "course_id": "Manitou Passage Golf Club",
-          "tee_time": "12:30 PM",
-          "tee_time_logic": "Quick pace through the trees makes this the perfect departure day finisher before TVC flights."
+          "tee_time": "7:30 AM",
+          "tee_time_logic": "Early morning round leaves time for brewery stops before afternoon flights out of TVC."
         }
       ],
       "recommended_lodging": {
@@ -16323,20 +16148,20 @@
       },
       "cost_breakdown_4day": [
         {
-          "item": "Green fees (5 rounds)",
-          "amount": 675
+          "item": "Green fees (4 rounds)",
+          "amount": 600
         },
         {
           "item": "Lodging (3 nights)",
           "amount": 425
         },
         {
-          "item": "Cart fees + range",
-          "amount": 100
+          "item": "Caddies + tips",
+          "amount": 80
         },
         {
           "item": "Food + drink",
-          "amount": 225
+          "amount": 220
         },
         {
           "item": "Travel + transfer",
@@ -16345,28 +16170,28 @@
       ],
       "bonus_plays": [
         {
-          "type": "other",
-          "name": "Sleeping Bear Dunes sunset",
-          "why": "Twenty-minute drive from town. Climb the dune, watch the sun drop into Lake Michigan, skip rocks on the way down.",
-          "when": "Day 3 evening"
+          "type": "9-hole",
+          "name": "Mistwood Golf Course",
+          "why": "Day 3 afternoon if the group has legs left. Thirty-nine bucks for nine holes and you'll have the place to yourselves.",
+          "when": "Day 3 afternoon"
         },
         {
           "type": "dinner",
-          "name": "Trattoria Stella",
-          "why": "Set in an old psychiatric hospital basement — sounds weird, tastes incredible. Great wine list and handles groups well with advance notice.",
-          "when": "Day 1 evening"
+          "name": "Bubba's",
+          "why": "West Bay waterfront patio handles big groups without reservations. Sunset views are better than the food, but that's the point.",
+          "when": "Day 1 or 3 evening"
+        },
+        {
+          "type": "other",
+          "name": "Sleeping Bear Dunes sunset",
+          "why": "Twenty-minute drive from town. Climb the dune, watch the sun drop into Lake Michigan, skip rocks on the way down.",
+          "when": "Day 2 evening"
         },
         {
           "type": "bar",
           "name": "Right Brain Brewery",
           "why": "Downtown TC. Weird beer names, solid pours, walking distance to three other breweries if the group splits up.",
-          "when": "Day 3 or 4 evening"
-        },
-        {
-          "type": "9-hole",
-          "name": "Mistwood Golf Course",
-          "why": "Day 3 afternoon if the group has legs left. Thirty-nine bucks for nine holes and you'll have the place to yourselves.",
-          "when": "Day 3 afternoon"
+          "when": "Anytime"
         }
       ]
     },
@@ -16670,7 +16495,7 @@
         }
       },
       "kit_title": "The High Desert Art Trip",
-      "kit_subtitle": "4 days · 4 rounds · all-in ~$1,300/pp",
+      "kit_subtitle": "4 days · 3 rounds · all-in ~$1,300/pp",
       "kit_tagline": "Championship golf at 7,000 feet plus the best non-golf city you'll find on any trip itinerary.",
       "region_visual_category": "Southwest",
       "default_recommended_dates": {
@@ -16682,37 +16507,30 @@
         {
           "day": 1,
           "day_label": "Day 1",
-          "course_id": "Marty Sanchez Links de Santa Fe",
-          "tee_time": "3:00 PM",
-          "tee_time_logic": "Afternoon arrival round on the muni gives legs time to adjust to 7,000 feet before the bigger tracks."
+          "course_id": "Travel + Range",
+          "tee_time": null,
+          "tee_time_logic": "Most flights land after noon. Use afternoon for Canyon Road gallery walk and acclimation to 7,000 feet."
         },
         {
           "day": 2,
           "day_label": "Day 2",
           "course_id": "Paa-Ko Ridge Golf Club",
           "tee_time": "8:00 AM",
-          "tee_time_logic": "Start with the best course while legs are fresh and before afternoon winds pick up in the high desert."
+          "tee_time_logic": "Start with the best course while legs are fresh. Morning tee before afternoon winds pick up in the high desert."
         },
         {
           "day": 3,
-          "day_label": "Day 3 (AM)",
+          "day_label": "Day 3",
           "course_id": "Black Mesa Golf Club",
-          "tee_time": "7:30 AM",
-          "tee_time_logic": "Early tee to finish by noon and leave afternoon open for Meow Wolf or spa without rushing."
-        },
-        {
-          "day": 3,
-          "day_label": "Day 3 (PM)",
-          "course_id": "Towa Golf Resort (Buffalo Thunder)",
-          "tee_time": "2:00 PM",
-          "tee_time_logic": "Second round after bodies are acclimated to elevation and the Hale Irwin design is forgiving enough for tired legs."
+          "tee_time": "8:30 AM",
+          "tee_time_logic": "Second round after bodies are acclimated to elevation. Mountain backdrop views are best in morning light."
         },
         {
           "day": 4,
           "day_label": "Day 4",
-          "course_id": "Travel",
-          "tee_time": null,
-          "tee_time_logic": "Checkout morning and ABQ airport drive takes 90 minutes with buffer time."
+          "course_id": "Marty Sanchez Links de Santa Fe",
+          "tee_time": "7:30 AM",
+          "tee_time_logic": "Early tee on the muni gives time for checkout and ABQ airport drive. Easier track works for last-day legs."
         }
       ],
       "recommended_lodging": {
@@ -16724,24 +16542,24 @@
       },
       "cost_breakdown_4day": [
         {
-          "item": "Green fees (4 rounds)",
-          "amount": 540
+          "item": "Green fees (3 rounds)",
+          "amount": 510
         },
         {
           "item": "Lodging (3 nights)",
           "amount": 350
         },
         {
-          "item": "Cart fees + range",
-          "amount": 80
+          "item": "Caddies + tips",
+          "amount": 0
         },
         {
           "item": "Food + drink",
-          "amount": 240
+          "amount": 280
         },
         {
           "item": "Travel + transfer",
-          "amount": 90
+          "amount": 110
         }
       ],
       "bonus_plays": [
@@ -16755,7 +16573,7 @@
           "type": "other",
           "name": "Meow Wolf between rounds",
           "why": "Takes 90 minutes and works even if your group thinks immersive art sounds ridiculous. Everyone leaves impressed.",
-          "when": "Day 3 between rounds"
+          "when": "Day 2 or 3 afternoon"
         },
         {
           "type": "bar",
@@ -16764,10 +16582,10 @@
           "when": "Day 1 evening or anytime"
         },
         {
-          "type": "other",
-          "name": "Ten Thousand Waves spa",
-          "why": "Japanese-style hot tubs at 10,000 feet elevation. Book the communal tub for groups and go between Day 2 and 3 rounds.",
-          "when": "Day 2 late afternoon"
+          "type": "9-hole",
+          "name": "Marty Sanchez par-3 course",
+          "why": "City muni has a separate par-3 track. Perfect for arrival day or as a pre-dinner putting contest with beers.",
+          "when": "Day 1 late afternoon if energy allows"
         }
       ]
     },
@@ -17090,7 +16908,7 @@
         }
       },
       "kit_title": "The Lowcountry Strantz Trip",
-      "kit_subtitle": "4 days · 5 rounds · all-in ~$1,300/pp",
+      "kit_subtitle": "4 days · 4 rounds · all-in ~$1,300/pp",
       "kit_tagline": "Two Mike Strantz masterpieces wrapped in live oaks and Spanish moss, 25 minutes south of the Myrtle madness.",
       "region_visual_category": "Southeast",
       "default_recommended_dates": {
@@ -17108,24 +16926,17 @@
         },
         {
           "day": 2,
-          "day_label": "Day 2 (AM)",
+          "day_label": "Day 2",
           "course_id": "Caledonia Golf & Fish Club",
           "tee_time": "7:45 AM",
           "tee_time_logic": "Play Caledonia first in morning light when the moss glows and before afternoon wind picks up off the marsh."
         },
         {
-          "day": 2,
-          "day_label": "Day 2 (PM)",
-          "course_id": "True Blue Golf Club",
-          "tee_time": "2:00 PM",
-          "tee_time_logic": "Book the Caledonia/True Blue combo package for 20-30% savings and knock out both Strantz courses while the group is sharp."
-        },
-        {
           "day": 3,
           "day_label": "Day 3",
-          "course_id": "Heritage Club",
+          "course_id": "True Blue Golf Club",
           "tee_time": "8:00 AM",
-          "tee_time_logic": "Maples design through plantation ruins and along the Waccamaw is scenic enough to carry the day after the 36-hole Strantz marathon."
+          "tee_time_logic": "True Blue's massive greens and waste bunkers demand fresh legs and sharp eyes, so morning slot after a rest day from 36."
         },
         {
           "day": 4,
@@ -17144,20 +16955,20 @@
       },
       "cost_breakdown_4day": [
         {
-          "item": "Green fees (5 rounds)",
-          "amount": 550
+          "item": "Green fees (4 rounds)",
+          "amount": 510
         },
         {
           "item": "Lodging (3 nights)",
           "amount": 450
         },
         {
-          "item": "Cart fees + range",
+          "item": "Caddies + tips",
           "amount": 0
         },
         {
           "item": "Food + drink",
-          "amount": 210
+          "amount": 250
         },
         {
           "item": "Travel + transfer",
@@ -17174,20 +16985,20 @@
         {
           "type": "dinner",
           "name": "Frank's Restaurant & Bar",
-          "why": "Reserve for Day 2 after the Strantz double. Best Lowcountry fine dining in the area and the group will be buzzing from 36 holes.",
+          "why": "Reserve for Day 2 after Caledonia. Best Lowcountry fine dining in the area and the group will be buzzing from the morning round.",
           "when": "Day 2 evening, book 2-3 weeks ahead for parties of 8+"
+        },
+        {
+          "type": "9-hole",
+          "name": "Heritage Club back nine",
+          "why": "If the group wants a fifth round, Heritage's back nine through plantation ruins and along the Waccamaw is worth a twilight add on Day 3.",
+          "when": "Day 3 afternoon, optional"
         },
         {
           "type": "other",
           "name": "Lee's Inlet Kitchen",
           "why": "Cash-only seafood shack from 1948. She-crab soup and fried platters. Bring hundreds, leave smiling.",
           "when": "Day 3 or 4, casual dinner"
-        },
-        {
-          "type": "other",
-          "name": "Brookgreen Gardens",
-          "why": "Sculpture garden and wildlife preserve between rounds. Good for Day 3 afternoon if the group needs a breather from golf.",
-          "when": "Day 3 afternoon, optional"
         }
       ]
     },
@@ -17476,7 +17287,7 @@
       },
       "kit_title": "The Phosphate Pilgrimage",
       "kit_subtitle": "4 days · 4 rounds · all-in ~$2000/pp",
-      "kit_tagline": "Three top-100 courses carved from reclaimed mines in the middle of nowhere Florida. Pure golf immersion with zero distractions.",
+      "kit_tagline": "Three top-100 courses carved from reclaimed mines in the middle of nowhere Florida. Golf purist heaven with zero distractions.",
       "region_visual_category": "Southeast",
       "default_recommended_dates": {
         "start": "2026-02-16",
@@ -17489,41 +17300,41 @@
           "day_label": "Day 1",
           "course_id": "Streamsong Chain of Lakes (par-3 course)",
           "tee_time": "3:30 PM",
-          "tee_time_logic": "Arrival day from TPA gives you late afternoon for the short course warm-up, then play it again under lights after dinner."
+          "tee_time_logic": "Arrival day from TPA gives you late afternoon for the short course under lights warm-up."
         },
         {
           "day": 2,
           "day_label": "Day 2",
           "course_id": "Streamsong Blue",
           "tee_time": "7:30 AM",
-          "tee_time_logic": "Doak's dramatic elevation changes and visual features play best in morning light when everyone's fresh."
+          "tee_time_logic": "Blue's dramatic elevation changes play best in morning light, and you want fresh legs for Doak's biggest features."
         },
         {
           "day": 3,
           "day_label": "Day 3",
           "course_id": "Streamsong Red",
           "tee_time": "8:00 AM",
-          "tee_time_logic": "Coore/Crenshaw's strategic design rewards clear thinking, so tee it up before the post-round heat and beers catch up."
+          "tee_time_logic": "Red's strategic routing rewards clear thinking, so morning tee time before anyone's tired or had too many at P205."
         },
         {
           "day": 4,
           "day_label": "Day 4",
           "course_id": "Streamsong Black",
           "tee_time": "7:30 AM",
-          "tee_time_logic": "Black is the most demanding, so play it last when you're dialed in but still early enough to make afternoon flights home."
+          "tee_time_logic": "Black is the most demanding, so play it last when you're dialed in but still early enough to make afternoon flights."
         }
       ],
       "recommended_lodging": {
         "name": "Streamsong Resort Lodge",
         "room_type": "",
         "nightly_rate": 375,
-        "why_this_one": "Only option on property and the whole point of Streamsong is total immersion. Stay-and-play package pricing beats à la carte every time.",
+        "why_this_one": "Only option on property and the whole point of Streamsong is total immersion. Stay-and-play package pricing beats à la carte every time. Lakeland hotels save money but kill the vibe.",
         "booking_priority": "Critical · 8-10 weeks out for group blocks"
       },
       "cost_breakdown_4day": [
         {
           "item": "Green fees (4 rounds)",
-          "amount": 810
+          "amount": 800
         },
         {
           "item": "Lodging (3 nights)",
@@ -17539,7 +17350,7 @@
         },
         {
           "item": "Travel + transfer",
-          "amount": 75
+          "amount": 85
         }
       ],
       "bonus_plays": [
@@ -17552,7 +17363,7 @@
         {
           "type": "other",
           "name": "Chain of Lakes night round",
-          "why": "The par-3 course under the lights is legitimately fun. Run it as a closest-to-the-pin contest with small stakes after dinner.",
+          "why": "The par-3 course under the lights is legitimately fun and you already paid for it. Run it as a closest-to-the-pin contest with small stakes after dinner one night.",
           "when": "Day 2 or 3 post-dinner"
         },
         {
@@ -17889,35 +17700,35 @@
           "day_label": "Day 2",
           "course_id": "Whistling Straits (Straits Course)",
           "tee_time": "8:00 AM",
-          "tee_time_logic": "Book the Straits first and build your trip around it — morning start beats Lake Michigan wind and afternoon fatigue on a walking-only course."
+          "tee_time_logic": "Book the Straits first and build your trip around it. Morning start beats Lake Michigan wind and afternoon fatigue on a walking-only course."
         },
         {
           "day": 3,
-          "day_label": "Day 3 (AM)",
+          "day_label": "Day 3",
           "course_id": "Blackwolf Run (River Course)",
-          "tee_time": "8:00 AM",
+          "tee_time": "8:30 AM",
           "tee_time_logic": "Tighter and more wooded than Whistling Straits means morning gives you better ball flight visibility through tree corridors."
         },
         {
           "day": 3,
-          "day_label": "Day 3 (PM)",
+          "day_label": "Day 3",
           "course_id": "Whistling Straits (Irish Course)",
-          "tee_time": "2:30 PM",
-          "tee_time_logic": "36-hole day works here because Irish is less demanding than Straits — summer daylight until 8:30pm means you finish all 18."
+          "tee_time": "2:00 PM",
+          "tee_time_logic": "36-hole day works here because Irish is less demanding than Straits. Summer daylight until 8:30pm means you finish all 18."
         },
         {
           "day": 4,
           "day_label": "Day 4",
-          "course_id": "Travel",
-          "tee_time": null,
-          "tee_time_logic": "Checkout and drive to MKE — no golf unless you have a late flight and want to add The Bull for $129."
+          "course_id": "The Bull at Pinehurst Farms",
+          "tee_time": "7:30 AM",
+          "tee_time_logic": "Early Nicklaus round 15 minutes from Kohler gets you to MKE by 1pm for afternoon flights. Costs a third of another Whistling Straits round."
         }
       ],
       "recommended_lodging": {
         "name": "Inn on Woodlake",
         "room_type": "Standard King",
         "nightly_rate": 225,
-        "why_this_one": "Same tee time access as The American Club at half the price. Your group cares about the golf, not Forbes Five Star sheets — save $600+ per person over three nights and put it toward another round.",
+        "why_this_one": "Same tee time access as The American Club at half the price. Your group cares about the golf, not Forbes Five Star sheets. Save $600+ per person over three nights and put it toward another round.",
         "booking_priority": "Moderate · 6-8 weeks out. Book after you lock Straits tee times."
       },
       "cost_breakdown_4day": [
@@ -17946,7 +17757,7 @@
         {
           "type": "dinner",
           "name": "River Wildlife",
-          "why": "Private rustic lodge in the woods with prix-fixe game meat menu. Most unique dining experience you'll have on any golf trip — book when you book Straits tee times.",
+          "why": "Private rustic lodge in the woods with prix-fixe game meat menu. Most unique dining experience you'll have on any golf trip. Book when you book Straits tee times.",
           "when": "Day 2 evening after Straits round"
         },
         {
@@ -18272,13 +18083,13 @@
         }
       },
       "kit_title": "The Wisconsin Sand Belt",
-      "kit_subtitle": "4 days · 5 rounds · all-in ~$2000/pp",
-      "kit_tagline": "Three world-ranked courses on ancient sand dunes in central Wisconsin—links golf an hour from nowhere.",
+      "kit_subtitle": "4 days · 4 rounds · all-in ~$2000/pp",
+      "kit_tagline": "Three Tom Doak-caliber courses dropped in ancient dunes an hour from nowhere—the Midwest's answer to links golf.",
       "region_visual_category": "Midwest",
       "default_recommended_dates": {
         "start": "2026-06-15",
         "end": "2026-06-18",
-        "reason": "Mid-June hits peak conditions with daylight until 9pm for twilight rounds, before July weekend premiums kick in."
+        "reason": "Mid-June hits the sweet spot: courses in peak condition, daylight until 9pm for twilight rounds, pricing before July weekend premiums."
       },
       "recommended_itinerary": [
         {
@@ -18286,55 +18097,41 @@
           "day_label": "Day 1",
           "course_id": "Sedge Valley (par-3 course)",
           "tee_time": "3:30 PM",
-          "tee_time_logic": "Walk-up par-3 after midday arrival gets everyone loose without the pressure of a championship track."
+          "tee_time_logic": "Walk-up par-3 course after midday flight arrival. Legs are fresh, stakes are low, everyone loosens up before the big courses."
         },
         {
           "day": 2,
           "day_label": "Day 2",
           "course_id": "Mammoth Dunes",
           "tee_time": "7:45 AM",
-          "tee_time_logic": "Start with the crowd favorite while legs are fresh—wide fairways mean the whole group plays fast and stays together."
-        },
-        {
-          "day": 2,
-          "day_label": "Day 2 (PM)",
-          "course_id": "Sand Valley Course",
-          "tee_time": "3:00 PM",
-          "tee_time_logic": "Twilight rate saves $200 and June daylight means you finish before dark—walking only so book early afternoon slot."
+          "tee_time_logic": "Start with the crowd favorite while everyone's fresh. Wide fairways and forgiving design mean the whole group stays together and enjoys it."
         },
         {
           "day": 3,
           "day_label": "Day 3",
-          "course_id": "The Lido",
+          "course_id": "Sand Valley Course",
           "tee_time": "8:00 AM",
-          "tee_time_logic": "The hardest tee time to get deserves your full attention—morning round before wind picks up on exposed dunes."
-        },
-        {
-          "day": 3,
-          "day_label": "Day 3 (PM)",
-          "course_id": "Sedge Valley (par-3 course)",
-          "tee_time": "5:00 PM",
-          "tee_time_logic": "Walk-up sunset loop if anyone's itching to hit more shots—no pressure, pure fun at golden hour."
+          "tee_time_logic": "Coore & Crenshaw's original design demands focus. Morning round before afternoon wind picks up—this course plays harder as the day goes on."
         },
         {
           "day": 4,
           "day_label": "Day 4",
-          "course_id": "Travel",
-          "tee_time": null,
-          "tee_time_logic": "Checkout and 90-minute drive to MSN—build in buffer for afternoon flights out."
+          "course_id": "The Lido",
+          "tee_time": "7:30 AM",
+          "tee_time_logic": "Save the crown jewel for last. Early tee time means you finish by noon with time to shower, debrief, and make afternoon flights out of MSN."
         }
       ],
       "recommended_lodging": {
         "name": "Sand Valley Resort Lodge & Cottages",
         "room_type": "Cottage (2-4 bedrooms)",
         "nightly_rate": 300,
-        "why_this_one": "Stay-and-play is the only way to lock Lido tee times without hoping for cancellations. Cottages give you space for post-round card games and rolling out of bed onto the first tee.",
+        "why_this_one": "Stay-and-play is the only way to lock Lido tee times without praying to the golf gods. Cottages give you your own space for post-round decompression and card games. On-site means you roll out of bed onto the first tee.",
         "booking_priority": "Critical · 4-6 months out for Lido access"
       },
       "cost_breakdown_4day": [
         {
-          "item": "Green fees (5 rounds)",
-          "amount": 820
+          "item": "Green fees (4 rounds)",
+          "amount": 785
         },
         {
           "item": "Lodging (3 nights)",
@@ -18357,26 +18154,26 @@
         {
           "type": "dinner",
           "name": "Craig's Porch",
-          "why": "Farm-to-table Wisconsin sourcing, best dining on property. Book it night one for arrival celebration and night three for Lido victory lap.",
+          "why": "Farm-to-table Wisconsin sourcing, best dining on property. Book it for night one and night three—arrival celebration and Lido victory lap.",
           "when": "Day 1 and Day 3 evening"
         },
         {
           "type": "bar",
           "name": "Mammoth Bar",
-          "why": "Post-round Wisconsin craft beers and burgers after your 36-hole day. Low-key spot where the lies get bigger and everyone recaps both courses.",
+          "why": "Post-Mammoth Dunes is the right time for Wisconsin craft beers and burgers. Low-key, high-energy. Where everyone recaps the round and the lies get bigger.",
           "when": "Day 2 evening"
         },
         {
           "type": "other",
           "name": "Camp Fire s'mores + stargazing",
-          "why": "Zero light pollution means stars you forgot existed. Outdoor fire pit with whiskey and s'mores—the bonding moment your group remembers most.",
+          "why": "Zero light pollution means you see stars you forgot existed. Outdoor fire pit, s'mores, whiskey. This is the bonding moment your group remembers most.",
           "when": "Day 2 or 3 night, after dinner"
         },
         {
           "type": "9-hole",
-          "name": "SentryWorld detour",
-          "why": "If someone has an early flight day 4 and wants out, the flower hole at SentryWorld is 30 minutes away and worth the solo mission.",
-          "when": "Day 4 morning (solo option)"
+          "name": "Sedge Valley sunset loop",
+          "why": "If your Day 3 afternoon is open and someone's itching to hit more shots, the par-3 course at golden hour is the move. Walk-up, no pressure, pure fun.",
+          "when": "Day 3 late afternoon"
         }
       ]
     },
@@ -18695,30 +18492,23 @@
         {
           "day": 2,
           "day_label": "Day 2",
-          "course_id": "Escena Golf Club",
+          "course_id": "Desert Willow (Firecliff Course)",
           "tee_time": "7:45 AM",
-          "tee_time_logic": "Start with Nicklaus' wide fairways to get everyone dialed in — beginner-friendly layout and best value in the morning calm."
+          "tee_time_logic": "Start with the locals' secret before wind picks up — best value in the valley and gets everyone dialed in."
         },
         {
           "day": 3,
-          "day_label": "Day 3 (AM)",
+          "day_label": "Day 3",
           "course_id": "PGA West (Stadium Course)",
-          "tee_time": "7:30 AM",
-          "tee_time_logic": "Tackle Pete Dye's monster when the group is warmed up — Alcatraz and San Andreas Fault demand morning calm before wind picks up."
-        },
-        {
-          "day": 3,
-          "day_label": "Day 3 (PM)",
-          "course_id": "SilverRock Resort",
-          "tee_time": "1:30 PM",
-          "tee_time_logic": "Arnold Palmer design for the afternoon 18 — former tour track with mountain backdrop and forgiving enough after a brutal morning."
+          "tee_time": "8:00 AM",
+          "tee_time_logic": "Tackle the valley's hardest track when the group is warmed up — Alcatraz and San Andreas Fault demand morning calm."
         },
         {
           "day": 4,
           "day_label": "Day 4",
           "course_id": "Indian Wells Golf Resort (Celebrity Course)",
           "tee_time": "7:30 AM",
-          "tee_time_logic": "Clive Clark's championship test for the victory lap — stunning mountain views, perfect conditions, early enough to make afternoon flights."
+          "tee_time_logic": "Clive Clark design with mountain backdrop for the victory lap — fair test, great conditions, early enough to make afternoon flights."
         },
         {
           "day": 5,
@@ -18745,12 +18535,12 @@
           "amount": 450
         },
         {
-          "item": "Cart fees + range",
-          "amount": 75
+          "item": "Caddies + tips",
+          "amount": 0
         },
         {
           "item": "Food + drink",
-          "amount": 200
+          "amount": 275
         },
         {
           "item": "Travel + transfer",
@@ -18759,10 +18549,10 @@
       ],
       "bonus_plays": [
         {
-          "type": "putting",
-          "name": "Pool-deck putting contest",
-          "why": "Set up a makeshift course around the Airbnb pool — beer holes, music, low-stakes chaos after arrival.",
-          "when": "Day 1 afternoon"
+          "type": "9-hole",
+          "name": "Escena twilight nine",
+          "why": "Nicklaus design for $25 twilight after Day 2's morning round — wide fairways, beginner-friendly, and you're done by sunset.",
+          "when": "Day 2 late afternoon"
         },
         {
           "type": "dinner",
@@ -18771,10 +18561,10 @@
           "when": "Day 3 evening"
         },
         {
-          "type": "9-hole",
-          "name": "Desert Willow twilight nine",
-          "why": "City-owned course that plays like a resort for $35 twilight — locals' secret and you're done by sunset.",
-          "when": "Day 2 late afternoon"
+          "type": "putting",
+          "name": "Pool-deck putting contest",
+          "why": "Set up a makeshift course around the Airbnb pool — beer holes, music, low-stakes chaos after arrival.",
+          "when": "Day 1 afternoon"
         },
         {
           "type": "other",
