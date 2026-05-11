@@ -55,3 +55,5 @@ android/
 
 # Native build output
 out/
+enrich-log-*.json
+kb-audit-report.json
