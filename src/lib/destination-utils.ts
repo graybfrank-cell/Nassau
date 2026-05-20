@@ -51,6 +51,7 @@ export function getAllDestinationSlugs(): string[] {
 // --- Types ---
 
 export interface Destination {
+  // Core v1 fields
   id: string;
   destination: string;
   region: string;
@@ -71,6 +72,28 @@ export interface Destination {
   non_golf_activities: string[];
   insider_tips: string[];
   sample_itineraries: Record<string, Itinerary>;
+
+  // v3 enriched fields (all optional — present on destinations that have been enriched)
+  kit_title?: string;
+  kit_subtitle?: string;
+  kit_tagline?: string;
+  region_visual_category?: RegionVisualCategory;
+  default_recommended_dates?: {
+    start: string;
+    end: string;
+    reason: string;
+  };
+  recommended_itinerary?: RecommendedItineraryEntry[];
+  recommended_lodging?: RecommendedLodging;
+  cost_breakdown_4day?: CostBreakdownLine[];
+  bonus_plays?: BonusPlay[];
+
+  // v4 human-polish fields (still pending across all 52)
+  founder_note?: string;
+  booking_contacts?: BookingContact[];
+
+  // Metadata for anti-piracy date-stamping
+  verified_month?: string; // e.g. "May 2026"
 }
 
 export interface Course {
@@ -83,6 +106,7 @@ export interface Course {
   designer?: string;
   signature_holes?: string[];
   tags?: string[];
+  caddie_available?: boolean;
 }
 
 export interface LodgingOption {
@@ -104,7 +128,7 @@ export interface Itinerary {
   duration_nights: number;
   ideal_group_size: string;
   estimated_cost_pp: number;
-  days: ItineraryDay[];
+  days?: ItineraryDay[];
 }
 
 export interface ItineraryDay {
@@ -118,4 +142,57 @@ export interface ItineraryItem {
   type: string;
   title: string;
   cost_pp: number;
+}
+
+// --- v3 types ---
+
+export type RegionVisualCategory =
+  | "PNW"
+  | "West"
+  | "Southwest"
+  | "Southeast"
+  | "Northeast"
+  | "Midwest"
+  | "Mountain"
+  | "Tropical"
+  | "International";
+
+export interface RecommendedItineraryEntry {
+  day: number;
+  day_label: string;
+  course_id: string;
+  tee_time: string | null;
+  tee_time_logic: string;
+}
+
+export interface RecommendedLodging {
+  name: string;
+  room_type: string;
+  nightly_rate: number;
+  why_this_one: string;
+  booking_priority: string;
+}
+
+export interface CostBreakdownLine {
+  item: string;
+  amount: number;
+}
+
+export interface BonusPlay {
+  type: string;
+  name: string;
+  why: string;
+  when: string;
+}
+
+export interface BookingContact {
+  number: number;
+  priority: "critical" | "important" | "nice";
+  task: string;
+  contact_name: string;
+  phone: string;
+  email: string;
+  what_to_ask: string;
+  when_they_pick_up: string;
+  notes: string;
 }

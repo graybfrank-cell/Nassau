@@ -1,4 +1,4 @@
-import { notFound } from "next/navigation";
+ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import {
   getDestinationBySlug,
@@ -10,7 +10,7 @@ import PreviewCourses from "@/components/preview/PreviewCourses";
 import PreviewItinerary from "@/components/preview/PreviewItinerary";
 import PreviewInsiderTips from "@/components/preview/PreviewInsiderTips";
 import PreviewCTA from "@/components/preview/PreviewCTA";
-
+import PreviewWhatsInside from "@/components/preview/PreviewWhatsInside";
 type Props = { params: Promise<{ slug: string }> };
 
 export async function generateStaticParams() {
@@ -87,7 +87,6 @@ export default async function TripPreviewPage({ params }: Props) {
   }
 
   const d: Destination = dest;
-  const firstItinerary = Object.values(d.sample_itineraries ?? {}).find((it) => Array.isArray(it?.days) && it.days.length > 0) ?? null;
 
   return (
     <main>
@@ -96,16 +95,13 @@ export default async function TripPreviewPage({ params }: Props) {
 
       <PreviewCourses courses={d.top_courses} />
 
-      {firstItinerary && (
-        <PreviewItinerary
-          itinerary={firstItinerary}
-          destinationName={d.destination}
-        />
-      )}
+      <PreviewItinerary dest={d} />
 
       <PreviewInsiderTips tips={d.insider_tips} />
 
-      <PreviewCTA destinationName={d.destination} />
+      <PreviewWhatsInside dest={d} />
+
+      <PreviewCTA dest={d} />
     </main>
   );
 }
