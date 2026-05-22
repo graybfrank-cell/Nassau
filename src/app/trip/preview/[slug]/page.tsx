@@ -1,4 +1,4 @@
- import { notFound } from "next/navigation";
+import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import {
   getDestinationBySlug,
@@ -7,10 +7,12 @@ import {
 } from "@/lib/destination-utils";
 import PreviewHero from "@/components/preview/PreviewHero";
 import PreviewCourses from "@/components/preview/PreviewCourses";
+import PreviewWhatsInside from "@/components/preview/PreviewWhatsInside";
+import PreviewUnlockBridge from "@/components/preview/PreviewUnlockBridge";
 import PreviewItinerary from "@/components/preview/PreviewItinerary";
 import PreviewInsiderTips from "@/components/preview/PreviewInsiderTips";
 import PreviewCTA from "@/components/preview/PreviewCTA";
-import PreviewWhatsInside from "@/components/preview/PreviewWhatsInside";
+
 type Props = { params: Promise<{ slug: string }> };
 
 export async function generateStaticParams() {
@@ -91,15 +93,18 @@ export default async function TripPreviewPage({ params }: Props) {
   return (
     <main>
       <DestinationJsonLd dest={d} slug={slug} />
+
       <PreviewHero dest={d} />
 
       <PreviewCourses courses={d.top_courses} />
 
-      <PreviewItinerary dest={d} />
-
       <PreviewInsiderTips tips={d.insider_tips} />
 
+      <PreviewItinerary dest={d} />
+
       <PreviewWhatsInside dest={d} />
+
+      <PreviewUnlockBridge dest={d} />
 
       <PreviewCTA dest={d} />
     </main>

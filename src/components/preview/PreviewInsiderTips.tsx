@@ -23,7 +23,6 @@ export default function PreviewInsiderTips({ tips }: Props) {
           className="mt-10 space-y-4 select-none"
           aria-hidden="true"
           style={{
-            // Prevent copy on most browsers
             WebkitUserSelect: "none",
             MozUserSelect: "none",
             msUserSelect: "none",
@@ -51,21 +50,9 @@ export default function PreviewInsiderTips({ tips }: Props) {
           ))}
         </ul>
 
-        {/* The hook */}
-        <div className="mt-12 text-center">
-          <p className="text-[14px] text-[#5A5A5A]">
-            {tips.length} insider tips · all unlocked when you buy the kit
-          </p>
-          <div className="mt-6">
-            <button
-              type="button"
-              className="inline-block cursor-not-allowed rounded-full bg-[#2D5A3D] px-8 py-3.5 text-sm font-medium text-white opacity-90 transition-colors hover:bg-[#244B33]"
-              aria-disabled="true"
-            >
-              Unlock the captain&apos;s playbook for $29 &rarr;
-            </button>
-          </div>
-        </div>
+        <p className="mt-8 text-center text-[13px] text-[#8A8A8A]">
+          {tips.length} insider tips · all unlocked in the kit below
+        </p>
       </div>
     </section>
   );

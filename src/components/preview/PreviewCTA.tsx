@@ -5,17 +5,17 @@ export default function PreviewCTA({ dest }: { dest: Destination }) {
   const subtitle = dest.kit_subtitle ?? "The complete kit";
 
   return (
-    <section className="bg-[#F2F0EB] px-6 py-24 text-center">
+    <section className="bg-[#111111] px-6 py-24 text-center">
       <div className="mx-auto max-w-2xl">
         <p className="text-[11px] font-medium uppercase tracking-[0.15em] text-[#2D5A3D]">
           The whole trip · one kit · $29
         </p>
 
-        <h2 className="mt-4 font-headline text-[40px] font-medium leading-[1.05] text-[#111111] sm:text-[52px]">
+        <h2 className="mt-4 font-headline text-[40px] font-medium leading-[1.05] text-white sm:text-[52px]">
           {title}
         </h2>
 
-        <p className="mt-4 text-[16px] text-[#5A5A5A]">
+        <p className="mt-4 text-[16px] text-white/70">
           {subtitle}
         </p>
 
@@ -27,12 +27,12 @@ export default function PreviewCTA({ dest }: { dest: Destination }) {
           >
             Buy this trip for $29 &rarr;
           </button>
-          <p className="mt-4 text-[11px] uppercase tracking-[0.08em] text-[#8A8A8A]">
+          <p className="mt-4 text-[11px] uppercase tracking-[0.08em] text-white/40">
             Checkout opens at launch · one-time purchase · no subscription
           </p>
         </div>
 
-        <p className="mt-12 text-[13px] italic text-[#8A8A8A]">
+        <p className="mt-12 text-[13px] italic text-white/50">
           You&apos;re the captain. Show up and run the trip.
         </p>
       </div>
