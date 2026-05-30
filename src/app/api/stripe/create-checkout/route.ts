@@ -2,8 +2,11 @@ import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
 import { prisma } from "@/lib/prisma";
 import { getUser, unauthorized, forbidden } from "@/lib/auth";
+import { getDestinationBySlug } from "@/lib/destination-utils";
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
+  apiVersion: "2026-02-25.clover",
+});
 
 function getSiteUrl(): string {
   return process.env.NEXT_PUBLIC_SITE_URL || "https://nassau.golf";
@@ -11,25 +14,92 @@ function getSiteUrl(): string {
 
 export async function POST(request: NextRequest) {
   try {
-    const user = await getUser();
-    if (!user) return unauthorized();
-
     const url = new URL(request.url);
     const queryMode = url.searchParams.get("mode");
     const queryTripId = url.searchParams.get("tripId");
+    const querySlug = url.searchParams.get("destination_slug");
 
     let bodyMode: string | undefined;
     let bodyTripId: string | undefined;
+    let bodySlug: string | undefined;
     try {
       const body = await request.json();
       bodyMode = body?.mode;
       bodyTripId = body?.tripId;
+      bodySlug = body?.destination_slug;
     } catch {
       // No JSON body — that's fine when params come from query string
     }
 
     const mode = queryMode || bodyMode;
     const tripId = queryTripId || bodyTripId;
+    const destinationSlug = querySlug || bodySlug;
+
+    // ─── KIT MODE (guest checkout, no auth required) ───────────────
+    if (mode === "kit") {
+      if (!destinationSlug) {
+        return NextResponse.json(
+          { error: "Missing destination_slug for kit checkout" },
+          { status: 400 }
+        );
+      }
+
+      const dest = getDestinationBySlug(destinationSlug);
+      if (!dest) {
+        return NextResponse.json(
+          { error: `Unknown destination: ${destinationSlug}` },
+          { status: 404 }
+        );
+      }
+
+      const kitPriceId = process.env.STRIPE_KIT_PRICE_ID;
+      if (!kitPriceId) {
+        return NextResponse.json(
+          { error: "Kit price not configured" },
+          { status: 500 }
+        );
+      }
+
+      const siteUrl = getSiteUrl();
+      const kitTitle = dest.kit_title ?? dest.destination;
+
+      const session = await stripe.checkout.sessions.create({
+        mode: "payment",
+        line_items: [
+          {
+            price: kitPriceId,
+            quantity: 1,
+          },
+        ],
+        // Surface refund policy + tagline at Stripe Checkout
+        custom_text: {
+          submit: {
+            message:
+              "One-time purchase. 7-day refund if you're not satisfied. Email support@nassau.golf.",
+          },
+        },
+        // Capture email — required for guest checkout reconciliation
+        customer_creation: "always",
+        // Enable Apple Pay / Google Pay automatically (Stripe Checkout default)
+        payment_method_types: ["card"],
+        success_url: `${siteUrl}/trip/preview/${destinationSlug}/purchased?session_id={CHECKOUT_SESSION_ID}`,
+        cancel_url: `${siteUrl}/trip/preview/${destinationSlug}`,
+        metadata: {
+          mode: "kit",
+          destination_slug: destinationSlug,
+          destination_name: dest.destination,
+          kit_title: kitTitle,
+        },
+        client_reference_id: destinationSlug,
+        allow_promotion_codes: true,
+      });
+
+      return NextResponse.json({ url: session.url });
+    }
+
+    // ─── EXISTING MODES (require auth) ──────────────────────────────
+    const user = await getUser();
+    if (!user) return unauthorized();
 
     if (mode === "trip") {
       if (!tripId) {
