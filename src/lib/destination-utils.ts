@@ -78,6 +78,7 @@ export interface Destination {
   kit_subtitle?: string;
   kit_tagline?: string;
   region_visual_category?: RegionVisualCategory;
+  region_subcategory?: RegionSubcategory;
   default_recommended_dates?: {
     start: string;
     end: string;
@@ -157,6 +158,11 @@ export type RegionVisualCategory =
   | "Tropical"
   | "International";
 
+export type RegionSubcategory =
+  | "Scotland"
+  | "Tropical-International"
+  | "Mexico";
+
 export interface RecommendedItineraryEntry {
   day: number;
   day_label: string;
@@ -195,4 +201,54 @@ export interface BookingContact {
   what_to_ask: string;
   when_they_pick_up: string;
   notes: string;
+}
+
+// --- Hero image resolver ---
+
+/**
+ * Returns the hero image path for a given destination based on its
+ * region_visual_category and optional region_subcategory.
+ *
+ * International destinations route to one of three sub-images:
+ *   - Scotland (St Andrews etc.)
+ *   - Mexico (Cabo)
+ *   - Tropical-International (Punta Cana, Riviera Maya)
+ *
+ * Default fallback if no category set: PNW (visually neutral)
+ */
+export function getHeroImage(dest: Destination): string {
+  const base = "/images/heroes";
+
+  // Handle International with subcategory routing
+  if (dest.region_visual_category === "International") {
+    switch (dest.region_subcategory) {
+      case "Mexico":
+        return `${base}/hero-mexico.jpg`;
+      case "Tropical-International":
+        return `${base}/hero-tropical-intl.jpg`;
+      case "Scotland":
+      default:
+        return `${base}/hero-scotland.jpg`;
+    }
+  }
+
+  // Handle all other regions by direct mapping
+  const categoryToFile: Record<Exclude<RegionVisualCategory, "International">, string> = {
+    PNW: "hero-pnw.jpg",
+    West: "hero-west.jpg",
+    Southwest: "hero-southwest.jpg",
+    Southeast: "hero-southeast.jpg",
+    Northeast: "hero-northeast.jpg",
+    Midwest: "hero-midwest.jpg",
+    Mountain: "hero-mountain.jpg",
+    Tropical: "hero-tropical.jpg",
+  };
+
+  const category = dest.region_visual_category;
+  if (category && category !== "International") {
+    return `${base}/${categoryToFile[category]}`;
+  }
+
+  // Fallback: PNW (visually neutral, coastal)
+  return `${base}/hero-pnw.jpg`;
 }
