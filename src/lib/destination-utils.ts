@@ -245,7 +245,7 @@ export function getHeroImage(dest: Destination): string {
   };
 
   const category = dest.region_visual_category;
-  if (category && category !== "International") {
+  if (category) {
     return `${base}/${categoryToFile[category]}`;
   }
 
