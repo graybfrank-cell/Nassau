@@ -1,4 +1,5 @@
 import type { Destination } from "@/lib/destination-utils";
+import BuyKitButton from "./BuyKitButton";
 
 export default function PreviewCTA({ dest }: { dest: Destination }) {
   const title = dest.kit_title ?? dest.destination;
@@ -20,15 +21,9 @@ export default function PreviewCTA({ dest }: { dest: Destination }) {
         </p>
 
         <div className="mt-10">
-          <button
-            type="button"
-            className="inline-block cursor-not-allowed rounded-full bg-[#2D5A3D] px-10 py-4 text-base font-medium text-white opacity-90 transition-colors hover:bg-[#244B33]"
-            aria-disabled="true"
-          >
-            Buy this trip for $29 &rarr;
-          </button>
+          <BuyKitButton dest={dest} variant="cta" />
           <p className="mt-4 text-[11px] uppercase tracking-[0.08em] text-white/40">
-            Checkout opens at launch · one-time purchase · no subscription
+            One-time purchase · 7-day refund · no subscription
           </p>
         </div>
 

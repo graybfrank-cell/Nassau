@@ -69,6 +69,68 @@ export async function POST(req: NextRequest) {
           },
         });
       }
+
+      // Kit Purchase (from kit preview page checkout)
+      if (session.metadata?.mode === "kit" && session.metadata.destination_slug) {
+        const stripeSessionId = session.id;
+        const destinationSlug = session.metadata.destination_slug;
+        const destinationName = session.metadata.destination_name || "";
+        const kitTitle = session.metadata.kit_title || destinationName;
+        const customerEmail = session.customer_email || session.customer_details?.email || "";
+        const amountPaid = session.amount_total ?? 2900; // cents, default $29
+        const currency = (session.currency || "usd").toLowerCase();
+        const stripePaymentIntentId =
+          typeof session.payment_intent === "string"
+            ? session.payment_intent
+            : session.payment_intent?.id ?? null;
+        const stripeCustomerId =
+          typeof session.customer === "string"
+            ? session.customer
+            : session.customer?.id ?? null;
+
+        if (!customerEmail) {
+          console.error(
+            "[stripe-webhook] Kit purchase missing customer email:",
+            stripeSessionId
+          );
+          // Still record the purchase; we'll reconcile email later
+        }
+
+        try {
+          await prisma.kitPurchases.upsert({
+            where: { stripe_session_id: stripeSessionId },
+            create: {
+              stripe_session_id: stripeSessionId,
+              stripe_payment_intent_id: stripePaymentIntentId,
+              stripe_customer_id: stripeCustomerId,
+              customer_email: customerEmail,
+              destination_slug: destinationSlug,
+              destination_name: destinationName,
+              kit_title: kitTitle,
+              amount_paid: amountPaid,
+              currency,
+              metadata: session.metadata as object,
+            },
+            update: {
+              // Idempotent — if Stripe retries the webhook, we don't double-record
+              // but we update payment_intent in case it wasn't set on first call
+              stripe_payment_intent_id: stripePaymentIntentId,
+              stripe_customer_id: stripeCustomerId,
+            },
+          });
+
+          console.log(
+            `[stripe-webhook] Kit purchase recorded: ${destinationSlug} for ${customerEmail} ($${(amountPaid / 100).toFixed(2)})`
+          );
+        } catch (err) {
+          console.error(
+            `[stripe-webhook] Failed to record kit purchase ${stripeSessionId}:`,
+            err
+          );
+          // Don't throw — webhook should still return 200 to Stripe
+          // We'll need to manually reconcile if this fails
+        }
+      }
     } else if (event.type === "customer.subscription.updated") {
       const subscription = event.data.object as Stripe.Subscription;
       await handleSubscriptionUpdated(subscription);

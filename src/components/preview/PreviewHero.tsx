@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { getHeroImage, type Destination } from "@/lib/destination-utils";
+import BuyKitButton from "./BuyKitButton";
 
 const MONTH_NAMES = [
   "January", "February", "March", "April", "May", "June",
@@ -84,16 +85,9 @@ export default function PreviewHero({ dest }: { dest: Destination }) {
 
         {/* Buy CTA */}
         <div className="mt-12">
-          <button
-            type="button"
-            className="inline-block cursor-not-allowed rounded-full bg-[#2D5A3D] px-12 py-5 text-base font-medium text-white opacity-90 shadow-lg shadow-black/40 transition-all duration-200 hover:scale-[1.02] hover:bg-[#244B33] hover:opacity-100"
-            aria-disabled="true"
-            title="Coming soon"
-          >
-            Buy this trip for $29 &rarr;
-          </button>
+          <BuyKitButton dest={dest} variant="hero" />
           <p className="mt-4 text-[11px] uppercase tracking-[0.08em] text-white/50 drop-shadow-[0_1px_2px_rgba(0,0,0,0.5)]">
-            Checkout opens at launch · one-time purchase · no subscription
+            One-time purchase · 7-day refund · no subscription
           </p>
         </div>
 

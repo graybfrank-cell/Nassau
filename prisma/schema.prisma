@@ -17,11 +17,11 @@ model Profiles {
   updated_at DateTime @default(now()) @db.Timestamptz()
 
   // Payment & subscription
-  venmo_username      String?
-  stripe_customer_id      String?  @unique
-  stripe_subscription_id  String?  @unique
-  subscription_status     String?  @default("free") // free | trialing | active | past_due | canceled
-  subscription_tier       String?  // pro | premium
+  venmo_username          String?
+  stripe_customer_id      String?   @unique
+  stripe_subscription_id  String?   @unique
+  subscription_status     String?   @default("free") // free | trialing | active | past_due | canceled
+  subscription_tier       String? // pro | premium
   subscription_expires_at DateTime? @db.Timestamptz()
 
   trips       Trips[]
@@ -35,6 +35,9 @@ model Profiles {
   // Settlements
   settlements_paid     Settlements[] @relation("SettlementsPaid")
   settlements_received Settlements[] @relation("SettlementsReceived")
+
+  // Kit marketplace purchases (claimed via email after guest checkout)
+  kit_purchases KitPurchases[]
 
   @@map("profiles")
 }
@@ -61,8 +64,8 @@ model Trips {
   notes             String?
   is_test           Boolean? @default(false)
 
-  payment_status String    @default("unpaid")
-  paid_at        DateTime? @db.Timestamptz()
+  payment_status  String    @default("unpaid")
+  paid_at         DateTime? @db.Timestamptz()
   first_active_at DateTime? @db.Timestamptz()
 
   creator        Profiles         @relation(fields: [created_by], references: [id], onDelete: Cascade)
@@ -79,18 +82,18 @@ model Trips {
 
 // ─── trip_members ────────────────────────────────────────────
 model TripMembers {
-  id             String   @id @default(uuid()) @db.Uuid
-  trip_id        String   @db.Uuid
-  user_id        String?  @db.Uuid
+  id             String    @id @default(uuid()) @db.Uuid
+  trip_id        String    @db.Uuid
+  user_id        String?   @db.Uuid
   email          String?
-  name           String   @default("")
-  handicap       Decimal  @default(0)
-  role           String   @default("MEMBER")
-  rsvp_status    String   @default("PENDING")
-  payment_status String   @default("UNPAID")
+  name           String    @default("")
+  handicap       Decimal   @default(0)
+  role           String    @default("MEMBER")
+  rsvp_status    String    @default("PENDING")
+  payment_status String    @default("UNPAID")
   invited_at     DateTime? @db.Timestamptz()
   rsvp_at        DateTime? @db.Timestamptz()
-  created_at     DateTime @default(now()) @db.Timestamptz()
+  created_at     DateTime  @default(now()) @db.Timestamptz()
 
   trip          Trips           @relation(fields: [trip_id], references: [id], onDelete: Cascade)
   user          Profiles?       @relation(fields: [user_id], references: [id], onDelete: SetNull)
@@ -136,8 +139,8 @@ model Expenses {
   split_method String   @default("EQUAL")
   created_at   DateTime @default(now()) @db.Timestamptz()
 
-  trip   Trips          @relation(fields: [trip_id], references: [id], onDelete: Cascade)
-  payer  TripMembers?   @relation(fields: [paid_by], references: [id], onDelete: SetNull)
+  trip   Trips           @relation(fields: [trip_id], references: [id], onDelete: Cascade)
+  payer  TripMembers?    @relation(fields: [paid_by], references: [id], onDelete: SetNull)
   splits ExpenseSplits[]
 
   @@index([trip_id])
@@ -215,21 +218,21 @@ model Scorecards {
 
 // ─── marketing_partnerships ─────────────────────────────────
 model MarketingPartnerships {
-  id                     String   @id @default(uuid()) @db.Uuid
-  course_name            String   @default("")
-  destination            String   @default("")
-  tier                   String   @default("")
-  course_type            String   @default("")
-  website_url            String?
-  marketing_contact_name String?
+  id                      String   @id @default(uuid()) @db.Uuid
+  course_name             String   @default("")
+  destination             String   @default("")
+  tier                    String   @default("")
+  course_type             String   @default("")
+  website_url             String?
+  marketing_contact_name  String?
   marketing_contact_email String?
-  booking_email          String?
-  outreach_status        String   @default("none")
-  confidence             String?
-  source_notes           String?
-  needs_review           Boolean  @default(false)
-  created_at             DateTime @default(now()) @db.Timestamptz()
-  updated_at             DateTime @default(now()) @db.Timestamptz()
+  booking_email           String?
+  outreach_status         String   @default("none")
+  confidence              String?
+  source_notes            String?
+  needs_review            Boolean  @default(false)
+  created_at              DateTime @default(now()) @db.Timestamptz()
+  updated_at              DateTime @default(now()) @db.Timestamptz()
 
   @@map("marketing_partnerships")
 }
@@ -250,25 +253,25 @@ model Waitlists {
 
 // ─── game_rounds ─────────────────────────────────────────────
 model GameRounds {
-  id              String   @id @default(uuid()) @db.Uuid
-  commissioner_id String   @db.Uuid
-  course_name     String
-  course_id       String?
-  course_location String?
-  course_layout   String?
-  course_lat      Float?
-  course_lng      Float?
+  id               String   @id @default(uuid()) @db.Uuid
+  commissioner_id  String   @db.Uuid
+  course_name      String
+  course_id        String?
+  course_location  String?
+  course_layout    String?
+  course_lat       Float?
+  course_lng       Float?
   course_photo_url String?
-  course_address  String?
-  tee_time        DateTime @db.Timestamptz()
-  status          String   @default("upcoming") // "upcoming", "in_progress", "completed"
-  share_code      String   @unique @default(cuid())
-  notes           String?
-  starting_hole   Int      @default(1)
-  weather_data    Json?
-  awards          Json?
-  created_at      DateTime @default(now()) @db.Timestamptz()
-  updated_at      DateTime @updatedAt @db.Timestamptz()
+  course_address   String?
+  tee_time         DateTime @db.Timestamptz()
+  status           String   @default("upcoming") // "upcoming", "in_progress", "completed"
+  share_code       String   @unique @default(cuid())
+  notes            String?
+  starting_hole    Int      @default(1)
+  weather_data     Json?
+  awards           Json?
+  created_at       DateTime @default(now()) @db.Timestamptz()
+  updated_at       DateTime @updatedAt @db.Timestamptz()
 
   commissioner Profiles          @relation(fields: [commissioner_id], references: [id], onDelete: Cascade)
   players      GamePlayers[]
@@ -284,15 +287,15 @@ model GameRounds {
 
 // ─── game_players ────────────────────────────────────────────
 model GamePlayers {
-  id              String   @id @default(uuid()) @db.Uuid
-  round_id        String   @db.Uuid
-  user_id         String?  @db.Uuid
-  name            String
-  email           String?
-  status          String   @default("invited") // "invited", "confirmed", "declined"
-  role            String   @default("PLAYER") // "COMMISSIONER", "PLAYER"
-  is_personal_best Boolean @default(false)
-  joined_at       DateTime @default(now()) @db.Timestamptz()
+  id               String   @id @default(uuid()) @db.Uuid
+  round_id         String   @db.Uuid
+  user_id          String?  @db.Uuid
+  name             String
+  email            String?
+  status           String   @default("invited") // "invited", "confirmed", "declined"
+  role             String   @default("PLAYER") // "COMMISSIONER", "PLAYER"
+  is_personal_best Boolean  @default(false)
+  joined_at        DateTime @default(now()) @db.Timestamptz()
 
   round GameRounds @relation(fields: [round_id], references: [id], onDelete: Cascade)
   user  Profiles?  @relation(fields: [user_id], references: [id], onDelete: SetNull)
@@ -411,4 +414,32 @@ model Settlements {
   @@index([payee_id])
   @@index([round_id])
   @@map("settlements")
+}
+
+// ─── kit_purchases (Captain's Kit marketplace purchases) ─────
+// Records every successful Stripe Checkout Session for kit purchases.
+// Guest checkout supported: claimed_by_user_id is nullable and gets set
+// when the buyer later claims their account via magic link.
+model KitPurchases {
+  id                       String    @id @default(uuid()) @db.Uuid
+  stripe_session_id        String    @unique
+  stripe_payment_intent_id String?
+  stripe_customer_id       String?
+  customer_email           String
+  destination_slug         String
+  destination_name         String
+  kit_title                String
+  amount_paid              Int // cents
+  currency                 String    @default("usd")
+  claimed_by_user_id       String?   @db.Uuid
+  claimed_at               DateTime? @db.Timestamptz()
+  purchased_at             DateTime  @default(now()) @db.Timestamptz()
+  metadata                 Json?
+
+  claimed_by Profiles? @relation(fields: [claimed_by_user_id], references: [id])
+
+  @@index([customer_email])
+  @@index([destination_slug])
+  @@index([claimed_by_user_id])
+  @@map("kit_purchases")
 }

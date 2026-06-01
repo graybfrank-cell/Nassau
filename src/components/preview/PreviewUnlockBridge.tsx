@@ -1,4 +1,5 @@
 import type { Destination } from "@/lib/destination-utils";
+import BuyKitButton from "./BuyKitButton";
 
 export default function PreviewUnlockBridge({ dest }: { dest: Destination }) {
   const v3 = dest.recommended_itinerary;
@@ -19,13 +20,7 @@ export default function PreviewUnlockBridge({ dest }: { dest: Destination }) {
           caddie strategy, and the right tee times to book — is in the kit.
         </p>
         <div className="mt-8">
-          <button
-            type="button"
-            className="inline-block cursor-not-allowed rounded-full bg-[#2D5A3D] px-8 py-3.5 text-sm font-medium text-white opacity-90 transition-colors hover:bg-[#244B33]"
-            aria-disabled="true"
-          >
-            Unlock the rest for $29 &rarr;
-          </button>
+          <BuyKitButton dest={dest} variant="bridge" />
         </div>
       </div>
     </section>
