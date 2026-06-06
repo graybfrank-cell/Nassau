@@ -153,7 +153,8 @@ export async function GET(request: Request) {
       next.startsWith("/dashboard") ||
       next === "/trips" ||
       next.startsWith("/trips/") ||
-      next.startsWith("/settlements"));
+      next.startsWith("/settlements") ||
+      next.startsWith("/claim"));
 
   try {
     const supabase = await createClient();

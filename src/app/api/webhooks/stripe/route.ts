@@ -3,6 +3,7 @@ import Stripe from "stripe";
 import { prisma } from "@/lib/prisma";
 import { sendEmail, FROM_PERSONAL, REPLY_TO_PERSONAL } from "@/lib/email";
 import { renderPaymentConfirmation } from "@/emails/PaymentConfirmation";
+import { sendKitClaimEmail } from "@/lib/kit-claim";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: "2026-02-25.clover",
@@ -122,6 +123,17 @@ export async function POST(req: NextRequest) {
           console.log(
             `[stripe-webhook] Kit purchase recorded: ${destinationSlug} for ${customerEmail} ($${(amountPaid / 100).toFixed(2)})`
           );
+
+          // Fire-and-forget the claim email — never blocks the webhook response.
+          // Internal errors are caught inside sendKitClaimEmail and logged.
+          void sendKitClaimEmail({
+            customerEmail,
+            destinationSlug,
+            destinationName,
+            kitTitle,
+            amountPaid,
+            stripeSessionId,
+          });
         } catch (err) {
           console.error(
             `[stripe-webhook] Failed to record kit purchase ${stripeSessionId}:`,
