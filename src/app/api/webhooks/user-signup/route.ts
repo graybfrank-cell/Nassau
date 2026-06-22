@@ -18,6 +18,16 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ ok: true });
     }
 
+    // Anti-abuse gate: only send onboarding emails to users who have
+    // confirmed their email address. Supabase creates auth.users rows
+    // on signInWithOtp submission (before the user clicks the magic link),
+    // so unverified rows are how bots use us as a spam cannon against
+    // third-party inboxes. No confirmation -> no email leaves Nassau.
+    if (!record.email_confirmed_at) {
+      console.log(`[user-signup] Skipping unverified signup: ${record.email}`);
+      return NextResponse.json({ ok: true, skipped: "unverified" });
+    }
+
     const userId = record.id;
     const email = record.email;
 
